@@ -1,9 +1,13 @@
 import { Routes } from '@angular/router';
-import { UserHome } from './modules/user-home/user-home';
+import { UserLayout } from './modules/user/user-layout/user-layout';
+import { UserHome } from './modules/user/user-home/user-home';
 
 export const routes: Routes = [
   {
     path: '',
-    component: UserHome,
+    component: UserLayout,
+    children: [
+      { path: '', component: UserHome },
+    ],
   },
 ];
