@@ -1,0 +1,28 @@
+<article class="market-card">
+  <div class="market-img">
+    <img [src]="market.image" [alt]="market.title" />
+
+    <span class="status-badge" [class]="market.statusClass">
+      {{ market.status }}
+    </span>
+  </div>
+
+  <div class="market-body">
+    <h3>{{ market.title }}</h3>
+
+    <p class="market-date">
+      {{ market.date }}
+    </p>
+
+    <p class="market-location">
+      <i class="bi bi-geo-alt"></i>
+      {{ market.location }}
+    </p>
+
+    <div class="tag-list">
+      @for (tag of market.tags; track $index; let i = $index;) {
+        <span>{{ tag }}</span>
+      }
+    </div>
+  </div>
+</article>

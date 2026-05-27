@@ -5,9 +5,22 @@ import { UserHome } from './modules/user/user-home/user-home';
 export const routes: Routes = [
   {
     path: '',
+    redirectTo: 'user/home',
+    pathMatch: 'full',
+  },
+  {
+    path: 'user',
     component: UserLayout,
     children: [
-      { path: '', component: UserHome },
+      {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full',
+      },
+      {
+        path: 'home',
+        component: UserHome,
+      },
     ],
   },
 ];

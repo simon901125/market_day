@@ -1,2 +1,100 @@
+<div class="user-home">
+  <!-- Hero -->
+  <section class="hero-section">
+    <button class="hero-arrow hero-arrow-left" type="button">
+      <i class="bi bi-chevron-left"></i>
+    </button>
 
+    <div class="hero-content">
+      <h1>
+        今天想去哪個<br />
+        <span>市集</span>走走？
+      </h1>
 
+      <p>
+        小集日收集城市裡的市集活動，<br />
+        帶你挖掘靈感城市美與原創品牌！
+      </p>
+
+      <div class="hero-actions">
+        <a routerLink="/user/markets" class="primary-btn">
+          <i class="bi bi-search"></i>
+          探索市集
+        </a>
+
+        <a routerLink="/vendor" class="secondary-btn">
+          <i class="bi bi-shop-window"></i>
+          攤主報名
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-dots">
+      <span class="active"></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <button class="hero-arrow hero-arrow-right" type="button">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </section>
+
+  <app-user-market-search-panel></app-user-market-search-panel>
+
+  <!-- Recent Markets -->
+  <section class="market-section">
+    <div class="section-header">
+      <div>
+        <h2>近期市集活動</h2>
+        <p>精選市集活動推薦，快來尋找你的週末計畫！</p>
+      </div>
+
+      <a routerLink="/user/markets" class="more-link">
+        查看更多
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="market-grid">
+      @for (market of markets; track $index; let i = $index;) {
+        <app-user-market-card [market]="market"></app-user-market-card>
+      }
+    </div>
+  </section>
+
+  <!-- Vendor CTA -->
+  <section class="vendor-section">
+    <div class="vendor-info">
+      <h2>
+        成為小集日攤主<br />
+        讓更多人看見你的品牌
+      </h2>
+
+      <p>
+        在城市的每個角落，讓你的品牌被更多人看見。小集日提供市集活動宣傳、品牌曝光與報名管理服務，陪你打造屬於自己的市集故事。
+      </p>
+
+      <a routerLink="/vendor" class="vendor-btn">
+        前往攤主專區
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="vendor-photo">
+      <img src="assets/images/vendor-cta-photo.png" alt="成為小集日攤主" />
+    </div>
+
+    <div class="vendor-feature-list">
+      @for (feature of vendorFeatures; track $index; let i = $index;) {
+        <div class="vendor-feature-card">
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.desc }}</p>
+          <img [src]="feature.image" [alt]="feature.title" />
+        </div>
+      }
+    </div>
+  </section>
+</div>

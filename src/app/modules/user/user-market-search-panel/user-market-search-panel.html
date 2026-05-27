@@ -1,0 +1,47 @@
+<section class="search-panel">
+  <div class="search-row">
+    <div class="search-input keyword-input">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="搜尋市集名稱、地點或關鍵字" />
+    </div>
+
+    <div class="search-input date-input">
+      <i class="bi bi-calendar3"></i>
+      <input type="text" placeholder="起始日" />
+    </div>
+
+    <div class="search-input date-input">
+      <i class="bi bi-calendar3"></i>
+      <input type="text" placeholder="結束日" />
+    </div>
+
+    <button class="select-btn" type="button">
+      <span>
+        <i class="bi bi-geo-alt-fill"></i>
+        全部地區
+      </span>
+      <i class="bi bi-chevron-down"></i>
+    </button>
+
+    <button class="select-btn" type="button">
+      <span>全部狀態</span>
+      <i class="bi bi-chevron-down"></i>
+    </button>
+
+    <button class="search-btn" type="button">
+      搜尋
+    </button>
+  </div>
+
+  <div class="category-list">
+    @for (category of categories; track $index; let i = $index;) {
+      <button class="category-item" [class.active]="category.active" type="button">
+        <span class="category-icon">
+          <img [src]="category.icon" [alt]="category.name" />
+        </span>
+
+        <span>{{ category.name }}</span>
+      </button>
+    }
+  </div>
+</section>

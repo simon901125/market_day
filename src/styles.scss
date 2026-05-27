@@ -1,12 +1,45 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
 
-html, body {
-  height: 100%;
-  overflow: hidden;
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 :root {
-  --bg-white: #f5f5f5;
+  /* Brand 主色 */
+  --primary-color: #f59e0b;
+  --primary-hover: #e88900;
+  --primary-soft: #fbf8f3;
+
+  /* Background 背景 */
+  --bg-white: #ffffff;
+  --bg-soft: #f8f4ed;
+  --bg-primary: #f9f0e1;
+
+  /* Text 文字 */
+  --text-dark: #2f2924;
+  --text-normal: #5f5a54;
+  --text-light: #9b948b;
+
+  /* Border 邊線 */
+  --border-primary: #f9f0e1;
+  --border-light: #eee5d8;
+  --border-soft: rgba(47, 41, 36, 0.08);
+
+  /* Shadow 陰影 */
+  --shadow-soft: 0 8px 24px rgba(47, 41, 36, 0.08);
+  --shadow-card: 0 12px 32px rgba(47, 41, 36, 0.1);
+
+  /* 狀態顏色 */
+  --status-active-bg: rgba(98, 162, 29, 0.85);;
+  --status-upcoming-bg: rgba(245, 158, 11, 0.85);
+  --status-preparing-bg: rgba(79, 143, 217, 0.85);
+  --status-ended-bg: rgba(139, 139, 139, 0.85);
 }
 
 // 驗證紅框

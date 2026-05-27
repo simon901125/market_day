@@ -1,0 +1,153 @@
+.user-footer {
+  width: 100%;
+  background: var(--primary-soft);
+  border-top: 1px solid var(--border-soft);
+}
+
+.footer-container {
+  width: min(100% - 64px, 1280px);
+  margin: 0 auto;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1.4fr;
+  gap: 64px;
+  padding: 24px 0 18px;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 18px;
+  text-decoration: none;
+
+  img {
+    width: 150px;
+    height: auto;
+    display: block;
+  }
+}
+
+.footer-section {
+  position: relative;
+  padding-left: 36px;
+  border-left: 1px solid var(--border-soft);
+
+  h4 {
+    margin: 0 0 20px;
+    color: var(--text-dark);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li + li {
+    margin-top: 14px;
+  }
+
+  a {
+    color: var(--text-normal);
+    font-size: 0.95rem;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.25s ease;
+
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+}
+
+.contact-list {
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-normal);
+    font-size: 0.95rem;
+    letter-spacing: 0.03em;
+
+    i {
+      color: var(--text-normal);
+      font-size: 1rem;
+      width: 18px;
+      text-align: center;
+    }
+  }
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--border-soft);
+  padding: 12px 0 16px;
+  text-align: center;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+}
+
+/* 平板 */
+@media (max-width: 992px) {
+  .footer-container {
+    width: calc(100% - 40px);
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px 32px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  .footer-section {
+    padding-left: 32px;
+  }
+}
+
+/* 手機 */
+@media (max-width: 576px) {
+  .user-footer {
+    margin-top: 48px;
+  }
+
+  .footer-container {
+    width: calc(100% - 32px);
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 40px 0 28px;
+  }
+
+  .footer-section {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .footer-logo {
+    img {
+      width: 120px;
+    }
+  }
+
+  .footer-bottom {
+    padding: 20px 0 24px;
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+}
