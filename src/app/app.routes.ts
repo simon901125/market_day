@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { UserLayout } from './modules/user/user-layout/user-layout';
 import { UserHome } from './modules/user/user-home/user-home';
+import { UserActivityList } from './modules/user/user-activity-list/user-activity-list';
 
 export const routes: Routes = [
   {
@@ -21,6 +22,11 @@ export const routes: Routes = [
         path: 'home',
         component: UserHome,
       },
+      {
+        path: 'activity-list',
+        component: UserActivityList,
+      },
+
     ],
   },
 ];
