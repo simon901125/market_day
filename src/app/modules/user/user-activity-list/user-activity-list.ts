@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import { MarketCardItem } from '../../../models/MarketCardItem';
 import { UserMarketSearchPanel } from '../user-market-search-panel/user-market-search-panel';
 import { UserMarketCard } from '../user-market-card/user-market-card';
+import { UserHistoryMarketCard } from '../user-history-market-card/user-history-market-card';
+import { HistoryMarketCardItem } from '../../../models/HistoryMarketCardItem';
 
 @Component({
   selector: 'app-user-activity-list',
-  imports: [UserMarketSearchPanel, UserMarketCard],
+  imports: [UserMarketSearchPanel, UserMarketCard, UserHistoryMarketCard],
   templateUrl: './user-activity-list.html',
   styleUrl: './user-activity-list.scss',
 })
@@ -68,6 +70,40 @@ export class UserActivityList {
       tags: ['植物', '園藝', '生活風格'],
     },
   ];
+
+  // historyMarkets: HistoryMarketCardItem[] = [
+  //   {
+  //     title: '小樹市集｜台灣歷史博物館戶外廣場',
+  //     date: '2024/06/15（六）- 06/16（日）',
+  //     location: '台南市 安南區',
+  //     image: 'assets/images/history-market-01.png',
+  //     status: '已結束',
+  //     statusClass: 'ended',
+  //     tags: ['親子家庭', '戶外', '歷史文化'],
+  //   },
+  //   {
+  //     title: '小火柴文創市集｜水交社文化園區',
+  //     date: '2024/05/18（六）- 05/19（日）',
+  //     location: '台南市 南區',
+  //     image: 'assets/images/history-market-02.png',
+  //     status: '已結束',
+  //     statusClass: 'ended',
+  //     tags: ['文創', '手作', '設計'],
+  //   },
+  //   {
+  //     title: '森林手作生活節｜台中審計新村',
+  //     date: '2024/04/20（六）- 04/21（日）',
+  //     location: '台中市 西區',
+  //     image: 'assets/images/history-market-03.png',
+  //     status: '已結束',
+  //     statusClass: 'ended',
+  //     tags: ['生活風格', '設計', '手作'],
+  //   },
+  // ];
+
+  // get displayMarkets(): MarketCardItem[] {
+  //   return this.activeTab === 'current'? this.markets: this.historyMarkets;
+  // }
 
   changeTab(tab: 'current' | 'history'): void {
     this.activeTab = tab;
