@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { UserLayout } from './modules/user/user-layout/user-layout';
 import { UserHome } from './modules/user/user-home/user-home';
 import { UserActivityList } from './modules/user/user-activity-list/user-activity-list';
+import { UserActivityDetail } from './modules/user/user-activity-detail/user-activity-detail';
 
 export const routes: Routes = [
   {
@@ -26,6 +27,10 @@ export const routes: Routes = [
         path: 'activity-list',
         component: UserActivityList,
       },
+      {
+        path: 'activity-detail',
+        component: UserActivityDetail,
+      }
 
     ],
   },

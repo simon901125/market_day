@@ -18,6 +18,8 @@ export class UserHome {
     {
       title: '草地野餐市集',
       date: '2024/05/24（五）- 05/26（日）',
+      description: '在草地上享受美食和音樂，與家人朋友共度美好時光。',
+      time: '10:00 - 18:00',
       location: '台中市西區 草悟道',
       image: 'assets/images/market-card-01.png',
       status: MarketStatus.active,
@@ -27,6 +29,8 @@ export class UserHome {
     {
       title: '台北精品咖啡生活節',
       date: '2024/05/24（五）- 05/26（日）',
+      description: '體驗精品咖啡的香醇與文化，享受慢活的惬意時光。',
+      time: '10:00 - 18:00',
       location: '台北市中山區 華山1914文創園區',
       image: 'assets/images/market-card-02.png',
       status: MarketStatus.active,
@@ -36,6 +40,8 @@ export class UserHome {
     {
       title: '手作設計市集',
       date: '2024/05/25（六）- 05/26（日）',
+      description: '匯聚各式手作設計品牌，展現創意與工藝的魅力。',
+      time: '10:00 - 18:00',
       location: '台南市中西區 藍晒圖文創園區',
       image: 'assets/images/market-card-03.png',
       status: MarketStatus.active,

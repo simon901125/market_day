@@ -1,1 +1,182 @@
-<p>user-activity-detail works!</p>
+<div class="container py-4">
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a routerLink="/user/home">首頁</a></li>
+      <li class="breadcrumb-item"><a routerLink="/user/home">市集活動</a></li>
+      <li class="breadcrumb-item"><a routerLink="/user/activity-list">活動列表</a></li>
+      <li class="breadcrumb-item active" aria-current="page"><span [innerText]="market?.title"></span></li>
+    </ol>
+  </nav>
+
+  <div class="row g-4 mb-5">
+    <div class="col-lg-7">
+      <div class="hero-image-wrap position-relative rounded-4 overflow-hidden h-100">
+        <span class="status-badge {{ market?.statusClass }} position-absolute top-0 start-0 m-3" >{{ market?.status }}</span>
+        <img [src]="market?.image || 'assets/images/market_1.jpg'" [alt]="market?.title" class="w-100 h-100 object-fit-cover">
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="d-flex flex-column h-100">
+        <div class="mb-4">
+          <p class="text-normal fw-bold mb-2">文創 · 美食 · 生活選物</p>
+          <h1 class="display-5 fw-bold mb-3 text-dark">{{ market?.title }}</h1>
+          <p class="text-normal">在春日的午後，一起散步在綠意之間，<br>發現生活的美好與靈感。</p>
+        </div>
+        <div class="info-card card border-0 rounded-4 p-4 mt-auto">
+          <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+            <li class="d-flex align-items-start gap-3">
+              <i class="bi bi-calendar-event text-primary fs-5"></i>
+              <div>
+                <div class="text-normal mb-1">活動日期</div>
+                      <div class="fw-bold text-dark" >{{market?.date}}</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-3">
+              <i class="bi bi-clock text-primary fs-5"></i>
+              <div>
+                <div class="text-normal mb-1">活動時間</div>
+                <div class="fw-bold text-dark" >{{market?.time}}</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-3">
+              <i class="bi bi-geo-alt text-primary fs-5"></i>
+              <div>
+                <div class="text-normal mb-1">活動地點</div>
+                <div class="fw-bold text-dark" >{{market?.location}}</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-3">
+              <i class="bi bi-hourglass-split text-primary fs-5"></i>
+              <div>
+                <div class="fw-bold text-primary">距離開始 
+                  <span class="ms-1" >{{ countMartketDays() }}</span></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="intro-section row g-4 mb-5 align-items-stretch">
+    <div class="col-lg-6">
+      <div class="card border-0 rounded-4 p-4 p-md-5 h-100">
+        <div class="d-flex align-items-center gap-2 mb-4">
+          <i class="bi bi-clipboard-check text-primary fs-4"></i>
+          <h4 class="mb-0 fw-bold text-dark">活動介紹</h4>
+        </div>
+        <p class="text-normal mb-3">{{ market?.description }}</p>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="rounded-4 overflow-hidden h-100">
+        <img src="{{market?.image}}" alt="{{market?.title}}" class="w-100 h-100 object-fit-cover">
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-5">
+    <div class="col-md-6 text-dark">
+      <div class="card border-0 rounded-4 p-4 h-100">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-calendar2-week text-primary fs-4"></i>
+          <h5 class="mb-0 fw-bold">活動日期</h5>
+        </div>
+        <p class="mb-2 text-normal" >{{market?.date}}</p>
+        <p class="mb-0 text-normal" >{{market?.time}}</p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card border-0 rounded-4 p-4 h-100">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-geo-alt text-primary fs-4"></i>
+          <h5 class="mb-0 fw-bold text-dark">活動地點</h5>
+        </div>
+        <p class="mb-2 text-dark" >{{market?.location}}</p>
+        <!-- 這要改成地址 -->
+        <p class="mb-0 text-normal fs-sm">{{market?.location}}</p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card border-0 rounded-4 p-4 h-100">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-car-front text-primary fs-4"></i>
+          <h5 class="mb-0 fw-bold text-dark">交通方式</h5>
+        </div>
+        <ul class="list-unstyled mb-0 d-flex flex-column gap-2 text-normal">
+          <li class="d-flex gap-2"><span class="badge text-bg-warning text-white rounded-pill d-flex align-items-center"><i class="bi bi-train-front"></i></span> 捷運：文心森林公園站 (G10)，步行約 8 分鐘</li>
+          <li class="d-flex gap-2"><span class="badge text-bg-warning text-white rounded-pill d-flex align-items-center"><i class="bi bi-bus-front"></i></span> 公車：乘坐 53、73、75、85、99，於「文心森林公園站」</li>
+          <li class="d-flex gap-2"><span class="badge text-bg-warning text-white rounded-pill d-flex align-items-center"><i class="bi bi-p-circle"></i></span> 開車：公園周邊設有收費停車場</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card border-0 rounded-4 p-4 h-100">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-tags text-primary fs-4"></i>
+          <h5 class="mb-0 fw-bold text-dark">活動類型</h5>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-2">
+          <span *ngFor="let tag of market?.tags" class="custom-tag badge text-bg-light text-normal fw-normal">{{ tag }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 要先hidden時間到再開 -->
+  <div class="announcement-banner rounded-4 p-4 mb-5 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div class="d-flex align-items-start align-items-md-center gap-3">
+      <i class="bi bi-megaphone fs-3 text-primary mt-1 mt-md-0"></i>
+      <div>
+        <h5 class="fw-bold mb-1 text-primary">參與品牌與攤位資訊已公開！</h5>
+        <p class="mb-0 text-normal">快來看看有哪些品牌參與，以及攤位配置，提前規劃你的逛市集路線吧！</p>
+      </div>
+    </div>
+    <button class="btn btn-primary rounded-pill px-4 py-2 text-white fw-bold text-nowrap flex-shrink-0">
+      查看攤位地圖
+    </button>
+  </div>
+
+  <div class="mb-5">
+    <div class="d-flex align-items-end gap-3 mb-4">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-map text-dark fs-4"></i>
+        <h4 class="mb-0 fw-bold text-dark">攤位地圖</h4>
+      </div>
+      <span class="text-normal small mb-1">點選攤位查看品牌資訊</span>
+    </div>
+    
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="map-card card border-0 rounded-4 p-4 h-100 text-center">
+           <img src="https://via.placeholder.com/800x400/f8f4ed/5f5a54?text=Interactive+Map+Area" class="img-fluid rounded-3" alt="攤位地圖">
+        </div>
+      </div>
+      
+      <div class="col-lg-4">
+        <div class="booth-detail-card card border-0 rounded-4 p-4 h-100">
+          <div class="booth-number mb-3">B03</div>
+          <img src="https://via.placeholder.com/400x200/DCC5A0/ffffff?text=Brand+Image" alt="品牌圖片" class="img-fluid rounded-3 mb-3 object-fit-cover" style="height: 160px;">
+          
+          <h5 class="fw-bold text-dark mb-3">台北精品咖啡生活節</h5>
+          
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge text-bg-light text-normal fw-normal">咖啡</span>
+            <span class="badge text-bg-light text-normal fw-normal">生活風格</span>
+            <span class="badge text-bg-light text-normal fw-normal">美食</span>
+          </div>
+          
+          <p class="text-normal small mb-4">{{ market?.description }}</p>
+          
+          <ul class="list-unstyled mb-0 d-flex flex-column gap-2 text-normal small">
+            <li class="d-flex align-items-center gap-2">
+              <i class="bi bi-instagram"></i> &#64;taipei.coffee.life
+            </li>
+            <li class="d-flex align-items-center gap-2">
+              <i class="bi bi-globe"></i> www.taipeicoffeelife.tw
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

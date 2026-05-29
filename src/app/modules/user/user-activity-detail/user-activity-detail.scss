@@ -1,0 +1,127 @@
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.text-dark {
+  color: var(--text-dark) !important;
+}
+
+.text-normal {
+  color: var(--text-normal) !important;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  &:hover, &:focus, &:active {
+    background-color: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+  }
+}
+
+/* 麵包屑樣式 */
+.breadcrumb {
+  a {
+    color: var(--text-normal);
+    text-decoration: none;
+    &:hover { color: var(--primary-color); }
+  }
+  .breadcrumb-item.active {
+    color: var(--text-dark);
+    font-weight: 500;
+  }
+  .breadcrumb-item + .breadcrumb-item::before {
+    content: "›"; /* 使用箭頭取代斜線 */
+    font-size: 1.2rem;
+    line-height: 1;
+    color: var(--text-light);
+  }
+}
+
+/* 共用卡片樣式 */
+.card {
+  background-color: var(--bg-white);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    box-shadow: var(--shadow-card);
+  }
+}
+
+/* Hero Section (主視覺區) */
+.hero-image-wrap {
+  min-height: 300px;
+}
+
+.status-badge {
+  padding: 6px 16px;
+  border-radius: 4px;
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+  z-index: 10;
+  
+  &.upcoming { background-color: var(--status-upcoming-bg); }
+  &.active   { background-color: var(--status-active-bg); }
+  &.preparing{ background-color: var(--status-preparing-bg); }
+  &.ended    { background-color: var(--status-ended-bg); }
+}
+
+.info-card {
+  border: 1px solid var(--border-primary) !important;
+}
+
+/* Intro Section (介紹區) */
+.intro-section {
+  .card {
+    background-color: var(--bg-white);
+  }
+}
+
+/* 標籤設計 (活動類型) */
+.custom-tag {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  
+  &.green  { background-color: #E8F3E8; }
+  &.brown  { background-color: #F3ECE8; }
+  &.purple { background-color: #EFE8F3; }
+  &.pink   { background-color: #F3E8E8; }
+}
+
+/* 公告橫幅 (Announcement Banner) */
+.announcement-banner {
+  background-color: var(--bg-primary); /* 使用淺橘色背景 */
+  border: 1px solid var(--border-light);
+}
+
+/* 攤位詳細資訊卡 (Booth Detail Card) */
+.booth-detail-card {
+  .booth-number {
+    display: inline-block;
+    padding: 4px 12px;
+    background-color: var(--bg-soft);
+    border-radius: 4px;
+    font-weight: bold;
+    color: var(--text-dark);
+  }
+  
+  .badge.text-bg-light {
+    background-color: #F5F5F5 !important;
+    border: 1px solid #EAEAEA;
+    padding: 6px 10px;
+  }
+  
+  ul i {
+    color: var(--text-light);
+    font-size: 1.1rem;
+  }
+}
+
+.map-card {
+  background-color: var(--bg-soft);
+}
