@@ -33,18 +33,15 @@
     </button>
   </div>
 
-  <div class="category-list">
+  <div class="category-tags">
     @for (category of categories; track $index; let i = $index;) {
       <button
-        class="category-item"
+        class="category-tag"
         [class.active]="category.active"
         type="button"
         (click)="selectCategory(i)"
       >
-        <span class="category-icon">
-          <i [class]="category.icon"></i>
-        </span>
-
+        <i [class]="category.icon"></i>
         <span>{{ category.name }}</span>
       </button>
     }
