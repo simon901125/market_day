@@ -1,0 +1,69 @@
+<div class="brandserch-page">
+
+  <!-- Hero Banner -->
+  <section class="brandserch-hero">
+    <div class="hero-content">
+      <h1>品牌探索</h1>
+      <p>探索小集日精心挑選的市集品牌，認識他們的故事與作品。</p>
+    </div>
+  </section>
+
+  <!-- Filter Panel -->
+  <section class="filter-panel">
+    <div class="filter-inner">
+      <div class="filter-top">
+        <div class="search-input">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="搜尋品牌名稱、類型或關鍵字" />
+        </div>
+        <div class="filter-actions">
+          <button class="select-btn" type="button">
+            <span>品牌類型</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <button class="select-btn" type="button">
+            <span>參與市集</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="tag-row">
+        @for (tag of tags; track $index; let i = $index) {
+          <app-user-brandserch-tag
+            [label]="tag"
+            [active]="activeTagIndex === i"
+            (tagClick)="selectTag(i)">
+          </app-user-brandserch-tag>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand Grid -->
+  <section class="brand-section">
+    <div class="brand-inner">
+      <p class="result-count">共 {{ brands.length }} 個品牌</p>
+
+      <div class="brand-grid">
+        @for (brand of brands; track $index) {
+          <app-user-brandserch-card [brand]="brand"></app-user-brandserch-card>
+        }
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <button class="page-btn" type="button">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <button class="page-btn active" type="button">1</button>
+        <button class="page-btn" type="button">2</button>
+        <button class="page-btn" type="button">3</button>
+        <button class="page-btn" type="button">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>

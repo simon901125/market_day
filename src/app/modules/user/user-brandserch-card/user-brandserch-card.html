@@ -1,0 +1,36 @@
+<article class="brand-card">
+  <div class="brand-img">
+    <!-- 圖片佔位符，待正式圖片資源補入 -->
+    <div class="brand-logo">
+      <!-- Logo 佔位符 -->
+    </div>
+  </div>
+
+  <div class="brand-body">
+
+    <div class="brand-name-row">
+      <h3 class="brand-name">{{ brand.name }}</h3>
+      <div class="tag-list">
+        @for (tag of brand.tags; track $index) {
+        <span>{{ tag }}</span>
+        }
+      </div>
+    </div>
+
+    <p class="brand-desc">{{ brand.description }}</p>
+
+    <div class="brand-work-row">
+      <span class="work-label">擅長作品</span>
+      <span class="work-value">{{ brand.goodat_works }}</span>
+    </div>
+
+    <div class="brand-work-row">
+      <span class="work-label">代表作品</span>
+      <span class="work-value">{{ brand.masterpiece }}</span>
+    </div>
+
+    <a href="#" class="brand-link">
+      查看品牌 <i class="bi bi-arrow-right"></i>
+    </a>
+  </div>
+</article>

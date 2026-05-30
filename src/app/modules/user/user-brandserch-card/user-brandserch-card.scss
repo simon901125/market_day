@@ -1,0 +1,114 @@
+.brand-card {
+  display: flex;
+  overflow: hidden;
+  padding: 8px;
+  border: 1px solid var(--border-primary);
+  border-radius: 10px;
+  background: #fff;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card);
+  }
+}
+
+.brand-img {
+  position: relative;
+  flex: 2;
+  flex-shrink: 0;
+  min-height: 200px;
+  border-radius: 10px;
+  background: var(--bg-primary);
+  aspect-ratio: 4 / 3;
+
+}
+
+.brand-body {
+  flex: 3;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.brand-logo {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  height: 35%;
+  border-radius: 50%;
+  background: white;
+  padding: 10px;
+  aspect-ratio: 1 / 1;
+}
+
+.brand-name-row {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  span {
+    padding: 3px 10px;
+    border-radius: 5px;
+    color: var(--text-normal);
+    background: var(--bg-primary);
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+}
+
+.brand-name {
+  margin: 0;
+  color: var(--text-dark);
+  font-size: 1.08rem;
+  font-weight: 800;
+}
+
+.brand-desc {
+  margin: 0;
+  color: var(--text-normal);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.brand-work-row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.work-label {
+  flex-shrink: 0;
+  color: var(--text-light);
+  font-size: 0.8rem;
+}
+
+.work-value {
+  color: var(--text-normal);
+  font-size: 0.88rem;
+}
+
+.brand-link {
+  margin-top: auto;
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--primary-hover);
+  }
+}
