@@ -7,6 +7,7 @@ import { VendorLayout } from './modules/vendor/vendor-layout/vendor-layout';
 import { VendorLogin } from './modules/vendor/vendor-login/vendor-login';
 import { VendorRegister } from './modules/vendor/vendor-register/vendor-register';
 import { VendorVerifyEmail } from './modules/vendor/vendor-verify-email/vendor-verify-email';
+import { VendorResetPassword } from './modules/vendor/vendor-reset-password/vendor-reset-password';
 
 export const routes: Routes = [
   {
@@ -53,6 +54,10 @@ export const routes: Routes = [
       {
         path: 'verify-email',
         component: VendorVerifyEmail,
+      },
+      {
+        path: 'reset-password',
+        component: VendorResetPassword,
       }
     ]
   }

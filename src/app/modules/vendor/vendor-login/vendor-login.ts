@@ -8,8 +8,9 @@ import { VendorSidebar } from '../vendor-sidebar/vendor-sidebar';
   styleUrl: './vendor-login.scss',
 })
 export class VendorLogin {
+  /** 是否顯示密碼 */
   showPassword = false;
-
+  /** 切換密碼顯示狀態 */
   togglePassword() {
     this.showPassword = !this.showPassword;
   }

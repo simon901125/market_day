@@ -7,6 +7,8 @@ import { RouterModule } from '@angular/router';
   styleUrl: './vendor-layout.scss',
 })
 export class VendorLayout {
+  /** 標題 */
   @Input() title: string = '';
+  /** 副標題 */
   @Input() subtitleLines: string[] = [];
 }
