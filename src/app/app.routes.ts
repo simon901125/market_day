@@ -6,6 +6,7 @@ import { UserActivityDetail } from './modules/user/user-activity-detail/user-act
 import { VendorLayout } from './modules/vendor/vendor-layout/vendor-layout';
 import { VendorLogin } from './modules/vendor/vendor-login/vendor-login';
 import { VendorRegister } from './modules/vendor/vendor-register/vendor-register';
+import { VendorVerifyEmail } from './modules/vendor/vendor-verify-email/vendor-verify-email';
 
 export const routes: Routes = [
   {
@@ -48,6 +49,10 @@ export const routes: Routes = [
       {
         path: 'register',
         component: VendorRegister,
+      },
+      {
+        path: 'verify-email',
+        component: VendorVerifyEmail,
       }
     ]
   }
