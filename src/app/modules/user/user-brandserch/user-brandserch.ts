@@ -6,7 +6,7 @@ import { UserBrandserchDropdown } from '../user-brandserch-dropdown/user-brandse
 
 @Component({
   selector: 'app-user-brandserch',
-  imports: [UserBrandserchCard, UserBrandserchTag, UserBrandserchDropdown],
+  imports: [UserBrandserchCard, UserBrandserchDropdown],
   templateUrl: './user-brandserch.html',
   styleUrl: './user-brandserch.scss',
 })
