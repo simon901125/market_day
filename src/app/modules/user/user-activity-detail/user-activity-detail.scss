@@ -1,0 +1,451 @@
+.activity-detail {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Hero Section */
+
+.breadcrumb-item{
+  color: var(--text-normal);
+  font-size: 0.9rem;
+
+  &.active {
+    color: var(--text-dark);
+    font-weight: 600;
+  }
+}
+
+.hero-section {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.hero-image-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  min-height: 500px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-subtitle {
+  color: var(--text-normal);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.hero-content h1 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  font-weight: 800;
+}
+
+.hero-desc {
+  color: var(--text-normal);
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+/* Status Badge */
+
+.status-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+
+  padding: 6px 16px;
+  border-radius: 8px;
+
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  z-index: 2;
+
+  &.upcoming {
+    background: var(--status-upcoming-bg);
+  }
+
+  &.active {
+    background: var(--status-active-bg);
+  }
+
+  &.preparing {
+    background: var(--status-preparing-bg);
+  }
+
+  &.ended {
+    background: var(--status-ended-bg);
+  }
+}
+
+/* Card */
+
+.info-card,
+.intro-card,
+.detail-card,
+.map-card,
+.booth-detail-card {
+  background: white;
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
+}
+
+.info-card {
+  margin-top: auto;
+  padding: 2rem;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  li {
+    display: flex;
+    gap: 1rem;
+  }
+
+  i {
+    color: var(--primary-color);
+    font-size: 1.3rem;
+  }
+
+  span {
+    display: block;
+    color: var(--text-normal);
+    margin-bottom: 0.25rem;
+  }
+
+  strong {
+    color: var(--text-dark);
+  }
+}
+
+/* Intro Section */
+
+.intro-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  margin-bottom: 4rem;
+}
+
+.intro-card {
+  padding: 2.5rem;
+}
+
+.intro-image {
+  border-radius: 24px;
+  overflow: hidden;
+  min-height: 400px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* Section Heading */
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  margin-bottom: 1.5rem;
+
+  i {
+    color: var(--primary-color);
+    font-size: 1.4rem;
+  }
+
+  h2,
+  h3 {
+    margin: 0;
+    color: var(--text-dark);
+    font-weight: 700;
+  }
+}
+
+/* Info Grid */
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+
+  margin-bottom: 4rem;
+}
+
+.detail-card {
+  padding: 2rem;
+}
+
+.traffic-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  span {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+  }
+}
+
+/* Tags */
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  span {
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: #f5f5f5;
+    color: var(--text-dark);
+    font-size: 0.85rem;
+  }
+}
+
+/* Announcement */
+
+.announcement-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 2rem;
+
+  padding: 2rem;
+  margin-bottom: 4rem;
+
+  background: var(--bg-primary);
+  border-radius: 24px;
+}
+
+.announcement-content {
+  display: flex;
+  gap: 1rem;
+
+  i {
+    color: var(--primary-color);
+    font-size: 2rem;
+  }
+
+  h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+}
+
+.announcement-banner button {
+  border: none;
+  border-radius: 999px;
+
+  padding: 0.8rem 1.5rem;
+
+  background: var(--primary-color);
+  color: white;
+  font-weight: 600;
+}
+
+/* Booth Section */
+
+.booth-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  margin-bottom: 1.5rem;
+
+  div {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.booth-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.map-card {
+  padding: 2rem;
+
+  img {
+    width: 100%;
+    border-radius: 16px;
+  }
+}
+
+.booth-detail-card {
+  padding: 2rem;
+}
+
+.booth-number {
+  display: inline-block;
+
+  padding: 4px 12px;
+  margin-bottom: 1rem;
+
+  background: var(--bg-soft);
+
+  border-radius: 8px;
+}
+
+.booth-image {
+  width: 100%;
+  height: 200px;
+
+  object-fit: cover;
+
+  border-radius: 16px;
+
+  margin-bottom: 1rem;
+}
+
+/* Breadcrumb */
+
+.breadcrumb {
+  .breadcrumb-item {
+    color: var(--text-dark);
+    font-size: 0.95rem;
+  }
+
+  .breadcrumb-item a {
+    color: var(--text-dark);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+
+  .breadcrumb-item.active {
+    color: var(--text-dark);
+    font-weight: 600;
+  }
+
+  .breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: var(--text-light);
+  }
+}
+
+/* Tablet */
+
+@media (max-width: 992px) {
+  .hero-section,
+  .intro-section,
+  .booth-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-image-wrap {
+    min-height: 380px;
+  }
+
+  .intro-image {
+    min-height: 300px;
+  }
+
+  .announcement-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .announcement-banner button {
+    width: 100%;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 576px) {
+  .activity-detail {
+    padding: 1rem;
+  }
+
+  .hero-image-wrap {
+    min-height: 240px;
+    border-radius: 18px;
+  }
+
+  .hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .intro-card,
+  .detail-card,
+  .info-card,
+  .map-card,
+  .booth-detail-card {
+    padding: 1.25rem;
+    border-radius: 18px;
+  }
+
+  .intro-image {
+    min-height: 220px;
+    border-radius: 18px;
+  }
+
+  .booth-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .booth-image {
+    height: 180px;
+  }
+
+  .announcement-content {
+    flex-direction: column;
+  }
+}

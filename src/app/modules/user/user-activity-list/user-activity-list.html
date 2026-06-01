@@ -1,0 +1,61 @@
+<div class="activity-page">
+  <section class="activity-hero">
+    <div class="hero-text">
+      <h1>市集活動</h1>
+      <p>
+        探索近期開放與即將登場的市集，<br />
+        也可以回顧過去留下的美好活動紀錄。
+      </p>
+    </div>
+  </section>
+
+  <section class="activity-content">
+    <div class="activity-tabs">
+      <button
+        type="button"
+        [class.active]="activeTab === 'current'"
+        (click)="changeTab('current')"
+      >
+        目前活動
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeTab === 'history'"
+        (click)="changeTab('history')"
+      >
+        歷史活動
+      </button>
+    </div>
+
+    <app-user-market-search-panel></app-user-market-search-panel>
+
+    <!-- <div class="market-grid">
+      @for (market of displayMarkets; track $index) {
+        <app-user-market-card [market]="market"></app-user-market-card>
+      }
+    </div> -->
+
+    <div class="market-grid">
+      @for (market of markets; track $index) {
+        <app-user-market-card [market]="market" (click)="goToActivityDetail(market)"></app-user-market-card>
+      }
+    </div>
+
+    <div class="pagination">
+      <button type="button">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+
+      <button type="button" class="active">1</button>
+      <button type="button">2</button>
+      <button type="button">3</button>
+      <button type="button">4</button>
+      <button type="button">5</button>
+
+      <button type="button">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </section>
+</div>

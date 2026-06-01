@@ -10,13 +10,20 @@ import { CategoryItem } from '../../../models/CategoryItem';
 
 export class UserMarketSearchPanel {
   categories: CategoryItem[] = [
-    { name: '全部市集', icon: 'assets/icons/tent-category.svg', active: true },
-    { name: '餐飲美食', icon: 'assets/icons/food-category.svg' },
-    { name: '文創手作', icon: 'assets/icons/bag-category.svg' },
-    { name: '親子家庭', icon: 'assets/icons/family-category.svg' },
-    { name: '寵物友善', icon: 'assets/icons/paw-category.svg' },
-    { name: '生活風格', icon: 'assets/icons/gift-category.svg' },
-    { name: '節慶限定', icon: 'assets/icons/balloon-category.svg' },
-    { name: '假日市集', icon: 'assets/icons/holiday-category.svg' },
+    { name: '全部市集', icon: 'bi bi-shop-window', active: true },
+    { name: '餐飲美食', icon: 'bi bi-fork-knife' },
+    { name: '文創手作', icon: 'bi bi-bag' },
+    { name: '親子家庭', icon: 'bi bi-people' },
+    { name: '寵物生活', icon: 'bi bi-house-heart' },
+    { name: '植物選物', icon: 'bi bi-flower1' },
+    { name: '服飾配件', icon: 'bi bi-person-standing-dress' },
+    { name: '玩具選物', icon: 'bi bi-gift' },
   ];
+
+  selectCategory(index: number): void {
+    this.categories = this.categories.map((category, i) => ({
+      ...category,
+      active: i === index,
+    }));
+  }
 }

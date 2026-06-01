@@ -1,1 +1,224 @@
-<p>user-activity-detail works!</p>
+<div class="activity-detail">
+  <nav class="breadcrumb-wrap" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a routerLink="/user/home">首頁</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a routerLink="/user/home">市集活動</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a routerLink="/user/activity-list">活動列表</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        {{ market?.title }}
+      </li>
+    </ol>
+  </nav>
+
+  <section class="hero-section">
+    <div class="hero-image-wrap">
+      <span class="status-badge" [class]="market?.statusClass">
+        {{ market?.status }}
+      </span>
+
+      <img
+        [src]="market?.image || 'assets/images/market_1.jpg'"
+        [alt]="market?.title"
+      />
+    </div>
+
+    <div class="hero-content">
+      <p class="hero-subtitle">文創 · 美食 · 生活選物</p>
+
+      <h1>{{ market?.title }}</h1>
+
+      <p class="hero-desc">
+        在春日的午後，一起散步在綠意之間，<br />
+        發現生活的美好與靈感。
+      </p>
+
+      <div class="info-card">
+        <ul>
+          <li>
+            <i class="bi bi-calendar-event"></i>
+            <div>
+              <span>活動日期</span>
+              <strong>{{ market?.date }}</strong>
+            </div>
+          </li>
+
+          <li>
+            <i class="bi bi-clock"></i>
+            <div>
+              <span>活動時間</span>
+              <strong>{{ market?.time }}</strong>
+            </div>
+          </li>
+
+          <li>
+            <i class="bi bi-geo-alt"></i>
+            <div>
+              <span>活動地點</span>
+              <strong>{{ market?.location }}</strong>
+            </div>
+          </li>
+
+          <li>
+            <i class="bi bi-hourglass-split"></i>
+            <div>
+              <!-- 感覺這裡可以用pipe，如果時間還沒到則出現距離開始反之為空 -->
+              <strong class="primary-text">
+                距離開始 {{ countMartketDays() }}
+              </strong>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="intro-section">
+    <div class="intro-card">
+      <div class="section-heading">
+        <i class="bi bi-clipboard-check"></i>
+        <h2>活動介紹</h2>
+      </div>
+
+      <p>{{ market?.description }}</p>
+    </div>
+
+    <div class="intro-image">
+      <img [src]="market?.image" [alt]="market?.title" />
+    </div>
+  </section>
+  <!-- 上方資訊就已經有活動開始時間、日期這裡有需要再寫一次嗎 -->
+  <section class="info-grid">
+    <article class="detail-card">
+      <div class="section-heading">
+        <i class="bi bi-calendar2-week"></i>
+        <h3>活動日期</h3>
+      </div>
+
+      <p>{{ market?.date }}</p>
+      <p>{{ market?.time }}</p>
+    </article>
+
+    <article class="detail-card">
+      <div class="section-heading">
+        <i class="bi bi-geo-alt"></i>
+        <h3>活動地點</h3>
+      </div>
+
+      <p class="dark-text">{{ market?.location }}</p>
+      <p>{{ market?.location }}</p>
+    </article>
+
+    <!-- 這裡要用傳的 -->
+    <article class="detail-card">
+      <div class="section-heading">
+        <i class="bi bi-car-front"></i>
+        <h3>交通方式</h3>
+      </div>
+
+      <ul class="traffic-list">
+        <li>
+          <span><i class="bi bi-train-front"></i></span>
+          捷運：文心森林公園站 G10，步行約 8 分鐘
+        </li>
+        <li>
+          <span><i class="bi bi-bus-front"></i></span>
+          公車：乘坐 53、73、75、85、99，於「文心森林公園站」
+        </li>
+        <li>
+          <span><i class="bi bi-p-circle"></i></span>
+          開車：公園周邊設有收費停車場
+        </li>
+      </ul>
+    </article>
+
+    <article class="detail-card">
+      <div class="section-heading">
+        <i class="bi bi-tags"></i>
+        <h3>活動類型</h3>
+      </div>
+      <!-- tag color還沒處理 -->
+      <div class="tag-list">
+        <span *ngFor="let tag of market?.tags">
+          {{ tag }}
+        </span>
+      </div>
+    </article>
+  </section>
+
+  <!-- 這裡時間到才能公開 -->
+  <section class="announcement-banner">
+    <div class="announcement-content">
+      <i class="bi bi-megaphone"></i>
+
+      <div>
+        <h3>參與品牌與攤位資訊已公開！</h3>
+        <p>快來看看有哪些品牌參與，以及攤位配置，提前規劃你的逛市集路線吧！</p>
+      </div>
+    </div>
+    <!-- 這裡 == true 才公開地圖 -->
+    <button type="button">查看攤位地圖</button>
+  </section>
+
+  <section class="booth-section">
+    <div class="booth-title">
+      <div>
+        <i class="bi bi-map"></i>
+        <h2>攤位地圖</h2>
+      </div>
+
+      <span>點選攤位查看品牌資訊</span>
+    </div>
+
+    <div class="booth-layout">
+      <div class="map-card">
+        <img
+          src="https://via.placeholder.com/800x400/f8f4ed/5f5a54?text=Interactive+Map+Area"
+          alt="攤位地圖"
+        />
+      </div>
+
+      <aside class="booth-detail-card">
+        <div class="booth-number">B03</div>
+
+        <img
+          class="booth-image"
+          src="https://via.placeholder.com/400x200/DCC5A0/ffffff?text=Brand+Image"
+          alt="品牌圖片"
+        />
+
+        <!-- 這裡攤位資訊 -->
+        <h3>台北精品咖啡生活節</h3>
+
+        <div class="tag-list">
+          <span>咖啡</span>
+          <span>生活風格</span>
+          <span>美食</span>
+        </div>
+
+        <p>{{ market?.description }}</p>
+
+        <!-- 社交媒體連結 -->
+        <ul>
+          <li>
+            <i class="bi bi-instagram"></i>
+            <a href="https://www.instagram.com/${this.instagramId}/" target="_blank" rel="noopener noreferrer">
+              &#64;taipei.coffee.life
+            </a>
+          </li>
+          <li>
+            <i class="bi bi-globe"></i>
+            <a href="https://www.taipeicoffeelife.tw/" target="_blank" rel="noopener noreferrer">
+              www.taipeicoffeelife.tw
+            </a>
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+</div>

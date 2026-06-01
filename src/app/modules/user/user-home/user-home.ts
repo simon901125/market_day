@@ -4,6 +4,8 @@ import { UserMarketSearchPanel } from '../user-market-search-panel/user-market-s
 import { VendorFeature } from '../../../models/VendorFeature';
 import { MarketCardItem } from '../../../models/MarketCardItem';
 import { UserMarketCard } from '../user-market-card/user-market-card';
+import { BrandType } from '../../../models/BrandType ';
+import { MarketStatus } from '../../../models/MarketStatus ';
 
 @Component({
   selector: 'app-user-home',
@@ -14,31 +16,37 @@ import { UserMarketCard } from '../user-market-card/user-market-card';
 export class UserHome {
   markets: MarketCardItem[] = [
     {
-      title: '草悟野餐市集',
+      title: '草地野餐市集',
       date: '2024/05/24（五）- 05/26（日）',
-      location: '台中市西區 草悟廣場',
+      description: '在草地上享受美食和音樂，與家人朋友共度美好時光。',
+      time: '10:00 - 18:00',
+      location: '台中市西區 草悟道',
       image: 'assets/images/market-card-01.png',
-      status: '進行中',
-      statusClass: 'active',
-      tags: ['野餐', '手作', '親子友善'],
+      status: MarketStatus.active,
+      statusClass: MarketStatus.getClass(MarketStatus.active),
+      tags: [BrandType.food, BrandType.handmade, BrandType.family],
     },
     {
-      title: '咖啡生活節',
-      date: '2024/06/07（五）- 06/09（日）',
-      location: '台中市南屯區 文心森林公園',
+      title: '台北精品咖啡生活節',
+      date: '2024/05/24（五）- 05/26（日）',
+      description: '體驗精品咖啡的香醇與文化，享受慢活的惬意時光。',
+      time: '10:00 - 18:00',
+      location: '台北市中山區 華山1914文創園區',
       image: 'assets/images/market-card-02.png',
-      status: '即將開始',
-      statusClass: 'upcoming ',
-      tags: ['咖啡', '甜點', '生活風格'],
+      status: MarketStatus.active,
+      statusClass: MarketStatus.getClass(MarketStatus.active),
+      tags: [BrandType.food, BrandType.handmade, BrandType.fashion],
     },
     {
-      title: '夏日風格服裝市集',
-      date: '2024/06/14（五）- 06/16（日）',
-      location: '台中市西區 審計新村',
+      title: '手作設計市集',
+      date: '2024/05/25（六）- 05/26（日）',
+      description: '匯聚各式手作設計品牌，展現創意與工藝的魅力。',
+      time: '10:00 - 18:00',
+      location: '台南市中西區 藍晒圖文創園區',
       image: 'assets/images/market-card-03.png',
-      status: '即將開始',
-      statusClass: 'upcoming ',
-      tags: ['服飾', '配件', '設計品牌'],
+      status: MarketStatus.active,
+      statusClass: MarketStatus.getClass(MarketStatus.active),
+      tags: [BrandType.handmade, BrandType.fashion, BrandType.toy],
     },
   ];
 
