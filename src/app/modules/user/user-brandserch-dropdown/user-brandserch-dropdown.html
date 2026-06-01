@@ -1,0 +1,14 @@
+@if (isOpen) {
+  <ul class="dropdown-list" role="listbox">
+    @for (option of options; track $index) {
+      <li
+        class="dropdown-item"
+        [class.active]="activeIndex === $index"
+        (click)="selectOption($index)"
+        role="option"
+        [attr.aria-selected]="activeIndex === $index">
+        {{ option }}
+      </li>
+    }
+  </ul>
+}

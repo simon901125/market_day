@@ -143,9 +143,9 @@ export class UserActivityList {
   },
 ];
 
-  get displayMarkets(): MarketCardItem[] {
-    return this.activeTab === 'current'? this.markets: this.historyMarkets;
-  }
+  // get displayMarkets(): MarketCardItem[] {
+  //   return this.activeTab === 'current'? this.markets: this.historyMarkets;
+  // }
 
   /**
    * 切換顯示的標籤

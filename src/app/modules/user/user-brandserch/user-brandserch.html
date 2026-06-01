@@ -14,29 +14,36 @@
       <div class="filter-top">
         <div class="search-input">
           <i class="bi bi-search"></i>
-          <input type="text" placeholder="搜尋品牌名稱、類型或關鍵字" />
+          <input type="text" placeholder="搜尋品牌名稱、關鍵字" />
         </div>
         <div class="filter-actions">
-          <button class="select-btn" type="button">
-            <span>品牌類型</span>
-            <i class="bi bi-chevron-down"></i>
-          </button>
-          <button class="select-btn" type="button">
-            <span>參與市集</span>
-            <i class="bi bi-chevron-down"></i>
-          </button>
+          <div class="select-wrapper">
+            <button class="select-btn" type="button" (click)="toggleBrandType()">
+              <span>{{ selectedBrandType }}</span>
+              <i class="bi bi-chevron-down"></i>
+            </button>
+            <app-user-brandserch-dropdown
+              [options]="brandTypeOptions"
+              [isOpen]="isBrandTypeOpen"
+              (optionSelected)="onBrandTypeSelected($event)"
+              (closed)="isBrandTypeOpen = false">
+            </app-user-brandserch-dropdown>
+          </div>
+          <div class="select-wrapper">
+            <button class="select-btn" type="button" (click)="toggleMarket()">
+              <span>{{ selectedMarket }}</span>
+              <i class="bi bi-chevron-down"></i>
+            </button>
+            <app-user-brandserch-dropdown
+              [options]="marketOptions"
+              [isOpen]="isMarketOpen"
+              (optionSelected)="onMarketSelected($event)"
+              (closed)="isMarketOpen = false">
+            </app-user-brandserch-dropdown>
+          </div>
         </div>
       </div>
 
-      <div class="tag-row">
-        @for (tag of tags; track $index; let i = $index) {
-          <app-user-brandserch-tag
-            [label]="tag"
-            [active]="activeTagIndex === i"
-            (tagClick)="selectTag(i)">
-          </app-user-brandserch-tag>
-        }
-      </div>
     </div>
   </section>
 
