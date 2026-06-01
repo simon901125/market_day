@@ -87,40 +87,65 @@ export class UserActivityList {
       tags: [BrandType.plant, BrandType.handmade, BrandType.family],
     },
   ];
+  /** 市集列表 */
+  historyMarkets: HistoryMarketCardItem[] = [
+  {
+    title: '小樹市集｜台灣歷史博物館戶外廣場',
+    date: '2024/06/15（六）- 06/16（日）',
+    location: '台南市 安南區',
+    image: 'assets/images/history-market-01.png',
+    status: '已結束',
+    statusClass: 'ended',
+    tags: [BrandType.family],
+    category: BrandType.family,
+    city: '台南市',
+    area: '安南區',
+    desc: '在歷史與綠意之間，孩子們自在奔跑，大小朋友都能找到喜歡的故事與手作好物。',
+  },
+  {
+    title: '小火柴文創市集｜水交社文化園區',
+    date: '2024/05/18（六）- 05/19（日）',
+    location: '台南市 南區',
+    image: 'assets/images/history-market-02.png',
+    status: '已結束',
+    statusClass: 'ended',
+    tags: [BrandType.handmade],
+    category: BrandType.handmade,
+    city: '台南市',
+    area: '南區',
+    desc: '老眷村裡的新故事，文創與手作的溫度，一起感受生活的美好與創意的力量。',
+  },
+  {
+    title: '森林手作生活節｜台中審計新村',
+    date: '2024/04/20（六）- 04/21（日）',
+    location: '台中市 西區',
+    image: 'assets/images/history-market-03.png',
+    status: '已結束',
+    statusClass: 'ended',
+    tags: [BrandType.handmade],
+    category: BrandType.handmade,
+    city: '台中市',
+    area: '西區',
+    desc: '在老屋與綠樹之間，慢下腳步，享受手作、設計與生活風格的美好日常。',
+  },
+  {
+    title: '夏日選物散步市集｜高雄駁二藝術特區',
+    date: '2024/03/09（六）- 03/10（日）',
+    location: '高雄市 鹽埕區',
+    image: 'assets/images/history-market-04.png',
+    status: '已結束',
+    statusClass: 'ended',
+    tags: [BrandType.fashion],
+    category: BrandType.fashion,
+    city: '高雄市',
+    area: '鹽埕區',
+    desc: '海風、陽光與好物相遇，在駁二散步挖寶，感受港都的夏日魅力。',
+  },
+];
 
-  // historyMarkets: HistoryMarketCardItem[] = [
-  //   {
-  //     title: '小樹市集｜台灣歷史博物館戶外廣場',
-  //     date: '2024/06/15（六）- 06/16（日）',
-  //     location: '台南市 安南區',
-  //     image: 'assets/images/history-market-01.png',
-  //     status: '已結束',
-  //     statusClass: 'ended',
-  //     tags: ['親子家庭', '戶外', '歷史文化'],
-  //   },
-  //   {
-  //     title: '小火柴文創市集｜水交社文化園區',
-  //     date: '2024/05/18（六）- 05/19（日）',
-  //     location: '台南市 南區',
-  //     image: 'assets/images/history-market-02.png',
-  //     status: '已結束',
-  //     statusClass: 'ended',
-  //     tags: ['文創', '手作', '設計'],
-  //   },
-  //   {
-  //     title: '森林手作生活節｜台中審計新村',
-  //     date: '2024/04/20（六）- 04/21（日）',
-  //     location: '台中市 西區',
-  //     image: 'assets/images/history-market-03.png',
-  //     status: '已結束',
-  //     statusClass: 'ended',
-  //     tags: ['生活風格', '設計', '手作'],
-  //   },
-  // ];
-
-  // get displayMarkets(): MarketCardItem[] {
-  //   return this.activeTab === 'current'? this.markets: this.historyMarkets;
-  // }
+  get displayMarkets(): MarketCardItem[] {
+    return this.activeTab === 'current'? this.markets: this.historyMarkets;
+  }
 
   /**
    * 切換顯示的標籤
