@@ -7,7 +7,7 @@
 .activity-hero {
   width: 100%;
   height: 240px;
-  background: url('/assets/images/user-activity-hero.png') center / cover no-repeat;
+  background: url('/assets/images/user/user-activity-hero.png') center / cover no-repeat;
   display: flex;
   align-items: center;
 }
@@ -137,7 +137,7 @@
 @media (max-width: 992px) {
   .activity-hero {
     height: 220px;
-    background: url('/assets/images/user-activity-hero.png') center / cover no-repeat;
+    background: url('/assets/images/user/user-activity-hero.png') center / cover no-repeat;
   }
 
   .activity-content {
@@ -157,7 +157,7 @@
 @media (max-width: 768px) {
   .activity-hero {
     height: 200px;
-    background: url('/assets/images/user-activity-hero.png') center / cover no-repeat;
+    background: url('/assets/images/user/user-activity-hero.png') center / cover no-repeat;
   }
 
   .hero-text,
@@ -206,7 +206,7 @@
 @media (max-width: 576px) {
   .activity-hero {
     height: 180px;
-    background: url('/assets/images/user-activity-hero.png') center / cover no-repeat;
+    background: url('/assets/images/user/user-activity-hero.png') center / cover no-repeat;
   }
 
   .hero-text,
