@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink,Router } from '@angular/router';
 import { UserMarketSearchPanel } from '../user-market-search-panel/user-market-search-panel';
 import { VendorFeature } from '../../../models/VendorFeature';
@@ -6,15 +6,81 @@ import { MarketCardItem } from '../../../models/MarketCardItem';
 import { UserMarketCard } from '../user-market-card/user-market-card';
 import { BrandType } from '../../../models/BrandType ';
 import { MarketStatus } from '../../../models/MarketStatus ';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-user-home',
-  imports: [RouterLink, UserMarketSearchPanel, UserMarketCard],
+  imports: [CommonModule, RouterLink, UserMarketSearchPanel, UserMarketCard],
   templateUrl: './user-home.html',
   styleUrl: './user-home.scss',
 })
-export class UserHome {
+export class UserHome implements OnInit, OnDestroy{
   constructor(private router: Router) {}
+
+  // 目前顯示的 Hero 輪播索引，預設顯示第一張
+  currentHeroIndex = 0;
+
+  // 控制 Hero 文字與圖片的動畫狀態
+  // true：顯示淡入效果
+  // false：先淡出，等待切換下一張資料
+  isHeroAnimating = true;
+
+  // 儲存自動輪播的計時器
+  private heroTimer: any;
+
+  // 自動輪播間隔時間，單位是毫秒
+  private readonly heroInterval = 5000;
+
+  // Hero 輪播資料
+  // 每一筆代表一張輪播圖，包含標題、描述、圖片與兩個按鈕資訊
+  heroSlides = [
+    {
+      title: '今天想去哪個<br /><span>市集</span>走走？',
+      desc: '探索城市裡最有溫度的市集活動，<br />發現手作、美食與生活靈感。',
+      image: 'assets/images/user-home-hero-market-01.png',
+      primaryText: '探索市集',
+      primaryLink: '/user/markets',
+      primaryIcon: 'bi bi-search',
+      secondaryText: '探索品牌',
+      secondaryLink: '/user/brands',
+      secondaryIcon: 'bi bi-stars',
+    },
+    {
+      title: '讓更多人看見你的<br /><span>品牌故事</span>',
+      desc: '快速報名市集活動，建立品牌頁面，<br />把你的作品帶到更多人面前。',
+      image: 'assets/images/user-home-hero-market-02.png',
+      primaryText: '攤主專區',
+      primaryLink: '/vendor/login',
+      primaryIcon: 'bi bi-shop-window',
+      secondaryText: '報名活動',
+      secondaryLink: '/vendor/apply-list',
+      secondaryIcon: 'bi bi-clipboard-check',
+    },
+    {
+      title: '輕鬆打造專屬的<br /><span>市集活動</span>',
+      desc: '從活動建立、攤商審核到公告通知，<br />一站式完成所有管理流程。',
+      image: 'assets/images/user-home-hero-market-03.png',
+      primaryText: '主辦方專區',
+      primaryLink: '/organizer/login',
+      primaryIcon: 'bi bi-calendar-event',
+      secondaryText: '了解功能',
+      secondaryLink: '/about',
+      secondaryIcon: 'bi bi-grid',
+    },
+    {
+      title: '讓每一次相遇，<br />都成為<span>生活的靈感</span>',
+      desc: '小集日致力於連結品牌、攤主與喜歡市集的人，<br />打造屬於城市的美好交流平台。',
+      image: 'assets/images/user-home-hero-market-04.png',
+      primaryText: '認識小集日',
+      primaryLink: '/about',
+      primaryIcon: 'bi bi-info-circle',
+      secondaryText: '聯絡我們',
+      secondaryLink: '/contact',
+      secondaryIcon: 'bi bi-chat-dots',
+    },
+  ];
+
+  // 首頁顯示的近期市集活動資料
   markets: MarketCardItem[] = [
     {
       title: '草地野餐市集',
@@ -72,24 +138,114 @@ export class UserHome {
     },
   ];
 
-  vendorFeatures: VendorFeature[] = [
-    {
-      title: '可報名活動',
-      desc: '快速瀏覽最新市集，一鍵報名參與',
-      image: 'assets/images/vendor-phone-01.png',
-    },
-    {
-      title: '品牌曝光',
-      desc: '專屬品牌頁面，展現你的商品與風格',
-      image: 'assets/images/vendor-phone-02.png',
-    },
-    {
-      title: '輕鬆管理',
-      desc: '掌握報名狀態與活動通知提醒',
-      image: 'assets/images/vendor-status-card.png',
-    },
-  ];
+  ngOnInit() {
+    this.startHeroAutoPlay();
+  }
 
+  ngOnDestroy() {
+    this.stopHeroAutoPlay();
+  }
+
+  // 取得目前要顯示的 Hero 資料
+  // HTML 會透過 currentHero 取得目前的標題、圖片、描述與按鈕內容
+  get currentHero() {
+    return this.heroSlides[this.currentHeroIndex];
+  }
+
+  /**
+   * 開始自動輪播
+   */
+  private startHeroAutoPlay() {
+    this.heroTimer = setInterval(() => {
+      this.nextHero();
+    }, this.heroInterval);
+  }
+
+  /**
+   * 停止自動輪播
+   */
+  private stopHeroAutoPlay() {
+    if (this.heroTimer) {
+      clearInterval(this.heroTimer);
+    }
+  }
+
+  /**
+   * 切換 Hero 輪播
+   * 先淡出目前的圖片和文字，再切換到新的輪播資料，最後淡入新內容
+   *
+   * @param index 要切換到的輪播索引
+   */
+  private changeHero(index: number) {
+    // 先關閉動畫 class，讓目前圖片與文字淡出
+    this.isHeroAnimating = false;
+
+    // 等淡出一小段時間後，再切換資料
+    setTimeout(() => {
+      // 切換目前顯示的輪播索引
+      this.currentHeroIndex = index;
+
+      // 重新開啟動畫 class，讓新的圖片與文字淡入
+      this.isHeroAnimating = true;
+    }, 450);
+  }
+
+  /**
+   * 切換到下一張 Hero
+   */
+  nextHero() {
+    const nextIndex = (this.currentHeroIndex + 1) % this.heroSlides.length;
+    this.changeHero(nextIndex);
+  }
+
+  /**
+   * 使用者點擊下一張
+   * 點擊後會重新計算自動輪播時間
+   */
+  nextHeroByUser() {
+    this.nextHero();
+    this.resetHeroAutoPlay();
+  }
+
+  /**
+   * 切換到上一張 Hero
+   */
+  prevHero() {
+    const prevIndex =
+      (this.currentHeroIndex - 1 + this.heroSlides.length) %
+      this.heroSlides.length;
+
+    this.changeHero(prevIndex);
+  }
+
+  /**
+   * 使用者點擊上一張
+   * 點擊後會重新計算自動輪播時間
+   */
+  prevHeroByUser() {
+    this.prevHero();
+    this.resetHeroAutoPlay();
+  }
+
+  /**
+   * 點擊下方圓點切換到指定 Hero
+   * @param index 要切換到的輪播索引
+   */
+  goToHero(index: number) {
+    if (index === this.currentHeroIndex) return;
+
+    this.changeHero(index);
+    this.resetHeroAutoPlay();
+  }
+
+  /**
+   * 重新計算自動輪播時間
+   */
+  private resetHeroAutoPlay() {
+    this.stopHeroAutoPlay();
+    this.startHeroAutoPlay();
+  }
+  
   /**
    * 導航到市集詳情頁
    * @param market 選擇的市集

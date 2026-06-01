@@ -1,43 +1,47 @@
 <div class="user-home">
   <!-- Hero -->
   <section class="hero-section">
-    <button class="hero-arrow hero-arrow-left" type="button">
+    <div
+      class="hero-bg"
+      [style.background-image]="'url(' + currentHero.image + ')'"
+      [class.hero-bg-animate]="isHeroAnimating"
+    ></div>
+
+    <div class="hero-overlay"></div>
+
+    <button class="hero-arrow hero-arrow-left" type="button" (click)="prevHeroByUser()">
       <i class="bi bi-chevron-left"></i>
     </button>
 
-    <div class="hero-content">
-      <h1>
-        今天想去哪個<br />
-        <span>市集</span>走走？
-      </h1>
+    <div class="hero-content" [class.hero-animate]="isHeroAnimating">
+      <h1 [innerHTML]="currentHero.title"></h1>
 
-      <p>
-        小集日收集城市裡的市集活動，<br />
-        帶你挖掘靈感城市美與原創品牌！
-      </p>
+      <p [innerHTML]="currentHero.desc"></p>
 
       <div class="hero-actions">
-        <a routerLink="/user/markets" class="primary-btn">
-          <i class="bi bi-search"></i>
-          探索市集
+        <a [routerLink]="currentHero.primaryLink" class="primary-btn">
+          <i [class]="currentHero.primaryIcon"></i>
+          {{ currentHero.primaryText }}
         </a>
 
-        <a routerLink="/vendor/login" class="secondary-btn">
-          <i class="bi bi-shop-window"></i>
-          攤主報名
+        <a [routerLink]="currentHero.secondaryLink" class="secondary-btn">
+          <i [class]="currentHero.secondaryIcon"></i>
+          {{ currentHero.secondaryText }}
         </a>
       </div>
     </div>
 
     <div class="hero-dots">
-      <span class="active"></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
+      @for (slide of heroSlides; track $index; let i = $index;) {
+        <button
+          type="button"
+          [class.active]="i === currentHeroIndex"
+          (click)="goToHero(i)"
+        ></button>
+      }
     </div>
 
-    <button class="hero-arrow hero-arrow-right" type="button">
+    <button class="hero-arrow hero-arrow-right" type="button" (click)="nextHeroByUser()">
       <i class="bi bi-chevron-right"></i>
     </button>
   </section>
@@ -86,15 +90,27 @@
     <div class="vendor-photo">
       <img src="assets/images/vendor-cta-photo.png" alt="成為小集日攤主" />
     </div>
+  </section>
 
-    <div class="vendor-feature-list">
-      @for (feature of vendorFeatures; track $index; let i = $index;) {
-        <div class="vendor-feature-card">
-          <h3>{{ feature.title }}</h3>
-          <p>{{ feature.desc }}</p>
-          <img [src]="feature.image" [alt]="feature.title" />
-        </div>
-      }
+  <section class="organizer-section">
+    <div class="organizer-photo">
+      <img src="assets/images/organizer-cta-photo.png" alt="前往主辦方專區" />
+    </div>
+
+    <div class="organizer-info">
+      <h2>
+        想舉辦自己的市集活動？<br />
+        讓活動管理更輕鬆
+      </h2>
+
+      <p>
+        小集日提供活動建立、攤商審核、報名管理與通知公告，協助主辦方更有效率地完成市集籌備流程。
+      </p>
+
+      <a routerLink="/organizer/login" class="organizer-btn">
+        前往主辦方專區
+        <i class="bi bi-arrow-right"></i>
+      </a>
     </div>
   </section>
 </div>

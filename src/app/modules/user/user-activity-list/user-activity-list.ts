@@ -9,7 +9,7 @@ import { MarketStatus } from '../../../models/MarketStatus ';
 import { Router} from '@angular/router';
 @Component({
   selector: 'app-user-activity-list',
-  imports: [UserMarketSearchPanel, UserMarketCard, UserHistoryMarketCard],
+  imports: [UserMarketSearchPanel, UserMarketCard],
   templateUrl: './user-activity-list.html',
   styleUrl: './user-activity-list.scss',
 })
@@ -31,7 +31,7 @@ export class UserActivityList {
       city: '台中市',
       area: '西區',
       category: '親子家庭',
-      image: 'assets/images/market_1.jpg',
+      image: 'assets/images/market-card-01.png',
       status: MarketStatus.active,
       statusClass: MarketStatus.getClass(MarketStatus.active),
       tags: [BrandType.food, BrandType.handmade, BrandType.family],
@@ -49,7 +49,7 @@ export class UserActivityList {
       city: '台北市',
       area: '中山區',
       category: '咖啡茶飲',
-      image: 'assets/images/market_1.jpg',
+      image: 'assets/images/market-card-02.png',
       status: MarketStatus.active,
       statusClass: MarketStatus.getClass(MarketStatus.active),
       tags: [BrandType.food, BrandType.handmade, BrandType.fashion],
@@ -67,7 +67,7 @@ export class UserActivityList {
       city: '台南市',
       area: '中西區',
       category: '手作設計',
-      image: 'assets/images/market_1.jpg',
+      image: 'assets/images/market-card-03.png',
       status: MarketStatus.active,
       statusClass: MarketStatus.getClass(MarketStatus.active),
       tags: [BrandType.handmade, BrandType.fashion, BrandType.toy],
@@ -85,7 +85,7 @@ export class UserActivityList {
       city: '新竹市',
       area: '西區',
       category: '戶外生活',
-      image: 'assets/images/market_1.jpg',
+      image: 'assets/images/market-card-01.png',
       status: MarketStatus.upcoming,
       statusClass: MarketStatus.getClass(MarketStatus.upcoming),
       tags: [BrandType.fashion, BrandType.family],
@@ -103,7 +103,7 @@ export class UserActivityList {
       city: '高雄市',
       area: '鼓山區',
       category: '寵物',
-      image: 'assets/images/market_1.jpg',
+      image: 'assets/images/market-card-02.png',
       status: MarketStatus.upcoming,
       statusClass: MarketStatus.getClass(MarketStatus.upcoming),
       tags: [BrandType.pet, BrandType.family],
@@ -121,7 +121,7 @@ export class UserActivityList {
       city: '台中市',
       area: '北區',
       category: '植物',
-      image: 'assets/images/market_1.jpg',
+      image: 'assets/images/market-card-03.png',
       status: MarketStatus.preview,
       statusClass: MarketStatus.getClass(MarketStatus.preview),
       tags: [BrandType.plant, BrandType.handmade, BrandType.family],
@@ -129,7 +129,8 @@ export class UserActivityList {
       Transportation: ['捷運：台中站', '公車：綠1、綠2、藍1路']
     },
   ];
-  /** 市集列表 */
+
+  /** 歷史市集列表 */
   historyMarkets: HistoryMarketCardItem[] = [
   {
     title: '小樹市集｜台灣歷史博物館戶外廣場',
