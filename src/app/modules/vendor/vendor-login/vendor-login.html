@@ -1,1 +1,59 @@
-<p>vendor-login works!</p>
+<!-- login 是不是也要有登入成功、失敗的畫面 -->
+<app-vendor-sidebar
+  title="歡迎回到小集日！"
+  description="登入你的攤主帳號，&#10;管理你的攤位與活動。"
+  topText="還沒有攤主帳號？"
+  topLinkText="前往註冊"
+  topLink="/vendor/register"
+>
+  <form class="auth-form">
+    <h2>攤主登入</h2>
+    <div class="title-line"></div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <div class="input-box">
+        <i class="bi bi-envelope"></i>
+        <input type="email" placeholder="請輸入 Email" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>密碼</label>
+      <div class="input-box">
+        <i class="bi bi-lock"></i>
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="請輸入密碼"
+        />
+        <button type="button" class="eye-btn" (click)="togglePassword()">
+          <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+        </button>
+      </div>
+
+      <div class="forgot">
+        <a routerLink="/vendor/reset-password">忘記密碼？</a>
+      </div>
+    </div>
+
+    <button type="submit" class="main-btn">登入</button>
+
+    <div class="divider">
+      <span></span>
+      <p>或使用以下方式快速登入</p>
+      <span></span>
+    </div>
+
+    <button type="button" class="google-btn">
+      <img src="assets/images/Google_Favicon_2025.png" alt="Google" />
+      使用 Google 快速登入
+    </button>
+
+    <p class="policy">
+      註冊即代表你同意
+      <a href="#">小集日服務條款</a>
+      與
+      <a href="#">隱私權政策</a>
+    </p>
+  </form>
+</app-vendor-sidebar>

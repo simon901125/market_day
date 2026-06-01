@@ -3,6 +3,11 @@ import { UserLayout } from './modules/user/user-layout/user-layout';
 import { UserHome } from './modules/user/user-home/user-home';
 import { UserActivityList } from './modules/user/user-activity-list/user-activity-list';
 import { UserActivityDetail } from './modules/user/user-activity-detail/user-activity-detail';
+import { VendorLayout } from './modules/vendor/vendor-layout/vendor-layout';
+import { VendorLogin } from './modules/vendor/vendor-login/vendor-login';
+import { VendorRegister } from './modules/vendor/vendor-register/vendor-register';
+import { VendorVerifyEmail } from './modules/vendor/vendor-verify-email/vendor-verify-email';
+import { VendorResetPassword } from './modules/vendor/vendor-reset-password/vendor-reset-password';
 
 export const routes: Routes = [
   {
@@ -34,4 +39,26 @@ export const routes: Routes = [
 
     ],
   },
+  {
+    path: 'vendor',
+    component: VendorLayout,
+    children: [
+      {
+        path: 'login',
+        component: VendorLogin,
+      },
+      {
+        path: 'register',
+        component: VendorRegister,
+      },
+      {
+        path: 'verify-email',
+        component: VendorVerifyEmail,
+      },
+      {
+        path: 'reset-password',
+        component: VendorResetPassword,
+      }
+    ]
+  }
 ];
