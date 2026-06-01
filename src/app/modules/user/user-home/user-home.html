@@ -22,7 +22,7 @@
           探索市集
         </a>
 
-        <a routerLink="/vendor" class="secondary-btn">
+        <a routerLink="/vendor/login" class="secondary-btn">
           <i class="bi bi-shop-window"></i>
           攤主報名
         </a>
@@ -60,7 +60,7 @@
 
     <div class="market-grid">
       @for (market of markets; track $index; let i = $index;) {
-        <app-user-market-card [market]="market"></app-user-market-card>
+        <app-user-market-card [market]="market" (click)="goToActivityDetail(market)"></app-user-market-card>
       }
     </div>
   </section>
@@ -77,7 +77,7 @@
         在城市的每個角落，讓你的品牌被更多人看見。小集日提供市集活動宣傳、品牌曝光與報名管理服務，陪你打造屬於自己的市集故事。
       </p>
 
-      <a routerLink="/vendor" class="vendor-btn">
+      <a routerLink="/vendor/login" class="vendor-btn">
         前往攤主專區
         <i class="bi bi-arrow-right"></i>
       </a>
