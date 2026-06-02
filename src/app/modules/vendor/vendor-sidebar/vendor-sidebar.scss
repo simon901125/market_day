@@ -1,12 +1,12 @@
 .vendor-auth-page {
   min-height: 100vh;
 
-  background-image: url('/assets/images/auth-BackImg.png');
+  background-image: url('/assets/user/images/auth-BackImg.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
-  padding: 24px 64px;
+  padding: 20px 60px;
 
   display: flex;
   flex-direction: column;
@@ -21,31 +21,30 @@
   justify-content: space-between;
   align-items: center;
 
-  margin-top: -30px;
-  margin-bottom: 20px;
+  margin-top: -50px;
+  margin-bottom: -10px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 20px;
-
   margin-top: 20px;
 
   img {
-    width: 180px;
+    width: 250px;
     height: auto;
   }
 }
 
 .vendor-label {
-  font-size: 24px;
-  font-weight: 800;
-  color: #ff5a00;
+  font-size: 25px;
+  font-weight: 600;
+  gap: 10px;
+  // color: #ff5a00;
 }
 
 .top-action {
-  font-size: 16px;
+  font-size: 14px;
 
   a {
     color: #ff5a00;

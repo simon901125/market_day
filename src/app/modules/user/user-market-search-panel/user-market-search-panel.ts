@@ -9,6 +9,7 @@ import { CategoryItem } from '../../../models/CategoryItem';
 })
 
 export class UserMarketSearchPanel {
+  /** 攤位類別 */
   categories: CategoryItem[] = [
     { name: '全部市集', icon: 'bi bi-shop-window', active: true },
     { name: '餐飲美食', icon: 'bi bi-fork-knife' },
