@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { BrandItem } from '../../../models/BrandItem';
 import { UserBrandserchCard } from '../user-brandserch-card/user-brandserch-card';
 import { UserBrandserchDropdown } from '../user-brandserch-dropdown/user-brandserch-dropdown';
+import { UserBrandserchPagination } from '../user-brandserch-pagination/user-brandserch-pagination';
 
 @Component({
   selector: 'app-user-brandserch',
-  imports: [UserBrandserchCard, UserBrandserchDropdown],
+  imports: [UserBrandserchCard, UserBrandserchDropdown, UserBrandserchPagination],
   templateUrl: './user-brandserch.html',
   styleUrl: './user-brandserch.scss',
 })
@@ -18,6 +19,12 @@ export class UserBrandserch {
 
   selectTag(index: number): void {
     this.activeTagIndex = index;
+  }
+
+  /** 接收頁碼元件的頁碼變更事件 */
+  onPageChange(page: number): void {
+    // TODO: 根據頁碼向 API 請求對應資料
+    console.log('切換至第', page, '頁');
   }
 
   brands: BrandItem[] = [

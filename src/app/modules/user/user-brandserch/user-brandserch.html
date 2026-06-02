@@ -57,18 +57,10 @@
         }
       </div>
 
-      <!-- 頁碼 -->
-      <div class="pagination">
-        <button class="page-btn" type="button">
-          <i class="bi bi-chevron-left"></i>
-        </button>
-        <button class="page-btn active" type="button">1</button>
-        <button class="page-btn" type="button">2</button>
-        <button class="page-btn" type="button">3</button>
-        <button class="page-btn" type="button">
-          <i class="bi bi-chevron-right"></i>
-        </button>
-      </div>
+      <!-- 頁籤 -->
+      <app-user-brandserch-pagination
+        (pageChange)="onPageChange($event)">
+      </app-user-brandserch-pagination>
     </div>
   </section>
 
