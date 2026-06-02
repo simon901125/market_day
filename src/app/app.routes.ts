@@ -9,6 +9,8 @@ import { VendorRegister } from './modules/vendor/vendor-register/vendor-register
 import { VendorVerifyEmail } from './modules/vendor/vendor-verify-email/vendor-verify-email';
 import { VendorResetPassword } from './modules/vendor/vendor-reset-password/vendor-reset-password';
 import { VendorForgotPassword } from './modules/vendor/vendor-forgot-password/vendor-forgot-password';
+import { AdminLayout } from './modules/admin/admin-layout/admin-layout';
+import { AdminLogin } from './modules/admin/admin-login/admin-login';
 
 export const routes: Routes = [
   {
@@ -65,5 +67,16 @@ export const routes: Routes = [
         component: VendorForgotPassword,
       }
     ]
+  },
+  {
+    path: 'admin',
+    component: AdminLayout,
+    children: [
+      {
+        path: 'login',
+        component: AdminLogin,
+      }
+    ] 
   }
+  
 ];

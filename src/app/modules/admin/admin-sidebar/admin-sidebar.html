@@ -1,0 +1,33 @@
+<section class="vendor-auth-page">
+  <header class="vendor-header">
+    <div class="brand">
+      <img src="/assets/images/logo/logo-market-day-administrator.png" alt="小集日 Market Day" />
+    </div>
+
+    <div class="top-action">
+      <span>{{ topText }}</span>
+      <a [routerLink]="topLink">{{ topLinkText }}</a>
+    </div>
+  </header>
+
+  <div class="vendor-auth-container">
+    <aside class="vendor-intro">
+      <h1>
+        {{ title }}
+        @if (highlight) {
+          <span>{{ highlight }}</span>
+        }
+      </h1>
+
+      <div class="orange-line"></div>
+
+      <p>{{ description }}</p>
+
+      <div class="deco"></div>
+    </aside>
+
+    <main class="vendor-card">
+      <ng-content></ng-content>
+    </main>
+  </div>
+</section>
