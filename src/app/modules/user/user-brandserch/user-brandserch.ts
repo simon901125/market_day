@@ -1,7 +1,6 @@
-import { Component, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
 import { BrandItem } from '../../../models/BrandItem';
 import { UserBrandserchCard } from '../user-brandserch-card/user-brandserch-card';
-import { UserBrandserchTag } from '../user-brandserch-tag/user-brandserch-tag';
 import { UserBrandserchDropdown } from '../user-brandserch-dropdown/user-brandserch-dropdown';
 
 @Component({
@@ -12,39 +11,8 @@ import { UserBrandserchDropdown } from '../user-brandserch-dropdown/user-brandse
 })
 export class UserBrandserch {
   brandTypeOptions = ['全部市集', '餐飲美食', '文創手作', '親子家庭', '寵物生活', '植物選物', '服飾配件', '玩具選物'];
-  marketOptions: string[] = [];
-  isBrandTypeOpen = false;
-  isMarketOpen = false;
-  selectedBrandType = '品牌類型';
-  selectedMarket = '參與市集';
+  marketOptions = ['草悟野餐市集', '咖啡生活節', '夏日風格服裝市集'];
 
-  toggleBrandType(): void {
-    this.isBrandTypeOpen = !this.isBrandTypeOpen;
-    this.isMarketOpen = false;
-  }
-
-  toggleMarket(): void {
-    this.isMarketOpen = !this.isMarketOpen;
-    this.isBrandTypeOpen = false;
-  }
-
-  onBrandTypeSelected(value: string): void {
-    this.selectedBrandType = value;
-    this.isBrandTypeOpen = false;
-  }
-
-  onMarketSelected(value: string): void {
-    this.selectedMarket = value;
-    this.isMarketOpen = false;
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event): void {
-    if (!(event.target as HTMLElement).closest('.select-wrapper')) {
-      this.isBrandTypeOpen = false;
-      this.isMarketOpen = false;
-    }
-  }
   tags = ['全部類型', '手作飾品', '手工皮件', '文創設計', '生活雜貨', '美食甜點'];
   activeTagIndex = 0;
 

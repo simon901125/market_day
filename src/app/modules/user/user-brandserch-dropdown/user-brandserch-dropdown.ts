@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-user-brandserch-dropdown',
@@ -6,17 +6,32 @@ import { Component, EventEmitter, HostListener, Input, OnChanges, Output, Simple
   templateUrl: './user-brandserch-dropdown.html',
   styleUrl: './user-brandserch-dropdown.scss',
 })
-export class UserBrandserchDropdown implements OnChanges {
+export class UserBrandserchDropdown {
   @Input() options: string[] = [];
-  @Input() isOpen: boolean = false;
+  @Input() placeholder: string = '';
   @Output() optionSelected = new EventEmitter<string>();
-  @Output() closed = new EventEmitter<void>();
 
+  isOpen: boolean = false;
   activeIndex: number = -1;
+  selectedValue: string = '';
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['isOpen']?.currentValue === true) {
+  constructor(private el: ElementRef) {}
+
+  get displayLabel(): string {
+    return this.selectedValue || this.placeholder;
+  }
+
+  toggle(): void {
+    this.isOpen = !this.isOpen;
+    if (this.isOpen) {
       this.activeIndex = -1;
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (!this.el.nativeElement.contains(event.target)) {
+      this.isOpen = false;
     }
   }
 
@@ -36,17 +51,18 @@ export class UserBrandserchDropdown implements OnChanges {
         if (this.activeIndex >= 0) {
           this.selectOption(this.activeIndex);
         } else {
-          this.closed.emit();
+          this.isOpen = false;
         }
         break;
       case 'Escape':
-        this.closed.emit();
+        this.isOpen = false;
         break;
     }
   }
 
   selectOption(index: number): void {
+    this.selectedValue = this.options[index];
     this.optionSelected.emit(this.options[index]);
-    this.closed.emit();
+    this.isOpen = false;
   }
 }
