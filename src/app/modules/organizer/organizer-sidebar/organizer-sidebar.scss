@@ -1,0 +1,259 @@
+.vendor-auth-page {
+  min-height: 100vh;
+
+  background-image: url('/assets/images/auth-BackImg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  padding: 20px 60px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow-x: hidden;
+}
+
+.vendor-header {
+  flex-shrink: 0;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: -50px;
+  margin-bottom: -10px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+
+  img {
+    width: 250px;
+    height: auto;
+  }
+}
+
+.vendor-label {
+  font-size: 25px;
+  font-weight: 600;
+  gap: 10px;
+  // color: #ff5a00;
+}
+
+.top-action {
+  font-size: 14px;
+
+  a {
+    color: #ff5a00;
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 8px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.vendor-auth-container {
+  flex: 1;
+
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+
+  gap: 72px;
+
+  align-items: center;
+}
+
+.vendor-intro {
+  padding-left: 50px;
+  margin-top: -200px;
+
+  h1 {
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1.5;
+    color: #111;
+    margin-bottom: 20px;
+
+    span {
+      color: #ff5a00;
+    }
+  }
+
+  p {
+    margin-top: 28px;
+
+    font-size: 22px;
+    line-height: 2;
+
+    color: #121212;
+
+    white-space: pre-line;
+  }
+}
+
+.orange-line {
+  width: 52px;
+  height: 5px;
+  border-radius: 999px;
+  background: #ff5a00;
+}
+
+.vendor-card {
+  width: 100%;
+  max-width: 920px;
+
+  margin-top: -20px;
+
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+
+  border-radius: 28px;
+  padding: 44px 64px 24px;
+
+  box-shadow: 0 18px 40px rgba(47, 41, 36, 0.12);
+}
+
+/* 小筆電 / 中型螢幕 */
+@media (max-width: 1200px) {
+  .vendor-auth-page {
+    padding: 24px 48px;
+  }
+
+  .vendor-auth-container {
+    grid-template-columns: 0.9fr 1.3fr;
+    gap: 48px;
+  }
+
+  .vendor-intro {
+    padding-left: 24px;
+    margin-top: -140px;
+
+    h1 {
+      font-size: 42px;
+    }
+
+    p {
+      font-size: 20px;
+    }
+  }
+
+  .vendor-card {
+    padding: 40px 48px 24px;
+  }
+}
+
+/* 平板 */
+@media (max-width: 992px) {
+  .vendor-auth-page {
+    padding: 24px;
+    background-position: left center;
+  }
+
+  .vendor-header {
+    margin-top: 0;
+    margin-bottom: 24px;
+  }
+
+  .brand {
+    margin-top: 0;
+
+    img {
+      width: 150px;
+    }
+  }
+
+  .vendor-label {
+    font-size: 20px;
+  }
+
+  .top-action {
+    font-size: 15px;
+  }
+
+  .vendor-auth-container {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  .vendor-intro {
+    padding-left: 0;
+    margin-top: 0;
+
+    h1 {
+      font-size: 34px;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    p {
+      margin-top: 20px;
+      font-size: 18px;
+      line-height: 1.8;
+    }
+  }
+
+  .vendor-card {
+    max-width: 100%;
+    margin-top: 0;
+    padding: 36px 32px 24px;
+  }
+}
+
+/* 手機 */
+@media (max-width: 576px) {
+  .vendor-auth-page {
+    padding: 16px;
+    background-position: left bottom;
+  }
+
+  .vendor-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+
+  .brand {
+    gap: 12px;
+    margin-top: 0;
+
+    img {
+      width: 130px;
+    }
+  }
+
+  .vendor-label {
+    font-size: 18px;
+  }
+
+  .top-action {
+    width: 100%;
+    text-align: right;
+    font-size: 14px;
+  }
+
+  .vendor-auth-container {
+    display: block;
+  }
+
+  .vendor-intro {
+    display: none;
+  }
+
+  .vendor-card {
+    width: 100%;
+    margin-top: 0;
+
+    padding: 28px 20px;
+    border-radius: 20px;
+  }
+}

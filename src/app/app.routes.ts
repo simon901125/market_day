@@ -11,6 +11,9 @@ import { VendorResetPassword } from './modules/vendor/vendor-reset-password/vend
 import { VendorForgotPassword } from './modules/vendor/vendor-forgot-password/vendor-forgot-password';
 import { AdminLayout } from './modules/admin/admin-layout/admin-layout';
 import { AdminLogin } from './modules/admin/admin-login/admin-login';
+import { OrganizerLayout } from './modules/organizer/organizer-layout/organizer-layout';  
+import { OrganizerLogin } from './modules/organizer/organizer-login/organizer-login';
+import { OrganizerRegister } from './modules/organizer/organizer-register/organizer-register';
 
 export const routes: Routes = [
   {
@@ -77,6 +80,20 @@ export const routes: Routes = [
         component: AdminLogin,
       }
     ] 
+  },
+  {
+    path: 'organizer',
+    component: OrganizerLayout,
+    children: [
+      {
+        path: 'login',
+        component: OrganizerLogin,
+      },
+      {
+        path: 'register',
+        component: OrganizerRegister,
+      }
+    ]
   }
   
 ];
