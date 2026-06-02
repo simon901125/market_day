@@ -64,7 +64,8 @@
           <li>
             <i class="bi bi-stopwatch"></i>
             <div>
-              <span class="primary-text">{{(market?.start_date || '') | countMarketDays}}</span>
+              <span class="primary-text">{{marketDaysText(market?.start_date || '')}}</span>
+              <!-- {{(market?.start_date || '') | countMarketDays}} -->
               <strong>{{countMarketDays(market?.start_date || '')}} 天</strong>
             </div>
           </li>
