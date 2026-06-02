@@ -1,0 +1,78 @@
+<app-organizer-sidebar
+  title="登入"
+  highlight="主辦方後台"
+  description="登入你的主辦方帳號，&#10;管理你的市集與活動。"
+  topText="還沒有主辦方帳號？"
+  topLinkText="前往註冊"
+  topLink="/organizer/register"
+  systemName="主辦方後台"
+>
+
+  <form class="admin-login-form">
+    <h2>主辦方登入</h2>
+    <div class="title-line"></div>
+
+    <!-- <p class="form-desc">
+      請使用主辦方 Email 與密碼登入後台。
+    </p> -->
+
+    <div class="form-group">
+      <label>Email</label>
+
+      <div class="input-box">
+        <i class="bi bi-envelope"></i>
+        <input
+          type="email"
+          name="email"
+          placeholder="請輸入 Email"
+          [(ngModel)]="email"
+        />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>密碼</label>
+
+      <div class="input-box">
+        <i class="bi bi-lock"></i>
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          name="password"
+          placeholder="請輸入密碼"
+          [(ngModel)]="password"
+        />
+
+        <button type="button" class="eye-btn" (click)="togglePassword()">
+          <i
+            class="bi"
+            [class.bi-eye]="!showPassword"
+            [class.bi-eye-slash]="showPassword"
+          ></i>
+        </button>
+      </div>
+      <div class="forgot">
+        <a routerLink="/vendor/forgot-password">忘記密碼？</a>
+      </div>
+    </div>
+
+    <button type="submit" class="main-btn">登入</button>
+
+    <div class="divider">
+      <span></span>
+      <p>或使用以下方式快速登入</p>
+      <span></span>
+    </div>
+
+    <button type="button" class="google-btn">
+      <img src="assets/images/Google_Favicon_2025.png" alt="Google" />
+      使用 Google 快速登入
+    </button>
+
+    <p class="policy">
+      註冊即代表你同意
+      <a href="#">小集日服務條款</a>
+      與
+      <a href="#">隱私權政策</a>
+    </p>
+  </form>
+</app-organizer-sidebar>

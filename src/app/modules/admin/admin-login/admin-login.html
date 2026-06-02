@@ -1,0 +1,63 @@
+<app-admin-sidebar
+  title="登入"
+  highlight="管理員後台"
+  description="管理市集活動、攤主報名與付款確認。&#10;系統將於閒置一段時間後自動登出，&#10;請妥善保管管理員帳號。"
+  systemName="管理員後台"
+>
+<!--   topText="想起密碼了？"
+  topLinkText="返回登入"
+  topLink="/admin/login" -->
+
+  <form class="admin-login-form">
+    <h2>管理員登入</h2>
+    <div class="title-line"></div>
+
+    <p class="form-desc">
+      請使用管理員 Email 與密碼登入後台。
+    </p>
+
+    <div class="form-group">
+      <label>Email</label>
+
+      <div class="input-box">
+        <i class="bi bi-envelope"></i>
+        <input
+          type="email"
+          name="email"
+          placeholder="請輸入 Email"
+          [(ngModel)]="email"
+        />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>密碼</label>
+
+      <div class="input-box">
+        <i class="bi bi-lock"></i>
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          name="password"
+          placeholder="請輸入密碼"
+          [(ngModel)]="password"
+        />
+
+        <button type="button" class="eye-btn" (click)="togglePassword()">
+          <i
+            class="bi"
+            [class.bi-eye]="!showPassword"
+            [class.bi-eye-slash]="showPassword"
+          ></i>
+        </button>
+      </div>
+    </div>
+
+    <button type="button" class="main-btn" (click)="loginAdmin()">
+      登入後台
+    </button>
+
+    <div class="notice">
+      後台帳號由系統建立，若無法登入請聯絡系統管理者。
+    </div>
+  </form>
+</app-admin-sidebar>
