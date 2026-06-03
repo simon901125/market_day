@@ -28,19 +28,31 @@
       </button>
     </div>
 
-    <app-user-market-search-panel></app-user-market-search-panel>
+    @if (activeTab === 'current') {
+      <app-user-market-search-panel></app-user-market-search-panel>
 
-    <!-- <div class="market-grid">
-      @for (market of displayMarkets; track $index) {
-        <app-user-market-card [market]="market"></app-user-market-card>
-      }
-    </div> -->
+      <div class="market-grid">
+        @for (market of markets; track $index) {
+          <app-user-market-card
+            [market]="market"
+            (click)="goToActivityDetail(market)"
+          ></app-user-market-card>
+        }
+      </div>
+    } @else {
+      <div class="history-header">
+        <h2>共 12 場歷史市集</h2>
+      </div>
 
-    <div class="market-grid">
-      @for (market of markets; track $index) {
-        <app-user-market-card [market]="market" (click)="goToActivityDetail(market)"></app-user-market-card>
-      }
-    </div>
+      <div class="history-list">
+        @for (market of historyMarkets; track $index) {
+          <app-user-history-market-card
+            [market]="market"
+            (click)="goToActivityHistory(market)"
+          ></app-user-history-market-card>
+        }
+      </div>
+    }
 
     <div class="pagination">
       <button type="button">
@@ -50,8 +62,6 @@
       <button type="button" class="active">1</button>
       <button type="button">2</button>
       <button type="button">3</button>
-      <button type="button">4</button>
-      <button type="button">5</button>
 
       <button type="button">
         <i class="bi bi-chevron-right"></i>

@@ -7,6 +7,14 @@
   display: grid;
   grid-template-columns: 530px 1fr;
   gap: 36px;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card);
+  }
 }
 
 .history-image {
@@ -23,15 +31,19 @@
 }
 
 .history-content {
+  position: relative;
   padding: 28px 16px 18px 0;
   display: flex;
   flex-direction: column;
 
   h3 {
     margin: 0 0 14px;
+    padding-right: 110px;
     color: var(--text-dark);
     font-size: 1.55rem;
     font-weight: 800;
+    line-height: 1.45;
+    letter-spacing: 0.04em;
   }
 
   p {
@@ -40,11 +52,13 @@
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.9;
+    letter-spacing: 0.04em;
   }
 }
 
 .history-meta {
   margin-bottom: 18px;
+  padding-right: 110px;
   display: flex;
   flex-wrap: wrap;
   gap: 28px;
@@ -60,7 +74,25 @@
 
   i {
     color: var(--primary-color);
+    font-size: 1rem;
   }
+}
+
+.ended-label {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  min-width: 82px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 8px;
+  color: var(--text-normal);
+  background: #e5e5e5;
+  font-size: 0.9rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .history-bottom {
@@ -77,30 +109,42 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
+
+  i {
+    color: var(--text-dark);
+  }
 }
 
-.ended-label {
-  min-width: 82px;
-  height: 34px;
-  border-radius: 8px;
-  color: var(--text-normal);
-  background: #e5e5e5;
-  font-size: 0.9rem;
+.detail-link {
+  border: none;
+  background: transparent;
+  color: var(--primary-color);
+  font-size: 0.95rem;
   font-weight: 800;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--primary-hover);
+  }
 }
 
 @media (max-width: 1200px) {
   .history-card {
     grid-template-columns: 360px 1fr;
   }
+
+  .history-image {
+    height: 230px;
+  }
 }
 
 @media (max-width: 768px) {
   .history-card {
     grid-template-columns: 1fr;
+    gap: 18px;
   }
 
   .history-image {
@@ -109,5 +153,27 @@
 
   .history-content {
     padding: 0 4px 8px;
+
+    h3 {
+      padding-right: 0;
+      font-size: 1.25rem;
+    }
+  }
+
+  .history-meta {
+    padding-right: 0;
+    gap: 16px;
+  }
+
+  .ended-label {
+    position: static;
+    width: fit-content;
+    margin-bottom: 14px;
+  }
+
+  .history-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
   }
 }

@@ -252,3 +252,38 @@
     }
   }
 }
+.history-header {
+  margin: 36px 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h2 {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-normal);
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+@media (max-width: 768px) {
+  .history-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
