@@ -1,0 +1,36 @@
+<header class="organizer-header">
+  <div class="header-inner">
+    <a routerLink="/organizer/home" class="brand" (click)="closeMenu()">
+      <img src="/assets/images/logo/logo-market-day-organizer.png" alt="小集日 Market Day" />
+      <span>主辦方專區</span>
+    </a>
+
+    <button type="button" class="menu-btn" (click)="toggleMenu()">
+      <i class="bi" [class.bi-list]="!isMenuOpen" [class.bi-x-lg]="isMenuOpen"></i>
+    </button>
+
+    <nav class="nav-links" [class.open]="isMenuOpen">
+      <a
+        routerLink="/organizer/home"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMenu()"
+      >
+        首頁
+      </a>
+
+      <a routerLink="/organizer/dashboard" routerLinkActive="active" (click)="closeMenu()">
+        管理後台
+      </a>
+
+      <a routerLink="/about" routerLinkActive="active" (click)="closeMenu()">
+        關於我們
+      </a>
+    </nav>
+
+    <div class="header-actions" [class.open]="isMenuOpen">
+      <a routerLink="/organizer/login" class="login-btn" (click)="closeMenu()">登入</a>
+      <a routerLink="/organizer/register" class="register-btn" (click)="closeMenu()">註冊</a>
+    </div>
+  </div>
+</header>
