@@ -1,0 +1,38 @@
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">
+      <i class="bi bi-shop-window"></i>
+    </div>
+    <!-- 這裡要改成圖片 -->
+    <div>
+      <h1>小集日</h1>
+      <p>主辦方後台</p>
+    </div>
+  </div>
+
+  <nav class="menu">
+    @for (item of menuItems; track item.label) {
+      <a
+        class="menu-item"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+      >
+        <i class="bi" [class]="item.icon"></i>
+        <span>{{ item.label }}</span>
+
+        @if (item.badge) {
+          <strong>{{ item.badge }}</strong>
+        }
+      </a>
+    }
+  </nav>
+
+  <div class="user-card">
+    <div class="avatar">小</div>
+
+    <div class="user-info">
+      <strong>小集日市集</strong>
+      <span>organizer@example.com</span>
+    </div>
+  </div>
+</aside>
