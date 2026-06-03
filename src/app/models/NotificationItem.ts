@@ -1,0 +1,12 @@
+export interface NotificationItem {
+  icon: string;
+  iconClass: string;
+  title: string;
+  status: string;
+  statusClass: string;
+  date: string;
+  unread: boolean;
+  type: NotificationType;
+}
+
+export type NotificationType = '報名通知' | '收款通知' | '攤位通知' | '活動通知';
