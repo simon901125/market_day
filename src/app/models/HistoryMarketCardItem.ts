@@ -2,8 +2,10 @@
 export interface HistoryMarketCardItem {
   /** 市集標題 */
   title: string;
-  /** 市集日期 */
-  date: string;
+  /** 市集開始日期 */
+  start_date: string;
+  /** 市集結束日期 */
+  end_date: string;
   /** 市集地點 */
   location: string;
   /** 市集圖片 */
