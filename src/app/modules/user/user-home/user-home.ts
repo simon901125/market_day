@@ -5,7 +5,7 @@ import { VendorFeature } from '../../../models/VendorFeature';
 import { MarketCardItem } from '../../../models/MarketCardItem';
 import { UserMarketCard } from '../user-market-card/user-market-card';
 import { BrandType } from '../../../models/BrandType ';
-import { MarketStatus } from '../../../models/MarketStatus ';
+import { MarketStatus } from '../../../models/MarketStatus';
 import { CommonModule } from '@angular/common';
 
 @Component({

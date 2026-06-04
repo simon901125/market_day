@@ -5,7 +5,7 @@ import { UserMarketCard } from '../user-market-card/user-market-card';
 import { UserHistoryMarketCard } from '../user-history-market-card/user-history-market-card';
 import { HistoryMarketCardItem } from '../../../models/HistoryMarketCardItem';
 import { BrandType } from '../../../models/BrandType ';
-import { MarketStatus } from '../../../models/MarketStatus ';
+import { MarketStatus } from '../../../models/MarketStatus';
 import { Router} from '@angular/router';
 @Component({
   selector: 'app-user-activity-list',
