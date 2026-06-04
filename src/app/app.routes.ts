@@ -16,6 +16,10 @@ import { AdminLogin } from './modules/admin/admin-login/admin-login';
 import { OrganizerLayout } from './modules/organizer/organizer-layout/organizer-layout';  
 import { OrganizerLogin } from './modules/organizer/organizer-login/organizer-login';
 import { OrganizerRegister } from './modules/organizer/organizer-register/organizer-register';
+import { OrganizerHome } from './modules/organizer/organizer-home/organizer-home';
+import { OrganizerActivityShell } from './modules/organizer/organizer-activity-shell/organizer-activity-shell';
+import { OrganizerActivityHome } from './modules/organizer/organizer-activity-home/organizer-activity-home';
+import { OrganizerActivityNotification } from './modules/organizer/organizer-activity-notification/organizer-activity-notification';
 
 export const routes: Routes = [
   {
@@ -102,6 +106,24 @@ export const routes: Routes = [
       {
         path: 'register',
         component: OrganizerRegister,
+      },
+      {
+        path: 'home',
+        component: OrganizerHome,
+      },
+      {
+        path: 'activity',
+        component: OrganizerActivityShell,
+        children: [
+          {
+            path: 'home',
+            component: OrganizerActivityHome
+          },
+          {
+            path: 'notification',
+            component: OrganizerActivityNotification
+          }
+        ]
       }
     ]
   }

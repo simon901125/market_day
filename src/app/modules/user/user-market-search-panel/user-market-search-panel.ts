@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { CategoryItem } from '../../../models/CategoryItem';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-user-market-search-panel',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './user-market-search-panel.html',
   styleUrl: './user-market-search-panel.scss',
 })
@@ -27,4 +28,6 @@ export class UserMarketSearchPanel {
       active: i === index,
     }));
   }
+
+  
 }

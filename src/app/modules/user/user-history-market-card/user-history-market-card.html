@@ -4,10 +4,24 @@
   </div>
 
   <div class="history-content">
+    <span class="ended-label" [class]="market.statusClass">
+      {{ market.status }}
+    </span>
     <div class="history-meta">
-      <span><i class="bi bi-bezier2"></i>{{ market.category }}</span>
-      <span><i class="bi bi-geo-alt-fill"></i>{{ market.city }}</span>
-      <span><i class="bi bi-geo-alt-fill"></i>{{ market.area }}</span>
+      <span>
+        <i class="bi bi-bezier2"></i>
+        {{ market.category }}
+      </span>
+
+      <span>
+        <i class="bi bi-geo-alt-fill"></i>
+        {{ market.city }}
+      </span>
+
+      <span>
+        <i class="bi bi-geo-alt-fill"></i>
+        {{ market.area }}
+      </span>
     </div>
 
     <h3>{{ market.title }}</h3>
@@ -17,10 +31,15 @@
     <div class="history-bottom">
       <span class="history-date">
         <i class="bi bi-calendar3"></i>
-        {{ market.date }}
+        {{ market.start_date }}
       </span>
 
-      <span class="ended-label">已結束</span>
+      
+      <button class="detail-link" type="button" >
+        查看詳情
+        <i class="bi bi-arrow-right"></i>
+      </button>
+
     </div>
   </div>
 </article>

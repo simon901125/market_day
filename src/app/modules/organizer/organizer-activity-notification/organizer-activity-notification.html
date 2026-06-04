@@ -1,0 +1,66 @@
+<section class="notification-page">
+  <div class="page-header">
+    <h1>通知中心</h1>
+
+    <button class="read-btn" type="button" (click)="markAllAsRead()">全部標示為已讀</button>
+  </div>
+
+  <div class="tabs">
+    <button
+      type="button"
+      *ngFor="let tab of tabs"
+      [class.active]="activeTab === tab"
+      (click)="setTab(tab)"
+    >
+      {{ tab }}
+    </button>
+  </div>
+
+  <div class="notification-list">
+    <article
+      class="notification-card"
+      *ngFor="let item of pagedNotifications()"
+      [class.unread]="item.unread"
+    >
+      <div class="dot" [class.show]="item.unread"></div>
+
+      <i class="notice-icon" [class]="item.icon" [ngClass]="item.iconClass"></i>
+
+      <h3>{{ item.title }}</h3>
+
+      <span class="status-badge" [ngClass]="item.statusClass">
+        {{ item.status }}
+      </span>
+
+      <time>{{ item.date }}</time>
+    </article>
+  </div>
+  <div class="pagination">
+    <button type="button" [disabled]="currentPage === 1" (click)="setPage(currentPage - 1)">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+
+    @for (page of pages(); track page) {
+      <button type="button" [class.active]="currentPage === page" (click)="setPage(page)">
+        {{ page }}
+      </button>
+    }
+
+    <button
+      type="button"
+      [disabled]="currentPage === totalPages()"
+      (click)="setPage(currentPage + 1)"
+    >
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+</section>
+<!-- <button type="button" class="active">1</button>
+<button type="button">2</button>
+<button type="button">3</button>
+<button type="button">4</button>
+<button type="button">5</button>
+
+<button type="button">
+  <i class="bi bi-chevron-right"></i>
+</button> -->
