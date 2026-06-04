@@ -1,12 +1,18 @@
-<article class="brand-card">
-  <div class="brand-img">
-    <img [src]="brand.image" [alt]="brand.name" />
+<article class="brand-card" (click)="$event.preventDefault(); onCardClick()">
+  <div class="brand-imgs">
+    <div class="brand-img">
+      <img [src]="brand.image" [alt]="brand.name" />
+    </div>
     <div class="brand-logo">
+      <div>
+        <img [src]="brand.logo" [alt]="brand.name">
+      </div>
     </div>
   </div>
 
-  <div class="brand-body">
+  
 
+  <div class="brand-body">
     <div class="brand-name-row">
       <h3 class="brand-name">{{ brand.name }}</h3>
       <div class="tag-list">
@@ -19,17 +25,12 @@
     <p class="brand-desc">{{ brand.description }}</p>
 
     <div class="brand-work-row">
-      <span class="work-label">擅長作品</span>
+      <span class="work-label">代表商品</span>
       <span class="work-value">{{ brand.goodat_works }}</span>
     </div>
 
-    <div class="brand-work-row">
-      <span class="work-label">代表作品</span>
-      <span class="work-value">{{ brand.masterpiece }}</span>
-    </div>
-
-    <a href="#" class="brand-link" (click)="$event.preventDefault(); onCardClick()">
+    <span class="brand-link">
       查看品牌 <i class="bi bi-arrow-right"></i>
-    </a>
+    </span>
   </div>
 </article>

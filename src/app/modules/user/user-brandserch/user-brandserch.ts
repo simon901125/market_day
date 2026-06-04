@@ -43,9 +43,8 @@ export class UserBrandserch {
       tags: ['餐飲美食'],
       historyMarkets: ['草悟野餐市集', '咖啡生活節'],
       image: 'assets/images/PromotionalPhotos_1.png',
-      logo: '',
+      logo: 'assets/images/brandLogo.png',
       goodat_works: '手工甜塔、布丁',
-      masterpiece: '限定甜塔系列',
     },
     {
       name: '鑲 · 手作飾品',
@@ -53,9 +52,8 @@ export class UserBrandserch {
       tags: ['文創手作'],
       historyMarkets: ['夏日風格服裝市集'],
       image: 'assets/images/PromotionalPhotos_1.png',
-      logo: '',
+      logo: 'assets/images/brandLogo.png',
       goodat_works: '耳環、項鍊',
-      masterpiece: '月光石系列耳環',
     },
     {
       name: '革本皮件',
@@ -63,9 +61,8 @@ export class UserBrandserch {
       tags: ['服飾配件'],
       historyMarkets: ['草悟野餐市集'],
       image: 'assets/images/PromotionalPhotos_1.png',
-      logo: '',
+      logo: 'assets/images/brandLogo.png',
       goodat_works: '長夾、名片夾',
-      masterpiece: '植鞣革長夾',
     },
     {
       name: '紙上植物',
@@ -73,9 +70,8 @@ export class UserBrandserch {
       tags: ['文創設計'],
       historyMarkets: ['咖啡生活節'],
       image: 'assets/images/PromotionalPhotos_1.png',
-      logo: '',
+      logo: 'assets/images/brandLogo.png',
       goodat_works: '植物明信片、書籤',
-      masterpiece: '四季植物明信片組',
     },
     {
       name: '簡生活選物',
@@ -83,9 +79,8 @@ export class UserBrandserch {
       tags: ['文創手作'],
       historyMarkets: ['草悟野餐市集', '夏日風格服裝市集'],
       image: 'assets/images/PromotionalPhotos_1.png',
-      logo: '',
+      logo: 'assets/images/brandLogo.png',
       goodat_works: '香氛蠟燭、馬克杯',
-      masterpiece: '手工香氛蠟燭禮盒',
     },
     {
       name: '默默設計',
@@ -93,9 +88,8 @@ export class UserBrandserch {
       tags: ['文創手作'],
       historyMarkets: ['咖啡生活節', '夏日風格服裝市集'],
       image: 'assets/images/PromotionalPhotos_1.png',
-      logo: '',
+      logo: 'assets/images/brandLogo.png',
       goodat_works: '品牌周邊、印刷品',
-      masterpiece: '城市插畫徽章組',
     },
   ];
 }

@@ -6,5 +6,4 @@ export interface BrandItem {
   image: string;
   logo: string;
   goodat_works: string;
-  masterpiece: string;
 }
