@@ -9,7 +9,7 @@ import { MarketStatus } from '../../../models/MarketStatus ';
 import { Router} from '@angular/router';
 @Component({
   selector: 'app-user-activity-list',
-  imports: [UserMarketSearchPanel, UserMarketCard],
+  imports: [UserMarketSearchPanel, UserMarketCard,UserHistoryMarketCard],
   templateUrl: './user-activity-list.html',
   styleUrl: './user-activity-list.scss',
 })
@@ -18,7 +18,7 @@ export class UserActivityList {
   constructor(private router: Router) {}
   /** 目前所在的標籤 */
   activeTab: 'current' | 'history' = 'current';
-  /** 市集列表 */
+  /** 目前市集列表 */
   markets: MarketCardItem[] = [
     {
       title: '草地野餐市集',
@@ -134,9 +134,10 @@ export class UserActivityList {
   historyMarkets: HistoryMarketCardItem[] = [
   {
     title: '小樹市集｜台灣歷史博物館戶外廣場',
-    date: '2024/06/15（六）- 06/16（日）',
+    start_date: '2024/06/15',
+    end_date: '2024/06/16',
     location: '台南市 安南區',
-    image: 'assets/images/user/history-market-01.png',
+    image: 'assets/images/user/market-card-01.png',
     status: '已結束',
     statusClass: 'ended',
     tags: [BrandType.family],
@@ -147,9 +148,10 @@ export class UserActivityList {
   },
   {
     title: '小火柴文創市集｜水交社文化園區',
-    date: '2024/05/18（六）- 05/19（日）',
+    start_date: '2024/05/18',
+    end_date: '2024/05/19',
     location: '台南市 南區',
-    image: 'assets/images/user/history-market-02.png',
+    image: 'assets/images/user/market-card-02.png',
     status: '已結束',
     statusClass: 'ended',
     tags: [BrandType.handmade],
@@ -160,9 +162,10 @@ export class UserActivityList {
   },
   {
     title: '森林手作生活節｜台中審計新村',
-    date: '2024/04/20（六）- 04/21（日）',
+    start_date: '2024/04/20',
+    end_date: '2024/04/21',
     location: '台中市 西區',
-    image: 'assets/images/user/history-market-03.png',
+    image: 'assets/images/user/market-card-03.png',
     status: '已結束',
     statusClass: 'ended',
     tags: [BrandType.handmade],
@@ -173,9 +176,10 @@ export class UserActivityList {
   },
   {
     title: '夏日選物散步市集｜高雄駁二藝術特區',
-    date: '2024/03/09（六）- 03/10（日）',
+    start_date: '2024/03/09',
+    end_date: '2024/03/10',
     location: '高雄市 鹽埕區',
-    image: 'assets/images/user/history-market-04.png',
+    image: 'assets/images/user/market-card-04.png',
     status: '已結束',
     statusClass: 'ended',
     tags: [BrandType.fashion],
@@ -206,7 +210,19 @@ export class UserActivityList {
     // 這裡可以根據實際路由設定來導航到市集詳情頁
     this.router.navigate(['/user/activity-detail'], {
       // 使用 state 傳遞選擇的市集數據
-      state: { market: market }
+      state: { market }
+    });
+  }
+
+  /**
+   * 歷史活動的查看詳情先導航到市集詳情頁
+   * @param market 選擇的市集
+   */
+  goToActivityHistory(market: HistoryMarketCardItem){
+    // 這裡可以根據實際路由設定來導航到市集詳情頁
+    this.router.navigate(['/user/activity-detail'], {
+      // 使用 state 傳遞選擇的市集數據
+      state: { market }
     });
   }
 }

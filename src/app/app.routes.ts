@@ -6,6 +6,7 @@ import { UserActivityDetail } from './modules/user/user-activity-detail/user-act
 import { VendorLayout } from './modules/vendor/vendor-layout/vendor-layout';
 import { VendorVerifyEmail } from './modules/vendor/vendor-verify-email/vendor-verify-email';
 import { VendorResetPassword } from './modules/vendor/vendor-reset-password/vendor-reset-password';
+import { UserBrandserch } from './modules/user/user-brandserch/user-brandserch';
 import { AdminLayout } from './modules/admin/admin-layout/admin-layout';
 import { AdminLogin } from './modules/admin/admin-login/admin-login';
 import { OrganizerLayout } from './modules/organizer/organizer-layout/organizer-layout';
@@ -33,6 +34,10 @@ export const routes: Routes = [
       {
         path: 'home',
         component: UserHome,
+      },
+      {
+        path: 'brands',
+        component: UserBrandserch,
       },
       {
         path: 'activity-list',
