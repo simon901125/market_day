@@ -1,0 +1,166 @@
+.auth-login-form {
+  width: 100%;
+
+  h2 {
+    font-size: 29px;
+    font-weight: 900;
+    color: #111;
+    margin-bottom: 6px;
+    margin-top: 20px;
+  }
+}
+
+.title-line {
+  width: 48px;
+  height: 5px;
+  background: #ff5a00;
+  border-radius: 999px;
+  margin-bottom: 22px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    font-size: 16px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 6px;
+  }
+}
+
+.input-box {
+  height: 42px;
+  border: 1px solid #d8d8d8;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  padding: 0 30px;
+  background: #fff;
+  margin-bottom: 30px;
+
+  i {
+    font-size: 14px;
+    color: #444;
+    margin-right: 16px;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    font-size: 14px;
+    color: #333;
+
+    &::placeholder {
+      color: #9ca3af;
+    }
+  }
+}
+
+.eye-btn {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  i {
+    margin: 0;
+    font-size: 20px;
+  }
+}
+
+.forgot {
+  text-align: right;
+  margin-top: -15px;
+
+  a {
+    color: #ff5a00;
+    font-weight: 700;
+    text-decoration: none;
+  }
+}
+
+.main-btn,
+.google-btn {
+  width: 100%;
+  height: 46px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.main-btn {
+  border: 0;
+  background: #ff5a00;
+  color: #fff;
+  margin-top: 7px;
+
+  &:hover {
+    background: #e84f00;
+  }
+}
+
+.google-btn {
+  border: 1px solid #d8d8d8;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  img {
+    width: 20px;
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0 14px;
+
+  span {
+    flex: 1;
+    height: 1px;
+    background: #ddd;
+  }
+
+  p {
+    margin: 0;
+    color: #555;
+    white-space: nowrap;
+  }
+}
+
+.policy {
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 30px;
+  color: #555;
+
+  a {
+    color: #ff5a00;
+    font-weight: 700;
+    margin: 0 6px;
+  }
+}
+
+@media (max-width: 576px) {
+  .auth-login-form h2 {
+    font-size: 28px;
+  }
+
+  .input-box,
+  .main-btn,
+  .google-btn {
+    height: 48px;
+  }
+
+  .divider p {
+    font-size: 13px;
+    white-space: normal;
+    text-align: center;
+  }
+}

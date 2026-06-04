@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VendorRegister } from './vendor-register';
+import { AuthForgotPassword } from './auth-forgot-password';
 
-describe('VendorRegister', () => {
-  let component: VendorRegister;
-  let fixture: ComponentFixture<VendorRegister>;
+describe('AuthForgotPassword', () => {
+  let component: AuthForgotPassword;
+  let fixture: ComponentFixture<AuthForgotPassword>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VendorRegister]
+      imports: [AuthForgotPassword]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(VendorRegister);
+    fixture = TestBed.createComponent(AuthForgotPassword);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

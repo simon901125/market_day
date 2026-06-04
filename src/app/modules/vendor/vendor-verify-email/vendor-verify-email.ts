@@ -1,7 +1,7 @@
 import { FormsModule } from '@angular/forms';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VendorSidebar } from '../vendor-sidebar/vendor-sidebar';
+import { VendorSidebar } from '../../auth/vendor-sidebar/vendor-sidebar';
 import { RouterLink } from '@angular/router';
 
 @Component({
