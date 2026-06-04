@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { BrandItem } from '../../../models/BrandItem';
 import { UserBrandserchCard } from '../user-brandserch-card/user-brandserch-card';
 import { UserBrandserchDropdown } from '../user-brandserch-dropdown/user-brandserch-dropdown';
@@ -17,6 +18,8 @@ export class UserBrandserch {
   tags = ['全部類型', '手作飾品', '手工皮件', '文創設計', '生活雜貨', '美食甜點'];
   activeTagIndex = 0;
 
+  constructor(private router: Router) {}
+
   selectTag(index: number): void {
     this.activeTagIndex = index;
   }
@@ -25,6 +28,12 @@ export class UserBrandserch {
   onPageChange(page: number): void {
     // TODO: 根據頁碼向 API 請求對應資料
     console.log('切換至第', page, '頁');
+  }
+
+  goToBrandDetail(brand: BrandItem): void {
+    this.router.navigate(['/user/brand-detail'], {
+      state: { brand: brand },
+    });
   }
 
   brands: BrandItem[] = [

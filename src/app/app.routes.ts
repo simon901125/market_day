@@ -9,6 +9,7 @@ import { VendorRegister } from './modules/vendor/vendor-register/vendor-register
 import { VendorVerifyEmail } from './modules/vendor/vendor-verify-email/vendor-verify-email';
 import { VendorResetPassword } from './modules/vendor/vendor-reset-password/vendor-reset-password';
 import { UserBrandserch } from './modules/user/user-brandserch/user-brandserch';
+import { UserBrandDetail } from './modules/user/user-brand-detail/user-brand-detail';
 import { VendorForgotPassword } from './modules/vendor/vendor-forgot-password/vendor-forgot-password';
 import { AdminLayout } from './modules/admin/admin-layout/admin-layout';
 import { AdminLogin } from './modules/admin/admin-login/admin-login';
@@ -46,6 +47,10 @@ export const routes: Routes = [
       {
         path: 'activity-detail',
         component: UserActivityDetail,
+      },
+      {
+        path: 'brand-detail',
+        component: UserBrandDetail,
       }
 
     ],

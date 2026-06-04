@@ -53,7 +53,7 @@
       <!-- 品牌展示卡片 -->
       <div class="brand-grid">
         @for (brand of brands; track $index) {
-          <app-user-brandserch-card [brand]="brand"></app-user-brandserch-card>
+          <app-user-brandserch-card [brand]="brand" (cardClick)="goToBrandDetail($event)"></app-user-brandserch-card>
         }
       </div>
 

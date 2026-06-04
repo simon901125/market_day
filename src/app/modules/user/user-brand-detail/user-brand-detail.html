@@ -1,0 +1,140 @@
+<div class="brand-detail-page">
+
+  <!-- Hero Banner -->
+  <section class="detail-hero">
+    <div class="hero-bg">
+      <img [src]="brand?.image || defaultImage" alt="品牌封面" />
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <div class="brand-avatar">
+        <img [src]="defaultImage" [alt]="brand?.name" />
+      </div>
+      <div class="brand-headline">
+        <h1>{{ brand?.name || '品牌名稱' }}</h1>
+        <p class="brand-tagline">{{ brand?.description || '' }}</p>
+        <div class="hero-btns">
+          <button class="btn-follow" type="button">追蹤品牌</button>
+          <button class="btn-contact" type="button">聯絡品牌</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="detail-main">
+    <div class="main-container">
+
+      <!-- Left Column -->
+      <div class="main-left">
+
+        <!-- 品牌介紹 -->
+        <div class="content-card">
+          <div class="card-heading">
+            <i class="bi bi-person-lines-fill"></i>
+            <h2>品牌介紹</h2>
+          </div>
+          <p class="brand-intro">{{ brand?.description || '品牌介紹內容待填入。' }}</p>
+        </div>
+
+        <!-- 代表品品 -->
+        <div class="content-card">
+          <div class="card-heading">
+            <i class="bi bi-box-seam"></i>
+            <h2>代表品品</h2>
+          </div>
+          <div class="products-grid">
+            @for (product of mockProducts; track $index) {
+              <div class="product-card">
+                <div class="product-img">
+                  <img [src]="product.image" [alt]="product.name" />
+                </div>
+                <div class="product-info">
+                  <p class="product-name">{{ product.name }}</p>
+                  <p class="product-price">NT$ {{ product.price }}</p>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- 參與市集記錄 -->
+        <div class="content-card">
+          <div class="card-heading">
+            <i class="bi bi-clock-history"></i>
+            <h2>參與市集記錄</h2>
+          </div>
+          <ul class="market-records">
+            @for (record of mockMarketRecords; track $index) {
+              <li class="record-item">
+                <i class="bi bi-check-circle-fill record-icon"></i>
+                <span class="record-name">{{ record.name }}</span>
+                <span class="record-date">{{ record.dateRange }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Right Column (Sidebar) -->
+      <div class="main-right">
+
+        <!-- 品牌標籤 -->
+        <div class="content-card">
+          <h3 class="sidebar-heading">品牌標籤</h3>
+          <div class="tag-list">
+            @for (tag of mockTags; track $index) {
+              <span class="tag-chip">{{ tag }}</span>
+            }
+          </div>
+        </div>
+
+        <!-- 聯絡品牌 -->
+        <div class="content-card">
+          <h3 class="sidebar-heading">聯絡品牌</h3>
+          <ul class="contact-list">
+            <li>
+              <a href="#" class="contact-link">
+                <i class="bi bi-globe2"></i><span>官方網站</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="contact-link">
+                <i class="bi bi-facebook"></i><span>Facebook</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="contact-link">
+                <i class="bi bi-instagram"></i><span>Instagram</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="contact-link">
+                <i class="bi bi-line"></i><span>Line</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 目前市集 -->
+        <div class="content-card">
+          <h3 class="sidebar-heading">目前市集</h3>
+          <div class="current-market-card">
+            <span class="market-status-badge">正在參與</span>
+            <p class="current-market-name">{{ mockCurrentMarket.name }}</p>
+            <p class="current-market-date">
+              <i class="bi bi-calendar-event"></i>
+              {{ mockCurrentMarket.dateRange }}
+            </p>
+            <p class="market-countdown">
+              距離活動開始 <strong>{{ getDaysRemaining(mockCurrentMarket.startDate) }}</strong> 天
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div>
