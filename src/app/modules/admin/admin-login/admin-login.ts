@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { AdminSidebar } from '../admin-sidebar/admin-sidebar';
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+// import { VendorLogin } from "../../vendor/vendor-login/vendor-login";
 
 @Component({
   selector: 'app-admin-login',
-  imports: [AdminSidebar, FormsModule, CommonModule],
+  imports: [AdminSidebar, FormsModule, CommonModule, ],
   templateUrl: './admin-login.html',
   styleUrl: './admin-login.scss',
 })

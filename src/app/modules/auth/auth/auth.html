@@ -1,0 +1,26 @@
+<app-vendor-sidebar
+  [title]="title"
+  [highlight]="highlight"
+  [description]="description"
+  [topText]="topText"
+  [topLinkText]="topLinkText"
+  [topLink]="topLink"
+  [systemName]="systemName"
+  [logoImg]="logoImg"
+  
+>
+  @if (isLogin) {
+    <app-auth-login [formTitle]="formTitle" [forgotLink]="forgotLink"></app-auth-login>
+  }
+
+  @if (isRegister) {
+    <app-auth-register [formTitle]="formTitle"></app-auth-register>
+  }
+
+  @if (isForgot) {
+    <!-- <app-vendor-forgot-password [formTitle]="formTitle"></app-vendor-forgot-password> -->
+    
+    <app-auth-forgot-password [formTitle]="formTitle" ></app-auth-forgot-password>
+
+  }
+</app-vendor-sidebar>

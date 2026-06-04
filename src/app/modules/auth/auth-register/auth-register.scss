@@ -1,8 +1,8 @@
-﻿.auth-form {
+.auth-register-form {
   width: 100%;
 
   h2 {
-    font-size: 29px;
+    font-size: 27px;
     font-weight: 900;
     color: #111;
     margin-bottom: 6px;
@@ -69,30 +69,17 @@
   }
 }
 
-.forgot {
-  text-align: right;
-  margin-top: 12px;
-
-  a {
-    color: #ff5a00;
-    font-weight: 700;
-    text-decoration: none;
-  }
-}
-
 .password-wrapper {
   border: 1px solid #d8d8d8;
   border-radius: 7px;
   overflow: hidden;
+  background: #fff;
 
   .input-box {
     border: 0;
+    border-bottom: 1px solid #d1d5db;
     border-radius: 0;
   }
-}
-
-.no-border-bottom {
-  border-bottom: 1px solid #d8d8d8 !important;
 }
 
 .password-rule {
@@ -179,13 +166,17 @@
 }
 
 @media (max-width: 576px) {
-  .auth-form h2 {
+  .auth-register-form h2 {
     font-size: 28px;
   }
 
   .input-box,
   .main-btn,
   .google-btn {
+    height: 48px;
+  }
+
+  .password-wrapper .input-box {
     height: 48px;
   }
 

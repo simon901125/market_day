@@ -20,5 +20,6 @@ export class VendorSidebar {
   @Input() topLinkText = '';
   /** 上方連結 */
   @Input() topLink = '';
+  @Input() logoImg = '';
   @Input() systemName = '攤主後台';
 }

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OrganizerLogin } from './organizer-login';
+import { Auth } from './auth';
 
-describe('OrganizerLogin', () => {
-  let component: OrganizerLogin;
-  let fixture: ComponentFixture<OrganizerLogin>;
+describe('Auth', () => {
+  let component: Auth;
+  let fixture: ComponentFixture<Auth>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OrganizerLogin]
+      imports: [Auth]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(OrganizerLogin);
+    fixture = TestBed.createComponent(Auth);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
