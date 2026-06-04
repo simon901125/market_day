@@ -50,10 +50,10 @@
               </div>
               <div class="product-info">
                 <div class="product-title">
-                  <div class="product-name">{{ product.name }}</div>
-                  <div class="product-price">NT$ {{ product.price }}</div>
+                  <div class="product-name">{{ product.name || '商品名稱'}}</div>
+                  <div class="product-price">NT$ {{ product.price || '商品價格'}}</div>
                 </div>
-                <p class="product-description">{{ product.description }}</p>
+                <p class="product-description">{{ product.description || '商品描述'}}</p>
               </div>
             </div>
             }
@@ -78,31 +78,6 @@
           </div>
         </div>
 
-        <!-- 聯絡品牌 -->
-        <div class="content-card">
-          <div class="card-heading">
-            <i class="bi bi-heart"></i>
-            <h2>關注品牌</h2>
-          </div>
-          <ul class="contact-list">
-            <li>
-              <a href="#" class="contact-link">
-                <i class="bi bi-instagram"></i><span>Instagram</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="contact-link">
-                <i class="bi bi-facebook"></i><span>Facebook</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="contact-link">
-                <i class="bi bi-globe2"></i><span>官方網站</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-
         <!-- 參與市集記錄 -->
         <div class="content-card">
           <div class="card-heading">
@@ -119,9 +94,35 @@
               <span class="record-name">{{ record.name }}</span>
               <span class="record-date">{{ record.year }}/{{record.startDate}} ~ {{record.endDate}}</span>
             </li>
-            }            
+            }
           </ul>
         </div>
+
+        <!-- 聯絡品牌 -->
+        <div class="content-card">
+          <div class="card-heading">
+            <i class="bi bi-heart"></i>
+            <h2>關注品牌</h2>
+          </div>
+          <ul class="contact-list">
+            <li>
+              <i class="bi bi-instagram"></i>
+              <span>Instagram</span>
+              <a [href]="mocklink.instagram">{{ mocklink.instagram || '品牌instagram連結'}}</a>
+            </li>
+            <li>
+              <i class="bi bi-facebook"></i>
+              <span>Facebook</span>
+              <a [href]="mocklink.facebook">{{ mocklink.facebook || '品牌facebook連結'}}</a>
+            </li>
+            <li>
+              <i class="bi bi-globe2"></i>
+              <span>官方網站</span>
+              <a [href]="mocklink.officialWebsite">{{ mocklink.officialWebsite || '品牌官網連結'}}</a>
+            </li>
+          </ul>
+        </div>
+
       </div>
     </div>
   </section>

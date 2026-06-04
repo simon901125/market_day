@@ -17,15 +17,15 @@ interface MarketRecord {
   endDate:string;
 }
 
-interface CurrentMarket {
-  name: string;
-  dateRange: string;
-  startDate: string;
+interface contactLinks{
+  instagram:string;
+  facebook:string;
+  officialWebsite:string;
 }
 
 @Component({
   selector: 'app-user-brand-detail',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './user-brand-detail.html',
   styleUrl: './user-brand-detail.scss',
 })
@@ -46,13 +46,13 @@ export class UserBrandDetail {
     { name: '夏日風格服裝市集', year: '2025', startDate: '07/02', endDate: '07/05' },
   ];
 
-  mockCurrentMarket: CurrentMarket = {
-    name: '草悟野餐市集',
-    dateRange: '2025/07/16 ~ 2025/07/18',
-    startDate: '2025/07/16',
-  };
-
   mockTags = ['台灣品牌', '純手工', '低糖', '無添加'];
+
+  mocklink: contactLinks = {
+    instagram: "@example.ig",
+    facebook: "example.fb",
+    officialWebsite: "example.com.tw"
+  }
 
   constructor(private router: Router) {
     const navigation = this.router.currentNavigation();
