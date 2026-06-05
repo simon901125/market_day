@@ -16,6 +16,7 @@ import { OrganizerActivityShell } from './modules/organizer/organizer-activity-s
 import { OrganizerActivityHome } from './modules/organizer/organizer-activity-home/organizer-activity-home';
 import { OrganizerActivityNotification } from './modules/organizer/organizer-activity-notification/organizer-activity-notification';
 import { Auth } from './modules/auth/auth/auth';
+import { UserAboutUs } from './modules/user/user-about-us/user-about-us';
 
 export const routes: Routes = [
   {
@@ -51,6 +52,10 @@ export const routes: Routes = [
       {
         path: 'brand-detail',
         component: UserBrandDetail,
+      },
+      {
+        path: 'about',
+        component: UserAboutUs,
       },
     ],
   },

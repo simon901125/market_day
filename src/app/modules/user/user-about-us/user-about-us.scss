@@ -1,0 +1,218 @@
+.about-us {
+
+  // ─────────────────────────────────────────
+  // 區塊1：關於小集日
+  // ─────────────────────────────────────────
+  .about-intro {
+    padding: 64px 0;
+    background: var(--bg-white);
+
+    .intro-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    // 左欄
+    .intro-left {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      .section-subtitle {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--primary-color);
+        letter-spacing: 0.05em;
+        margin: 0;
+      }
+
+      .section-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-dark);
+        line-height: 1.55;
+        margin: 0;
+      }
+
+      .intro-text {
+        font-size: 15px;
+        color: var(--text-normal);
+        line-height: 1.8;
+        margin: 0;
+      }
+
+      .intro-photo {
+        margin-top: 8px;
+
+        img {
+          width: 100%;
+          aspect-ratio: 3 / 4;
+          object-fit: cover;
+          border-radius: var(--radius-section);
+        }
+      }
+    }
+
+    // 右欄
+    .intro-right {
+      font-style: normal;
+      background: var(--bg-soft);
+      border-radius: var(--radius-section);
+      padding: 32px;
+      position: sticky;
+      top: 24px;
+
+      .contact-subtitle {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--primary-color);
+        letter-spacing: 0.05em;
+        margin: 0 0 12px;
+      }
+
+      .contact-desc {
+        font-size: 14px;
+        color: var(--text-normal);
+        line-height: 1.7;
+        margin: 0 0 28px;
+      }
+
+      .contact-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+
+        i {
+          font-size: 20px;
+          color: var(--primary-color);
+          margin-top: 2px;
+          flex-shrink: 0;
+        }
+
+        div {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+        }
+
+        .contact-label {
+          font-size: 12px;
+          color: var(--text-light);
+        }
+
+        .contact-value {
+          font-size: 15px;
+          color: var(--text-dark);
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  // ─────────────────────────────────────────
+  // 區塊2：平台理念
+  // ─────────────────────────────────────────
+  .about-values {
+    padding: 64px 0;
+    background: var(--bg-soft);
+
+    .values-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+
+      .section-subtitle {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--primary-color);
+        letter-spacing: 0.05em;
+        margin: 0 0 24px;
+      }
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .value-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 28px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+
+      .value-icon {
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--primary-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+          font-size: 20px;
+          color: var(--primary-color);
+        }
+      }
+
+      .value-content {
+        h3 {
+          font-size: 16px;
+          font-weight: 700;
+          color: var(--text-dark);
+          margin: 0 0 8px;
+        }
+
+        p {
+          font-size: 13px;
+          color: var(--text-light);
+          line-height: 1.7;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  // ─────────────────────────────────────────
+  // RWD：行動裝置單欄堆疊
+  // ─────────────────────────────────────────
+  @media (max-width: 767px) {
+    .about-intro {
+      padding: 40px 0;
+
+      .intro-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .intro-right {
+        position: static;
+      }
+    }
+
+    .about-values {
+      padding: 40px 0;
+
+      .values-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
