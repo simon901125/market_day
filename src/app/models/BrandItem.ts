@@ -12,8 +12,6 @@ export interface BrandItem {
   image: string;
   /** logo */
   logo: string;
-  /** 品牌招牌 */
+  /** 代表商品 */
   goodat_works: string;
-  /** 熱銷商品 */
-  masterpiece: string;
 }
