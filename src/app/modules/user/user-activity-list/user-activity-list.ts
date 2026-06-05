@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 import { MarketCardItem } from '../../../models/MarketCardItem';
 import { UserMarketSearchPanel } from '../user-market-search-panel/user-market-search-panel';
 import { UserMarketCard } from '../user-market-card/user-market-card';
-import { UserHistoryMarketCard } from '../user-history-market-card/user-history-market-card';
 import { HistoryMarketCardItem } from '../../../models/HistoryMarketCardItem';
-import { BrandType } from '../../../models/BrandType ';
-import { MarketStatus } from '../../../models/MarketStatus';
+import { BrandType } from '../../../models/list/BrandType ';
+import { MarketStatus } from '../../../models/status/MarketStatus';
 import { Router} from '@angular/router';
+import { UserHistoryMarketCard } from '../user-history-market-card/user-history-market-card';
 @Component({
   selector: 'app-user-activity-list',
-  imports: [UserMarketSearchPanel, UserMarketCard,UserHistoryMarketCard],
+  imports: [UserMarketSearchPanel, UserMarketCard, UserHistoryMarketCard], 
   templateUrl: './user-activity-list.html',
   styleUrl: './user-activity-list.scss',
 })

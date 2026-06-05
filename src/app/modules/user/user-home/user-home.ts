@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink,Router } from '@angular/router';
 import { UserMarketSearchPanel } from '../user-market-search-panel/user-market-search-panel';
-import { VendorFeature } from '../../../models/VendorFeature';
 import { MarketCardItem } from '../../../models/MarketCardItem';
 import { UserMarketCard } from '../user-market-card/user-market-card';
-import { BrandType } from '../../../models/BrandType ';
-import { MarketStatus } from '../../../models/MarketStatus';
+import { BrandType } from '../../../models/list/BrandType ';
+import { MarketStatus } from '../../../models/status/MarketStatus';
 import { CommonModule } from '@angular/common';
 
 @Component({
