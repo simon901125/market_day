@@ -1,7 +1,7 @@
 .activity-detail {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 28px 32px 48px;
+  padding: 25px 32px 28px;
 }
 
 /* Breadcrumb */
@@ -50,14 +50,14 @@
   grid-template-columns: minmax(0, 1.55fr) minmax(360px, 0.95fr);
   gap: 36px;
   align-items: center;
-  margin-bottom: 46px;
+  margin-bottom: 43px;
 }
 
 .market-image-wrap {
   position: relative;
   overflow: hidden;
   border-radius: 12px;
-  height: 550px;
+  height: 500px;
   box-shadow: var(--shadow-soft);
 
   img {
@@ -98,21 +98,22 @@
 }
 
 .market-content {
+  margin-bottom: 10px;
   h1 {
-    margin: 0 0 20px;
+    margin: 0 0 10px;
     color: #111;
-    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-size: clamp(2rem, 4vw, 2.9rem);
     font-weight: 900;
     letter-spacing: 0.04em;
   }
 }
 
 .market-desc {
-  margin-bottom: 24px;
+  margin-bottom: 18px;
   color: var(--text-dark);
   font-size: 1.08rem;
   font-weight: 600;
-  line-height: 1.9;
+  line-height: 1.7;
 }
 
 /* Cards */
@@ -129,12 +130,12 @@
 }
 
 .info-card {
-  padding: 28px 32px;
+  padding: 22px 29px;
 
   ul {
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 20px;
     padding: 0;
     margin: 0;
     list-style: none;
@@ -143,7 +144,7 @@
   li {
     display: grid;
     grid-template-columns: 32px 1fr;
-    gap: 16px;
+    gap: 13px;
     align-items: start;
 
     > i {
@@ -155,7 +156,7 @@
 
   span {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     color: var(--text-dark);
     font-size: 0.98rem;
     font-weight: 800;
