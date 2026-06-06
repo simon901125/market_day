@@ -149,37 +149,11 @@
 }
 
 /* 平板 */
-@media (max-width: 992px) {
-  .vendor-auth-page {
-    padding: 24px;
-    background-position: left center;
-  }
-
-  .vendor-header {
-    margin-top: 0;
-    margin-bottom: 24px;
-  }
-
-  .brand {
-    margin-top: 0;
-
-    img {
-      width: 150px;
-    }
-  }
-
-  .vendor-label {
-    font-size: 20px;
-  }
-
-  .top-action {
-    font-size: 12px;
-  }
-
+@media (min-width: 768px) and (max-width: 1024px) {
   .vendor-auth-container {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    align-items: start;
+    grid-template-columns: 0.7fr 1.3fr;
+    gap: 30px;
+    align-items: center;
   }
 
   .vendor-intro {
@@ -188,57 +162,63 @@
 
     h1 {
       font-size: 34px;
-      line-height: 1.45;
-      margin-bottom: 16px;
+      line-height: 1.4;
+      margin-bottom: 12px;
     }
 
     p {
-      margin-top: 20px;
-      font-size: 18px;
+      margin-top: 18px;
+      font-size: 22px;
       line-height: 1.8;
     }
   }
 
   .vendor-card {
+
     max-width: 100%;
     margin-top: 0;
-    padding: 36px 32px 24px;
+    padding: 32px 28px 24px;
+    border-radius: 20px;
   }
 }
 
 /* 手機 */
-@media (max-width: 576px) {
+@media (max-width: 767px) {
   .vendor-auth-page {
-    padding: 16px;
+    min-height: 100dvh;
+    padding: 18px;
     background-position: left bottom;
+    background-size: cover;
   }
 
   .vendor-header {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 4px;
 
     margin-top: 0;
     margin-bottom: 20px;
   }
 
   .brand {
-    gap: 12px;
+    gap: 10px;
     margin-top: 0;
 
     img {
-      width: 130px;
+      width: 150px;
     }
   }
 
   .vendor-label {
-    font-size: 18px;
+    font-size: 15px;
   }
 
   .top-action {
     width: 100%;
     text-align: right;
-    font-size: 14px;
+    font-size: 12px;
+    margin-top: -6px;
   }
 
   .vendor-auth-container {
@@ -251,9 +231,10 @@
 
   .vendor-card {
     width: 100%;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding: 25px 0px;
-    border-radius: 20px;
+    max-width: 360px;
+    margin: 0 auto;
+
+    padding: 50px 20px;
+    border-radius: 18px;
   }
 }

@@ -111,6 +111,7 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
+
   img {
     width: 20px;
   }
@@ -148,20 +149,215 @@
   }
 }
 
-@media (max-width: 576px) {
-  .auth-login-form h2 {
-    font-size: 28px;
+/* 平板 */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .auth-login-form {
+    height: auto;
+    width: 100%;
+
+    h2 {
+      font-size: 26px;
+      margin-left: 10px;
+      margin-top: 10px;
+      margin-bottom: 6px;
+    }
   }
 
-  .input-box,
+  .title-line {
+    margin-left: 10px;
+    width: 38px;
+    height: 4px;
+    margin-bottom: 22px;
+  }
+
+  .form-group {
+    margin-left: 10px;
+    margin-bottom: 14px;
+
+    label {
+      font-size: 17px;
+      margin-bottom: 7px;
+    }
+  }
+
+  .input-box {
+    height: 42px;
+    padding: 0 14px;
+    
+    margin-bottom: 20px;
+    border-radius: 6px;
+
+    i {
+      font-size: 15px;
+      margin-right: 12px;
+    }
+
+    input {
+      font-size: 16px;
+    }
+  }
+
+  .forgot {
+    margin-top: -5px;
+    margin-bottom: 24px;
+
+    a {
+      font-size: 14px;
+    }
+  }
+
   .main-btn,
   .google-btn {
+    width: clamp(250px, 85%, 500px);
     height: 48px;
+    border-radius: 6px;
+    font-size: 18px;
   }
 
-  .divider p {
+  .main-btn {
+    margin-top: 0;
+  }
+
+  .divider {
+    gap: 12px;
+    margin: 18px 0 16px;
+
+    p {
+      font-size: 12px;
+    }
+  }
+
+  .google-btn {
+    gap: 10px;
+    margin-bottom: 20px;
+
+    img {
+      width: 17px;
+    }
+  }
+
+  .policy {
+    font-size: 12px;
+    line-height: 1.8;
+    margin-top: 8px;
+    margin-bottom: 0;
+
+    a {
+      margin: 0 6px;
+    }
+  }
+}
+
+
+/* 手機 */
+@media (max-width: 576px) {
+  .auth-login-form {
+    height: auto;
+    width: 100%;
+
+    h2 {
+      font-size: 24px;
+      margin: 0 18px 6px;
+    }
+  }
+
+  .title-line {
+    width: 34px;
+    height: 4px;
+    margin: 0 19px 22px;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+    padding: 0 14px;
+
+    label {
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+  }
+
+  .input-box {
+    height: 40px;
+    width: 100%;
+    padding: 0 13px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+
+    i {
+      font-size: 13px;
+      margin-right: 11px;
+    }
+
+    input {
+      font-size: 13px;
+    }
+  }
+
+  .eye-btn {
+    padding: 0;
+
+    i {
+      font-size: 17px;
+    }
+  }
+
+  .forgot {
+    margin-top: -10px;
+    margin-bottom: 26px;
+    padding: 0 14px;
+
+    a {
+      font-size: 12px;
+    }
+  }
+
+  .main-btn,
+  .google-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: clamp(250px, 85%, 500px);
+    height: 40px;
+    margin-left: auto;
+    margin-right: auto;
+
+    border-radius: 6px;
     font-size: 13px;
-    white-space: normal;
-    text-align: center;
+  }
+
+  .main-btn {
+    margin-top: 0;
+    margin-bottom: 18px;
+  }
+
+  .divider {
+    gap: 12px;
+    margin: 18px 0 13px;
+
+    p {
+      font-size: 12px;
+    }
+  }
+
+  .google-btn {
+    gap: 10px;
+    margin-bottom: 18px;
+
+    img {
+      width: 17px;
+    }
+  }
+
+  .policy {
+    font-size: 11px;
+    line-height: 1.8;
+    margin-top: 8px;
+    margin-bottom: 0;
+
+    a {
+      margin: 0 3px;
+    }
   }
 }
