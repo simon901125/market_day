@@ -10,6 +10,10 @@ export class ApplicationStatus {
   static readonly pendingSelection = '待選位';
   /** 報名完成 */
   static readonly completed = '報名完成';
+  /** 退款處理中 */
+  static readonly refunding = '退款處理中';
+  /** 已退款 */
+  static readonly refunded = '已退款';
   /** 報名完成 */
   static readonly cancelled = '已取消';
 }
