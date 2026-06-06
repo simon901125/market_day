@@ -9,13 +9,18 @@ import { RouterLink } from '@angular/router';
   styleUrl: './auth-login.scss',
 })
 export class AuthLogin {
+  /** 身分驗證：表單標題 */
   @Input() formTitle = '';
+  /** 身分驗證：忘記密碼路由 */
   @Input() forgotLink = '';
-  
+  /** 電子郵件 */
   email = '';
+  /** 密碼 */
   password = '';
+  /** 顯示密碼 */
   showPassword = false;
 
+  /** 顯示密碼 */
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
