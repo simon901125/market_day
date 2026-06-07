@@ -165,29 +165,192 @@
   }
 }
 
-@media (max-width: 576px) {
-  .auth-register-form h2 {
-    font-size: 28px;
+/* 平板 */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .auth-register-form {
+    width: 100%;
+
+    h2 {
+      font-size: 22px;
+      margin-top: 6px;
+      margin-bottom: 5px;
+    }
   }
 
-  .input-box,
+  .title-line {
+    width: 42px;
+    height: 4px;
+    margin-bottom: 14px;
+  }
+
+  .form-group {
+    margin-bottom: 8px;
+
+    label {
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+  }
+
+  .input-box {
+    height: 32px;
+    padding: 0 16px;
+
+    i {
+      font-size: 12px;
+      margin-right: 12px;
+    }
+
+    input {
+      font-size: 12px;
+    }
+  }
+
+  .password-wrapper {
+    .input-box {
+      height: 34px;
+    }
+  }
+
+  .password-rule {
+    padding: 5px 15px;
+    font-size: 11px;
+
+    p {
+      margin-bottom: 3px;
+    }
+  }
+
   .main-btn,
   .google-btn {
-    height: 48px;
+    height: 38px;
+    font-size: 14px;
   }
 
-  .password-wrapper .input-box {
-    height: 48px;
+  .main-btn {
+    margin-top: 2px;
   }
 
-  .divider p {
-    font-size: 13px;
-    white-space: normal;
-    text-align: center;
+  .divider {
+    gap: 12px;
+    margin: 14px 0 10px;
+
+    p {
+      font-size: 12px;
+    }
+  }
+
+  .google-btn {
+    gap: 10px;
+
+    img {
+      width: 15px;
+    }
   }
 
   .policy {
-    font-size: 13px;
+    font-size: 11px;
     line-height: 1.6;
+    margin-top: 7px;
+    margin-bottom: -8px;
+    a {
+      margin: 0 3px;
+    }
+  }
+}
+
+// 手機
+@media (max-width: 576px) {
+  .auth-register-form {
+    width: 100%;
+
+    h2 {
+      font-size: 18px;
+      margin: -22px 0 5px;
+    }
+  }
+
+  .title-line {
+    width: 36px;
+    height: 3px;
+    margin-bottom: 15px;
+  }
+
+  .form-group {
+    margin-bottom: 7px;
+
+    label {
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+  }
+
+  .input-box {
+    height: 31px;
+    padding: 0 11px;
+
+    i {
+      font-size: 12px;
+      margin-right: 12px;
+    }
+
+    input {
+      font-size: 12px;
+    }
+  }
+
+  .password-wrapper {
+    .input-box {
+      height: 33px;
+    }
+  }
+
+  .password-rule {
+    padding: 7px 13px;
+    font-size: 10.5px;
+
+    p {
+      margin-bottom: 3px;
+    }
+  }
+
+  .main-btn,
+  .google-btn {
+    height: 35px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .main-btn {
+    margin-top: 4px;
+  }
+
+  .divider {
+    gap: 10px;
+    margin: 13px 0 10px;
+
+    p {
+      font-size: 12px;
+      white-space: nowrap;
+    }
+  }
+
+  .google-btn {
+    gap: 7px;
+
+    img {
+      width: 17px;
+    }
+  }
+
+  .policy {
+    font-size: 10px;
+    line-height: 1.7;
+    margin-top: 7px;
+    margin-bottom: -30px;
+
+    a {
+      margin: 0 3px;
+    }
   }
 }

@@ -193,7 +193,7 @@ export const routes: Routes = [
           role: 'organizer',
           mode: 'register',
           sidebarComponent: 'organizer',
-          title: '加入小集日，\n開啟你的',
+          title: '加入小集日，\n 開啟你的',
           highlight: '主辦方後台',
           description: '登入你的主辦方帳號，\n管理你的市集與活動。',
           topText: '已經有主辦方帳號了？',
