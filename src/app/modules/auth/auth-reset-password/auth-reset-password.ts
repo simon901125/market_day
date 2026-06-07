@@ -26,6 +26,8 @@ export class AuthResetPassword {
   hasPwLenght = false;
   /** 密碼長度是否足夠 */
   hasPwNumLetter = false;
+  /** 密碼是否吻合 */
+  passwordNotMatch = false;
 
   /** 檢查密碼長度是否有效 */
   get isPasswordLengthValid(): boolean {
@@ -42,7 +44,6 @@ export class AuthResetPassword {
     this.hasPwNumLetter = /[A-Za-z]/.test(this.newPassword) && /\d/.test(this.newPassword);
   }
 
-
   /** 切換新密碼顯示狀態 */
   toggleNewPassword(): void {
     this.showNewPassword = !this.showNewPassword;
@@ -56,10 +57,16 @@ export class AuthResetPassword {
     if (
       this.isPasswordLengthValid &&
       this.isPasswordFormatValid &&
-      this.newPassword === this.confirmPassword
+      this.passwordNotMatch
     ) {
       // 驗證成功後
       this.resetSuccess.emit();
     }
+  }
+
+  /** 檢查新密碼與確認密碼是否吻合 */
+  checkPasswordMatch() {
+    this.passwordNotMatch =
+      this.confirmPassword.length > 0 && this.newPassword !== this.confirmPassword;
   }
 }

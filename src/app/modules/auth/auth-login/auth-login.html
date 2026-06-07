@@ -41,7 +41,15 @@
     </div>
   </div>
 
-  <button type="submit" class="main-btn">登入</button>
+  <!-- 登入失敗訊息 -->
+  @if (loginError) {
+  <div class="error-alert">
+    <i class="bi bi-exclamation-circle"></i>
+    <span>帳號或密碼錯誤，請重新確認後再登入。</span>
+  </div>
+}
+
+  <button type="submit" class="main-btn" (click)="login()">登入</button>
 
   <div class="divider">
     <span></span>
