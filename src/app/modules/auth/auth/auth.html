@@ -7,7 +7,6 @@
   [topLink]="topLink"
   [systemName]="systemName"
   [logoImg]="logoImg"
-  
 >
   @if (isLogin) {
     <app-auth-login [formTitle]="formTitle" [forgotLink]="forgotLink"></app-auth-login>
@@ -18,9 +17,78 @@
   }
 
   @if (isForgot) {
-    <!-- <app-vendor-forgot-password [formTitle]="formTitle"></app-vendor-forgot-password> -->
-    
-    <app-auth-forgot-password [formTitle]="formTitle" ></app-auth-forgot-password>
+    <app-auth-forgot-password [formTitle]="formTitle" [vertifyLink]="vertifyLink"></app-auth-forgot-password>
+  }
 
+  @if (isVerify) {
+    <app-auth-verify-email
+      [formTitle]="formTitle"
+      [backLink]="backLink"
+      [loginLink]="loginLink"
+      (verifySuccess)="openSuccessModal()"
+      (verifyError)="openErrorModal()"
+    ></app-auth-verify-email>
+
+    
+  }
+  @if (isReset) {
+    <app-auth-reset-password
+      [formTitle]="formTitle"
+      [loginLink]="loginLink"
+      (resetSuccess)="openResetSuccessModal()"
+    ></app-auth-reset-password>
   }
 </app-vendor-sidebar>
+
+<!-- email驗證訊息 -->
+@if (showSuccessModal || showErrorModal) {
+  <div class="page-modal-backdrop">
+    <div class="result-modal">
+      <div class="result-icon" [class.success]="showSuccessModal" [class.error]="showErrorModal">
+        <i [class]="showSuccessModal ? 'bi bi-check-lg' : 'bi bi-x-lg'"></i>
+      </div>
+
+      <h3>{{ showSuccessModal ? '驗證成功' : '驗證失敗' }}</h3>
+
+      <p>
+        {{
+          showSuccessModal
+            ? '你的 Email 已完成驗證，現在可以登入攤主平台。'
+            : '你輸入的驗證碼不正確或已失效，請重新確認後再試一次。'
+        }}
+      </p>
+
+      @if (showSuccessModal) {
+        <a [routerLink]="loginLink" class="modal-btn">前往登入</a>
+      }
+
+      @if (showErrorModal) {
+        <button type="button" class="modal-btn" (click)="closeModal()">
+          重新輸入
+        </button>
+      }
+    </div>
+  </div>
+}
+
+<!-- resetPassword -->
+ @if (showResetSuccessModal) {
+  <div class="page-modal-backdrop">
+    <div class="result-modal">
+      <div class="result-icon success">
+        <i class="bi bi-check-lg"></i>
+      </div>
+
+      <h3>密碼重設成功</h3>
+
+      <p>
+        你的密碼已更新完成，<br />
+        現在可以返回登入並使用新密碼登入。
+      </p>
+
+      <a [routerLink]="loginLink" class="modal-btn">
+        前往登入
+      </a>
+    </div>
+  </div>
+}

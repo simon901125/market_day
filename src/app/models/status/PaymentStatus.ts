@@ -2,10 +2,14 @@
 export class PaymentStatus {
   /** 待付款 */
   static readonly pending = '待付款';
-  /** 待付款 */
+  /** 付款成功 */
   static readonly paid = '付款成功';
   /** 付款失敗 */
   static readonly failed = '付款失敗';
+  /** 已逾期 */
+  static readonly expired = '已逾期';
+  /** 退款申請中 */
+  static readonly refundRequested = '退款申請中';
   /** 退款處理中 */
   static readonly refunding = '退款處理中';
   /** 已退款 */

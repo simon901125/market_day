@@ -41,10 +41,11 @@ body {
   --shadow-card: 0 12px 32px rgba(47, 41, 36, 0.1);
 
   /* 狀態顏色 */
-  --status-active-bg: rgba(98, 162, 29, 0.85);;
-  --status-upcoming-bg: rgba(245, 158, 11, 0.85);
-  --status-preparing-bg: rgba(79, 143, 217, 0.85);
-  --status-ended-bg: rgba(139, 139, 139, 0.85);
+  /** 市集狀態-MarketStatus*/
+  --market-status-active-bg: rgba(98, 162, 29, 0.85);;
+  --market-status-upcoming-bg: rgba(245, 158, 11, 0.85);
+  --market-status-preparing-bg: rgba(79, 143, 217, 0.85);
+  --market-status-ended-bg: rgba(139, 139, 139, 0.85);
 }
 
 // 驗證紅框

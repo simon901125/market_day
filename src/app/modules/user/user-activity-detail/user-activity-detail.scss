@@ -81,19 +81,19 @@
   font-weight: 700;
 
   &.upcoming {
-    background: var(--status-upcoming-bg);
+    background: var(--market-status-upcoming-bg);
   }
 
   &.active {
-    background: var(--status-active-bg);
+    background: var(--market-status-active-bg);
   }
 
   &.preparing {
-    background: var(--status-preparing-bg);
+    background: var(--market-status-preparing-bg);
   }
 
   &.ended {
-    background: var(--status-ended-bg);
+    background: var(--market-status-ended-bg);
   }
 }
 
