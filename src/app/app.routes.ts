@@ -17,6 +17,8 @@ import { OrganizerActivityHome } from './modules/organizer/organizer-activity-ho
 import { OrganizerActivityNotification } from './modules/organizer/organizer-activity-notification/organizer-activity-notification';
 import { Auth } from './modules/auth/auth/auth';
 import { UserAboutUs } from './modules/user/user-about-us/user-about-us';
+import { VendorDashboardHome } from './modules/Dashboard/dashboard-sidebar/vender/vendor-dashboard-home/vendor-dashboard-home';
+import { VendorDashboardShell } from './modules/Dashboard/dashboard-sidebar/vender/vendor-dashboard-shell/vendor-dashboard-shell';
 
 export const routes: Routes = [
   {
@@ -150,6 +152,20 @@ export const routes: Routes = [
           logoImg: '/assets/images/logo/logo-market-day-vendor.png',
         },
       },
+      {
+        path: 'dash-board',
+        component: VendorDashboardShell,
+        children: [
+          {
+            path: 'home',
+            component: VendorDashboardHome,
+          },
+          {
+            path: 'notification',
+            component: OrganizerActivityNotification,
+          },
+        ],
+      },
     ],
   },
 
@@ -208,7 +224,7 @@ export const routes: Routes = [
         path: 'forgot-password',
         component: Auth,
         data: {
-          role: 'vendor',
+          role: 'organizer',
           mode: 'forgot',
           title: '忘記密碼了嗎？',
           highlight: '',
@@ -225,7 +241,7 @@ export const routes: Routes = [
         path: 'reset-password',
         component: Auth,
         data: {
-          role: 'vendor',
+          role: 'organizer',
           mode: 'reset',
           title: '重新設定密碼',
           highlight: '',
@@ -242,7 +258,7 @@ export const routes: Routes = [
         path: 'verify-email',
         component: Auth,
         data: {
-          role: 'vendor',
+          role: 'organizer',
           mode: 'verify',
           title: '請完成',
           highlight: 'Email 驗證',
@@ -261,7 +277,7 @@ export const routes: Routes = [
         component: OrganizerHome,
       },
       {
-        path: 'activity',
+        path: 'dash-board',
         component: OrganizerActivityShell,
         children: [
           {
