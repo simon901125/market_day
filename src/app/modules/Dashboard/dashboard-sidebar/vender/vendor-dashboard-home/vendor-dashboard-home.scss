@@ -1,68 +1,80 @@
 .vendor-home {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 7px 0 0;
+
   h1 {
     margin: 0;
-    font-size: 30px;
-    font-weight: 700;
+    font-size: 28px;
+    font-weight: 900;
     color: #111827;
+    letter-spacing: 1px;
   }
 }
 
 .subtitle {
-  margin: 16px 0 30px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
+  margin: 10px 0 27px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #334155;
 }
 
-.home-grid {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 25px;
-}
-
+/* 共用卡片 */
 .setup-card,
 .notice-card,
-.bottom-alert {
+.bottom-alert,
+.summary-card,
+.latest-card {
   border: 1px solid #eadfd4;
-  border-radius: 14px;
+  border-radius: 11px;
   background: #fff;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 9px 24px rgba(47, 41, 36, 0.04);
+}
+
+/* 首次登入引導 */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.95fr;
+  gap: 18px;
+  align-items: stretch;
 }
 
 .setup-card {
-  padding: 34px;
+  padding: 24px 26px 18px;
+
 
   h2 {
-    margin: 0 0 22px;
-    font-size: 20px;
-    font-weight: 700;
+    margin: 0 0 14px;
+    font-size: 18px;
+    font-weight: 900;
     color: #111;
   }
 }
 
 .step {
   display: grid;
-  grid-template-columns: 48px 48px 1fr;
+  grid-template-columns: 40px 42px 1fr;
   align-items: center;
-  gap: 15px;
-  padding: 15px 0;
+  gap: 12px;
+  padding: 13px 0 10px;
   border-bottom: 1px solid #eee2d6;
+  margin-bottom: 0px;
 
   &:last-child {
     border-bottom: none;
   }
 
   span {
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: #fff2e6;
     color: #ff6500;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 17px;
-    font-weight: 800;
+    font-size: 16px;
+    font-weight: 900;
   }
 
   i {
@@ -71,8 +83,8 @@
   }
 
   h3 {
-    margin: 0 0 8px;
-    font-size: 16px;
+    margin: 0 0 4px;
+    font-size: 15px;
     font-weight: 900;
     color: #111;
   }
@@ -80,20 +92,22 @@
   p {
     margin: 0;
     font-size: 12px;
-    font-weight: 600;
-    color: #4b5563;
-    line-height: 1.7;
+    font-weight: 700;
+    color: #475569;
+    line-height: 1.55;
   }
 }
 
 .notice-card {
-  padding: 50px 30px;
+  position: relative;
+  padding: 42px 32px 34px;
   text-align: center;
+  overflow: hidden;
 
   .tent-icon {
-    width: 110px;
-    height: 110px;
-    margin: 0 auto 35px;
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 40px;
     border-radius: 50%;
     background: #fff2e6;
     display: flex;
@@ -101,15 +115,15 @@
     justify-content: center;
 
     img {
-      width: 75px;
+      width: 56px;
     }
   }
 
   h2 {
     margin: 0;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 900;
-    line-height: 1.7;
+    line-height: 1.75;
     color: #111;
 
     span {
@@ -118,17 +132,17 @@
   }
 
   p {
-    margin-top: 54px;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 2;
-    color: #374151;
+    margin: 42px 0 0;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.9;
+    color: #334155;
   }
 }
 
 .bottom-alert {
-  margin-top: 27px;
-  padding: 16px 24px;
+  margin-top: 18px;
+  padding: 16px 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -136,30 +150,212 @@
   div {
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 12px;
     font-size: 15px;
     font-weight: 800;
-    color: #374151;
+    color: #334155;
 
     i {
-      font-size: 20px;
+      font-size: 22px;
     }
   }
 
   button {
-    height: 45px;
-    padding: 0 44px;
+    height: 50px;
+    padding: 0 48px;
     border: none;
     border-radius: 8px;
     background: #ff6500;
     color: #fff;
     font-size: 16px;
     font-weight: 900;
+  }
+}
+
+/* 有紀錄儀錶板 */
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-bottom: 28px;
+}
+
+.summary-card {
+  min-height: 112px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  a {
+    margin-left: auto;
+    color: #ff6500;
+    font-size: 14px;
+    font-weight: 900;
+    text-decoration: none;
+    white-space: nowrap;
 
     i {
-      margin-right: 8px;
+      margin-left: 4px;
+      font-size: 13px;
     }
   }
 }
 
+.summary-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #fff2e6;
+  color: #ff6500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
+  i {
+    font-size: 36px;
+  }
+
+  &.blue {
+    background: #eaf3ff;
+    color: #1683f5;
+  }
+}
+
+.summary-content {
+  h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 900;
+    color: #111;
+  }
+
+  strong {
+    margin-right: 8px;
+    font-size: 34px;
+    font-weight: 900;
+    color: #111827;
+  }
+
+  span {
+    font-size: 15px;
+    font-weight: 900;
+    color: #111;
+  }
+}
+
+.latest-card {
+  padding: 26px 28px 28px;
+}
+
+.latest-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 900;
+    color: #111;
+  }
+
+  button {
+    border: none;
+    background: transparent;
+    color: #ff6500;
+    font-size: 15px;
+    font-weight: 900;
+  }
+}
+
+.notice-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.notice-row {
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 14px 46px 120px 1fr 180px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 18px;
+  border-bottom: 1px solid #eee;
+  border-radius: 6px;
+
+  &.unread {
+    background: #fff4ec;
+    border-bottom: none;
+    margin-bottom: 4px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff6500;
+  }
+
+  &:not(.unread) .dot {
+    background: transparent;
+  }
+
+  .notice-icon {
+    font-size: 25px;
+    color: #ff6500;
+  }
+
+  strong {
+    font-size: 15px;
+    font-weight: 900;
+    color: #111;
+    white-space: nowrap;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  time {
+    font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+    text-align: right;
+  }
+}
+
+/* RWD */
+@media (max-width: 992px) {
+  .home-grid,
+  .dashboard-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .notice-row {
+    grid-template-columns: 12px 36px 1fr;
+    row-gap: 6px;
+    padding: 14px 16px;
+
+    strong,
+    p,
+    time {
+      grid-column: 3 / -1;
+      text-align: left;
+    }
+  }
+
+  .bottom-alert {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+
+    button {
+      width: 100%;
+    }
+  }
+}
