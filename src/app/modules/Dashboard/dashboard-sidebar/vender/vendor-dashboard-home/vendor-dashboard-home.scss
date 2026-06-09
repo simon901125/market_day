@@ -1,0 +1,165 @@
+.vendor-home {
+  h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    color: #111827;
+  }
+}
+
+.subtitle {
+  margin: 16px 0 30px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 25px;
+}
+
+.setup-card,
+.notice-card,
+.bottom-alert {
+  border: 1px solid #eadfd4;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+}
+
+.setup-card {
+  padding: 34px;
+
+  h2 {
+    margin: 0 0 22px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #111;
+  }
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 48px 48px 1fr;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee2d6;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  span {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #fff2e6;
+    color: #ff6500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    font-weight: 800;
+  }
+
+  i {
+    font-size: 24px;
+    color: #ff6500;
+  }
+
+  h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 900;
+    color: #111;
+  }
+
+  p {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4b5563;
+    line-height: 1.7;
+  }
+}
+
+.notice-card {
+  padding: 50px 30px;
+  text-align: center;
+
+  .tent-icon {
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 35px;
+    border-radius: 50%;
+    background: #fff2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 75px;
+    }
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.7;
+    color: #111;
+
+    span {
+      color: #ff6500;
+    }
+  }
+
+  p {
+    margin-top: 54px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 2;
+    color: #374151;
+  }
+}
+
+.bottom-alert {
+  margin-top: 27px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  div {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #374151;
+
+    i {
+      font-size: 20px;
+    }
+  }
+
+  button {
+    height: 45px;
+    padding: 0 44px;
+    border: none;
+    border-radius: 8px;
+    background: #ff6500;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 900;
+
+    i {
+      margin-right: 8px;
+    }
+  }
+}
+
+
