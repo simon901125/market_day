@@ -3,7 +3,7 @@ import { MarketCardItem } from '../../../models/MarketCardItem';
 import { UserMarketSearchPanel } from '../user-market-search-panel/user-market-search-panel';
 import { UserMarketCard } from '../user-market-card/user-market-card';
 import { HistoryMarketCardItem } from '../../../models/HistoryMarketCardItem';
-import { BrandType } from '../../../models/list/BrandType ';
+import { BrandType } from '../../../models/type/BrandType ';
 import { MarketStatus } from '../../../models/status/MarketStatus';
 import { Router} from '@angular/router';
 import { UserHistoryMarketCard } from '../user-history-market-card/user-history-market-card';
