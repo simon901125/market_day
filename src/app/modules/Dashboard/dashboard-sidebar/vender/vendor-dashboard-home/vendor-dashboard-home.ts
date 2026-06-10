@@ -12,7 +12,7 @@ import { RouterLink } from '@angular/router';
 export class VendorDashboardHome {
   // 之後接 API 判斷是否有報名 / 通知 / 攤位紀錄
   /** 是否有紀錄 */
-  hasRecords = false; // false = 首次登入引導，true = 儀錶板
+  hasRecords = true; // false = 首次登入引導，true = 儀錶板
 
   /** 首頁儀表板摘要資訊 */
   summaryCards: DashboardSummaryCard[] = [

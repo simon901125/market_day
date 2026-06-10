@@ -2,6 +2,13 @@
   max-width: 1180px;
   margin: 0 auto;
   padding: 7px 0 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -8px 0 8px;
 
   h1 {
     margin: 0;
@@ -12,11 +19,18 @@
   }
 }
 
+.title-accent {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  transform: translateY(-3px);
+}
+
 .subtitle {
-  margin: 10px 0 27px;
+  margin: 10px 2px 27px;
   font-size: 15px;
   font-weight: 700;
-  color: #334155;
+  color: #536073;
 }
 
 /* 共用卡片 */
@@ -34,9 +48,14 @@
 /* 首次登入引導 */
 .home-grid {
   display: grid;
-  grid-template-columns: 1.25fr 0.95fr;
+  grid-template-columns: 1.15fr 0.85fr;
   gap: 18px;
   align-items: stretch;
+}
+
+.setup-card,
+.notice-card {
+  min-height: 386px;
 }
 
 .setup-card {
@@ -53,10 +72,10 @@
 
 .step {
   display: grid;
-  grid-template-columns: 40px 42px 1fr;
+  grid-template-columns: 36px 42px 1fr;
   align-items: center;
   gap: 12px;
-  padding: 13px 0 10px;
+  padding: 13px 0;
   border-bottom: 1px solid #eee2d6;
   margin-bottom: 0px;
 
@@ -107,7 +126,7 @@
   .tent-icon {
     width: 90px;
     height: 90px;
-    margin: 0 auto 40px;
+    margin: 0 auto 32px;
     border-radius: 50%;
     background: #fff2e6;
     display: flex;
@@ -119,11 +138,21 @@
     }
   }
 
+  // .plant-icon {
+  //   display: flex;
+  //   align-items: center;
+  //   justify-content: center;
+  //   margin-bottom:-30px ;
+  //   img {
+  //     width: 320px;
+  //   }
+  // }
+
   h2 {
     margin: 0;
-    font-size: 20px;
-    font-weight: 900;
-    line-height: 1.75;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.60;
     color: #111;
 
     span {
@@ -132,12 +161,20 @@
   }
 
   p {
-    margin: 42px 0 0;
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 1.9;
+    margin: 38px 0 0;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.7;
     color: #334155;
   }
+}
+
+.plant-icon {
+  position: absolute;
+  pointer-events: none;
+  right: 40px;
+  bottom: 25px;
+  width: 118px;
 }
 
 .bottom-alert {
@@ -173,6 +210,14 @@
 }
 
 /* 有紀錄儀錶板 */
+.vendor-home>h1 {
+  margin: -6px 0 8px;
+  font-size: 30px;
+  font-weight: 900;
+  color: #111827;
+  letter-spacing: 1px;
+}
+
 .dashboard-summary {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -181,11 +226,13 @@
 }
 
 .summary-card {
-  min-height: 112px;
-  padding: 18px 22px;
-  display: flex;
+  min-height: 100px;
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: 76px 1fr auto;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
+  border-radius: 12px;
 
   a {
     margin-left: auto;
@@ -197,14 +244,14 @@
 
     i {
       margin-left: 4px;
-      font-size: 13px;
+      font-size: 12px;
     }
   }
 }
 
 .summary-icon {
-  width: 72px;
-  height: 72px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   background: #fff2e6;
   color: #ff6500;
@@ -213,7 +260,7 @@
   justify-content: center;
 
   i {
-    font-size: 36px;
+    font-size: 34px;
   }
 
   &.blue {
@@ -225,7 +272,7 @@
 .summary-content {
   h3 {
     margin: 0 0 8px;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 900;
     color: #111;
   }
@@ -235,6 +282,7 @@
     font-size: 34px;
     font-weight: 900;
     color: #111827;
+    line-height: 1;
   }
 
   span {
@@ -245,7 +293,8 @@
 }
 
 .latest-card {
-  padding: 26px 28px 28px;
+  padding: 24px 22px 24px;
+  border-radius: 12px;
 }
 
 .latest-header {
@@ -253,6 +302,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 22px;
+  padding: 0 10px;
 
   h2 {
     margin: 0;
@@ -278,7 +328,7 @@
 .notice-row {
   min-height: 62px;
   display: grid;
-  grid-template-columns: 14px 46px 120px 1fr 180px;
+  grid-template-columns: 18px 48px 112px 1fr 180px;
   align-items: center;
   gap: 8px;
   padding: 0 18px;
@@ -331,6 +381,7 @@
 
 /* RWD */
 @media (max-width: 992px) {
+
   .home-grid,
   .dashboard-summary {
     grid-template-columns: 1fr;
