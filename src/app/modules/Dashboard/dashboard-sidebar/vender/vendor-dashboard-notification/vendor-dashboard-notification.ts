@@ -10,8 +10,10 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './vendor-dashboard-notification.scss',
 })
 export class VendorDashboardNotification {
+  /** 是否已讀標籤 */
   activeTab: '全部' | '未讀' | NotificationType = '全部';
 
+  /** 標籤 */
   tabs: Array<'全部' | '未讀' | NotificationType> = [
     '全部',
     '未讀',
@@ -21,6 +23,7 @@ export class VendorDashboardNotification {
     '活動通知',
   ];
 
+  /** 通知列 */
   notifications: NotificationItem[] = [
     {
       icon: 'bi bi-clipboard-check',
@@ -103,7 +106,8 @@ export class VendorDashboardNotification {
       type: '攤位通知',
     },
   ];
-
+  //這裡似乎不用了
+  /** 過濾是否已讀 */
   get filteredNotifications(): NotificationItem[] {
     if (this.activeTab === '全部') return this.notifications;
     if (this.activeTab === '未讀') {

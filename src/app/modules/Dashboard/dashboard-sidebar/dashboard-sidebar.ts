@@ -10,10 +10,14 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './dashboard-sidebar.scss',
 })
 export class DashboardSidebar {
-   @Input() backendTitle = '';
+  /** 後台標題 */
+  @Input() backendTitle = '';
+  /** 側邊欄目錄 */
   @Input() menuItems: MenuItem[] = [];
-
+  /** 使用者名稱 */
   @Input() userName = '';
+  /** 使用者郵件 */
   @Input() userEmail = '';
+  /** 使用者 姓 */
   @Input() userInitial = '';
 }

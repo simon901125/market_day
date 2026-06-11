@@ -8,6 +8,7 @@ import { MenuItem } from '../../../models/MenuItem';
   styleUrl: './organizer-activity-sidebar.scss',
 })
 export class OrganizerActivitySidebar {
+  /** 側邊欄目錄 */
   menuItems: MenuItem[] = [
     { label: '首頁', icon: 'bi-house-fill', path: '/organizer/activity/home' },
     /**badge >> 訊息數 */
