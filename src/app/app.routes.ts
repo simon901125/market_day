@@ -19,7 +19,8 @@ import { Auth } from './modules/auth/auth/auth';
 import { UserAboutUs } from './modules/user/user-about-us/user-about-us';
 import { VendorDashboardHome } from './modules/dashboard/dashboard-sidebar/vender/vendor-dashboard-home/vendor-dashboard-home';
 import { VendorDashboardShell } from './modules/dashboard/dashboard-sidebar/vender/vendor-dashboard-shell/vendor-dashboard-shell';
-import { VendorDashboardNotification } from './modules/dashboard/dashboard-sidebar/vender/vendor-dashboard-notification/vendor-dashboard-notification';
+import { DashboardNotification } from './modules/dashboard/dashboard-sidebar/dashboard-notification/dashboard-notification';
+
 
 import { AUTH_ROUTE_DATA } from './config/auth-route-data';
 
@@ -96,6 +97,7 @@ export const routes: Routes = [
       {
         path: 'dash-board',
         component: VendorDashboardShell,
+        data: AUTH_ROUTE_DATA.vendorDashBoardNotification,
         children: [
           {
             path: '',
@@ -108,7 +110,7 @@ export const routes: Routes = [
           },
           {
             path: 'notification',
-            component: VendorDashboardNotification,
+            component: DashboardNotification,
           },
         ],
       },
@@ -160,6 +162,7 @@ export const routes: Routes = [
       {
         path: 'dash-board',
         component: OrganizerActivityShell,
+        data: AUTH_ROUTE_DATA.organizerVerifyEmail,
         children: [
           {
             path: '',
@@ -172,7 +175,7 @@ export const routes: Routes = [
           },
           {
             path: 'notification',
-            component: OrganizerActivityNotification,
+            component: DashboardNotification,
           },
         ],
       },

@@ -1,20 +1,29 @@
 import { Component } from '@angular/core';
-import { NotificationType } from '../../../../../models/NotificationItem';
-import { NotificationItem } from '../../../../../models/NotificationItem';
+import { NotificationType } from '../../../../models/NotificationItem';
+import { NotificationItem } from '../../../../models/NotificationItem';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 @Component({
-  selector: 'app-vendor-dashboard-notification',
-  imports: [CommonModule, FormsModule],
-  templateUrl: './vendor-dashboard-notification.html',
-  styleUrl: './vendor-dashboard-notification.scss',
+  selector: 'app-dashboard-notification',
+  imports: [CommonModule, FormsModule, ],
+  templateUrl: './dashboard-notification.html',
+  styleUrl: './dashboard-notification.scss',
 })
-export class VendorDashboardNotification {
+export class DashboardNotification {
+  /** 目前畫面使用的 tabs */
+  tabs: Array<'全部' | '未讀' | NotificationType> = [];
+  /** 目前角色 */
+  role: 'vendor' | 'organizer' = 'vendor';
+  /** 目前畫面使用的通知資料 */
+  notifications: NotificationItem[] = [];
+
   /** 是否已讀標籤 */
   activeTab: '全部' | '未讀' | NotificationType = '全部';
 
+  //vendor
   /** 標籤 */
-  tabs: Array<'全部' | '未讀' | NotificationType> = [
+  vendorTabs: Array<'全部' | '未讀' | NotificationType> = [
     '全部',
     '未讀',
     '報名通知',
@@ -24,7 +33,7 @@ export class VendorDashboardNotification {
   ];
 
   /** 通知列 */
-  notifications: NotificationItem[] = [
+  vendorNotifications: NotificationItem[] = [
     {
       icon: 'bi bi-clipboard-check',
       iconClass: 'orange',
@@ -106,6 +115,113 @@ export class VendorDashboardNotification {
       type: '攤位通知',
     },
   ];
+
+  //organizer
+
+  // 通知分類 Tabs
+  organizerTabs: Array<'全部' | '未讀' | NotificationType> = [
+    '全部',
+    '未讀',
+    '報名相關',
+    '付款相關',
+    '活動異動',
+    '系統公告',
+  ];
+
+  // 主辦方通知資料
+  /** 主辦方通知列表 */
+  organizerNotifications: NotificationItem[] = [
+    {
+      icon: 'bi bi-calendar-event',
+      iconClass: 'orange',
+      title: '品牌「森日甜點」送出報名申請：夏日綠意市集',
+      status: '新報名',
+      statusClass: 'pending',
+      date: '2026/06/02 14:30',
+      unread: true,
+      type: '報名相關',
+    },
+    {
+      icon: 'bi bi-wallet2',
+      iconClass: 'blue',
+      title: '品牌「木木手作」已完成付款：貓貓森林市集',
+      status: '付款完成',
+      statusClass: 'payment',
+      date: '2026/06/02 13:10',
+      unread: true,
+      type: '付款相關',
+    },
+    {
+      icon: 'bi bi-arrow-repeat',
+      iconClass: 'green',
+      title: '品牌「草語選物」申請退款：夏日綠意市集',
+      status: '退款申請',
+      statusClass: 'refund',
+      date: '2026/06/02 11:45',
+      unread: true,
+      type: '付款相關',
+    },
+    {
+      icon: 'bi bi-pencil',
+      iconClass: 'purple',
+      title: '品牌「日常手作所」已完成補件並重新送審：秋日手作市集',
+      status: '補件完成',
+      statusClass: 'success',
+      date: '2026/06/02 10:15',
+      unread: false,
+      type: '報名相關',
+    },
+    {
+      icon: 'bi bi-map',
+      iconClass: 'teal',
+      title: '品牌「木木手作」已完成攤位選擇：貓貓森林市集',
+      status: '完成選位',
+      statusClass: 'success',
+      date: '2026/06/01 16:20',
+      unread: false,
+      type: '報名相關',
+    },
+    {
+      icon: 'bi bi-megaphone',
+      iconClass: 'yellow',
+      title: '夏日綠意市集活動時間調整，請參考最新公告',
+      status: '活動異動',
+      statusClass: 'info',
+      date: '2026/05/29 09:30',
+      unread: false,
+      type: '活動異動',
+    },
+    {
+      icon: 'bi bi-calendar-x',
+      iconClass: 'red',
+      title: '冬季暖心市集已下架或取消',
+      status: '已下架',
+      statusClass: 'cancel',
+      date: '2026/05/30 15:05',
+      unread: false,
+      type: '活動異動',
+    },
+    {
+      icon: 'bi bi-check-circle',
+      iconClass: 'blue',
+      title: '春日野餐市集活動已結束，感謝您的參與',
+      status: '活動結束',
+      statusClass: 'success',
+      date: '2026/05/26 18:30',
+      unread: false,
+      type: '系統公告',
+    },
+  ];
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    const role = this.route.parent?.snapshot.data['role'] as 'vendor' | 'organizer';
+    console.log(role);
+    this.changeRole(role);
+    console.log(role);
+  }
+
   //這裡似乎不用了
   /** 過濾是否已讀 */
   get filteredNotifications(): NotificationItem[] {
@@ -116,6 +232,29 @@ export class VendorDashboardNotification {
 
     return this.notifications.filter((item) => item.type === this.activeTab);
   }
+
+  /**
+ * 根據角色切換通知資料
+ * @param role - vendor 攤主 / organizer 主辦方
+ */
+changeRole(role: 'vendor' | 'organizer'): void {
+  this.role = role;
+
+  if (role === 'vendor') {
+    this.tabs = this.vendorTabs;
+    console.log(this.tabs)
+    this.notifications = this.vendorNotifications;
+  }
+
+  if (role === 'organizer') {
+    this.tabs = this.organizerTabs;
+    console.log(this.tabs)
+    this.notifications = this.organizerNotifications;
+  }
+
+  this.activeTab = '全部';
+  this.currentPage = 1;
+}
 
   //切換 Tab 時回到第一頁
   /**
@@ -129,7 +268,7 @@ export class VendorDashboardNotification {
 
   /** 將所有通知標記為已讀，全部已讀後也回第一頁 */
   markAllAsRead(): void {
-    this.notifications = this.notifications.map((item) => ({
+    this.notifications  = this.notifications.map((item) => ({
       ...item,
       unread: false,
     }));
@@ -139,7 +278,7 @@ export class VendorDashboardNotification {
   /** 當前頁碼 */
   currentPage = 1;
   /** 每頁顯示的通知數量 */
-  pageSize = 7;
+  pageSize = 8;
 
   /** 計算頁數 */
   totalPages() {
