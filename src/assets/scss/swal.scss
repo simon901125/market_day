@@ -1,9 +1,9 @@
 .custom-swal-popup {
-  width: 29rem !important;
-  padding: 2rem 3.2rem 2.3rem !important;
-  border-radius: 0.85rem !important;
+  width: 26rem !important;
+  padding: 1.8rem 2.8rem 2rem !important;
+  border-radius: 0.8rem !important;
   background: #fff !important;
-  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.16) !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16) !important;
 }
 
 .custom-swal-html {
@@ -14,8 +14,8 @@
 }
 
 .custom-swal-icon {
-  margin: 0 auto 1.15rem;
-  font-size: 3.7rem;
+  margin: 0 auto 1rem;
+  font-size: 3.3rem;
   line-height: 1;
 
   &.success {
@@ -40,19 +40,19 @@
 }
 
 .custom-swal-title {
-  margin: 0 0 0.8rem;
-  font-size: 1.45rem;
+  margin: 0 0 0.65rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: #222;
   letter-spacing: 0.08em;
 }
 
 .custom-swal-text {
-  margin: 0 0 1.8rem;
-  font-size: 1rem;
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem;
   font-weight: 500;
   color: #555;
-  line-height: 1.75;
+  line-height: 1.7;
   letter-spacing: 0.04em;
 }
 
@@ -66,8 +66,8 @@
 
 .custom-swal-confirm,
 .custom-swal-cancel {
-  height: 3rem !important;
-  padding: 0 2rem !important;
+  height: 2.7rem !important;
+  padding: 0 1.8rem !important;
   border: 0 !important;
   border-radius: 0.4rem !important;
   color: #fff !important;
@@ -77,7 +77,7 @@
 }
 
 .custom-swal-confirm {
-  min-width: 180px !important;
+  min-width: 160px !important;
   background: #f59e0b !important;
 
   &:hover {
@@ -87,10 +87,10 @@
 
 .custom-swal-cancel {
   min-width: 90px !important;
-  background: #e5e7eb !important;
-  color: #374151 !important;
+  background: #f3f4f6 !important;
+  color: #4b5563 !important;
 
   &:hover {
-    background: #d1d5db !important;
+    background: #e5e7eb !important;
   }
 }
