@@ -2,7 +2,7 @@
   <div class="page-header">
     <h1>通知中心</h1>
 
-    <button class="read-btn" type="button" (click)="markAllAsRead()">全部標示為已讀</button>
+    <!-- <button class="read-btn" type="button" (click)="markAllAsRead()">全部標示為已讀</button> -->
   </div>
 
   <div class="tabs">
@@ -26,11 +26,10 @@
 
       <i class="notice-icon" [class]="item.icon" [ngClass]="item.iconClass"></i>
 
-      <h3>{{ item.title }}</h3>
-
-      <span class="status-badge" [ngClass]="item.statusClass">
-        {{ item.status }}
-      </span>
+      <h3>
+        <span class="status-text">【{{ item.status }}】</span>
+        {{ item.title }}
+      </h3>
 
       <time>{{ item.date }}</time>
     </article>

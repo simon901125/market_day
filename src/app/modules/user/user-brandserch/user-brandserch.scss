@@ -220,8 +220,16 @@
     width: calc(100% - 32px);
   }
 
-  .filter-actions {
-    justify-content: flex-end;
+  .filter-top {
+    flex-wrap: wrap;
+  }
+
+  .search-input {
+    flex: 1 1 100%;
+  }
+
+  .search-btn {
+    flex: 1;
   }
 
   .brand-grid {

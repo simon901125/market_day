@@ -1,3 +1,4 @@
+@use "assets/scss/swal";
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
@@ -41,10 +42,11 @@ body {
   --shadow-card: 0 12px 32px rgba(47, 41, 36, 0.1);
 
   /* 狀態顏色 */
-  --status-active-bg: rgba(98, 162, 29, 0.85);;
-  --status-upcoming-bg: rgba(245, 158, 11, 0.85);
-  --status-preparing-bg: rgba(79, 143, 217, 0.85);
-  --status-ended-bg: rgba(139, 139, 139, 0.85);
+  /** 市集狀態-MarketStatus*/
+  --market-status-active-bg: rgba(98, 162, 29, 0.85);;
+  --market-status-upcoming-bg: rgba(245, 158, 11, 0.85);
+  --market-status-preparing-bg: rgba(79, 143, 217, 0.85);
+  --market-status-ended-bg: rgba(139, 139, 139, 0.85);
 }
 
 // 驗證紅框
@@ -53,6 +55,7 @@ body {
   font-weight: bold;
 }
 
+//滾輪
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -61,4 +64,39 @@ body {
 ::-webkit-scrollbar-thumb {
   background-color: #acacac;
   border-radius: 4px;
+}
+
+//畫面轉換淡入淡出
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+  animation-timing-function: ease;
+}
+
+::view-transition-old(root) {
+  animation-name: page-fade-out;
+}
+
+::view-transition-new(root) {
+  animation-name: page-fade-in;
+}
+
+@keyframes page-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }

@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Alert } from '../../shared/alert';
 @Component({
   selector: 'app-auth-reset-password',
   imports: [CommonModule, FormsModule],
@@ -29,6 +30,8 @@ export class AuthResetPassword {
   /** 密碼是否吻合 */
   passwordNotMatch = false;
 
+  constructor(private alert: Alert) {}
+  
   /** 檢查密碼長度是否有效 */
   get isPasswordLengthValid(): boolean {
     return this.newPassword.length >= 8;
@@ -62,6 +65,12 @@ export class AuthResetPassword {
       // 驗證成功後
       this.resetSuccess.emit();
     }
+
+    this.alert.success(
+      '密碼重設成功',
+      '你的密碼已更新完成，<br>現在可以返回登入並使用新密碼登入。',
+      '前往登入'
+    );
   }
 
   /** 檢查新密碼與確認密碼是否吻合 */

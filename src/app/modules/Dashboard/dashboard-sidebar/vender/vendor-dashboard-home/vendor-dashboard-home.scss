@@ -1,0 +1,412 @@
+.vendor-home {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 7px 0 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -8px 0 8px;
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 900;
+    color: #111827;
+    letter-spacing: 1px;
+  }
+}
+
+.title-accent {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  transform: translateY(-3px);
+}
+
+.subtitle {
+  margin: 10px 2px 27px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #536073;
+}
+
+/* 共用卡片 */
+.setup-card,
+.notice-card,
+.bottom-alert,
+.summary-card,
+.latest-card {
+  border: 1px solid #eadfd4;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 9px 24px rgba(47, 41, 36, 0.04);
+}
+
+/* 首次登入引導 */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.setup-card,
+.notice-card {
+  min-height: 386px;
+}
+
+.setup-card {
+  padding: 24px 26px 18px;
+
+
+  h2 {
+    margin: 0 0 14px;
+    font-size: 18px;
+    font-weight: 900;
+    color: #111;
+  }
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 36px 42px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid #eee2d6;
+  margin-bottom: 0px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  span {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fff2e6;
+    color: #ff6500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 900;
+  }
+
+  i {
+    font-size: 24px;
+    color: #ff6500;
+  }
+
+  h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 900;
+    color: #111;
+  }
+
+  p {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+    line-height: 1.55;
+  }
+}
+
+.notice-card {
+  position: relative;
+  padding: 42px 32px 34px;
+  text-align: center;
+  overflow: hidden;
+
+  .tent-icon {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 32px;
+    border-radius: 50%;
+    background: #fff2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 56px;
+    }
+  }
+
+  // .plant-icon {
+  //   display: flex;
+  //   align-items: center;
+  //   justify-content: center;
+  //   margin-bottom:-30px ;
+  //   img {
+  //     width: 320px;
+  //   }
+  // }
+
+  h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.60;
+    color: #111;
+
+    span {
+      color: #ff6500;
+    }
+  }
+
+  p {
+    margin: 38px 0 0;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.7;
+    color: #334155;
+  }
+}
+
+.plant-icon {
+  position: absolute;
+  pointer-events: none;
+  right: 40px;
+  bottom: 25px;
+  width: 118px;
+}
+
+.bottom-alert {
+  margin-top: 18px;
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  div {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #334155;
+
+    i {
+      font-size: 22px;
+    }
+  }
+
+  button {
+    height: 50px;
+    padding: 0 48px;
+    border: none;
+    border-radius: 8px;
+    background: #ff6500;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 900;
+  }
+}
+
+/* 有紀錄儀錶板 */
+.vendor-home>h1 {
+  margin: -6px 0 8px;
+  font-size: 30px;
+  font-weight: 900;
+  color: #111827;
+  letter-spacing: 1px;
+}
+
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-bottom: 28px;
+}
+
+.summary-card {
+  min-height: 100px;
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: 76px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  border-radius: 12px;
+
+  a {
+    margin-left: auto;
+    color: #ff6500;
+    font-size: 14px;
+    font-weight: 900;
+    text-decoration: none;
+    white-space: nowrap;
+
+    i {
+      margin-left: 4px;
+      font-size: 12px;
+    }
+  }
+}
+
+.summary-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #fff2e6;
+  color: #ff6500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i {
+    font-size: 34px;
+  }
+
+  &.blue {
+    background: #eaf3ff;
+    color: #1683f5;
+  }
+}
+
+.summary-content {
+  h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 900;
+    color: #111;
+  }
+
+  strong {
+    margin-right: 8px;
+    font-size: 34px;
+    font-weight: 900;
+    color: #111827;
+    line-height: 1;
+  }
+
+  span {
+    font-size: 15px;
+    font-weight: 900;
+    color: #111;
+  }
+}
+
+.latest-card {
+  padding: 24px 22px 24px;
+  border-radius: 12px;
+}
+
+.latest-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  padding: 0 10px;
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 900;
+    color: #111;
+  }
+
+  button {
+    border: none;
+    background: transparent;
+    color: #ff6500;
+    font-size: 15px;
+    font-weight: 900;
+  }
+}
+
+.notice-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.notice-row {
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 18px 48px 112px 1fr 180px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 18px;
+  border-bottom: 1px solid #eee;
+  border-radius: 6px;
+
+  &.unread {
+    background: #fff4ec;
+    border-bottom: none;
+    margin-bottom: 4px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff6500;
+  }
+
+  &:not(.unread) .dot {
+    background: transparent;
+  }
+
+  .notice-icon {
+    font-size: 25px;
+    color: #ff6500;
+  }
+
+  strong {
+    font-size: 15px;
+    font-weight: 900;
+    color: #111;
+    white-space: nowrap;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  time {
+    font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+    text-align: right;
+  }
+}
+
+/* RWD */
+@media (max-width: 992px) {
+
+  .home-grid,
+  .dashboard-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .notice-row {
+    grid-template-columns: 12px 36px 1fr;
+    row-gap: 6px;
+    padding: 14px 16px;
+
+    strong,
+    p,
+    time {
+      grid-column: 3 / -1;
+      text-align: left;
+    }
+  }
+
+  .bottom-alert {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+
+    button {
+      width: 100%;
+    }
+  }
+}

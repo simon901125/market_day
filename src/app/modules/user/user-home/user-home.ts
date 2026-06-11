@@ -3,7 +3,7 @@ import { RouterLink,Router } from '@angular/router';
 import { UserMarketSearchPanel } from '../user-market-search-panel/user-market-search-panel';
 import { MarketCardItem } from '../../../models/MarketCardItem';
 import { UserMarketCard } from '../user-market-card/user-market-card';
-import { BrandType } from '../../../models/list/BrandType ';
+import { BrandType } from '../../../models/type/BrandType ';
 import { MarketStatus } from '../../../models/status/MarketStatus';
 import { CommonModule } from '@angular/common';
 
@@ -71,10 +71,10 @@ export class UserHome implements OnInit, OnDestroy{
       desc: '小集日致力於連結品牌、攤主與喜歡市集的人，<br />打造屬於城市的美好交流平台。',
       image: 'assets/images/user/user-home-hero-market-04.png',
       primaryText: '認識小集日',
-      primaryLink: '/about',
+      primaryLink: '/user/about',
       primaryIcon: 'bi bi-info-circle',
       secondaryText: '聯絡我們',
-      secondaryLink: '/contact',
+      secondaryLink: '/user/about',
       secondaryIcon: 'bi bi-chat-dots',
     },
   ];

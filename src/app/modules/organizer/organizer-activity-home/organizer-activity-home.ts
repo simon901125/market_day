@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FlowStep } from '../../../models/FlowStep';
 import { Activity } from '../../../models/Activity';
-import { SummaryCard } from '../../../models/SummaryCard';
-import { Notice } from '../../../models/Notice';
+import { DashboardSummaryCard } from '../../../models/DashboardSummaryCard';
+import { DashboardNotification } from '../../../models/DashboardNotification';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -26,7 +26,7 @@ export class OrganizerActivityHome {
   ];
 
   /** 摘要卡片 */
-  summaryCards: SummaryCard[] = [
+  summaryCards: DashboardSummaryCard[] = [
     {
       title: '待審核報名',
       count: 12,
@@ -86,7 +86,7 @@ export class OrganizerActivityHome {
   ];
 
   /** 通知 */
-  notices: Notice[] = [
+  notices: DashboardNotification[] = [
     {
       type: 'signup',
       text: '草悟野餐市集收到 1 筆新的攤主報名',
@@ -117,7 +117,7 @@ export class OrganizerActivityHome {
    * @param type 通知類型
    * @returns 圖示名稱
    */
-  getNoticeIcon(type: Notice['type']): string {
+  getNoticeIcon(type: DashboardNotification['type']): string {
     return {
       signup: 'bi-clipboard-check',
       payment: 'bi-wallet2',
