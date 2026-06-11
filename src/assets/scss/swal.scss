@@ -1,0 +1,96 @@
+.custom-swal-popup {
+  width: 29rem !important;
+  padding: 2rem 3.2rem 2.3rem !important;
+  border-radius: 0.85rem !important;
+  background: #fff !important;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.16) !important;
+}
+
+.custom-swal-html {
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+  overflow: visible !important;
+}
+
+.custom-swal-icon {
+  margin: 0 auto 1.15rem;
+  font-size: 3.7rem;
+  line-height: 1;
+
+  &.success {
+    color: #45b957;
+  }
+
+  &.error {
+    color: #ef4444;
+  }
+
+  &.warning {
+    color: #f59e0b;
+  }
+
+  &.info {
+    color: #3b82f6;
+  }
+
+  &.question {
+    color: #f59e0b;
+  }
+}
+
+.custom-swal-title {
+  margin: 0 0 0.8rem;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #222;
+  letter-spacing: 0.08em;
+}
+
+.custom-swal-text {
+  margin: 0 0 1.8rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #555;
+  line-height: 1.75;
+  letter-spacing: 0.04em;
+}
+
+.custom-swal-actions {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  margin: 0 !important;
+}
+
+.custom-swal-confirm,
+.custom-swal-cancel {
+  height: 3rem !important;
+  padding: 0 2rem !important;
+  border: 0 !important;
+  border-radius: 0.4rem !important;
+  color: #fff !important;
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.custom-swal-confirm {
+  min-width: 180px !important;
+  background: #f59e0b !important;
+
+  &:hover {
+    background: #e88900 !important;
+  }
+}
+
+.custom-swal-cancel {
+  min-width: 90px !important;
+  background: #e5e7eb !important;
+  color: #374151 !important;
+
+  &:hover {
+    background: #d1d5db !important;
+  }
+}
