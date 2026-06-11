@@ -17,9 +17,9 @@ import { OrganizerActivityHome } from './modules/organizer/organizer-activity-ho
 import { OrganizerActivityNotification } from './modules/organizer/organizer-activity-notification/organizer-activity-notification';
 import { Auth } from './modules/auth/auth/auth';
 import { UserAboutUs } from './modules/user/user-about-us/user-about-us';
-import { VendorDashboardHome } from './modules/Dashboard/dashboard-sidebar/vender/vendor-dashboard-home/vendor-dashboard-home';
-import { VendorDashboardShell } from './modules/Dashboard/dashboard-sidebar/vender/vendor-dashboard-shell/vendor-dashboard-shell';
-import { VendorDashboardNotification } from './modules/Dashboard/dashboard-sidebar/vender/vendor-dashboard-notification/vendor-dashboard-notification';
+import { VendorDashboardHome } from './modules/dashboard/dashboard-sidebar/vender/vendor-dashboard-home/vendor-dashboard-home';
+import { VendorDashboardShell } from './modules/dashboard/dashboard-sidebar/vender/vendor-dashboard-shell/vendor-dashboard-shell';
+import { VendorDashboardNotification } from './modules/dashboard/dashboard-sidebar/vender/vendor-dashboard-notification/vendor-dashboard-notification';
 
 export const routes: Routes = [
   {
