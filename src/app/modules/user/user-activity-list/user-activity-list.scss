@@ -113,12 +113,17 @@
       transform 0.25s ease;
 
     &.active,
-    &:hover {
+    &:hover:not(:disabled) {
       color: #fff;
       border-color: var(--primary-color);
       background: var(--primary-color);
-      transform: translateY(-1px);
     }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
   }
 }
 

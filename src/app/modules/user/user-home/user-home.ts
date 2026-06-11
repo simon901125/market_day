@@ -38,7 +38,7 @@ export class UserHome implements OnInit, OnDestroy{
       desc: '探索城市裡最有溫度的市集活動，<br />發現手作、美食與生活靈感。',
       image: 'assets/images/user/user-home-hero-market-01.png',
       primaryText: '探索市集',
-      primaryLink: '/user/markets',
+      primaryLink: '/user/activity-list',
       primaryIcon: 'bi bi-search',
       secondaryText: '探索品牌',
       secondaryLink: '/user/brands',

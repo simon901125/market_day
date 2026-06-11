@@ -32,12 +32,40 @@
       <app-user-market-search-panel></app-user-market-search-panel>
 
       <div class="market-grid">
-        @for (market of markets; track $index) {
+        @for (market of pagedMarkets; track market.title) {
           <app-user-market-card
             [market]="market"
             (click)="goToActivityDetail(market)"
           ></app-user-market-card>
         }
+      </div>
+
+      <div class="pagination">
+        <button
+          type="button"
+          [disabled]="currentPage === 1"
+          (click)="prevPage()"
+        >
+          <i class="bi bi-chevron-left"></i>
+        </button>
+
+        @for (page of pageNumbers; track page) {
+          <button
+            type="button"
+            [class.active]="currentPage === page"
+            (click)="changePage(page)"
+          >
+            {{ page }}
+          </button>
+        }
+
+        <button
+          type="button"
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+        >
+          <i class="bi bi-chevron-right"></i>
+        </button>
       </div>
     } @else {
       <div class="history-header">
@@ -45,7 +73,7 @@
       </div>
 
       <div class="history-list">
-        @for (market of historyMarkets; track $index) {
+        @for (market of historyMarkets; track market.title) {
           <app-user-history-market-card
             [market]="market"
             (click)="goToActivityHistory(market)"
@@ -53,19 +81,5 @@
         }
       </div>
     }
-
-    <div class="pagination">
-      <button type="button">
-        <i class="bi bi-chevron-left"></i>
-      </button>
-
-      <button type="button" class="active">1</button>
-      <button type="button">2</button>
-      <button type="button">3</button>
-
-      <button type="button">
-        <i class="bi bi-chevron-right"></i>
-      </button>
-    </div>
   </section>
 </div>
