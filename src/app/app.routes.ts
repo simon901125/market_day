@@ -15,6 +15,7 @@ import { VendorDashboardNotification } from './modules/vendor/dashboard/vendor-d
 import { OrganizerDashboardHome } from './modules/organizer/dashboard/organizer-dashboard-home/organizer-dashboard-home';
 import { OrganizerDashboardNotification } from './modules/organizer/dashboard/organizer-dashboard-notification/organizer-dashboard-notification';
 import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organizer-home';
+import { VendorHome } from './modules/vendor/frontend/vendor-home/vendor-home';
 
 export const routes: Routes = [
   /** 預設導向 */
@@ -65,6 +66,7 @@ export const routes: Routes = [
   {
     path: 'vendor',
     children: [
+      { path: 'home', component: VendorHome },
       { path: 'login', component: Auth, data: AUTH_ROUTE_DATA.vendorLogin },
       { path: 'register', component: Auth, data: AUTH_ROUTE_DATA.vendorRegister },
       { path: 'forgot-password', component: Auth, data: AUTH_ROUTE_DATA.vendorForgotPassword },

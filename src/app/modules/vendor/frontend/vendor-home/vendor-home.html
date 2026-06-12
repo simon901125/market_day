@@ -1,0 +1,183 @@
+<app-vendor-header></app-vendor-header>
+<main class="container">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>
+        讓好品牌，<br />
+        在對的市集<span>被看見</span>
+      </h1>
+      <p>
+        註冊成為攤主，建立攤位資料，<br />
+        開始報名適合你的市集活動。
+      </p>
+
+      <div class="hero-actions">
+        <a routerLink="/organizer/register" class="primary-btn">立即加入攤主</a>
+        <a routerLink="/organizer/login" class="outline-btn">查看可報名市集</a>
+      </div>
+    </div>
+
+    <div class="hero-image">
+      <img src="/assets/images/user/user-home-hero-market-01.png" alt="市集攤位" />
+    </div>
+  </section>
+
+  <!-- 近期可報名市集 -->
+  <section class="home-section">
+    <div class="section-title-row">
+      <h2>
+        <i class="bi bi-shop"></i>
+        近期可報名市集
+      </h2>
+
+      <a routerLink="/market/list">
+        查看所有市集
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="market-grid">
+      @for (market of markets; track $index; let i = $index;) {
+        <app-user-market-card [market]="market" (click)="goToActivityDetail(market)"></app-user-market-card>
+      }
+    </div>
+  </section>
+
+  <!-- 平台特色 -->
+  <section class="home-section">
+    <h2 class="section-title">
+      <i class="bi bi-shop"></i>
+      平台特色
+    </h2>
+
+    <div class="feature-strip">
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="bi bi-search"></i>
+        </div>
+
+        <div>
+          <h3>快速找到適合的市集</h3>
+          <p>多元市集分類與篩選， 快速找到符合品牌定位的活動。</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="bi bi-map"></i>
+        </div>
+
+        <div>
+          <h3>互動式攤位選位</h3>
+          <p>查看攤位配置圖， 自行選擇喜歡的攤位位置。</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="bi bi-bell"></i>
+        </div>
+
+        <div>
+          <h3>即時掌握報名進度</h3>
+          <p>審核結果與攤位通知， 皆可於通知中心查看。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 為什麼選擇 -->
+  <section class="home-section">
+    <h2 class="section-title">
+      <i class="bi bi-shop"></i>
+      為什麼攤主選擇小集日？
+    </h2>
+
+    <div class="row g-4">
+      <div class="col-12 col-md-4">
+        <article class="reason-card">
+          <img src="assets/images/vendor-home/reason-01.png" alt="找到適合的市集" />
+
+          <div class="reason-body">
+            <h3>
+              <span>01</span>
+              找到適合的市集
+            </h3>
+
+            <ul>
+              <li><i class="bi bi-check-lg"></i>多元市集分類，快速篩選</li>
+              <li><i class="bi bi-check-lg"></i>完整活動資訊，一目了然</li>
+              <li><i class="bi bi-check-lg"></i>快速找到適合品牌的活動</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <article class="reason-card">
+          <img src="assets/images/vendor-home/reason-02.png" alt="搶到理想攤位" />
+
+          <div class="reason-body">
+            <h3>
+              <span>02</span>
+              搶到理想攤位
+            </h3>
+
+            <ul>
+              <li><i class="bi bi-check-lg"></i>查看攤位配置圖</li>
+              <li><i class="bi bi-check-lg"></i>自行選擇喜歡的位置</li>
+              <li><i class="bi bi-check-lg"></i>攤位結果即時同步</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <article class="reason-card">
+          <img src="assets/images/vendor-home/reason-03.png" alt="集中管理報名紀錄" />
+
+          <div class="reason-body">
+            <h3>
+              <span>03</span>
+              集中管理報名紀錄
+            </h3>
+
+            <ul>
+              <li><i class="bi bi-check-lg"></i>所有報名活動集中管理</li>
+              <li><i class="bi bi-check-lg"></i>清楚掌握審核與付款狀態</li>
+              <li><i class="bi bi-check-lg"></i>重要時程與訊息不遺漏</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="home-section faq-section">
+    <h2 class="section-title">
+      <i class="bi bi-shop"></i>
+      常見問題
+    </h2>
+
+    <article class="faq-item">
+      <h3>如何報名市集活動？</h3>
+      <p>註冊並完成攤位資料後，即可於市集報名列表選擇開放報名中的活動， 填寫報名資料並送出申請。</p>
+    </article>
+
+    <article class="faq-item">
+      <h3>報名後多久會有審核結果？</h3>
+      <p>
+        主辦方通常會於收到報名申請後 3 天內完成審核，
+        審核結果將同步顯示於攤主後台，並透過通知中心提醒。
+      </p>
+    </article>
+
+    <article class="faq-item">
+      <h3>審核通過後要做什麼？</h3>
+      <p>審核通過後需於 3 天內完成付款， 付款成功後即可於開放選位期間選擇攤位。</p>
+    </article>
+  </section>
+</main>
+<app-user-footer></app-user-footer>

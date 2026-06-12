@@ -11,7 +11,7 @@ import { DashboardSummaryCard } from '../../../../models/DashboardSummaryCard';
 })
 export class VendorDashboardHome {
   /** 是否有紀錄 */
-  hasRecords = true;
+  hasRecords = false;
 
   /** 首頁儀表板摘要資訊 */
   summaryCards: DashboardSummaryCard[] = [
