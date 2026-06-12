@@ -1,48 +1,78 @@
 .admin-login-page {
   min-height: 100vh;
+  background-color: var(--primary-soft);
   background-image: url('/assets/images/auth-BackImg.png');
-  background-size: cover;
-  background-position: center;
+  background-size: 100% 100%;
+  background-position: center center;
   background-repeat: no-repeat;
+  padding: 20px 60px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-weight: 600;
 }
 
 .admin-login-header {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 
   img {
-    width: 180px;
+    width: 250px;
+    height: auto;
     cursor: pointer;
   }
 }
 
 .admin-login-container {
-  max-width: 1180px;
-  margin: 0 auto;
+  flex: 1;
   display: grid;
-  grid-template-columns: 1fr 460px;
+  grid-template-columns: 1fr 1.4fr;
   gap: 72px;
   align-items: center;
+  padding: 0 16px;
 }
 
 .admin-login-intro {
+  margin: 35% auto auto;
+
   h1 {
     margin: 0;
-    font-size: 48px;
+    font-size: 2.5rem;
     font-weight: 900;
-    color: #111827;
+    color: var(--text-dark);
     line-height: 1.25;
 
     span {
-      display: block;
-      color: #f59e0b;
+      color: var(--primary-color);
     }
   }
 
-  p {
-    margin: 24px 0 0;
+  .admin-login-desc-primary {
+    margin: 24px 0;
     font-size: 18px;
     line-height: 2;
-    color: #4b5563;
+    font-weight: 900;
+    color: var(--text-dark);
+  }
+
+  .admin-login-desc-secondary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    line-height: 1.5;
+    font-weight: 700;
+    color: var(--text-light);
+
+    i {
+      display: flex;
+      align-items: center;
+      font-size: 1.8rem;
+      color: var(--primary-color);
+    }
+
+    p {
+      margin-top: auto;
+      margin-bottom: auto;
+    }
   }
 }
 
@@ -51,15 +81,19 @@
   width: 48px;
   height: 4px;
   border-radius: 99px;
-  background: #f59e0b;
+  background: var(--primary-color);
   margin-top: 18px;
 }
 
 .admin-login-card {
-  background: #fff;
-  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-section);
   padding: 44px 42px;
-  box-shadow: 0 18px 50px rgba(17, 24, 39, 0.08);
+  margin-bottom: auto;
+  box-shadow: var(--shadow-card);
+  max-height: 70vh;
+  aspect-ratio: 5 / 4;
 }
 
 .admin-login-form {
@@ -67,13 +101,13 @@
     margin: 0;
     font-size: 28px;
     font-weight: 900;
-    color: #111827;
+    color: var(--text-dark);
   }
 
   .form-desc {
     margin: 20px 0 28px;
     font-size: 15px;
-    color: #6b7280;
+    color: var(--text-normal);
   }
 }
 
@@ -85,32 +119,43 @@
     margin-bottom: 8px;
     font-size: 14px;
     font-weight: 800;
-    color: #374151;
+    color: var(--text-dark);
   }
 }
 
 .input-box {
   height: 48px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-tag);
+  background: var(--bg-white);
   display: flex;
   align-items: center;
   padding: 0 14px;
+  transition: 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.14);
+  }
 
   i {
-    color: #f59e0b;
+    color: var(--text-normal);
     font-size: 18px;
     margin-right: 10px;
   }
 
   input {
     flex: 1;
+    min-width: 0;
     border: 0;
     outline: 0;
     font-size: 15px;
-    color: #111827;
+    color: var(--text-dark);
     background: transparent;
+
+    &::placeholder {
+      color: var(--text-light);
+    }
   }
 }
 
@@ -121,7 +166,7 @@
 
   i {
     margin: 0;
-    color: #9ca3af;
+    color: var(--text-normal);
   }
 }
 
@@ -130,20 +175,30 @@
   height: 48px;
   margin-top: 8px;
   border: 0;
-  border-radius: 12px;
-  background: #f59e0b;
-  color: #fff;
-  font-size: 16px;
+  border-radius: var(--radius-tag);
+  background: var(--primary-color);
+  color: var(--bg-white);
   font-weight: 900;
   cursor: pointer;
+  transition: 0.2s ease;
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+}
+
+hr {
+  margin: 1.5rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--border-light);
 }
 
 .notice {
-  margin-top: 18px;
   padding: 14px 16px;
-  border-radius: 12px;
-  background: #fff7ed;
-  color: #92400e;
+  color: var(--text-light);
   font-size: 14px;
   line-height: 1.6;
+  display: flex;
+  align-items: center;
+  justify-self: center;
 }

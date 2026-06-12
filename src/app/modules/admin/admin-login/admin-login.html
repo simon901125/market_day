@@ -10,17 +10,18 @@
   <div class="admin-login-container">
     <aside class="admin-login-intro">
       <h1>
-        登入
-        <span>管理員後台</span>
+        登入<span>管理員後台</span>
       </h1>
-
       <div class="orange-line"></div>
+      <p class="admin-login-desc-primary">管理市集活動、主辦方帳號與平台資料。</p>
 
-      <p>
-        管理市集活動、主辦方帳號與平台資料。<br />
-        系統將於閒置一段時間後自動登出，<br />
-        請妥善保管管理員帳號。
-      </p>
+      <div class="admin-login-desc-secondary">
+        <i class="bi bi-shield-check"></i>
+        <p>
+          系統將於閒置一段時間後自動登出，<br />
+          請妥善保管管理員帳號。
+        </p>
+      </div>
     </aside>
 
     <main class="admin-login-card">
@@ -67,7 +68,7 @@
         <button type="button" class="main-btn" (click)="loginAdmin()">
           登入後台
         </button>
-
+        <hr />
         <div class="notice">
           後台帳號由系統建立，若無法登入請聯絡系統管理者。
         </div>

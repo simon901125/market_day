@@ -1,7 +1,14 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationItem, NotificationType } from '../../../models/NotificationItem';
 import { Pagination } from '../../shared/pagination/pagination';
+import { NotificationStatus } from '../../../models/status/NotificationStatus';
+
+/** 通知頁籤類型 */
+type NotificationTab =
+  | typeof NotificationStatus.all
+  | typeof NotificationStatus.unread
+  | NotificationType;
 
 @Component({
   selector: 'app-dashboard-notification',
@@ -9,15 +16,15 @@ import { Pagination } from '../../shared/pagination/pagination';
   templateUrl: './dashboard-notification.html',
   styleUrl: './dashboard-notification.scss',
 })
-export class DashboardNotification implements OnChanges {
-  /** 通知分類 */
-  @Input() tabs: Array<'全部' | '未讀' | NotificationType> = [];
+export class DashboardNotification implements OnChanges, OnInit {
+  /** 通知分類頁籤 */
+  @Input() tabs: NotificationTab[] = [];
 
   /** 通知資料 */
   @Input() notifications: NotificationItem[] = [];
 
   /** 目前選中的分類 */
-  activeTab: '全部' | '未讀' | NotificationType = '全部';
+  activeTab: NotificationTab = NotificationStatus.all;
 
   /** 當前頁碼 */
   currentPage = 1;
@@ -25,37 +32,62 @@ export class DashboardNotification implements OnChanges {
   /** 每頁顯示數量 */
   pageSize = 8;
 
-  /** 當外部通知資料改變時，重置分類與頁碼 */
-  ngOnChanges(): void {
-    this.activeTab = '全部';
-    this.currentPage = 1;
+  /** 初始化時計算每頁顯示筆數 */
+  ngOnInit(): void {
+    this.updatePageSize();
   }
 
-  /** 過濾通知 */
+  /** 外部資料改變時，重置分類與頁碼 */
+  ngOnChanges(): void {
+    this.activeTab = NotificationStatus.all;
+    this.currentPage = 1;
+    this.updatePageSize();
+  }
+
+  /** 依照視窗高度自動調整每頁筆數 */
+  @HostListener('window:resize')
+  updatePageSize(): void {
+    const headerHeight = 130;
+    const itemHeight = 70;
+
+    const availableHeight = window.innerHeight - headerHeight;
+    const newPageSize = Math.max(5, Math.floor(availableHeight / itemHeight));
+
+    this.pageSize = newPageSize;
+
+    const totalPages = Math.ceil(this.filteredNotifications.length / this.pageSize);
+
+    if (this.currentPage > totalPages) {
+      this.currentPage = Math.max(1, totalPages);
+    }
+  }
+
+  /** 依照目前分類過濾通知 */
   get filteredNotifications(): NotificationItem[] {
-    if (this.activeTab === '全部') {
+    if (this.activeTab === NotificationStatus.all) {
       return this.notifications;
     }
 
-    if (this.activeTab === '未讀') {
+    if (this.activeTab === NotificationStatus.unread) {
       return this.notifications.filter((item) => item.unread);
     }
 
     return this.notifications.filter((item) => item.type === this.activeTab);
   }
 
-  /** 切換分類 */
-  setTab(tab: '全部' | '未讀' | NotificationType): void {
+  /** 切換通知分類 */
+  setTab(tab: NotificationTab): void {
     this.activeTab = tab;
     this.currentPage = 1;
+    this.updatePageSize();
   }
 
-  /** 點擊單筆通知後標記為已讀 */
+  /** 點擊通知後標記為已讀 */
   markAsRead(item: NotificationItem): void {
     item.unread = false;
   }
 
-  /** 目前頁面的通知 */
+  /** 取得目前頁面的通知資料 */
   pagedNotifications(): NotificationItem[] {
     const start = (this.currentPage - 1) * this.pageSize;
     const end = start + this.pageSize;
