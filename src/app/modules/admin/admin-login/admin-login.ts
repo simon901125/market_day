@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { AdminSidebar } from '../admin-sidebar/admin-sidebar';
-import { FormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
-// import { VendorLogin } from "../../vendor/vendor-login/vendor-login";
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-login',
-  imports: [AdminSidebar, FormsModule, CommonModule, ],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './admin-login.html',
   styleUrl: './admin-login.scss',
 })
@@ -15,11 +14,11 @@ export class AdminLogin {
   password = '';
   showPassword = false;
 
-  togglePassword() {
+  togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  loginAdmin() {
+  loginAdmin(): void {
     console.log('admin login', this.email, this.password);
   }
 }

@@ -6,7 +6,6 @@ import { UserActivityDetail } from './modules/user/frontend/user-activity-detail
 import { VendorLayout } from './modules/vendor/vendor-layout/vendor-layout';
 import { UserBrandserch } from './modules/user/frontend/user-brandserch/user-brandserch';
 import { UserBrandDetail } from './modules/user/frontend/user-brand-detail/user-brand-detail';
-import { AdminLayout } from './modules/admin/admin-layout/admin-layout';
 import { AdminLogin } from './modules/admin/admin-login/admin-login';
 import { OrganizerLayout } from './modules/organizer/organizer-layout/organizer-layout';
 import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organizer-home';
@@ -136,14 +135,8 @@ export const routes: Routes = [
 
   /** 系統管理員登入 */
   {
-    path: 'admin',
-    component: AdminLayout,
-    children: [
-      {
-        path: 'login',
-        component: AdminLogin,
-      },
-    ],
+    path: 'admin/login',
+    component: AdminLogin,
   },
 
   /** 攤主後台 */

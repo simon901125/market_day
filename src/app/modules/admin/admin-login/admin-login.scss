@@ -1,232 +1,149 @@
-.auth-form {
-  width: 100%;
+.admin-login-page {
+  min-height: 100vh;
+  background-image: url('/assets/images/auth-BackImg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
-  h2 {
-    font-size: 30px;
-    font-weight: 900;
-    color: #111;
-    margin-top: 16px;
-    margin-bottom: 14px;
+.admin-login-header {
+  margin-bottom: 40px;
+
+  img {
+    width: 180px;
+    cursor: pointer;
   }
 }
 
-.title-line {
-  width: 48px;
-  height: 5px;
-  background: #ff5a00;
-  border-radius: 999px;
-  margin-bottom: 32px;
+.admin-login-container {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 460px;
+  gap: 72px;
+  align-items: center;
 }
 
-.form-desc {
-  font-size: 16px;
-  line-height: 1.8;
-  margin-bottom: 28px;
+.admin-login-intro {
+  h1 {
+    margin: 0;
+    font-size: 48px;
+    font-weight: 900;
+    color: #111827;
+    line-height: 1.25;
+
+    span {
+      display: block;
+      color: #f59e0b;
+    }
+  }
+
+  p {
+    margin: 24px 0 0;
+    font-size: 18px;
+    line-height: 2;
+    color: #4b5563;
+  }
+}
+
+.orange-line,
+.title-line {
+  width: 48px;
+  height: 4px;
+  border-radius: 99px;
+  background: #f59e0b;
+  margin-top: 18px;
+}
+
+.admin-login-card {
+  background: #fff;
+  border-radius: 22px;
+  padding: 44px 42px;
+  box-shadow: 0 18px 50px rgba(17, 24, 39, 0.08);
+}
+
+.admin-login-form {
+  h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 900;
+    color: #111827;
+  }
+
+  .form-desc {
+    margin: 20px 0 28px;
+    font-size: 15px;
+    color: #6b7280;
+  }
 }
 
 .form-group {
-  margin-top: 22px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 
   label {
     display: block;
-    font-size: 17px;
-    font-weight: 800;
-    color: #222;
     margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #374151;
   }
 }
 
 .input-box {
-  height: 52px;
-  border: 1px solid #d8d8d8;
-  border-radius: 7px;
-
+  height: 48px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
   display: flex;
   align-items: center;
-
-  padding: 0 18px;
-  background: #fff;
+  padding: 0 14px;
 
   i {
-    font-size: 22px;
-    color: #444;
-    margin-right: 18px;
+    color: #f59e0b;
+    font-size: 18px;
+    margin-right: 10px;
   }
 
   input {
     flex: 1;
-    min-width: 0;
     border: 0;
     outline: 0;
-    font-size: 17px;
-    color: #333;
-
-    &::placeholder {
-      color: #9ca3af;
-    }
+    font-size: 15px;
+    color: #111827;
+    background: transparent;
   }
 }
 
 .eye-btn {
   border: 0;
   background: transparent;
-  padding: 0;
   cursor: pointer;
 
   i {
     margin: 0;
-    font-size: 22px;
+    color: #9ca3af;
   }
 }
 
 .main-btn {
   width: 100%;
-  height: 58px;
-
+  height: 48px;
+  margin-top: 8px;
   border: 0;
-  border-radius: 6px;
-
-  background: #ff5a00;
+  border-radius: 12px;
+  background: #f59e0b;
   color: #fff;
-
-  font-size: 22px;
-  font-weight: 800;
-
-  margin-top: 8px;
-
-  &:hover {
-    background: #e84f00;
-  }
-}
-
-.admin-note {
-  margin-top: 8px;
   font-size: 16px;
-  line-height: 1.7;
-  color: #333;
+  font-weight: 900;
+  cursor: pointer;
 }
 
-/* 平板 */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .auth-form {
-    h2 {
-      font-size: 28px;
-      margin-top: 0;
-      margin-bottom: 8px;
-    }
-  }
-
-  .title-line {
-    width: 42px;
-    height: 4px;
-    margin-bottom: 26px;
-  }
-
-  .form-desc {
-    font-size: 15px;
-    line-height: 1.7;
-    margin-bottom: 26px;
-  }
-
-  .form-group {
-    margin-top: 0;
-    margin-bottom: 22px;
-
-    label {
-      font-size: 15px;
-      margin-bottom: 8px;
-    }
-  }
-
-  .input-box {
-    height: 48px;
-    padding: 0 14px;
-
-    i {
-      font-size: 18px;
-      margin-right: 14px;
-    }
-
-    input {
-      font-size: 15px;
-    }
-  }
-
-  .main-btn {
-    height: 50px;
-    font-size: 18px;
-    margin-top: 8px;
-    margin-bottom: 12px;
-  }
-
-  .notice {
-    font-size: 14px;
-    line-height: 1.7;
-    text-align: center;
-  }
-}
-
-/* 手機 */
-@media (max-width: 767px) {
-  .auth-form {
-    h2 {
-      font-size: 26px;
-      margin-top: 10;
-      margin-bottom: 8px;
-    }
-  }
-
-  .title-line {
-    width: 40px;
-    height: 4px;
-    margin-bottom: 20px;
-  }
-
-  .form-desc {
-    font-size: 14px;
-    line-height: 1.7;
-    margin-bottom: 20px;
-  }
-
-  .form-group {
-    margin-top: 0;
-    margin-bottom: 22px;
-
-    label {
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-  }
-
-  .input-box {
-    height: 45px;
-    padding: 0 16px;
-
-    i {
-      font-size: 15px;
-      margin-right: 16px;
-    }
-
-    input {
-      font-size: 15px;
-    }
-  }
-
-  .eye-btn i {
-    font-size: 20px;
-  }
-
-  .main-btn {
-    height: 45px;
-    font-size: 15px;
-    margin-top: 8px;
-    margin-bottom: 10px;
-  }
-
-  .notice {
-    font-size: 14px;
-    line-height: 1.7;
-    text-align: center;
-  }
+.notice {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fff7ed;
+  color: #92400e;
+  font-size: 14px;
+  line-height: 1.6;
 }
