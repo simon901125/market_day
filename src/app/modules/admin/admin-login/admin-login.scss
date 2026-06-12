@@ -1,8 +1,9 @@
 .admin-login-page {
   min-height: 100vh;
+  background-color: var(--primary-soft);
   background-image: url('/assets/images/auth-BackImg.png');
-  background-size: cover;
-  background-position: center;
+  background-size: 100% 100%;
+  background-position: center center;
   background-repeat: no-repeat;
   padding: 20px 60px;
   display: flex;
@@ -31,7 +32,8 @@
 }
 
 .admin-login-intro {
-  margin: 35% auto auto auto;
+  margin: 35% auto auto;
+
   h1 {
     margin: 0;
     font-size: 2.5rem;
@@ -59,11 +61,12 @@
     line-height: 1.5;
     font-weight: 700;
     color: var(--text-light);
+
     i {
-      display: block;
-      font-size: 1.8rem;
       display: flex;
       align-items: center;
+      font-size: 1.8rem;
+      color: var(--primary-color);
     }
 
     p {
@@ -83,11 +86,12 @@
 }
 
 .admin-login-card {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
   border-radius: var(--radius-section);
   padding: 44px 42px;
   margin-bottom: auto;
-  box-shadow: 0 18px 50px rgba(17, 24, 39, 0.08);
+  box-shadow: var(--shadow-card);
   max-height: 70vh;
   aspect-ratio: 5 / 4;
 }
@@ -121,26 +125,37 @@
 
 .input-box {
   height: 48px;
-  border: 2px solid #dfdfdf;
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-tag);
-  background:white;
+  background: var(--bg-white);
   display: flex;
   align-items: center;
   padding: 0 14px;
+  transition: 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.14);
+  }
 
   i {
-    color: var(--text-dark);
+    color: var(--text-normal);
     font-size: 18px;
     margin-right: 10px;
   }
 
   input {
     flex: 1;
+    min-width: 0;
     border: 0;
     outline: 0;
     font-size: 15px;
     color: var(--text-dark);
     background: transparent;
+
+    &::placeholder {
+      color: var(--text-light);
+    }
   }
 }
 
@@ -151,7 +166,7 @@
 
   i {
     margin: 0;
-    color: var(--text-dark);
+    color: var(--text-normal);
   }
 }
 
@@ -162,14 +177,20 @@
   border: 0;
   border-radius: var(--radius-tag);
   background: var(--primary-color);
-  color: #fff;
+  color: var(--bg-white);
   font-weight: 900;
   cursor: pointer;
+  transition: 0.2s ease;
+
+  &:hover {
+    background: var(--primary-hover);
+  }
 }
 
 hr {
   margin: 1.5rem 0 0;
-  border-top: 2px solid var(--text-light);
+  border: 0;
+  border-top: 1px solid var(--border-light);
 }
 
 .notice {
@@ -177,8 +198,7 @@ hr {
   color: var(--text-light);
   font-size: 14px;
   line-height: 1.6;
-  display:flex;
+  display: flex;
   align-items: center;
   justify-self: center;
-  
 }

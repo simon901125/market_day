@@ -36,18 +36,16 @@
     </div>
 
     <div class="forgot">
-      
       <a [routerLink]="forgotLink">忘記密碼？</a>
     </div>
   </div>
 
-  <!-- 登入失敗訊息 -->
   @if (loginError) {
-  <div class="error-alert">
-    <i class="bi bi-exclamation-circle"></i>
-    <span>帳號或密碼錯誤，請重新確認後再登入。</span>
-  </div>
-}
+    <div class="error-alert">
+      <i class="bi bi-exclamation-circle"></i>
+      <span>帳號或密碼錯誤，請重新確認後再登入。</span>
+    </div>
+  }
 
   <button type="submit" class="main-btn" (click)="login()">登入</button>
 
@@ -61,11 +59,4 @@
     <img src="assets/images/Google_Favicon_2025.png" alt="Google" />
     使用 Google 快速登入
   </button>
-
-  <p class="policy">
-      註冊即代表你同意
-      <a href="#">小集日服務條款</a>
-      與
-      <a href="#">隱私權政策</a>
-    </p>
 </form>

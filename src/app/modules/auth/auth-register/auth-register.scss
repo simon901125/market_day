@@ -1,18 +1,19 @@
 .auth-register-form {
   width: 100%;
+  height: 100%;
 
   h2 {
-    font-size: 27px;
+    margin: 0 0 6px;
+    font-size: 30px;
     font-weight: 900;
-    color: #111;
-    margin-bottom: 6px;
+    color: var(--text-dark);
   }
 }
 
 .title-line {
-  width: 48px;
+  width: 44px;
   height: 5px;
-  background: #ff5a00;
+  background: var(--primary-color);
   border-radius: 999px;
   margin-bottom: 16px;
 }
@@ -22,26 +23,37 @@
 
   label {
     display: block;
-    font-size: 15px;
+    margin-bottom: 6px;
+    font-size: 14px;
     font-weight: 800;
-    color: #222;
-    margin-bottom: 3px;
+    color: var(--text-dark);
   }
 }
 
 .input-box {
-  height: 34px;
-  border: 1px solid #d8d8d8;
-  border-radius: 7px;
+  height: 40px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  padding: 0 18px;
-  background: #fff;
+  padding: 0 16px;
+  background: var(--bg-white);
+  transition: 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.14);
+  }
+
+  &.error {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+  }
 
   i {
-    font-size: 14px;
-    color: #444;
-    margin-right: 16px;
+    font-size: 16px;
+    color: var(--text-normal);
+    margin-right: 12px;
   }
 
   input {
@@ -49,191 +61,215 @@
     min-width: 0;
     border: 0;
     outline: 0;
-    font-size: 14px;
-    color: #333;
+    font-size: 13px;
+    color: var(--text-dark);
+    background: transparent;
 
     &::placeholder {
-      color: #9ca3af;
+      color: var(--text-light);
     }
   }
+}
+
+.password-wrapper {
+  width: 100%;
+}
+
+.password-input {
+  margin-bottom: 6px;
 }
 
 .eye-btn {
   border: 0;
   background: transparent;
   cursor: pointer;
+  padding: 0;
 
   i {
     margin: 0;
-    font-size: 20px;
-  }
-}
-
-.password-wrapper {
-  border: 1px solid #d8d8d8;
-  border-radius: 7px;
-  overflow: hidden;
-  background: #fff;
-
-  .input-box {
-    border: 0;
-    border-bottom: 1px solid #d1d5db;
-    border-radius: 0;
+    font-size: 18px;
+    color: var(--text-normal);
   }
 }
 
 .password-rule {
-  padding: 6px 18px;
-  font-size: 13px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
 
-  p {
-    margin-bottom: 4px;
-  }
+  width: 100%;
+  font-size: 12px;
+  color: var(--text-normal);
+  line-height: 1.5;
 
   span {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-normal);
+
+    i {
+      margin-right: 5px;
+      color: var(--text-light);
+      font-size: 12px;
+    }
+
+    &.valid {
+      color: var(--text-dark);
+
+      i {
+        color: #22c55e;
+      }
+    }
   }
+}
+
+.password-error {
+  display: none;
+  align-items: center;
+  gap: 8px;
+
+  margin: 5px 0 0;
+  color: #ef4444;
+
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
 
   i {
-    color: #22c55e;
-    margin-right: 8px;
+    font-size: 13px;
+    color: #ef4444;
+  }
+
+  &.show {
+    display: flex;
   }
 }
 
 .main-btn,
 .google-btn {
   width: 100%;
-  height: 45px;
-  border-radius: 7px;
-  font-size: 17px;
-  font-weight: 800;
+  height: 42px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .main-btn {
   border: 0;
-  background: #ff5a00;
-  color: #fff;
-  margin-top: 3px;
+  background: var(--primary-color);
+  color: var(--bg-white);
+  margin-top: 8px;
+  margin-bottom: 12px;
 
   &:hover {
-    background: #e84f00;
-  }
-}
-
-.google-btn {
-  border: 1px solid #d8d8d8;
-  background: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-
-  img {
-    width: 20px;
+    background: var(--primary-hover);
   }
 }
 
 .divider {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin: 16px 0 12px;
+  gap: 12px;
+  margin-bottom: 10px;
 
   span {
     flex: 1;
     height: 1px;
-    background: #ddd;
+    background: var(--border-light);
   }
 
   p {
     margin: 0;
-    color: #555;
+    color: var(--text-normal);
+    font-size: 12px;
     white-space: nowrap;
   }
 }
 
-.policy {
-  text-align: center;
-  margin-top: 10px;
-  color: #555;
-  font-size: 14px;
+.google-btn {
+  border: 1px solid var(--border-light);
+  background: var(--bg-white);
+  color: var(--text-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 
-  a {
-    color: #ff5a00;
-    font-weight: 700;
-    margin: 0 6px;
+  &:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-soft);
+  }
+
+  img {
+    width: 18px;
   }
 }
 
 /* 平板 */
 @media (min-width: 768px) and (max-width: 1024px) {
   .auth-register-form {
-    width: 100%;
+    height: auto;
 
     h2 {
-      font-size: 22px;
-      margin-top: 6px;
-      margin-bottom: 5px;
+      font-size: 26px;
     }
   }
 
   .title-line {
-    width: 42px;
+    width: 40px;
     height: 4px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .form-group {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 
     label {
       font-size: 13px;
-      margin-bottom: 3px;
+      margin-bottom: 6px;
     }
   }
 
   .input-box {
-    height: 32px;
-    padding: 0 16px;
+    height: 40px;
+    padding: 0 14px;
 
     i {
-      font-size: 12px;
-      margin-right: 12px;
+      font-size: 15px;
+      margin-right: 11px;
     }
 
     input {
-      font-size: 12px;
-    }
-  }
-
-  .password-wrapper {
-    .input-box {
-      height: 34px;
+      font-size: 13px;
     }
   }
 
   .password-rule {
-    padding: 5px 15px;
-    font-size: 11px;
+    gap: 10px;
+    font-size: 12px;
+  }
 
-    p {
-      margin-bottom: 3px;
-    }
+  .password-error {
+    font-size: 12px;
   }
 
   .main-btn,
   .google-btn {
-    height: 38px;
+    height: 40px;
     font-size: 14px;
   }
 
   .main-btn {
-    margin-top: 2px;
+    margin-top: 8px;
+    margin-bottom: 12px;
   }
 
   .divider {
-    gap: 12px;
-    margin: 14px 0 10px;
+    gap: 10px;
+    margin-bottom: 10px;
 
     p {
       font-size: 12px;
@@ -241,116 +277,93 @@
   }
 
   .google-btn {
-    gap: 10px;
-
     img {
-      width: 15px;
-    }
-  }
-
-  .policy {
-    font-size: 11px;
-    line-height: 1.6;
-    margin-top: 7px;
-    margin-bottom: -8px;
-    a {
-      margin: 0 3px;
+      width: 17px;
     }
   }
 }
 
-// 手機
+/* 手機 */
 @media (max-width: 576px) {
   .auth-register-form {
-    width: 100%;
+    height: auto;
 
     h2 {
-      font-size: 18px;
-      margin: -22px 0 5px;
+      font-size: 24px;
     }
   }
 
   .title-line {
-    width: 36px;
-    height: 3px;
-    margin-bottom: 15px;
+    width: 38px;
+    height: 4px;
+    margin-bottom: 16px;
   }
 
   .form-group {
-    margin-bottom: 7px;
+    margin-bottom: 10px;
 
     label {
-      font-size: 12px;
-      margin-bottom: 5px;
+      font-size: 13px;
+      margin-bottom: 6px;
     }
   }
 
   .input-box {
-    height: 31px;
-    padding: 0 11px;
+    height: 40px;
+    padding: 0 13px;
 
     i {
-      font-size: 12px;
-      margin-right: 12px;
+      font-size: 15px;
+      margin-right: 10px;
     }
 
     input {
-      font-size: 12px;
+      font-size: 13px;
     }
   }
 
-  .password-wrapper {
-    .input-box {
-      height: 33px;
+  .eye-btn {
+    i {
+      font-size: 17px;
     }
   }
 
   .password-rule {
-    padding: 7px 13px;
-    font-size: 10.5px;
+    gap: 8px;
+    font-size: 12px;
+  }
 
-    p {
-      margin-bottom: 3px;
+  .password-error {
+    font-size: 11px;
+
+    i {
+      font-size: 12px;
     }
   }
 
   .main-btn,
   .google-btn {
-    height: 35px;
-    font-size: 12px;
-    border-radius: 6px;
+    height: 40px;
+    font-size: 14px;
   }
 
   .main-btn {
-    margin-top: 4px;
+    margin-top: 8px;
+    margin-bottom: 12px;
   }
 
   .divider {
     gap: 10px;
-    margin: 13px 0 10px;
+    margin-bottom: 10px;
 
     p {
       font-size: 12px;
-      white-space: nowrap;
     }
   }
 
   .google-btn {
-    gap: 7px;
-
     img {
       width: 17px;
-    }
-  }
-
-  .policy {
-    font-size: 10px;
-    line-height: 1.7;
-    margin-top: 7px;
-    margin-bottom: -30px;
-
-    a {
-      margin: 0 3px;
     }
   }
 }

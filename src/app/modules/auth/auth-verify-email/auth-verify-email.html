@@ -20,10 +20,13 @@
     <div class="code-inputs">
       @for (item of code; track $index; let i = $index) {
         <input
+          #codeInput
           type="text"
           maxlength="1"
+          inputmode="numeric"
           [ngModel]="code[i]"
-          (ngModelChange)="code[i] = $event"
+          (ngModelChange)="onCodeInput($event, i)"
+          (keydown.backspace)="onCodeBackspace(i)"
         />
       }
     </div>
@@ -32,9 +35,19 @@
       確認驗證
     </button>
 
-    <button type="button" class="resend-btn" (click)="resendCode()">
+    <button
+      type="button"
+      class="resend-btn"
+      [disabled]="resendSeconds > 0"
+      (click)="resendCode()"
+    >
       <i class="bi bi-arrow-clockwise"></i>
-      重新寄送驗證碼（56 秒後可重發）
+
+      @if (resendSeconds > 0) {
+        重新寄送驗證碼（{{ resendSeconds }} 秒後可重發）
+      } @else {
+        重新寄送驗證碼
+      }
     </button>
 
     <p class="help-text">
