@@ -1,10 +1,11 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationItem, NotificationType } from '../../../models/NotificationItem';
+import { Pagination } from '../../shared/pagination/pagination';
 
 @Component({
   selector: 'app-dashboard-notification',
-  imports: [CommonModule],
+  imports: [CommonModule, Pagination],
   templateUrl: './dashboard-notification.html',
   styleUrl: './dashboard-notification.scss',
 })
@@ -24,6 +25,7 @@ export class DashboardNotification implements OnChanges {
   /** 每頁顯示數量 */
   pageSize = 8;
 
+  /** 當外部通知資料改變時，重置分類與頁碼 */
   ngOnChanges(): void {
     this.activeTab = '全部';
     this.currentPage = 1;
@@ -48,19 +50,9 @@ export class DashboardNotification implements OnChanges {
     this.currentPage = 1;
   }
 
-  /** 標記全部已讀 */
-  markAllAsRead(): void {
-    this.notifications = this.notifications.map((item) => ({
-      ...item,
-      unread: false,
-    }));
-
-    this.currentPage = 1;
-  }
-
-  /** 總頁數 */
-  totalPages(): number {
-    return Math.ceil(this.filteredNotifications.length / this.pageSize);
+  /** 點擊單筆通知後標記為已讀 */
+  markAsRead(item: NotificationItem): void {
+    item.unread = false;
   }
 
   /** 目前頁面的通知 */
@@ -71,17 +63,8 @@ export class DashboardNotification implements OnChanges {
     return this.filteredNotifications.slice(start, end);
   }
 
-  /** 頁碼 */
-  pages(): number[] {
-    return Array.from({ length: this.totalPages() }, (_, i) => i + 1);
-  }
-
   /** 切換頁碼 */
   setPage(page: number): void {
-    if (page < 1 || page > this.totalPages()) {
-      return;
-    }
-
     this.currentPage = page;
   }
 }

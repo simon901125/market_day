@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { DashboardSidebar } from '../dashboard-sidebar/dashboard-sidebar';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { DashboardSidebar } from '../dashboard-sidebar/dashboard-sidebar';
 import { MenuItem } from '../../../models/MenuItem';
+import { UserMenuItem } from '../../../models/UserMenuItem';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -12,6 +13,7 @@ import { MenuItem } from '../../../models/MenuItem';
 export class DashboardLayout {
   logoPath = '';
   menuItems: MenuItem[] = [];
+  userMenuItems: UserMenuItem[] = [];
 
   userName = '董映彤';
   userEmail = 'yingtung0808@gmail.com';
@@ -22,16 +24,24 @@ export class DashboardLayout {
 
     if (role === 'vendor') {
       this.logoPath = '/assets/images/logo/logo-market-day-vendor.png';
+
       this.menuItems = [
         { label: '首頁', icon: 'bi-house-door', path: '/vendor/dash-board/home' },
         { label: '通知中心', icon: 'bi-bell', path: '/vendor/dash-board/notification' },
         { label: '我的攤位', icon: 'bi-shop', path: '/vendor/dash-board/stall' },
         { label: '我的報名紀錄', icon: 'bi-clipboard-check', path: '/vendor/dash-board/register-record' },
       ];
+
+      this.userMenuItems = [
+        { label: '我的攤位資料', icon: 'bi-person', path: '/vendor/dash-board/stall' },
+        { label: '帳號設定', icon: 'bi-gear', path: '/vendor/dash-board/account' },
+        { label: '登出', icon: 'bi-box-arrow-right', action: 'logout' },
+      ];
     }
 
     if (role === 'organizer') {
       this.logoPath = '/assets/images/logo/logo-market-day-organizer.png';
+
       this.menuItems = [
         { label: '首頁', icon: 'bi-house-door', path: '/organizer/dash-board/home' },
         { label: '通知中心', icon: 'bi-bell', path: '/organizer/dash-board/notification' },
@@ -40,16 +50,29 @@ export class DashboardLayout {
         { label: '收款管理', icon: 'bi-cash-coin', path: '/organizer/dash-board/payment' },
         { label: '帳務管理', icon: 'bi-receipt', path: '/organizer/dash-board/account' },
       ];
+
+      this.userMenuItems = [
+        { label: '主辦方資料', icon: 'bi-person', path: '/organizer/dash-board/profile' },
+        { label: '帳號設定', icon: 'bi-gear', path: '/organizer/dash-board/account' },
+        { label: '登出', icon: 'bi-box-arrow-right', action: 'logout' },
+      ];
     }
 
     if (role === 'admin') {
       this.logoPath = '/assets/images/logo/logo-market-day-admin.png';
+
       this.menuItems = [
         { label: '首頁', icon: 'bi-house-door', path: '/admin/dash-board/home' },
         { label: '通知中心', icon: 'bi-bell', path: '/admin/dash-board/notification' },
         { label: '活動管理', icon: 'bi-calendar-event', path: '/admin/dash-board/activity' },
         { label: '使用者管理', icon: 'bi-people', path: '/admin/dash-board/users' },
         { label: '操作紀錄', icon: 'bi-clock-history', path: '/admin/dash-board/logs' },
+      ];
+
+      this.userMenuItems = [
+        { label: '管理員資料', icon: 'bi-person', path: '/admin/dash-board/profile' },
+        { label: '帳號設定', icon: 'bi-gear', path: '/admin/dash-board/account' },
+        { label: '登出', icon: 'bi-box-arrow-right', action: 'logout' },
       ];
     }
   }
