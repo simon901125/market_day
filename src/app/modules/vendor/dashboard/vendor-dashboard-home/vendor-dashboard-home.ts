@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { DashboardSummaryCard } from '../../../../../models/DashboardSummaryCard';
-import { DashboardNotification } from '../../../../../models/DashboardNotification';
 import { RouterLink } from '@angular/router';
+import { DashboardNotification } from '../../../../models/DashboardNotification';
+import { DashboardSummaryCard } from '../../../../models/DashboardSummaryCard';
 
 @Component({
   selector: 'app-vendor-dashboard-home',
@@ -10,33 +10,32 @@ import { RouterLink } from '@angular/router';
   styleUrl: './vendor-dashboard-home.scss',
 })
 export class VendorDashboardHome {
-  // 之後接 API 判斷是否有報名 / 通知 / 攤位紀錄
   /** 是否有紀錄 */
-  hasRecords = true; // false = 首次登入引導，true = 儀錶板
+  hasRecords = true;
 
   /** 首頁儀表板摘要資訊 */
   summaryCards: DashboardSummaryCard[] = [
     {
-      title: '待審核報名',
-      count: 12,
+      title: '審核中報名',
+      count: 1,
       unit: '筆',
       icon: 'bi-clipboard-check',
-      link: '/organizer/register-manage',
+      link: '/vendor/dash-board/register-record',
     },
     {
-      title: '待確認付款',
-      count: 6,
+      title: '待付款報名',
+      count: 1,
       unit: '筆',
       icon: 'bi-wallet2',
-      link: '/organizer/payment-manage',
+      link: '/vendor/dash-board/register-record',
     },
     {
-      title: '即將開始活動',
-      count: 2,
-      unit: '場',
-      icon: 'bi-calendar3',
+      title: '已選攤位',
+      count: 1,
+      unit: '個',
+      icon: 'bi-shop',
       iconClass: 'blue',
-      link: '/organizer/activity-manage',
+      link: '/vendor/dash-board/stall',
     },
   ];
 
@@ -44,26 +43,27 @@ export class VendorDashboardHome {
   notices: DashboardNotification[] = [
     {
       type: 'signup',
-      text: '草悟野餐市集收到 1 筆新的攤主報名',
-      status: '待審核',
+      text: '你報名的「草悟野餐市集」已送出，等待主辦方審核',
+      status: '審核中',
       statusClass: 'pending',
       date: '2026/06/02 14:30',
       unread: true,
     },
     {
       type: 'payment',
-      text: '品牌「森日甜點」已提交付款資料',
-      status: '付款待確認',
+      text: '「夏日綠意市集」報名審核通過，請於期限內完成付款',
+      status: '待付款',
       statusClass: 'payment',
       date: '2026/06/02 13:10',
       unread: true,
     },
     {
       type: 'booth',
-      text: '品牌「木木手作」已完成攤位選擇',
+      text: '你已完成「貓貓森林市集」攤位選擇',
       status: '已完成選位',
       statusClass: 'success',
       date: '2026/06/02 10:15',
+      unread: false,
     },
   ];
 
@@ -72,7 +72,7 @@ export class VendorDashboardHome {
    * signup  → 報名通知
    * payment → 付款通知
    * booth   → 攤位通知
-   * 
+   *
    * @param type 通知類型
    * @returns Bootstrap Icon Class
    */

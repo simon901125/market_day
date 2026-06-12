@@ -1,27 +1,19 @@
 <aside class="dashboard-sidebar">
   <div class="brand">
-    <img src="/assets/images/logo/logo-market-day-vendor.png" alt="小集日" />
-
-    <!-- <div class="brand-text">
-      <h1>小集日</h1>
-      <p>Market Day</p>
-    </div>
-
-    <div class="divider"></div>
-
-    <span class="backend-title">{{ backendTitle }}</span> -->
+    <img [src]="logoPath" alt="小集日" />
   </div>
 
   <nav class="menu">
-    <a
-      *ngFor="let item of menuItems"
-      class="menu-item"
-      [routerLink]="item.path"
-      routerLinkActive="active"
-    >
-      <i class="bi" [class]="item.icon"></i>
-      <span>{{ item.label }}</span>
-    </a>
+    @for (item of menuItems; track item.path) {
+      <a
+        class="menu-item"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+      >
+        <i class="bi" [ngClass]="item.icon"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    }
   </nav>
 
   <div class="user-box">

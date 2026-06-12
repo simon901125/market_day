@@ -34,6 +34,7 @@
     color: #111827;
     font-size: 15px;
     font-weight: 900;
+    cursor: pointer;
 
     &.active {
       border-color: #ffcfbd;
@@ -100,6 +101,26 @@
       background: #fff2e6;
       color: #ff4b0b;
     }
+
+    &.purple {
+      background: #f5f3ff;
+      color: #7c3aed;
+    }
+
+    &.teal {
+      background: #ecfdf5;
+      color: #0f766e;
+    }
+
+    &.yellow {
+      background: #fffbeb;
+      color: #d97706;
+    }
+
+    &.red {
+      background: #fef2f2;
+      color: #dc2626;
+    }
   }
 
   h3 {
@@ -143,6 +164,7 @@
     font-size: 16px;
     font-weight: 800;
     color: #111827;
+    cursor: pointer;
 
     &:first-child,
     &:last-child {

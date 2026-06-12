@@ -1,18 +1,18 @@
-.vendor-layout {
+.dashboard-layout {
   height: 100vh;
   display: flex;
   overflow: hidden;
   background: #fff;
 }
 
-app-dashboard-sidebar {
+.dashboard-sidebar {
   width: 280px;
   flex: 0 0 280px;
   height: 100vh;
   overflow: hidden;
 }
 
-.vendor-main {
+.dashboard-main {
   flex: 1;
   height: 100vh;
   overflow-y: auto;
