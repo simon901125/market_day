@@ -31,6 +31,7 @@
 }
 
 .admin-login-intro {
+  margin: 35% auto auto auto;
   h1 {
     margin: 0;
     font-size: 2.5rem;
@@ -44,7 +45,7 @@
   }
 
   .admin-login-desc-primary {
-    margin: 24px 0 0;
+    margin: 24px 0;
     font-size: 18px;
     line-height: 2;
     font-weight: 900;
@@ -54,13 +55,13 @@
   .admin-login-desc-secondary {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     line-height: 1.5;
     font-weight: 700;
     color: var(--text-light);
     i {
       display: block;
-      font-size: 2rem;
+      font-size: 1.8rem;
       display: flex;
       align-items: center;
     }
@@ -77,7 +78,7 @@
   width: 48px;
   height: 4px;
   border-radius: 99px;
-  background: #f59e0b;
+  background: var(--primary-color);
   margin-top: 18px;
 }
 
@@ -85,7 +86,10 @@
   background: #fff;
   border-radius: var(--radius-section);
   padding: 44px 42px;
+  margin-bottom: auto;
   box-shadow: 0 18px 50px rgba(17, 24, 39, 0.08);
+  max-height: 70vh;
+  aspect-ratio: 5 / 4;
 }
 
 .admin-login-form {
@@ -117,7 +121,7 @@
 
 .input-box {
   height: 48px;
-  border: 1px solid var(--border-primary);
+  border: 2px solid #dfdfdf;
   border-radius: var(--radius-tag);
   background:white;
   display: flex;
@@ -125,7 +129,7 @@
   padding: 0 14px;
 
   i {
-    color: #f59e0b;
+    color: var(--text-dark);
     font-size: 18px;
     margin-right: 10px;
   }
@@ -135,7 +139,7 @@
     border: 0;
     outline: 0;
     font-size: 15px;
-    color: #111827;
+    color: var(--text-dark);
     background: transparent;
   }
 }
@@ -147,7 +151,7 @@
 
   i {
     margin: 0;
-    color: #9ca3af;
+    color: var(--text-dark);
   }
 }
 
@@ -156,20 +160,25 @@
   height: 48px;
   margin-top: 8px;
   border: 0;
-  border-radius: 12px;
-  background: #f59e0b;
+  border-radius: var(--radius-tag);
+  background: var(--primary-color);
   color: #fff;
-  font-size: 16px;
   font-weight: 900;
   cursor: pointer;
 }
 
+hr {
+  margin: 1.5rem 0 0;
+  border-top: 2px solid var(--text-light);
+}
+
 .notice {
-  margin-top: 18px;
   padding: 14px 16px;
-  border-radius: 12px;
-  background: #fff7ed;
-  color: #92400e;
+  color: var(--text-light);
   font-size: 14px;
   line-height: 1.6;
+  display:flex;
+  align-items: center;
+  justify-self: center;
+  
 }
