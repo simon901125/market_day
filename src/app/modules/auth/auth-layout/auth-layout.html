@@ -1,5 +1,5 @@
-<section class="vendor-auth-page">
-  <header class="vendor-header">
+<section class="auth-page">
+  <header class="auth-header">
     <div class="brand">
       <img routerLink="/user/home" [src]="logoImg" alt="小集日 Market Day" />
     </div>
@@ -10,10 +10,11 @@
     </div>
   </header>
 
-  <div class="vendor-auth-container">
-    <aside class="vendor-intro">
+  <div class="auth-container">
+    <aside class="auth-intro">
       <h1>
         {{ title }}
+
         @if (highlight) {
           <span>{{ highlight }}</span>
         }
@@ -26,9 +27,8 @@
       <div class="deco"></div>
     </aside>
 
-    <main class="vendor-card">
+    <main class="auth-card">
       <ng-content></ng-content>
     </main>
   </div>
 </section>
-

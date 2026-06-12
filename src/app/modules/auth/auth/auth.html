@@ -1,11 +1,10 @@
-<app-vendor-sidebar
+<app-auth-layout
   [title]="title"
   [highlight]="highlight"
   [description]="description"
   [topText]="topText"
   [topLinkText]="topLinkText"
   [topLink]="topLink"
-  [systemName]="systemName"
   [logoImg]="logoImg"
 >
   @if (isLogin) {
@@ -38,7 +37,7 @@
       (resetSuccess)="openResetSuccessModal()"
     ></app-auth-reset-password>
   }
-</app-vendor-sidebar>
+</app-auth-layout>
 
 <!-- email驗證訊息 -->
 @if (showSuccessModal || showErrorModal) {

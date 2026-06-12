@@ -3,12 +3,9 @@ import { UserLayout } from './modules/user/frontend/user-layout/user-layout';
 import { UserHome } from './modules/user/frontend/user-home/user-home';
 import { UserActivityList } from './modules/user/frontend/user-activity-list/user-activity-list';
 import { UserActivityDetail } from './modules/user/frontend/user-activity-detail/user-activity-detail';
-import { VendorLayout } from './modules/vendor/vendor-layout/vendor-layout';
 import { UserBrandserch } from './modules/user/frontend/user-brandserch/user-brandserch';
 import { UserBrandDetail } from './modules/user/frontend/user-brand-detail/user-brand-detail';
 import { AdminLogin } from './modules/admin/admin-login/admin-login';
-import { OrganizerLayout } from './modules/organizer/organizer-layout/organizer-layout';
-import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organizer-home';
 import { Auth } from './modules/auth/auth/auth';
 import { UserAboutUs } from './modules/user/frontend/user-about-us/user-about-us';
 import { AUTH_ROUTE_DATA } from './config/auth-route-data';
@@ -66,70 +63,23 @@ export const routes: Routes = [
   /** 攤主專區登入 / 註冊 / 驗證 */
   {
     path: 'vendor',
-    component: VendorLayout,
     children: [
-      {
-        path: 'login',
-        component: Auth,
-        data: AUTH_ROUTE_DATA.vendorLogin,
-      },
-      {
-        path: 'register',
-        component: Auth,
-        data: AUTH_ROUTE_DATA.vendorRegister,
-      },
-      {
-        path: 'verify-email',
-        component: Auth,
-        data: AUTH_ROUTE_DATA.vendorVerifyEmail,
-      },
-      {
-        path: 'forgot-password',
-        component: Auth,
-        data: AUTH_ROUTE_DATA.vendorForgotPassword,
-      },
-      {
-        path: 'reset-password',
-        component: Auth,
-        data: AUTH_ROUTE_DATA.vendorResetPassword,
-      },
+      { path: 'login', component: Auth, data: AUTH_ROUTE_DATA.vendorLogin },
+      { path: 'register', component: Auth, data: AUTH_ROUTE_DATA.vendorRegister },
+      { path: 'forgot-password', component: Auth, data: AUTH_ROUTE_DATA.vendorForgotPassword },
+      { path: 'verify-email', component: Auth, data: AUTH_ROUTE_DATA.vendorVerifyEmail },
+      { path: 'reset-password', component: Auth, data: AUTH_ROUTE_DATA.vendorResetPassword },
     ],
   },
-
-  /** 主辦方專區 / 登入 / 註冊 / 驗證 */
+  /** 主辦方專區登入 / 註冊 / 驗證 */
   {
     path: 'organizer',
-    component: OrganizerLayout,
     children: [
-      {
-        path: 'login',
-        component: Auth,
-        data: AUTH_ROUTE_DATA.organizerLogin,
-      },
-      {
-        path: 'register',
-        component: Auth,
-        data: AUTH_ROUTE_DATA.organizerRegister,
-      },
-      {
-        path: 'forgot-password',
-        component: Auth,
-        data: AUTH_ROUTE_DATA.organizerForgotPassword,
-      },
-      {
-        path: 'reset-password',
-        component: Auth,
-        data: AUTH_ROUTE_DATA.organizerResetPassword,
-      },
-      {
-        path: 'verify-email',
-        component: Auth,
-        data: AUTH_ROUTE_DATA.organizerVerifyEmail,
-      },
-      {
-        path: 'home',
-        component: OrganizerHome,
-      },
+      { path: 'login', component: Auth, data: AUTH_ROUTE_DATA.organizerLogin },
+      { path: 'register', component: Auth, data: AUTH_ROUTE_DATA.organizerRegister },
+      { path: 'forgot-password', component: Auth, data: AUTH_ROUTE_DATA.organizerForgotPassword },
+      { path: 'verify-email', component: Auth, data: AUTH_ROUTE_DATA.organizerVerifyEmail },
+      { path: 'reset-password', component: Auth, data: AUTH_ROUTE_DATA.organizerResetPassword },
     ],
   },
 

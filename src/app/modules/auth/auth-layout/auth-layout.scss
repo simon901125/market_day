@@ -1,4 +1,4 @@
-.vendor-auth-page {
+.auth-page {
   min-height: 100vh;
 
   background-image: url('/assets/images/auth-BackImg.png');
@@ -14,7 +14,7 @@
   overflow-x: hidden;
 }
 
-.vendor-header {
+.auth-header {
   flex-shrink: 0;
 
   display: flex;
@@ -36,12 +36,6 @@
   }
 }
 
-.vendor-label {
-  font-size: 25px;
-  font-weight: 600;
-  gap: 10px;
-}
-
 .top-action {
   font-size: 14px;
 
@@ -57,7 +51,7 @@
   }
 }
 
-.vendor-auth-container {
+.auth-container {
   flex: 1;
 
   display: grid;
@@ -68,7 +62,7 @@
   align-items: center;
 }
 
-.vendor-intro {
+.auth-intro {
   padding-left: 50px;
   margin-top: -150px;
 
@@ -103,7 +97,7 @@
   background: #ff5a00;
 }
 
-.vendor-card {
+.auth-card {
   width: 100%;
   max-width: 920px;
   max-height: 630px;
@@ -119,18 +113,17 @@
   box-shadow: 0 18px 40px rgba(47, 41, 36, 0.12);
 }
 
-/* 小筆電 / 中型螢幕 */
 @media (max-width: 1200px) {
-  .vendor-auth-page {
+  .auth-page {
     padding: 24px 48px;
   }
 
-  .vendor-auth-container {
+  .auth-container {
     grid-template-columns: 0.9fr 1.3fr;
     gap: 48px;
   }
 
-  .vendor-intro {
+  .auth-intro {
     padding-left: 24px;
     margin-top: -140px;
 
@@ -143,21 +136,20 @@
     }
   }
 
-  .vendor-card {
+  .auth-card {
     padding: 40px 48px 24px;
   }
 }
 
-/* 平板 */
 @media (min-width: 768px) and (max-width: 1024px) {
-  .vendor-auth-page {
+  .auth-page {
     min-height: 100dvh;
     padding: 50px 64px 30px;
     background-position: left bottom;
     background-size: cover;
   }
 
-  .vendor-header {
+  .auth-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -173,24 +165,20 @@
     }
   }
 
-  .vendor-label {
-    font-size: 14px;
-  }
-
   .top-action {
     font-size: 12px;
     margin-top: -15px;
   }
 
-  .vendor-auth-container {
-  display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 45px;
-  align-items: start;
-  min-height: auto;
-}
+  .auth-container {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 45px;
+    align-items: start;
+    min-height: auto;
+  }
 
-  .vendor-intro {
+  .auth-intro {
     padding-left: 0;
     margin: 120px 20px auto;
 
@@ -207,7 +195,7 @@
     }
   }
 
-  .vendor-card {
+  .auth-card {
     width: 100%;
     max-width: 460px;
     margin-top: -15px;
@@ -216,9 +204,8 @@
   }
 }
 
-/* 手機 */
 @media (max-width: 767px) {
-  .vendor-auth-page {
+  .auth-page {
     min-height: 100dvh;
     margin-bottom: 0px;
     padding: 15px;
@@ -226,7 +213,7 @@
     background-size: cover;
   }
 
-  .vendor-header {
+  .auth-header {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -235,7 +222,7 @@
     margin-top: -15px;
     margin-bottom: 5px;
   }
-  
+
   .brand {
     gap: 10px;
     margin-top: 1px;
@@ -245,10 +232,6 @@
     }
   }
 
-  .vendor-label {
-    font-size: 15px;
-  }
-
   .top-action {
     width: 100%;
     text-align: right;
@@ -256,15 +239,15 @@
     margin-top: -15px;
   }
 
-  .vendor-auth-container {
+  .auth-container {
     display: block;
   }
 
-  .vendor-intro {
+  .auth-intro {
     display: none;
   }
 
-  .vendor-card {
+  .auth-card {
     width: 100%;
     max-width: 360px;
     margin: 0 auto;
