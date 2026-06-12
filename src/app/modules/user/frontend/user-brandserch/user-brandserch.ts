@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { BrandItem } from '../../../models/BrandItem';
+import { BrandItem } from '../../../../models/BrandItem';
 import { UserBrandserchCard } from '../user-brandserch-card/user-brandserch-card';
 import { UserBrandserchDropdown } from '../user-brandserch-dropdown/user-brandserch-dropdown';
 import { UserBrandserchPagination } from '../user-brandserch-pagination/user-brandserch-pagination';

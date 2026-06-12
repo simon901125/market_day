@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { MarketCardItem } from '../../../models/MarketCardItem';
+import { MarketCardItem } from '../../../../models/MarketCardItem';
 import { CommonModule } from '@angular/common';
 
 @Component({

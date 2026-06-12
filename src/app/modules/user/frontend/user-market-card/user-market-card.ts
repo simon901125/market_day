@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { MarketCardItem } from '../../../models/MarketCardItem';
+import { MarketCardItem } from '../../../../models/MarketCardItem';
 
 @Component({
   selector: 'app-user-market-card',

@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { MarketCardItem } from '../../../models/MarketCardItem';
-import { HistoryMarketCardItem } from '../../../models/HistoryMarketCardItem';
-import { BrandType } from '../../../models/type/BrandType ';
-import { MarketStatus } from '../../../models/status/MarketStatus';
+import { MarketCardItem } from '../../../../models/MarketCardItem';
+import { HistoryMarketCardItem } from '../../../../models/HistoryMarketCardItem';
+import { BrandType } from '../../../../models/type/BrandType ';
+import { MarketStatus } from '../../../../models/status/MarketStatus';
 
 import { UserMarketSearchPanel } from '../user-market-search-panel/user-market-search-panel';
 import { UserMarketCard } from '../user-market-card/user-market-card';
