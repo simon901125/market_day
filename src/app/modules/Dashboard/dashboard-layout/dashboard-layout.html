@@ -1,6 +1,7 @@
 <div class="dashboard-layout">
   <app-dashboard-sidebar
     [logoPath]="logoPath"
+    [homePath]="homePath"
     [menuItems]="menuItems"
     [userMenuItems]="userMenuItems"
     [userName]="userName"
@@ -9,6 +10,8 @@
   ></app-dashboard-sidebar>
 
   <main class="dashboard-main">
-    <router-outlet></router-outlet>
+    <div class="page-transition">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 </div>

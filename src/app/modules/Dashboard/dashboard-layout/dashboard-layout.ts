@@ -12,6 +12,8 @@ import { UserMenuItem } from '../../../models/UserMenuItem';
 })
 export class DashboardLayout {
   logoPath = '';
+  homePath = '/';
+
   menuItems: MenuItem[] = [];
   userMenuItems: UserMenuItem[] = [];
 
@@ -24,12 +26,17 @@ export class DashboardLayout {
 
     if (role === 'vendor') {
       this.logoPath = '/assets/images/logo/logo-market-day-vendor.png';
+      this.homePath = '/vendor/dash-board/home';
 
       this.menuItems = [
         { label: '首頁', icon: 'bi-house-door', path: '/vendor/dash-board/home' },
         { label: '通知中心', icon: 'bi-bell', path: '/vendor/dash-board/notification' },
         { label: '我的攤位', icon: 'bi-shop', path: '/vendor/dash-board/stall' },
-        { label: '我的報名紀錄', icon: 'bi-clipboard-check', path: '/vendor/dash-board/register-record' },
+        {
+          label: '我的報名紀錄',
+          icon: 'bi-clipboard-check',
+          path: '/vendor/dash-board/register-record',
+        },
       ];
 
       this.userMenuItems = [
@@ -41,6 +48,7 @@ export class DashboardLayout {
 
     if (role === 'organizer') {
       this.logoPath = '/assets/images/logo/logo-market-day-organizer.png';
+      this.homePath = '/organizer/dash-board/home';
 
       this.menuItems = [
         { label: '首頁', icon: 'bi-house-door', path: '/organizer/dash-board/home' },
@@ -60,6 +68,7 @@ export class DashboardLayout {
 
     if (role === 'admin') {
       this.logoPath = '/assets/images/logo/logo-market-day-admin.png';
+      this.homePath = '/admin/dash-board/home';
 
       this.menuItems = [
         { label: '首頁', icon: 'bi-house-door', path: '/admin/dash-board/home' },

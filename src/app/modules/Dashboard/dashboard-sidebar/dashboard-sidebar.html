@@ -1,5 +1,5 @@
 <aside class="dashboard-sidebar">
-  <div class="brand">
+  <div class="brand" [routerLink]="homePath">
     <img [src]="logoPath" alt="小集日" />
   </div>
 
@@ -12,7 +12,7 @@
     }
   </nav>
 
-  <div class="user-area">
+  <div class="user-area" (click)="$event.stopPropagation()">
     @if (isUserMenuOpen) {
       <div class="user-menu">
         @for (item of userMenuItems; track item.label) {
@@ -31,7 +31,12 @@
       </div>
     }
 
-    <button type="button" class="user-box" (click)="toggleUserMenu()">
+    <button
+      type="button"
+      class="user-box"
+      [class.open]="isUserMenuOpen"
+      (click)="toggleUserMenu()"
+    >
       <div class="user-avatar">
         {{ userInitial }}
       </div>
