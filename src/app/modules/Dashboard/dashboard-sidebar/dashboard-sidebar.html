@@ -5,27 +5,47 @@
 
   <nav class="menu">
     @for (item of menuItems; track item.path) {
-      <a
-        class="menu-item"
-        [routerLink]="item.path"
-        routerLinkActive="active"
-      >
+      <a class="menu-item" [routerLink]="item.path" routerLinkActive="active">
         <i class="bi" [ngClass]="item.icon"></i>
         <span>{{ item.label }}</span>
       </a>
     }
   </nav>
 
-  <div class="user-box">
-    <div class="user-avatar">
-      {{ userInitial }}
-    </div>
+  <div class="user-area">
+    @if (isUserMenuOpen) {
+      <div class="user-menu">
+        @for (item of userMenuItems; track item.label) {
+          @if (item.action === 'logout') {
+            <button type="button" class="user-menu-item logout" (click)="logout()">
+              <i class="bi" [ngClass]="item.icon"></i>
+              <span>{{ item.label }}</span>
+            </button>
+          } @else {
+            <a class="user-menu-item" [routerLink]="item.path">
+              <i class="bi" [ngClass]="item.icon"></i>
+              <span>{{ item.label }}</span>
+            </a>
+          }
+        }
+      </div>
+    }
 
-    <div class="user-info">
-      <strong>{{ userName }}</strong>
-      <span>{{ userEmail }}</span>
-    </div>
+    <button type="button" class="user-box" (click)="toggleUserMenu()">
+      <div class="user-avatar">
+        {{ userInitial }}
+      </div>
 
-    <i class="bi bi-chevron-down"></i>
+      <div class="user-info">
+        <strong>{{ userName }}</strong>
+        <span>{{ userEmail }}</span>
+      </div>
+
+      <i
+        class="bi"
+        [class.bi-chevron-up]="isUserMenuOpen"
+        [class.bi-chevron-down]="!isUserMenuOpen"
+      ></i>
+    </button>
   </div>
 </aside>

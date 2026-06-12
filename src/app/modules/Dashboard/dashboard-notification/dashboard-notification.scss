@@ -1,13 +1,13 @@
 .notification-page {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 4px 0 0;
+  padding: 0;
 
   h1 {
-    margin: 0 0 23px;
-    font-size: 27px;
+    margin: 0 0 20px;
+    font-size: 26px;
     font-weight: 900;
-    color: #111827;
+    color: var(--text-dark);
   }
 }
 
@@ -15,31 +15,30 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: -10px;
 }
 
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
-  margin-bottom: 22px;
+  gap: 10px;
+  margin-bottom: 16px;
 
   button {
-    min-width: 78px;
-    height: 42px;
-    padding: 0 28px;
-    border: 1px solid #dcdfe5;
+    min-width: 72px;
+    height: 34px;
+    padding: 0 18px;
+    border: 1px solid var(--border-light);
     border-radius: 7px;
-    background: #fff;
-    color: #111827;
-    font-size: 15px;
-    font-weight: 900;
+    background: var(--bg-white);
+    color: var(--text-dark);
+    font-size: 13px;
+    font-weight: 800;
     cursor: pointer;
 
     &.active {
-      border-color: #ffcfbd;
-      background: #fffaf7;
-      color: #ff4b0b;
+      border-color: var(--border-primary);
+      background: var(--bg-primary);
+      color: var(--primary-color);
     }
   }
 }
@@ -48,44 +47,47 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  animation: page-fade-in 0.25s ease;
 }
 
 .notification-card {
   display: grid;
-  grid-template-columns: 22px 70px 1fr 190px;
+  grid-template-columns: 18px 54px 1fr 170px;
   align-items: center;
-  min-height: 58px;
-  padding: 0 34px 0 24px;
-  border: 1px solid #e5e7eb;
-  border-radius: 7px;
-  background: #fff;
+  min-height: 56px;
+  padding: 0 24px 0 20px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background: var(--bg-white);
+  cursor: pointer;
+  animation: page-fade-in 0.25s ease;
 
   &.unread {
-    border-color: #ffd9c2;
-    background: linear-gradient(90deg, #fff4ec, #fffaf7);
+    border-color: var(--border-primary);
+    background: linear-gradient(90deg, var(--bg-primary), var(--primary-soft));
   }
 
   .dot {
-    width: 9px;
-    height: 9px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: transparent;
 
     &.show {
-      background: #ff5a16;
+      background: var(--primary-color);
     }
   }
 
   .notice-icon {
-    width: 42px;
-    height: 42px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    background: #fff2e6;
-    color: #ff4b0b;
+    background: var(--bg-primary);
+    color: var(--primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 23px;
+    font-size: 19px;
 
     &.green {
       background: #ecfdf3;
@@ -98,8 +100,8 @@
     }
 
     &.orange {
-      background: #fff2e6;
-      color: #ff4b0b;
+      background: var(--bg-primary);
+      color: var(--primary-color);
     }
 
     &.purple {
@@ -125,70 +127,30 @@
 
   h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 800;
-    color: #111827;
+    color: var(--text-dark);
   }
 
   .status-text {
-    margin-right: 14px;
+    margin-right: 8px;
     font-weight: 900;
-    color: #111;
+    color: var(--text-dark);
   }
 
   time {
     text-align: right;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
-    color: #7f8794;
-  }
-}
-
-.status-badge {
-  display: none;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  margin-top: 24px;
-
-  button {
-    width: 36px;
-    height: 36px;
-    border: 1px solid transparent;
-    border-radius: 7px;
-    background: transparent;
-    font-size: 16px;
-    font-weight: 800;
-    color: #111827;
-    cursor: pointer;
-
-    &:first-child,
-    &:last-child {
-      border-color: #e5e7eb;
-      background: #fff;
-    }
-
-    &.active {
-      background: #fff0e8;
-      color: #ff4b0b;
-    }
-
-    &:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
+    color: var(--text-normal);
   }
 }
 
 @media (max-width: 992px) {
   .notification-card {
-    grid-template-columns: 14px 48px 1fr;
-    gap: 8px 12px;
-    padding: 14px 16px;
+    grid-template-columns: 14px 42px 1fr;
+    gap: 8px 10px;
+    padding: 12px 14px;
 
     time {
       grid-column: 3 / -1;

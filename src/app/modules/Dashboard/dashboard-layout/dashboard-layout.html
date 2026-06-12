@@ -1,12 +1,14 @@
 <div class="dashboard-layout">
-    <app-dashboard-sidebar
-        [logoPath]="logoPath"
-        [menuItems]="menuItems"
-        [userName]="userName"
-        [userEmail]="userEmail"
-        [userInitial]="userInitial"
-    ></app-dashboard-sidebar>
-    <main class="dashboard-main">
-        <router-outlet></router-outlet>
-    </main>
+  <app-dashboard-sidebar
+    [logoPath]="logoPath"
+    [menuItems]="menuItems"
+    [userMenuItems]="userMenuItems"
+    [userName]="userName"
+    [userEmail]="userEmail"
+    [userInitial]="userInitial"
+  ></app-dashboard-sidebar>
+
+  <main class="dashboard-main">
+    <router-outlet></router-outlet>
+  </main>
 </div>
