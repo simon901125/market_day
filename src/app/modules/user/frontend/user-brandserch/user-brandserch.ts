@@ -2,45 +2,55 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { BrandItem } from '../../../../models/BrandItem';
 import { UserBrandserchCard } from '../user-brandserch-card/user-brandserch-card';
-import { UserBrandserchDropdown } from '../user-brandserch-dropdown/user-brandserch-dropdown';
-import { UserBrandserchPagination } from '../user-brandserch-pagination/user-brandserch-pagination';
+import { UserDropdown } from '../user-dropdown/user-dropdown';
+import { Pagination } from '../../../shared/pagination/pagination';
+import { BrandType } from '../../../../models/type/BrandType ';
 
 @Component({
   selector: 'app-user-brandserch',
-  imports: [UserBrandserchCard, UserBrandserchDropdown, UserBrandserchPagination],
+  imports: [UserBrandserchCard, UserDropdown, Pagination],
   templateUrl: './user-brandserch.html',
   styleUrl: './user-brandserch.scss',
 })
 export class UserBrandserch {
-  brandTypeOptions = ['全部市集', '餐飲美食', '文創手作', '親子家庭', '寵物生活', '植物選物', '服飾配件', '玩具選物'];
-  marketOptions = ['草悟野餐市集', '咖啡生活節', '夏日風格服裝市集'];
+  /** 品牌類型下拉選單 */
+  brandTypeOptions = BrandType.filterList;
 
-  tags = ['全部類型', '手作飾品', '手工皮件', '文創設計', '生活雜貨', '美食甜點'];
-  activeTagIndex = 0;
+  /** 參與市集下拉選單 */
+  marketOptions = ['全部市集', '草悟野餐市集', '咖啡生活節', '夏日風格服裝市集'];
+
+  /** 目前頁碼 */
+  currentPage = 1;
+
+  /** 每頁顯示筆數 */
+  pageSize = 6;
 
   constructor(private router: Router) {}
 
-  selectTag(index: number): void {
-    this.activeTagIndex = index;
+  /** 依目前頁碼取得要顯示的品牌資料 */
+  get pagedBrands(): BrandItem[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.brands.slice(start, start + this.pageSize);
   }
 
-  /** 接收頁碼元件的頁碼變更事件 */
+  /** 接收分頁元件傳回的頁碼 */
   onPageChange(page: number): void {
-    // TODO: 根據頁碼向 API 請求對應資料
-    console.log('切換至第', page, '頁');
+    this.currentPage = page;
   }
 
+  /** 前往品牌詳細頁 */
   goToBrandDetail(brand: BrandItem): void {
     this.router.navigate(['/user/brand-detail'], {
-      state: { brand: brand },
+      state: { brand },
     });
   }
 
+  /** 品牌列表假資料 */
   brands: BrandItem[] = [
     {
       name: '品一好食主意',
       description: '精選手工點心，從台灣在地食材出發，用心製作每一口。',
-      tags: ['餐飲美食'],
+      tags: [BrandType.food],
       historyMarkets: ['草悟野餐市集', '咖啡生活節'],
       image: 'assets/images/PromotionalPhotos_1.png',
       logo: 'assets/images/brandLogo.png',
@@ -49,7 +59,7 @@ export class UserBrandserch {
     {
       name: '鑲 · 手作飾品',
       description: '以金屬工藝融合自然元素，打造獨一無二的手作飾品。',
-      tags: ['文創手作'],
+      tags: [BrandType.handmade],
       historyMarkets: ['夏日風格服裝市集'],
       image: 'assets/images/PromotionalPhotos_1.png',
       logo: 'assets/images/brandLogo.png',
@@ -58,7 +68,7 @@ export class UserBrandserch {
     {
       name: '革本皮件',
       description: '職人手縫皮件，每一針每一線都是對質感的堅持。',
-      tags: ['服飾配件'],
+      tags: [BrandType.fashion],
       historyMarkets: ['草悟野餐市集'],
       image: 'assets/images/PromotionalPhotos_1.png',
       logo: 'assets/images/brandLogo.png',
@@ -67,7 +77,7 @@ export class UserBrandserch {
     {
       name: '紙上植物',
       description: '將自然植物轉化為文創設計，讓日常充滿生命力。',
-      tags: ['文創設計'],
+      tags: [BrandType.plant],
       historyMarkets: ['咖啡生活節'],
       image: 'assets/images/PromotionalPhotos_1.png',
       logo: 'assets/images/brandLogo.png',
@@ -75,8 +85,8 @@ export class UserBrandserch {
     },
     {
       name: '簡生活選物',
-      description: '精選北歐風格生活雜貨，讓家更有溫度。',
-      tags: ['文創手作'],
+      description: '精選溫柔質感生活雜貨，讓居家日常多一點細緻溫度。',
+      tags: [BrandType.handmade],
       historyMarkets: ['草悟野餐市集', '夏日風格服裝市集'],
       image: 'assets/images/PromotionalPhotos_1.png',
       logo: 'assets/images/brandLogo.png',
@@ -85,11 +95,29 @@ export class UserBrandserch {
     {
       name: '默默設計',
       description: '用設計說故事，讓每件作品都有一段值得珍藏的記憶。',
-      tags: ['文創手作'],
+      tags: [BrandType.handmade],
       historyMarkets: ['咖啡生活節', '夏日風格服裝市集'],
       image: 'assets/images/PromotionalPhotos_1.png',
       logo: 'assets/images/brandLogo.png',
       goodat_works: '品牌周邊、印刷品',
+    },
+    {
+      name: '毛日子寵物選品',
+      description: '為毛孩挑選安心實用的日常用品，陪伴每個溫暖生活片刻。',
+      tags: [BrandType.pet],
+      historyMarkets: ['草悟野餐市集'],
+      image: 'assets/images/PromotionalPhotos_1.png',
+      logo: 'assets/images/brandLogo.png',
+      goodat_works: '寵物圍巾、零食包',
+    },
+    {
+      name: '小島玩具研究所',
+      description: '設計親子共享的木作玩具，讓孩子在遊戲裡探索與學習。',
+      tags: [BrandType.toy],
+      historyMarkets: ['夏日風格服裝市集'],
+      image: 'assets/images/PromotionalPhotos_1.png',
+      logo: 'assets/images/brandLogo.png',
+      goodat_works: '木作玩具、益智積木',
     },
   ];
 }

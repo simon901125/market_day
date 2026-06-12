@@ -1,6 +1,4 @@
 <div class="brandserch-page">
-
-  <!-- Hero Banner -->
   <section class="brandserch-hero">
     <div class="hero-content">
       <h1>品牌探索</h1>
@@ -8,29 +6,26 @@
     </div>
   </section>
 
-  <!-- Filter Panel -->
   <section class="filter-panel">
     <div class="filter-inner">
       <div class="filter-top">
-        <!-- 搜尋框 -->
         <div class="search-input">
           <i class="bi bi-search"></i>
           <input type="text" placeholder="搜尋品牌名稱、關鍵字" />
         </div>
 
-        <!-- 兩個下拉式選單 -->
         <div class="filter-actions">
-          <app-user-brandserch-dropdown
+          <app-user-dropdown
             [options]="brandTypeOptions"
             placeholder="品牌類型">
-          </app-user-brandserch-dropdown>
-          <app-user-brandserch-dropdown
+          </app-user-dropdown>
+
+          <app-user-dropdown
             [options]="marketOptions"
             placeholder="參與市集">
-          </app-user-brandserch-dropdown>
+          </app-user-dropdown>
         </div>
 
-        <!-- 確認按鈕 -->
         <button class="search-btn" type="button">
           搜尋
         </button>
@@ -38,30 +33,30 @@
     </div>
   </section>
 
-  <!-- Brand Grid -->
   <section class="brand-section">
     <div class="brand-inner">
-      <!-- 標題 -->
-       <div class="brand-section-title">
-         <div >
+      <div class="brand-section-title">
+        <div>
           <h4>探索品牌</h4>
           <p>發掘參與小集日市集的優質品牌</p>
-         </div>
-        <p class="result-count">共 {{ brands.length }} 個品牌</p>
-       </div>
+        </div>
+      </div>
 
-      <!-- 品牌展示卡片 -->
       <div class="brand-grid">
-        @for (brand of brands; track $index) {
-          <app-user-brandserch-card [brand]="brand" (cardClick)="goToBrandDetail($event)"></app-user-brandserch-card>
+        @for (brand of pagedBrands; track $index) {
+          <app-user-brandserch-card
+            [brand]="brand"
+            (cardClick)="goToBrandDetail($event)">
+          </app-user-brandserch-card>
         }
       </div>
 
-      <!-- 頁籤 -->
-      <app-user-brandserch-pagination
+      <app-pagination
+        [currentPage]="currentPage"
+        [pageSize]="pageSize"
+        [totalItems]="brands.length"
         (pageChange)="onPageChange($event)">
-      </app-user-brandserch-pagination>
+      </app-pagination>
     </div>
   </section>
-
 </div>

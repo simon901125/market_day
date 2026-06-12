@@ -38,10 +38,10 @@
     </div>
   }
 
-  <app-pagination
+  <app-dashboard-pagination
     [currentPage]="currentPage"
     [pageSize]="pageSize"
     [totalItems]="filteredNotifications.length"
     (pageChange)="setPage($event)"
-  ></app-pagination>
+  ></app-dashboard-pagination>
 </section>

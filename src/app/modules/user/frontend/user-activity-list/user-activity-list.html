@@ -40,33 +40,12 @@
         }
       </div>
 
-      <div class="pagination">
-        <button
-          type="button"
-          [disabled]="currentPage === 1"
-          (click)="prevPage()"
-        >
-          <i class="bi bi-chevron-left"></i>
-        </button>
-
-        @for (page of pageNumbers; track page) {
-          <button
-            type="button"
-            [class.active]="currentPage === page"
-            (click)="changePage(page)"
-          >
-            {{ page }}
-          </button>
-        }
-
-        <button
-          type="button"
-          [disabled]="currentPage === totalPages"
-          (click)="nextPage()"
-        >
-          <i class="bi bi-chevron-right"></i>
-        </button>
-      </div>
+      <app-pagination
+        [currentPage]="currentPage"
+        [pageSize]="pageSize"
+        [totalItems]="markets.length"
+        (pageChange)="changePage($event)">
+      </app-pagination>
     } @else {
       <div class="history-header">
         <h2>共 12 場歷史市集</h2>

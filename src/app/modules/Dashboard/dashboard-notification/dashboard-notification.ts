@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationItem, NotificationType } from '../../../models/NotificationItem';
-import { Pagination } from '../../shared/pagination/pagination';
 import { NotificationStatus } from '../../../models/status/NotificationStatus';
+import { DashboardPagination } from '../../shared/dashboard-pagination/dashboard-pagination';
 
 /** 通知頁籤類型 */
 type NotificationTab =
@@ -12,7 +12,7 @@ type NotificationTab =
 
 @Component({
   selector: 'app-dashboard-notification',
-  imports: [CommonModule, Pagination],
+  imports: [CommonModule, DashboardPagination],
   templateUrl: './dashboard-notification.html',
   styleUrl: './dashboard-notification.scss',
 })

@@ -18,21 +18,24 @@
 .search-input,
 .select-btn {
   height: 48px;
+  padding: 0 16px;
   border: 1px solid var(--border-soft);
   border-radius: 8px;
   background: var(--bg-white);
+  color: var(--text-normal);
+  box-sizing: border-box;
+
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 16px;
-  color: var(--text-normal);
+
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 
   i {
-    font-size: 1rem;
     color: var(--text-normal);
+    font-size: 1rem;
     transition: color 0.2s ease;
   }
 
@@ -42,8 +45,8 @@
     border: none;
     outline: none;
     color: var(--text-dark);
-    font-size: 0.95rem;
     background: transparent;
+    font-size: 0.95rem;
 
     &::placeholder {
       color: var(--text-light);
@@ -62,8 +65,9 @@
 
 .select-btn {
   justify-content: space-between;
-  cursor: pointer;
+  font-size: 0.95rem;
   font-weight: 600;
+  cursor: pointer;
 
   span {
     display: inline-flex;
@@ -111,13 +115,13 @@
 }
 
 .category-tag {
-  height: 34px;
-  padding: 0 15px;
+  height: 38px;
+  padding: 0 16px;
   border: 1px solid var(--border-light);
   border-radius: 999px;
   background: var(--bg-white);
   color: var(--text-normal);
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   white-space: nowrap;
@@ -136,9 +140,9 @@
     transform 0.2s ease;
 
   i {
-    font-size: 0.95rem;
-    line-height: 1;
     color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1;
     transition: color 0.2s ease;
   }
 
@@ -202,7 +206,7 @@
   .search-input,
   .select-btn,
   .search-btn {
-    height: 46px;
+    height: 48px;
   }
 
   .category-tags {
@@ -215,12 +219,12 @@
 
   .category-tag {
     flex: 0 0 auto;
-    height: 32px;
-    padding: 0 14px;
-    font-size: 0.82rem;
+    height: 36px;
+    padding: 0 16px;
+    font-size: 0.9rem;
 
     i {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
     }
   }
 }

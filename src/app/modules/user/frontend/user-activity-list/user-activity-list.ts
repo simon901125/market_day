@@ -9,6 +9,7 @@ import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { UserMarketSearchPanel } from '../user-market-search-panel/user-market-search-panel';
 import { UserMarketCard } from '../user-market-card/user-market-card';
 import { UserHistoryMarketCard } from '../user-history-market-card/user-history-market-card';
+import { Pagination } from '../../../shared/pagination/pagination';
 
 @Component({
   selector: 'app-user-activity-list',
@@ -16,6 +17,7 @@ import { UserHistoryMarketCard } from '../user-history-market-card/user-history-
     UserMarketSearchPanel,
     UserMarketCard,
     UserHistoryMarketCard,
+    Pagination,
   ],
   templateUrl: './user-activity-list.html',
   styleUrl: './user-activity-list.scss',
@@ -29,12 +31,45 @@ export class UserActivityList {
   /** 目前頁碼 */
   currentPage = 1;
 
-  /** 每頁顯示幾筆 */
+  /** 每頁顯示筆數 */
   pageSize = 6;
+
+  /** 目前頁面要顯示的市集 */
+  get pagedMarkets(): MarketCardItem[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.markets.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  /** 切換目前/歷史活動 */
+  changeTab(tab: 'current' | 'history'): void {
+    this.activeTab = tab;
+
+    if (tab === 'current') {
+      this.currentPage = 1;
+    }
+  }
+
+  /** 接收共用分頁元件傳回的頁碼 */
+  changePage(page: number): void {
+    this.currentPage = page;
+  }
+
+  /** 導航到市集詳情頁 */
+  goToActivityDetail(market: MarketCardItem): void {
+    this.router.navigate(['/user/activity-detail'], {
+      state: { market },
+    });
+  }
+
+  /** 歷史活動的查看詳情 */
+  goToActivityHistory(market: HistoryMarketCardItem): void {
+    this.router.navigate(['/user/activity-detail'], {
+      state: { market },
+    });
+  }
 
   /** 目前市集列表 */
   markets: MarketCardItem[] = [
-    // 第 1 頁
     {
       title: '草地野餐市集',
       start_date: '2026/06/04',
@@ -143,8 +178,6 @@ export class UserActivityList {
       organizer: '台中市政府',
       Transportation: ['捷運：台中站', '公車：綠1、綠2、藍1路'],
     },
-
-    // 第 2 頁
     {
       title: '城市甜點生活市集',
       start_date: '2024/07/05',
@@ -253,8 +286,6 @@ export class UserActivityList {
       organizer: '新北市政府',
       Transportation: ['捷運：板橋站', '台鐵：板橋站'],
     },
-
-    // 第 3 頁
     {
       title: '秋日職人手作市集',
       start_date: '2024/09/06',
@@ -424,64 +455,4 @@ export class UserActivityList {
       desc: '海風、陽光與好物相遇，在駁二散步挖寶，感受港都的夏日魅力。',
     },
   ];
-
-  /** 目前活動總頁數 */
-  get totalPages(): number {
-    return Math.ceil(this.markets.length / this.pageSize);
-  }
-
-  /** 分頁按鈕數字 */
-  get pageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
-  }
-
-  /** 目前頁面要顯示的市集 */
-  get pagedMarkets(): MarketCardItem[] {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-
-    return this.markets.slice(startIndex, endIndex);
-  }
-
-  /** 切換目前/歷史活動 */
-  changeTab(tab: 'current' | 'history'): void {
-    this.activeTab = tab;
-
-    if (tab === 'current') {
-      this.currentPage = 1;
-    }
-  }
-
-  /** 切換頁碼 */
-  changePage(page: number): void {
-    if (page < 1 || page > this.totalPages) {
-      return;
-    }
-
-    this.currentPage = page;
-  }
-
-  /** 上一頁 */
-  prevPage(): void {
-    this.changePage(this.currentPage - 1);
-  }
-
-  /** 下一頁 */
-  nextPage(): void {
-    this.changePage(this.currentPage + 1);
-  }
-
-  /** 導航到市集詳情頁 */
-  goToActivityDetail(market: MarketCardItem): void {
-    this.router.navigate(['/user/activity-detail'], {
-      state: { market },
-    });
-  }
-
-  /** 歷史活動的查看詳情 */
-  goToActivityHistory(market: HistoryMarketCardItem): void {
-    this.router.navigate(['/user/activity-detail'], {
-      state: { market },
-    });
-  }
 }

@@ -1,7 +1,7 @@
 .pagination-row {
   position: relative;
-  min-height: 32px;
-  margin-top: 12px;
+  min-height: 38px;
+  margin-top: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,37 +11,38 @@
   position: absolute;
   right: 0;
   margin: 0;
-  font-size: 12px;
-  font-weight: 700;
   color: var(--text-light);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .pagination {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 18px;
 
   button {
-    width: 32px;
-    height: 32px;
-    border: 1px solid transparent;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--border-light);
     border-radius: 8px;
-    background: transparent;
-    font-size: 14px;
-    font-weight: 800;
     color: var(--text-dark);
+    background: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
     cursor: pointer;
+    transition:
+      color 0.25s ease,
+      border-color 0.25s ease,
+      background-color 0.25s ease,
+      transform 0.25s ease;
 
-    &:first-child,
-    &:last-child {
-      border-color: var(--border-light);
-      background: var(--bg-white);
-    }
-
-    &.active {
-      background: var(--bg-primary);
-      color: var(--primary-color);
+    &.active,
+    &:hover:not(:disabled) {
+      color: #fff;
+      border-color: var(--primary-color);
+      background: var(--primary-color);
     }
 
     &:disabled {
@@ -51,7 +52,7 @@
   }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 768px) {
   .pagination-row {
     flex-direction: column;
     gap: 10px;
@@ -59,5 +60,26 @@
 
   .page-info {
     position: static;
+  }
+
+  .pagination {
+    gap: 12px;
+
+    button {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .pagination {
+    gap: 8px;
+
+    button {
+      width: 34px;
+      height: 34px;
+      font-size: 0.86rem;
+    }
   }
 }
