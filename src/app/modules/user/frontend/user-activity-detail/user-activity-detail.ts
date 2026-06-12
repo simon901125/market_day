@@ -22,7 +22,10 @@ export class UserActivityDetail {
   constructor(private router: Router) {
     // 使用 currentNavigation 信號獲取傳遞的數據
     const navigation = this.router.currentNavigation();
-    this.market = navigation?.extras.state?.['market'] || null;
+    //navigation?.extras.state?.['market']：從 Angular Router 的當前導航資料取得
+    //history.state?.['market']：從瀏覽器歷史紀錄取得
+    //這樣可以避免刷新或回上一頁後 currentNavigation() 為 null 時，頁面拿不到資料
+    this.market = navigation?.extras.state?.['market'] || history.state?.['market'] || null;
   }
 
   //這裡先寫假資料，等串接後再改成傳入的資料
@@ -43,11 +46,6 @@ export class UserActivityDetail {
       return false;
     }
   }
-
-  // /** 切換市集攤位資訊的顯示狀態 */
-  // toggleMarketMapInfo(){
-  //   this.isMarketMapInfo = !this.isMarketMapInfo;
-  // }
 
   /**
    * 計算剩餘天數
@@ -96,10 +94,5 @@ export class UserActivityDetail {
     } else {
       return `活動已經開始了`;
     }
-    
   }
-
-  
-
-  
 }

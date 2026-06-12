@@ -12,6 +12,7 @@ import {
   styleUrl: './organizer-dashboard-notification.scss',
 })
 export class OrganizerDashboardNotification {
+  
   tabs: Array<'全部' | '未讀' | NotificationType> = [
     '全部',
     '未讀',

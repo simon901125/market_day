@@ -9,6 +9,7 @@ import { NotificationItem, NotificationType } from '../../../../models/Notificat
   styleUrl: './vendor-dashboard-notification.scss',
 })
 export class VendorDashboardNotification {
+  /** 標籤 */
   tabs: Array<'全部' | '未讀' | NotificationType> = [
     '全部',
     '未讀',
@@ -18,6 +19,7 @@ export class VendorDashboardNotification {
     '活動通知',
   ];
 
+  /** 通知列 */
   notifications: NotificationItem[] = [
   {
     icon: 'bi bi-clipboard-check',
