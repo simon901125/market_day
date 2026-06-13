@@ -1,0 +1,72 @@
+.todo-card {
+  background: var(--bg-white);
+  border: 2px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+
+  .todo-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    i {
+      font-size: 1.8rem;
+    }
+  }
+
+  .todo-body {
+    flex: 1;
+    
+    .todo-label {
+      font-size: 0.875rem;
+      color: var(--text-normal);
+      font-weight: 600;
+      margin: 0;
+      margin-bottom: 12px;
+    }
+
+    .todo-count {
+      margin: 0 0 2px;
+      line-height: 1;
+
+      .count-num {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--text-dark);
+      }
+
+      .count-unit {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-normal);
+        margin-left: 12px;
+      }
+    }
+  }
+
+  .todo-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: none;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    position: absolute;
+    bottom: 16px;
+    right: 24px;
+
+    &:hover {
+      color: var(--primary-hover);
+    }
+  }
+}

@@ -1,0 +1,70 @@
+<section class="admin-home page-transition">
+
+  <!-- 歡迎區塊 -->
+  <header class="welcome-header">
+    <h1 class="welcome-title">歡迎回來，管理員！👋</h1>
+    <p class="welcome-subtitle">一起打造精彩的市集活動，讓好品牌被更多人看見！</p>
+  </header>
+
+  <!-- 待辦事項 -->
+  <section class="todo-section">
+    <h2 class="section-title">待辦事項</h2>
+    <div class="todo-cards">
+      @for (item of todoItems; track item.label) {
+        <app-dashboard-home-todo-card
+          [icon]="item.icon"
+          [count]="item.count"
+          [unit]="item.unit"
+          [label]="item.label"
+          [path]="item.path"
+          [iconBgColor]="item.iconBgColor ?? 'var(--bg-primary)'"
+          [iconColor]="item.iconColor ?? 'var(--primary-color)'"
+        />
+      }
+    </div>
+  </section>
+
+  <!-- 平台概況 -->
+  <section class="stats-section">
+    <h2 class="section-title">平台概況</h2>
+    <div class="stats-cards">
+      @for (stat of platformStats; track stat.label) {
+        <app-dashboard-home-todo-card
+          [icon]="stat.icon"
+          [count]="stat.value"
+          [unit]="stat.unit"
+          [label]="stat.label"
+          [iconBgColor]="stat.iconBgColor ?? 'var(--bg-primary)'"
+          [iconColor]="stat.iconColor ?? 'var(--primary-color)'"
+        />
+      }
+    </div>
+  </section>
+
+  <!-- 最新通知 -->
+  <section class="notifications-section">
+    <header class="section-header">
+      <h2 class="section-title">最新通知</h2>
+      <a class="view-all-link" [routerLink]="'/admin/dash-board/notification'">
+        查看全部 <i class="bi bi-chevron-right"></i>
+      </a>
+    </header>
+    <ul class="notification-list">
+      @for (item of recentNotifications; track item.time) {
+        <li class="notification-item">
+          <span class="notification-icon {{ item.iconColor }}">
+            <i class="bi {{ item.icon }}"></i>
+          </span>
+          <div class="notification-content">
+            <p class="notification-text">
+              <span class="notification-tag">{{ item.tag }}</span>
+              {{ item.content }}
+            </p>
+          </div>
+          <time class="notification-time">{{ item.time }}</time>
+        </li>
+      }
+    </ul>
+  </section>
+
+</section>

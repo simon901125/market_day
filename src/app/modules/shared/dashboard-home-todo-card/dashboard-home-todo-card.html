@@ -1,0 +1,17 @@
+<article class="todo-card">
+  <div class="todo-icon-wrap" [style.background]="iconBgColor">
+    <i class="bi {{ icon }}" [style.color]="iconColor"></i>
+  </div>
+  <div class="todo-body">
+    <h3 class="todo-label">{{ label }}</h3>
+    <p class="todo-count">
+      <span class="count-num">{{ count }}</span>
+      <span class="count-unit">{{ unit }}</span>
+    </p>
+  </div>
+  @if (path) {
+    <a class="todo-link" [routerLink]="path">
+      前往查看 <i class="bi bi-chevron-right"></i>
+    </a>
+  }
+</article>
