@@ -1,1 +1,80 @@
-<p>admin-home works!</p>
+<section class="admin-home page-transition">
+
+  <!-- 歡迎區塊 -->
+  <header class="welcome-header">
+    <h1 class="welcome-title">歡迎回來，管理員！👋</h1>
+    <p class="welcome-subtitle">一起打造精彩的市集活動，讓好品牌被更多人看見！</p>
+  </header>
+
+  <!-- 待辦事項 -->
+  <section class="todo-section">
+    <h2 class="section-title">待辦事項</h2>
+    <div class="todo-cards">
+      @for (item of todoItems; track item.label) {
+        <article class="todo-card">
+          <div class="todo-icon-wrap">
+            <i class="bi {{ item.icon }}"></i>
+          </div>
+          <div class="todo-body">
+            <p class="todo-count">
+              <span class="count-num">{{ item.count }}</span>
+              <span class="count-unit">{{ item.unit }}</span>
+            </p>
+            <h3 class="todo-label">{{ item.label }}</h3>
+          </div>
+          <a class="todo-link" [routerLink]="item.path">
+            前往查看 <i class="bi bi-chevron-right"></i>
+          </a>
+        </article>
+      }
+    </div>
+  </section>
+
+  <!-- 平台概況 -->
+  <section class="stats-section">
+    <h2 class="section-title">平台概況</h2>
+    <div class="stats-cards">
+      @for (stat of platformStats; track stat.label) {
+        <article class="stat-card">
+          <div class="stat-icon-wrap">
+            <i class="bi {{ stat.icon }}"></i>
+          </div>
+          <div class="stat-body">
+            <p class="stat-value">
+              <span class="value-num">{{ stat.value }}</span>
+              <span class="value-unit">{{ stat.unit }}</span>
+            </p>
+            <h3 class="stat-label">{{ stat.label }}</h3>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  <!-- 最新通知 -->
+  <section class="notifications-section">
+    <header class="section-header">
+      <h2 class="section-title">最新通知</h2>
+      <a class="view-all-link" [routerLink]="'/admin/dash-board/notification'">
+        查看全部 <i class="bi bi-chevron-right"></i>
+      </a>
+    </header>
+    <ul class="notification-list">
+      @for (item of recentNotifications; track item.time) {
+        <li class="notification-item">
+          <span class="notification-icon {{ item.iconColor }}">
+            <i class="bi {{ item.icon }}"></i>
+          </span>
+          <div class="notification-content">
+            <p class="notification-text">
+              <span class="notification-tag">{{ item.tag }}</span>
+              {{ item.content }}
+            </p>
+          </div>
+          <time class="notification-time">{{ item.time }}</time>
+        </li>
+      }
+    </ul>
+  </section>
+
+</section>

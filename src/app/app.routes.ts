@@ -6,6 +6,11 @@ import { UserActivityDetail } from './modules/user/frontend/user-activity-detail
 import { UserBrandserch } from './modules/user/frontend/user-brandserch/user-brandserch';
 import { UserBrandDetail } from './modules/user/frontend/user-brand-detail/user-brand-detail';
 import { AdminLogin } from './modules/admin/admin-login/admin-login';
+import { AdminDashboardHome } from './modules/admin/admin-dashboard-home/admin-dashboard-home';
+import { AdminDashboardNotification } from './modules/admin/admin-dashboard-notification/admin-dashboard-notification';
+import { AdminDashboardMarketManagemant } from './modules/admin/admin-dashboard-market-managemant/admin-dashboard-market-managemant';
+import { AdminDashboardUserManagement } from './modules/admin/admin-dashboard-user-management/admin-dashboard-user-management';
+import { AdminDashboardLogs } from './modules/admin/admin-dashboard-logs/admin-dashboard-logs';
 import { Auth } from './modules/auth/auth/auth';
 import { UserAboutUs } from './modules/user/frontend/user-about-us/user-about-us';
 import { AUTH_ROUTE_DATA } from './config/auth-route-data';
@@ -147,6 +152,26 @@ export const routes: Routes = [
         path: '',
         redirectTo: 'home',
         pathMatch: 'full',
+      },
+      {
+        path: 'home',
+        component: AdminDashboardHome,
+      },
+      {
+        path: 'notification',
+        component: AdminDashboardNotification,
+      },
+      {
+        path: 'activity',
+        component: AdminDashboardMarketManagemant,
+      },
+      {
+        path: 'users',
+        component: AdminDashboardUserManagement,
+      },
+      {
+        path: 'logs',
+        component: AdminDashboardLogs,
       },
     ],
   },
