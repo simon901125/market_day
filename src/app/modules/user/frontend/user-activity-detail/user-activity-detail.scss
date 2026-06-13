@@ -148,7 +148,7 @@
     align-items: start;
 
     > i {
-      color: #ff6a00;
+      color: var(--primary-color);
       font-size: 1.6rem;
       line-height: 1.2;
     }
@@ -176,7 +176,7 @@
   }
 
   .primary-text {
-    color: #ff6a00;
+    color: var(--primary-color);
   }
 }
 
@@ -202,14 +202,14 @@
   margin-bottom: 26px;
 
   i {
-    color: #ff6a00;
+    color: var(--primary-color);
     font-size: 1.8rem;
   }
 
   h2,
   h3 {
     margin: 0;
-    color: #111;
+    color: var(--text-dark);
     font-weight: 900;
     letter-spacing: 0.04em;
   }
@@ -238,8 +238,8 @@
     padding: 8px 18px;
     border-radius: 999px;
 
-    background: #fef1dc;
-    color: #ff7a00;
+    background: var(--bg-primary);
+    color: var(--primary-color);
 
     font-size: 0.95rem;
     font-weight: 800;
@@ -284,13 +284,13 @@
   }
 
   i {
-    color: #ff6a00;
+    color: var(--primary-color);
     font-size: 1.8rem;
   }
 
   h2 {
     margin: 0;
-    color: #111;
+    color: var(--text-dark);
     font-size: 1.5rem;
     font-weight: 900;
   }
@@ -336,7 +336,7 @@
 
   h3 {
     margin: 0;
-    color: #111;
+    color: var(--text-dark);
     font-size: 1.45rem;
     font-weight: 900;
   }
@@ -374,7 +374,7 @@
   }
 
   i {
-    color: #ff6a00;
+    color: var(--bg-primary);
     font-size: 1.5rem;
   }
 
@@ -384,7 +384,7 @@
     text-decoration: none;
 
     &:hover {
-      color: var(--primary-color);
+      color: var(--primary-hover);
     }
   }
 }
@@ -443,7 +443,7 @@
   }
 
   i {
-    color: #ff6a00;
+    color: var(--primary-color);
     font-size: 1.45rem;
     line-height: 1.2;
   }

@@ -1,0 +1,137 @@
+:host {
+  display: block;
+  background: var(--bg-primary);
+}
+
+.market-search-section {
+  padding: 3px 0 26px;
+  background: var(--bg-white);
+  color: var(--text-dark);
+
+  .container {
+    max-width: 1180px;
+  }
+}
+
+.search-card {
+  padding: 24px 20px;
+  border-radius: var(--radius-card);
+  background: var(--bg-white);
+  box-shadow: var(--shadow-soft);
+}
+
+.search-row {
+  display: grid;
+  grid-template-columns: 220px 150px 140px 12px 140px 120px 120px 86px;
+  align-items: center;
+  gap: 13px;
+}
+
+.search-field {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  border: 1px solid var(--bg-primary);
+  border-radius: 6px;
+  background: var(--bg-white);
+
+  i {
+    color: var(--text-normal);
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  input,
+  select {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  input::placeholder {
+    color: var(--text-light);
+  }
+}
+
+.search-select {
+  height: 46px;
+  padding: 0 36px 0 14px;
+  border-color: var(--bg-primary);
+  border-radius: 6px;
+  color: var(--text-dark);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: none;
+
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: none;
+  }
+}
+
+.search-btn {
+  width: 92px;
+  height: 46px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--primary-color);
+  color: var(--bg-white);
+  font-size: 15px;
+  font-weight: 900;
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+}
+
+.dash {
+  display: flex;
+  justify-content: center;
+  color: var(--text-dark);
+  font-weight: 900;
+}
+
+@media (max-width: 1200px) {
+  .market-search-section .container {
+    max-width: 960px;
+  }
+
+  .search-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dash {
+    display: none;
+  }
+
+  .search-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .market-search-section {
+    padding: 30px 0 24px;
+
+    h1 {
+      margin-bottom: 24px;
+      font-size: 32px;
+    }
+  }
+
+  .search-card {
+    padding: 18px;
+  }
+
+  .search-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}

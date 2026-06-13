@@ -97,7 +97,7 @@ export class UserHome implements OnInit, OnDestroy{
       statusClass: MarketStatus.getClass(MarketStatus.active),
       tags: [BrandType.food, BrandType.handmade, BrandType.family],
       organizer: '台中市政府',
-      Transportation: ['捷運綠線：草悟道站', '公車：5、10、20、30路']
+      transportation: ['捷運綠線：草悟道站', '公車：5、10、20、30路']
     },
     {
       title: '台北精品咖啡生活節',
@@ -115,7 +115,7 @@ export class UserHome implements OnInit, OnDestroy{
       statusClass: MarketStatus.getClass(MarketStatus.active),
       tags: [BrandType.food, BrandType.handmade, BrandType.fashion],
       organizer: '台北市政府',
-      Transportation: ['捷運紅線：忠孝新生站', '公車：藍5、藍7、藍10路']
+      transportation: ['捷運紅線：忠孝新生站', '公車：藍5、藍7、藍10路']
     },
     {
       title: '手作設計市集',
@@ -133,7 +133,7 @@ export class UserHome implements OnInit, OnDestroy{
       statusClass: MarketStatus.getClass(MarketStatus.active),
       tags: [BrandType.handmade, BrandType.fashion, BrandType.toy],
       organizer: '台南市政府',
-      Transportation: ['公車：綠幹線、藍幹線', '計程車：台南火車站搭乘約10分鐘']
+      transportation: ['公車：綠幹線、藍幹線', '計程車：台南火車站搭乘約10分鐘']
     },
   ];
 

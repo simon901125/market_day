@@ -38,9 +38,13 @@
     </div>
 
     <div class="market-grid">
-      @for (market of markets; track $index; let i = $index;) {
-        <app-user-market-card [market]="market" (click)="goToActivityDetail(market)"></app-user-market-card>
-      }
+      <div class="row g-4">
+        @for (market of recentMarkets; track market.title) {
+          <div class="col-12 col-md-6 col-lg-4">
+            <app-vendor-market-card [market]="market"></app-vendor-market-card>
+          </div>
+        }
+      </div>
     </div>
   </section>
 

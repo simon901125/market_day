@@ -36,7 +36,7 @@
   }
 
   span {
-    color: #ff5a00;
+    color: var(--primary-color);
     font-size: 18px;
     font-weight: 800;
     white-space: nowrap;
@@ -61,7 +61,7 @@
 
     &.active,
     &:hover {
-      color: #ff5a00;
+      color: var(--primary-hover);
     }
 
     &.active::after {
@@ -74,7 +74,7 @@
       width: 56px;
       height: 3px;
 
-      background: #ff5a00;
+      background: var(--primary-color);
       border-radius: 999px;
 
       transform: translateX(-50%);
@@ -104,22 +104,22 @@
 }
 
 .login-btn {
-  border: 1px solid #ff5a00;
-  color: #ff5a00;
-  background: #fff;
+  border: 1px solid var(--primary-hover);
+  color:var(--primary-color);
+  background: var(--bg-white);
 
   &:hover {
-    background: #fff4ed;
+    background: var(--bg-soft);
   }
 }
 
 .register-btn {
-  border: 1px solid #ff5a00;
-  color: #fff;
-  background: #ff5a00;
+  border: 1px solid var(--primary-hover);
+  color: var(--bg-white);
+  background: var(--primary-color);
 
   &:hover {
-    background: #e84f00;
+    background:var(--primary-hover);
   }
 }
 
@@ -194,7 +194,7 @@
     flex-direction: column;
     gap: 0;
 
-    background: #fff;
+    background: var(--bg-white);
     border-top: 1px solid var(--border-soft);
     box-shadow: var(--shadow-soft);
 
@@ -220,7 +220,7 @@
 
     padding: 16px 24px 20px;
 
-    background: #fff;
+    background: var(--bg-white);
     box-shadow: var(--shadow-soft);
 
     a {
