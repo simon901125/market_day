@@ -8,6 +8,8 @@ interface TodoItem {
   unit: string;
   label: string;
   path: string;
+  iconBgColor?: string;
+  iconColor?: string;
 }
 
 interface StatItem {
@@ -15,6 +17,8 @@ interface StatItem {
   value: number;
   unit: string;
   label: string;
+  iconBgColor?: string;
+  iconColor?: string;
 }
 
 interface NotificationItem {
@@ -35,34 +39,36 @@ export class AdminDashboardHome {
   /** 待辦事項假資料 */
   todoItems: TodoItem[] = [
     {
+      icon: 'bi-exclamation-triangle',
+      count: 1, //接api傳進來的資料
+      unit: '筆',
+      label: '異常提醒',
+      path: '/admin/dash-board/logs',
+      iconBgColor: '#fbe9ec',
+      iconColor: '#e96379',
+    },
+    {
       icon: 'bi-person-check',
-      count: 5,
+      count: 5, //接api傳進來的資料
       unit: '筆',
       label: '待審核主辦方',
       path: '/admin/dash-board/organizer',
     },
     {
       icon: 'bi-file-earmark-check',
-      count: 2,
+      count: 2, //接api傳進來的資料
       unit: '筆',
       label: '補件確認',
       path: '/admin/dash-board/organizer',
-    },
-    {
-      icon: 'bi-exclamation-triangle',
-      count: 1,
-      unit: '筆',
-      label: '異常提醒',
-      path: '/admin/dash-board/logs',
     },
   ];
 
   /** 平台概況假資料 */
   platformStats: StatItem[] = [
-    { icon: 'bi-building', value: 32, unit: '位', label: '主辦方總數' },
+    { icon: 'bi-flag', value: 7, unit: '場', label: '進行中活動', iconBgColor: '#e9fbf0', iconColor: '#40bf71', },
+    { icon: 'bi-people', value: 32, unit: '位', label: '主辦方總數' },
     { icon: 'bi-shop', value: 126, unit: '位', label: '攤主總數' },
     { icon: 'bi-calendar3', value: 18, unit: '場', label: '活動總數' },
-    { icon: 'bi-flag', value: 7, unit: '場', label: '進行中活動' },
   ];
 
   /** 最新通知假資料 */
