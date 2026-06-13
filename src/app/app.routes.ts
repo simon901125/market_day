@@ -14,7 +14,7 @@ import { AdminDashboardLogs } from './modules/admin/admin-dashboard-logs/admin-d
 import { Auth } from './modules/auth/auth/auth';
 import { UserAboutUs } from './modules/user/frontend/user-about-us/user-about-us';
 import { AUTH_ROUTE_DATA } from './config/auth-route-data';
-import { DashboardLayout } from './modules/Dashboard/dashboard-layout/dashboard-layout';
+import { DashboardLayout } from './modules/dashboard/dashboard-layout/dashboard-layout';
 import { VendorDashboardHome } from './modules/vendor/dashboard/vendor-dashboard-home/vendor-dashboard-home';
 import { VendorDashboardNotification } from './modules/vendor/dashboard/vendor-dashboard-notification/vendor-dashboard-notification';
 import { OrganizerDashboardHome } from './modules/organizer/dashboard/organizer-dashboard-home/organizer-dashboard-home';
