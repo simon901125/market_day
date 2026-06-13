@@ -8,14 +8,15 @@ import { BrandType } from '../../../../models/type/BrandType ';
 import { RouterLink, Router } from '@angular/router';
 import { VendorMarketCard } from "../vendor-market-card/vendor-market-card";
 
-interface MarketSlot {
-  date: string;
-  count: number;
-}
+
+// interface MarketSlot {
+//   date: string;
+//   count: number;
+// }
 
 @Component({
   selector: 'app-vendor-home',
-  imports: [VendorHeader, UserFooter,  VendorMarketCard],
+  imports: [VendorHeader, UserFooter,  VendorMarketCard, RouterLink],
   templateUrl: './vendor-home.html',
   styleUrl: './vendor-home.scss',
 })
