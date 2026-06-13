@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { DashboardHomeTodoCard } from '../../shared/dashboard-home-todo-card/dashboard-home-todo-card';
 
 interface TodoItem {
   icon: string;
@@ -26,7 +27,7 @@ interface NotificationItem {
 
 @Component({
   selector: 'app-admin-dashboard-home',
-  imports: [RouterLink],
+  imports: [RouterLink, DashboardHomeTodoCard],
   templateUrl: './admin-dashboard-home.html',
   styleUrl: './admin-dashboard-home.scss',
 })
