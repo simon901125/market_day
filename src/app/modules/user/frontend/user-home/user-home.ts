@@ -2,10 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink,Router } from '@angular/router';
 import { UserMarketSearchPanel } from '../shared/user-market-search-panel/user-market-search-panel';
 import { MarketCardItem } from '../../../../models/MarketCardItem';
-import { UserMarketCard } from '../shared/user-market-card/user-market-card';
 import { BrandType } from '../../../../models/type/BrandType ';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { CommonModule } from '@angular/common';
+import { UserMarketCard } from '../shared/user-market-card/user-market-card';
 
 @Component({
   selector: 'app-user-home',
