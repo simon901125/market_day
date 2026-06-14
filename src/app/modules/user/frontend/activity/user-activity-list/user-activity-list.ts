@@ -7,8 +7,6 @@ import { BrandType } from '../../../../../models/type/BrandType ';
 import { MarketStatus } from '../../../../../models/status/MarketStatus';
 
 import { UserMarketSearchPanel } from '../../shared/user-market-search-panel/user-market-search-panel';
-import { UserMarketCard } from '../../user-market-card/user-market-card';
-import { UserHistoryMarketCard } from '../../user-history-market-card/user-history-market-card';
 import { Pagination } from '../../../../shared/pagination/pagination';
 import { UserMarketCard } from '../../shared/user-market-card/user-market-card';
 import { UserHistoryMarketCard } from '../../brand/user-history-market-card/user-history-market-card';
