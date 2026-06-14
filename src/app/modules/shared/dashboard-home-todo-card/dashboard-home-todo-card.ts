@@ -23,9 +23,6 @@ export class DashboardHomeTodoCard {
   /** 連結路徑，有值才顯示「前往查看」按鈕 */
   @Input() path?: string;
 
-  /** icon 圓形背景色，預設使用主題色背景 */
-  @Input() iconBgColor = 'var(--bg-primary)';
-
-  /** icon 本身的顏色，預設使用主題主色 */
-  @Input() iconColor = 'var(--primary-color)';
+  /**icon 配色 class，使用 styles.scss 定義的全域 class：green / blue / orange / purple / teal / yellow / red ，預設是orange*/
+  @Input() iconColor = "orange";
 }

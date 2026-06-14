@@ -47,18 +47,19 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  gap: 4px;
 }
 
 .notification-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 8px;
+  gap: 12px;
+  padding: 0 16px;
   border-bottom: 1px solid var(--border-soft);
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s ease;
-  min-height: 65px;
+  min-height: 56px;
   box-sizing: border-box;
 
   &:last-child {
@@ -76,8 +77,8 @@
   }
 
   .dot {
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: transparent;
     flex-shrink: 0;
@@ -95,9 +96,10 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    background-color: transparent;
 
     i {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
     }
   }
 
@@ -108,14 +110,14 @@
     .notification-text {
       margin: 0;
       font-size: 0.875rem;
-      color: var(--text-normal);
       white-space: nowrap;
+      color: var(--text-dark);
       overflow: hidden;
       text-overflow: ellipsis;
 
       .notification-tag {
-        font-weight: 700;
-        color: var(--text-dark);
+        font-size: 0.95rem;
+        font-weight: 800;
         margin-right: 4px;
       }
     }
