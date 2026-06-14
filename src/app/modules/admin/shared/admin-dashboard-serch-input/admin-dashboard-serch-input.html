@@ -1,1 +1,4 @@
-<p>admin-dashboard-serch-input works!</p>
+<div class="search-input">
+    <i class="bi bi-search"></i>
+    <input type="text" placeholder="{{ placeholder }}" (input)="onInput($event)" (keydown.enter)="onEnter()" />
+</div>
