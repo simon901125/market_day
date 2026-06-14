@@ -6,8 +6,13 @@
     </a>
   </header>
   <ul class="notification-list">
-    @for (item of notifications; track item.time) {
-      <li class="notification-item" >
+    @for (item of displayedNotifications; track item.time) {
+      <li
+        class="notification-item"
+        [class.unread]="item.unread"
+        (click)="markAsRead(item)"
+      >
+        <span class="dot" [class.show]="item.unread"></span>
         <span class="notification-icon {{ item.iconColor }}">
           <i class="bi {{ item.icon }}"></i>
         </span>
@@ -19,6 +24,9 @@
         </div>
         <time class="notification-time">{{ item.time }}</time>
       </li>
+    }
+    @for (i of placeholders; track i) {
+      <li class="notification-item placeholder"></li>
     }
   </ul>
 </section>

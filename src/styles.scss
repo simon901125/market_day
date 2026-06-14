@@ -33,9 +33,9 @@ body {
   --border-soft: rgba(47, 41, 36, 0.08);
 
   /*Radius 圓角*/
-  --radius-section:12px;
-  --radius-card:10px;
-  --radius-tag:5px;
+  --radius-section: 12px;
+  --radius-card: 10px;
+  --radius-tag: 5px;
 
   /* Shadow 陰影 */
   --shadow-soft: 0 8px 24px rgba(47, 41, 36, 0.08);
@@ -43,7 +43,8 @@ body {
 
   /* 狀態顏色 */
   /** 市集狀態-MarketStatus*/
-  --market-status-active-bg: rgba(98, 162, 29, 0.85);;
+  --market-status-active-bg: rgba(98, 162, 29, 0.85);
+  ;
   --market-status-upcoming-bg: rgba(245, 158, 11, 0.85);
   --market-status-preparing-bg: rgba(79, 143, 217, 0.85);
   --market-status-ended-bg: rgba(139, 139, 139, 0.85);
@@ -81,4 +82,40 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+//dashboard 可用狀態配色
+.green {
+  background: #ecfdf3;
+  color: #16a34a;
+}
+
+.blue {
+  background: #eaf5ff;
+  color: #1680e5;
+}
+
+.orange {
+  background: var(--bg-primary);
+  color: var(--primary-color);
+}
+
+.purple {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.teal {
+  background: #ecfdf5;
+  color: #0f766e;
+}
+
+.yellow {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.red {
+  background: #fef2f2;
+  color: #dc2626;
 }
