@@ -1,0 +1,13 @@
+<button
+  [class]="'dashboard-btn ' + type"
+  type="button"
+  (click)="todo()"
+>
+  @if (type === 'search') {
+    <i class="bi bi-search"></i><span>搜尋</span>
+  } @else if (type === 'clear') {
+    <span>清除條件</span>
+  } @else {
+    <span>{{ text }}</span>
+  }
+</button>

@@ -32,12 +32,27 @@ interface contactLinks{
 export class UserBrandDetail {
   brand: BrandItem | null = null;
 
-  readonly defaultImage = 'assets/images/PromotionalPhotos_2.png';
+  readonly defaultImage = 'assets/images/user/user-brandserch-PromotionalPhotos_2.png';
 
   mockProducts: ProductItem[] = [
-    { image: 'assets/images/PromotionalPhotos_2.png', name: '蜂蜜蛋糕禮盒', price: 380, description:'美味好吃的東西' },
-    { image: 'assets/images/PromotionalPhotos_2.png', name: '手工瑪德蓮', price: 240, description:'美味好吃的東西' },
-    { image: 'assets/images/PromotionalPhotos_2.png', name: '低糖布丁組', price: 290, description:'美味好吃的東西' },
+    { 
+      image: 'assets/images/user/user-brandserch-PromotionalPhotos_2.png', 
+      name: '蜂蜜蛋糕禮盒', 
+      price: 380, 
+      description:'美味好吃的東西' 
+    },
+    { 
+      image: 'assets/images/user/user-brandserch-PromotionalPhotos_2.png', 
+      name: '手工瑪德蓮', 
+      price: 240, 
+      description:'美味好吃的東西' 
+    },
+    { 
+      image: 'assets/images/user/user-brandserch-PromotionalPhotos_2.png', 
+      name: '低糖布丁組', 
+      price: 290, 
+      description:'美味好吃的東西' 
+    },
   ];
 
   mockMarketRecords: MarketRecord[] = [
