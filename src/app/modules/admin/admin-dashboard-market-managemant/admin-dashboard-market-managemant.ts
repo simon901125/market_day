@@ -1,11 +1,16 @@
 import { Component } from '@angular/core';
-
+import { AdminDashboardDropdown } from '../shared/admin-dashboard-dropdown/admin-dashboard-dropdown';
+import { AdminDashboardButton } from '../shared/admin-dashboard-button/admin-dashboard-button';
+import { AdminDashboardSerchInput } from '../shared/admin-dashboard-serch-input/admin-dashboard-serch-input';
+import { AdminDashboardTimeSelector } from '../shared/admin-dashboard-time-selector/admin-dashboard-time-selector';
 @Component({
   selector: 'app-admin-dashboard-market-managemant',
-  imports: [],
+  imports: [AdminDashboardDropdown, AdminDashboardButton, AdminDashboardSerchInput, AdminDashboardTimeSelector],
   templateUrl: './admin-dashboard-market-managemant.html',
   styleUrl: './admin-dashboard-market-managemant.scss',
 })
 export class AdminDashboardMarketManagemant {
 
+  /**主辦方下拉選單 */
+  organizerOptions = ['森林生活市集', '日日好市', '春語市集', '歡樂市集團隊'];
 }

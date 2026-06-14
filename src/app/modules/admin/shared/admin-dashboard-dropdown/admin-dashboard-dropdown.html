@@ -1,0 +1,17 @@
+<div class="select-wrapper">
+    <span class="select-title">{{ title }}</span>
+    <button class="select-btn" type="button" (click)="toggle()">
+        <span>{{ displayLabel }}</span>
+        <i class="bi bi-chevron-down"></i>
+    </button>
+    @if (isOpen) {
+    <ul class="dropdown-list" role="listbox">
+        @for (option of options; track $index) {
+        <li class="dropdown-item" [class.active]="activeIndex === $index" (click)="selectOption($index)" role="option"
+            [attr.aria-selected]="activeIndex === $index">
+            {{ option }}
+        </li>
+        }
+    </ul>
+    }
+</div>

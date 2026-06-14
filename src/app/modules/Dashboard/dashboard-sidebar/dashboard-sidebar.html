@@ -1,6 +1,6 @@
 <aside class="dashboard-sidebar">
   <div class="brand" [routerLink]="homePath">
-    <img [src]="logoPath" alt="小集日" />
+    <img [src]="logoPath" alt="Market Day" />
   </div>
 
   <nav class="menu">
@@ -31,12 +31,7 @@
       </div>
     }
 
-    <button
-      type="button"
-      class="user-box"
-      [class.open]="isUserMenuOpen"
-      (click)="toggleUserMenu()"
-    >
+    <button type="button" class="user-box" [class.open]="isUserMenuOpen" (click)="toggleUserMenu()">
       <div class="user-avatar">
         {{ userInitial }}
       </div>
