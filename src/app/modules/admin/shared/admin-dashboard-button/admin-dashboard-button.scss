@@ -54,9 +54,9 @@
     border: 2px solid var(--primary-color);
 
     &:hover {
-      background-color: white;
-      color: var(--primary-hover);
-      border-color: var(--primary-hover);
+      background-color: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
     }
   }
 }
