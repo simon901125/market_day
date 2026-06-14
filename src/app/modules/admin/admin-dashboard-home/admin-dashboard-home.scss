@@ -1,9 +1,21 @@
+:host {
+  display: block;
+}
+
 .admin-home {
   padding: 0 32px 0;
   margin: auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
+  height: calc(100vh - 60px); // 60px = dashboard-main 上下各 30px padding
+  overflow: hidden;
+
+  app-dashboard-home-notifications {
+    flex: 1;
+    min-height: 0;
+    display: block;
+  }
 }
 
 /* 歡迎區塊 */
@@ -28,7 +40,7 @@
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-dark);
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 /* 待辦事項 */
