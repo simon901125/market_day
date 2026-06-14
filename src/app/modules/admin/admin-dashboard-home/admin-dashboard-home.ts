@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { DashboardHomeTodoCard } from '../../shared/dashboard-home-todo-card/dashboard-home-todo-card';
+import { DashboardHomeNotifications, NotificationItem } from '../../shared/dashboard-home-notifications/dashboard-home-notifications';
 
 interface TodoItem {
   icon: string;
@@ -21,17 +21,9 @@ interface StatItem {
   iconColor?: string;
 }
 
-interface NotificationItem {
-  icon: string;
-  iconColor: string;
-  tag: string;
-  content: string;
-  time: string;
-}
-
 @Component({
   selector: 'app-admin-dashboard-home',
-  imports: [RouterLink, DashboardHomeTodoCard],
+  imports: [DashboardHomeTodoCard, DashboardHomeNotifications],
   templateUrl: './admin-dashboard-home.html',
   styleUrl: './admin-dashboard-home.scss',
 })
