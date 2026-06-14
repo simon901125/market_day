@@ -7,7 +7,7 @@
 
     <div class="hero-content">
       <div class="brand-avatar">
-        <img [src]="defaultImage" [alt]="brand?.name" />
+        <img [src]="brand?.logo || defaultImage" [alt]="brand?.name" />
       </div>
       <div class="brand-headline">
         <h1>{{ brand?.name || '品牌名稱' }}</h1>

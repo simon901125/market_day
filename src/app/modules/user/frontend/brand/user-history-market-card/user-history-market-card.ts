@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { HistoryMarketCardItem } from '../../../../models/HistoryMarketCardItem';
-import { MarketCardItem } from '../../../../models/MarketCardItem';
+import { HistoryMarketCardItem } from '../../../../../models/HistoryMarketCardItem';
+import { MarketCardItem } from '../../../../../models/MarketCardItem';
 import { Router} from '@angular/router';
 
 @Component({
