@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { VendorHeader } from '../vendor-header/vendor-header';
-import { UserFooter } from '../../../user/frontend/user-footer/user-footer';
+import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
 import { VendorMarketCard } from '../vendor-market-card/vendor-market-card';
 import { BrandType } from '../../../../models/type/BrandType ';
 import { MarketStatus } from '../../../../models/status/MarketStatus';

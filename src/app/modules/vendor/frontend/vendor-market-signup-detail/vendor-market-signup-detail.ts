@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { VendorHeader } from "../vendor-header/vendor-header";
-import { UserFooter } from "../../../user/frontend/user-footer/user-footer";
+import { UserFooter } from "../../../user/frontend/shared/user-footer/user-footer";
 
 @Component({
   selector: 'app-vendor-market-signup-detail',

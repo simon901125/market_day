@@ -1,13 +1,13 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { BrandItem } from '../../../../models/BrandItem';
+import { BrandItem } from '../../../../../models/BrandItem';
 
 @Component({
   selector: 'app-user-brandserch-card',
   imports: [],
-  templateUrl: './user-brandserch-card.html',
-  styleUrl: './user-brandserch-card.scss',
+  templateUrl: './user-brand-search-card.html',
+  styleUrl: './user-brand-search-card.scss',
 })
-export class UserBrandserchCard {
+export class UserBrandSearchCard {
   @Input({ required: true }) brand!: BrandItem;
   @Output() cardClick = new EventEmitter<BrandItem>();
 
