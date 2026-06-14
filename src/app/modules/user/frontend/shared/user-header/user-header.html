@@ -1,28 +1,18 @@
-<div class="user-header">
+<header class="user-header">
   <div class="header-container">
     <a class="brand" routerLink="/user/home">
       <img src="assets/images/logo/logo-market-day.png" alt="小集日 Market Day" class="brand-logo" />
     </a>
 
-    <nav class="nav-menu">
+    <nav class="nav-menu" aria-label="主要導覽">
       <a routerLink="/user/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         首頁
       </a>
-      <a routerLink="/user/activity-list" routerLinkActive="active">
-        市集活動
-      </a>
-      <a routerLink="/user/brands" routerLinkActive="active">
-        品牌探索
-      </a>
-      <a routerLink="/vendor/home" routerLinkActive="active" >
-        攤主專區
-      </a>
-      <a routerLink="/organizer/home" routerLinkActive="active">
-        主辦方專區
-      </a>
-      <a routerLink="/user/about" routerLinkActive="active">
-        關於我們
-      </a>
+      <a routerLink="/user/activity-list" routerLinkActive="active">市集活動</a>
+      <a routerLink="/user/brands" routerLinkActive="active">品牌探索</a>
+      <a routerLink="/vendor/home" routerLinkActive="active">攤主專區</a>
+      <a routerLink="/organizer/home" routerLinkActive="active">主辦方專區</a>
+      <a routerLink="/user/about" routerLinkActive="active">關於我們</a>
     </nav>
   </div>
-</div>
+</header>
