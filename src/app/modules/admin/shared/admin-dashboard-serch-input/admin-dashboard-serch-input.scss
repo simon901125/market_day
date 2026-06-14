@@ -1,3 +1,21 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.search-section {
+    position: relative;
+    width: 100%;
+    font-weight: 600;
+}
+
+.search-title {
+  color: var(--text-normal);
+  font-size: 0.8rem;
+  display: block;
+  margin: 0 auto 4px 8px;
+}
+
 .search-input {
     display: flex;
     align-items: center;

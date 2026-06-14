@@ -10,6 +10,9 @@ export class AdminDashboardSerchInput {
   /** 尚未輸入時顯示的提示文字 */
   @Input() placeholder: string = '';
 
+  /**標籤名稱，預設為空 */
+  @Input() searchTitle: string = '';
+
   /** 觸發搜尋時輸出目前的輸入值（按 Enter 或父元素呼叫 triggerSearch()） */
   @Output() search = new EventEmitter<string>();
 
