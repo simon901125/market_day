@@ -67,7 +67,7 @@ export class DashboardLayout {
     }
 
     if (role === 'admin') {
-      this.logoPath = '/assets/images/logo/logo-market-day-admin.png';
+      this.logoPath = '/assets/images/logo/logo-market-day-administrator.png';
       this.homePath = '/admin/dash-board/home';
 
       this.menuItems = [
