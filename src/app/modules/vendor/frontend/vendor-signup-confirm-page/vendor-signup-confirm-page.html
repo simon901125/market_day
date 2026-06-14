@@ -1,0 +1,130 @@
+<main class="confirm-page container">
+  <button type="button" class="back-link" (click)="backToDetail()">
+    <i class="bi bi-arrow-left"></i>
+    返回市集詳情
+  </button>
+
+  @if (market; as market) {
+    <div class="page-head">
+      <!-- 市集名稱由 Router state 的 market 資料綁定。 -->
+      <h1>市集報名｜{{ market.title }}</h1>
+
+      <div class="stepper">
+        <div class="step done">
+          <span><i class="bi bi-check-lg"></i></span>
+          <strong>報名資料填寫</strong>
+        </div>
+        <div class="line"></div>
+        <div class="step active">
+          <span>2</span>
+          <strong>確認報名細節</strong>
+        </div>
+        <div class="line"></div>
+        <div class="step">
+          <span>3</span>
+          <strong>送出申請</strong>
+        </div>
+      </div>
+    </div>
+
+    <section class="confirm-card">
+      <h2>
+        <i class="bi bi-calendar-event"></i>
+        報名資訊
+      </h2>
+
+      <!-- 報名資訊由 form 頁帶入的 signup 資料與 market 資料組合顯示。 -->
+      <div class="summary-block">
+        <div class="summary-title">
+          <strong>{{ market.title }}</strong>
+          <p>攤位類別：{{ categoryText }}</p>
+        </div>
+
+        <div class="summary-row main">
+          <span>{{ selectedSlotDate }} - {{ boothSpec }}</span>
+          <strong>${{ boothFee }}元</strong>
+        </div>
+
+        <div class="summary-group">
+          <strong>租借設備</strong>
+
+          <div class="summary-row sub">
+            <span>電力</span>
+            <strong>${{ powerRentalFee }}元</strong>
+          </div>
+
+          <div class="summary-row sub">
+            <span>保證金</span>
+            <strong>${{ boothDeposit }}元</strong>
+          </div>
+        </div>
+
+        <div class="summary-total">
+          <strong>總計</strong>
+          <strong>${{ totalFee }}元</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="confirm-card">
+      <h2>
+        <i class="bi bi-people"></i>
+        補充資訊
+      </h2>
+
+      <!-- 補充資訊顯示使用者在 sign-up-form 填寫的欄位。 -->
+      <div class="extra-list">
+        <div class="extra-item">
+          <i class="bi bi-lightning-charge"></i>
+          <div>
+            <strong>使用電器與瓦數</strong>
+            <p>{{ powerUsage }}</p>
+          </div>
+        </div>
+
+        <div class="extra-item">
+          <i class="bi bi-car-front"></i>
+          <div>
+            <strong>車牌登記</strong>
+            <p>{{ vehicleNumber }}</p>
+          </div>
+        </div>
+
+        <div class="extra-item">
+          <i class="bi bi-pencil-square"></i>
+          <div>
+            <strong>備註</strong>
+            <p>{{ note }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="confirm-card notice-card">
+      <h2>
+        <i class="bi bi-bell"></i>
+        注意事項
+      </h2>
+
+      <ul>
+        <li>主辦方會在報名送出後 3 天內完成資格審核，審核結果可至「我的報名紀錄」查看。</li>
+        <li>審核通過後，請於 3 天內完成信用卡付款，逾期系統將自動取消報名。</li>
+        <li>付款成功後，系統會開放攤位選擇，請於選位截止前完成攤位選擇。</li>
+      </ul>
+    </section>
+
+    <div class="action-row">
+      <button type="button" class="outline-action" (click)="backToForm()">返回修改資料</button>
+      <button type="button" class="primary-action" (click)="goToComplete()">確認送出</button>
+    </div>
+  } @else {
+    <section class="confirm-card empty-state">
+      <h2>
+        <i class="bi bi-info-circle"></i>
+        找不到報名資料
+      </h2>
+      <p>請回到市集報名列表，重新選擇要報名的市集。</p>
+      <a routerLink="/vendor/sign-up" class="outline-action">返回市集報名</a>
+    </section>
+  }
+</main>

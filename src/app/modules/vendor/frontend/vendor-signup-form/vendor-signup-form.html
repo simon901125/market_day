@@ -1,0 +1,232 @@
+<main class="signup-form-page container">
+  <button type="button" class="back-link" (click)="backToDetail()">
+    <i class="bi bi-arrow-left"></i>
+    返回市集詳情
+  </button>
+
+  @if (market; as market) {
+    <div class="page-head">
+      <!-- 市集名稱由 detail 頁帶入的 market 資料綁定。 -->
+      <h1>市集報名｜{{ market.title }}</h1>
+
+      <div class="stepper">
+        <div class="step active">
+          <span>1</span>
+          <strong>報名資料填寫</strong>
+        </div>
+        <div class="line"></div>
+        <div class="step">
+          <span>2</span>
+          <strong>確認報名細節</strong>
+        </div>
+        <div class="line"></div>
+        <div class="step">
+          <span>3</span>
+          <strong>送出申請</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="signup-layout">
+      <div class="signup-main">
+        <section class="form-card">
+          <h2>
+            <i class="bi bi-calendar-event"></i>
+            市集資訊
+          </h2>
+
+          <div class="market-info-box">
+            <div>
+              <span>市集名稱</span>
+              <strong>{{ market.title }}</strong>
+            </div>
+            <div>
+              <span>舉辦地點</span>
+              <strong>{{ market.location }}</strong>
+            </div>
+            <div>
+              <span>舉辦日期</span>
+              <strong>{{ dateRangeText }}</strong>
+            </div>
+            <div>
+              <span>報名截止日</span>
+              <strong>{{ signupDeadline }}</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <h2>
+            <i class="bi bi-calendar-event"></i>
+            選擇報名時間
+          </h2>
+
+          <!-- 場次由 market.slots 動態產生，選取狀態同步到右側摘要。 -->
+          @for (slot of slots; track slot.date; let index = $index) {
+            <label class="date-option" [class.active]="isSelectedSlot(index)">
+              <input
+                type="radio"
+                name="marketDate"
+                [checked]="isSelectedSlot(index)"
+                (change)="selectSlot(index)"
+              />
+              <div>
+                <strong>{{ slot.date }}</strong>
+                <span>{{ market.time }}</span>
+              </div>
+            </label>
+          }
+        </section>
+
+        <section class="form-card">
+          <h2>
+            <i class="bi bi-tags"></i>
+            攤位類型與費用
+          </h2>
+
+          <div class="booth-price-box">
+            <div>
+              <strong>{{ boothSpec }}</strong>
+              <span>{{ selectedSlotDate }}　{{ market.time }}</span>
+            </div>
+
+            <strong class="price">${{ boothFee }} / 攤</strong>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <h2>
+            <i class="bi bi-tags"></i>
+            選擇攤位類別
+            <small>（可複選）</small>
+          </h2>
+
+          <!-- 類別優先綁定 market.tags，沒有資料時使用 TS 裡的預設類別。 -->
+          <div class="category-grid">
+            @for (category of categoryOptions; track category) {
+              <label>
+                <input type="checkbox" [(ngModel)]="selectedCategories[category]" />
+                <span>{{ category }}</span>
+              </label>
+            }
+          </div>
+        </section>
+
+        <section class="form-card">
+          <h2>
+            <i class="bi bi-box-seam"></i>
+            選擇租借設備
+          </h2>
+
+          <label class="equipment-option">
+            <input type="checkbox" [(ngModel)]="formData.rentPower" />
+            <div>
+              <strong>電力</strong>
+              <span>如需現場用電，每攤限 900 瓦。</span>
+            </div>
+            <strong>${{ powerRentalFee }}元/天</strong>
+          </label>
+        </section>
+
+        <section class="form-card">
+          <h2>
+            <i class="bi bi-pencil"></i>
+            補充資訊
+          </h2>
+
+          <!-- 補充資料用 ngModel 綁定，之後送出申請時可直接整理成 payload。 -->
+          <div class="form-group">
+            <label>使用電器與瓦數<span>*</span></label>
+            <input
+              type="text"
+              placeholder="例如：小型飲水機或 300W"
+              [(ngModel)]="formData.powerUsage"
+            />
+            <p>請列出所有會使用的電器設備；若沒有請填「無」。</p>
+          </div>
+
+          <div class="form-group">
+            <label>車牌登記<span>*</span></label>
+            <input type="text" placeholder="例如：ABC-1234" [(ngModel)]="formData.vehicleNumber" />
+            <p>報名時提供車牌號碼，未登記車輛無法進入場地裝卸或置放；若沒有請填「無」。</p>
+          </div>
+
+          <div class="form-group">
+            <label>備註</label>
+            <textarea
+              rows="3"
+              placeholder="其他想告訴我們的事項（選填）"
+              [(ngModel)]="formData.note"
+            ></textarea>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <h2>
+            <i class="bi bi-calculator"></i>
+            費用試算
+          </h2>
+
+          <!-- 費用由 market.price、保證金與租借設備勾選狀態即時計算。 -->
+          <div class="fee-list">
+            <div>
+              <span>攤位費用</span>
+              <strong>${{ boothFee }}元</strong>
+            </div>
+            <div>
+              <span>保證金</span>
+              <strong>${{ boothDeposit }}元</strong>
+            </div>
+            <div>
+              <span>設備租借（電力）</span>
+              <strong>${{ selectedPowerRentalFee }}元</strong>
+            </div>
+            <div class="total">
+              <span>總計</span>
+              <strong>${{ totalFee }}元</strong>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="signup-side">
+        <div class="side-card">
+          <h2>報名資訊</h2>
+
+          <div class="side-date-box">
+            <span>報名日期</span>
+            <strong>{{ selectedSlotDate }}</strong>
+            <p>{{ market.time }}</p>
+          </div>
+
+          <div class="side-booth-box">
+            <h3>攤位資訊</h3>
+            <ul>
+              <li>單一攤位</li>
+              <li>{{ boothSpec }}</li>
+              <li>${{ boothFee }} / 攤</li>
+            </ul>
+            <p>剩餘 {{ remainingBooths }} 個</p>
+          </div>
+
+          <button type="button" class="main-btn" (click)="goToConfirm()">下一步：確認報名細節</button>
+          <button type="button" class="outline-btn">查看報名流程</button>
+
+          <div class="side-note">
+            <p><i class="bi bi-check-circle"></i> 提交申請即視為同意注意事項</p>
+            <p><i class="bi bi-check-circle"></i> 主辦單位保留審核之權力</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  } @else {
+    <section class="form-card empty-state">
+      <h2>
+        <i class="bi bi-info-circle"></i>
+        找不到市集資料
+      </h2>
+      <p>請回到市集報名列表，重新選擇要報名的市集。</p>
+      <a routerLink="/vendor/sign-up" class="outline-link">返回市集報名</a>
+    </section>
+  }
+</main>

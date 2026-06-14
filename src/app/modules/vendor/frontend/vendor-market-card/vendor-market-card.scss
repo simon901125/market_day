@@ -38,7 +38,7 @@
   left: 14px;
   padding: 5px 12px;
   border-radius: 6px;
-  color: #fff;
+  color: var(--bg-white);
   font-size: 13px;
   font-weight: 900;
   line-height: 1.2;
@@ -85,7 +85,7 @@
   span {
     padding: 5px 9px;
     border-radius: 6px;
-    background: #fff4e6;
+    background: var(--bg-soft);
     font-size: 13px;
     font-weight: 800;
     line-height: 1.2;
@@ -97,7 +97,7 @@
   }
 
   .city {
-    color: #d86d00;
+    color: var(--primary-color);
   }
 }
 
@@ -138,7 +138,7 @@
   }
 
   strong {
-    color: #ff5a00;
+    color: var(--primary-color);
     font-size: 20px;
     font-weight: 900;
     line-height: 1;
@@ -160,7 +160,7 @@
   .slot-item {
     padding: 7px 10px;
     border-radius: 6px;
-    background: #f1f1f1;
+    background: var(--bg-soft);
     color: var(--text-dark);
     font-size: 13px;
     font-weight: 800;

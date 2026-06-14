@@ -23,6 +23,11 @@ import { VendorHome } from './modules/vendor/frontend/vendor-home/vendor-home';
 import { VendorMarketSignupList } from './modules/vendor/frontend/vendor-market-signup-list/vendor-market-signup-list';
 import { VendorMarketSignupDetail } from './modules/vendor/frontend/vendor-market-signup-detail/vendor-market-signup-detail';
 import { UserBrandSearch } from './modules/user/frontend/brand/user-brand-search/user-brand-search';
+import { VendorSignupForm } from './modules/vendor/frontend/vendor-signup-form/vendor-signup-form';
+import { VendorSignupConfirmPage } from './modules/vendor/frontend/vendor-signup-confirm-page/vendor-signup-confirm-page';
+import { VendorSignupCompletePage } from './modules/vendor/frontend/vendor-signup-complete-page/vendor-signup-complete-page';
+import { VendorAccountSettings } from './modules/vendor/dashboard/vendor-account-settings/vendor-account-settings';
+import { VendorPasswordSettings } from './modules/vendor/dashboard/vendor-password-settings/vendor-password-settings';
 
 export const routes: Routes = [
   /** 預設導向 */
@@ -76,6 +81,9 @@ export const routes: Routes = [
       { path: 'home', component: VendorHome },
       { path: 'sign-up', component:VendorMarketSignupList},
       {path: 'sign-up-detail', component:VendorMarketSignupDetail},
+      { path: 'sign-up-form',component:VendorSignupForm}, 
+      { path: 'sign-up-confirm', component:VendorSignupConfirmPage},
+      { path: 'sign-up-complete', component: VendorSignupCompletePage },
       { path: 'login', component: Auth, data: AUTH_ROUTE_DATA.vendorLogin },
       { path: 'register', component: Auth, data: AUTH_ROUTE_DATA.vendorRegister },
       { path: 'forgot-password', component: Auth, data: AUTH_ROUTE_DATA.vendorForgotPassword },
@@ -120,6 +128,14 @@ export const routes: Routes = [
       {
         path: 'notification',
         component: VendorDashboardNotification,
+      },
+      {
+        path: 'account-settings',
+        component: VendorAccountSettings,
+      },
+      {
+        path: 'password-settings',
+        component: VendorPasswordSettings,
       },
     ],
   },

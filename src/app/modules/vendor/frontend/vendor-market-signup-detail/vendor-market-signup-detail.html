@@ -1,303 +1,310 @@
 <app-vendor-header></app-vendor-header>
+
 <main class="market-detail-page container">
-  <div class="detail-layout">
-    <div class="detail-main">
-      <!-- Hero -->
-      <section class="detail-hero">
-        <div class="hero-info">
-          <span class="status-badge">開放報名中</span>
+  @if (market; as market) {
+    <div class="detail-layout">
+      <div class="detail-main">
+        <section class="detail-hero">
+          <div class="hero-info">
+            <span class="status-badge {{ market.statusClass }}">{{ market.status }}</span>
 
-          <h1>新動市集｜貓貓森林市</h1>
+            <h1>{{ market.title }}</h1>
+            <p class="hero-desc">{{ market.description }}</p>
 
-          <p class="hero-desc">給手作品牌、甜點小吃與生活禮物攤主的週末市集</p>
-
-          <div class="hero-meta">
-            <p>
-              <i class="bi bi-calendar-event"></i>
-              <strong>活動日期：</strong>
-              2026/05/30（六） - 2026/05/31（日）
-            </p>
-
-            <p>
-              <i class="bi bi-geo-alt-fill"></i>
-              <strong>地　　點：</strong>
-              宜蘭車站前空空貓森林廣場
-            </p>
-
-            <p>
-              <i class="bi bi-clock"></i>
-              <strong>報名截止：</strong>
-              2026/05/31（日）
-            </p>
-          </div>
-        </div>
-
-        <div class="hero-img">
-          <img src="assets/images/vendor-market/detail-hero.png" alt="新動市集" />
-        </div>
-      </section>
-
-      <!-- 市集簡介 -->
-      <section class="info-card">
-        <h2>
-          <i class="bi bi-flower1"></i>
-          市集簡介
-        </h2>
-
-        <p>
-          新動市集（貓貓森林市）以貓咪主題為核心，集結甜點美食、手作設計、
-          生活禮物與寵物友善品牌，共同打造充滿溫度與療癒感的週末市集。
-        </p>
-
-        <p>
-          現場除了特色攤位展售外，也規劃舒適的逛市空間，讓喜愛貓咪與生活風格的民眾能夠自在交流、
-          探索特色商品，享受悠閒愉快的市集時光。
-        </p>
-
-        <p>
-          活動適合親子家庭、寵物飼主以及喜愛文創與植物的朋友參與，一起感受充滿森林氣息的生活提案。
-        </p>
-      </section>
-
-      <!-- 招商資訊 -->
-      <section class="info-card">
-        <h2>
-          <i class="bi bi-award"></i>
-          招商資訊
-        </h2>
-
-        <p>本場採單一攤位報名方式，統一審核，不需另外選擇方案。</p>
-
-        <div class="info-grid">
-          <div class="mini-card">
-            <span>招商攤數</span>
-            <strong>200 攤</strong>
-          </div>
-
-          <div class="mini-card">
-            <span>報名費用</span>
-            <strong>$650 / 攤</strong>
-          </div>
-
-          <div class="mini-card wide">
-            <span>攤位資訊</span>
-            <strong>攤位型式　2*3米 / 2.7*3米 / 1.5米</strong>
-          </div>
-        </div>
-
-        <div class="tag-group">
-          <span>徵收美食</span>
-          <span>文創手作</span>
-          <span>親子家庭</span>
-          <span>寵物生活</span>
-        </div>
-      </section>
-
-      <!-- 場地須知 -->
-      <section class="info-card">
-        <h2>
-          <i class="bi bi-node-plus"></i>
-          場地須知
-        </h2>
-
-        <div class="notice-grid">
-          <div class="notice-item">
-            <i class="bi bi-bank"></i>
-            <div>
-              <h3>攤位設備</h3>
-              <p>提供 1 大桌、2 小桌、2 椅，帳篷及水電依配置提供。</p>
+            <div class="hero-meta">
+              <p>
+                <i class="bi bi-calendar-event"></i>
+                <strong>活動日期：</strong>
+                {{ dateRangeText }}
+              </p>
+              <p>
+                <i class="bi bi-geo-alt-fill"></i>
+                <strong>地　　點：</strong>
+                {{ market.location }}
+              </p>
+              <p>
+                <i class="bi bi-clock"></i>
+                <strong>報名截止：</strong>
+                {{ signupDeadline }}
+              </p>
             </div>
           </div>
 
-          <div class="notice-item">
-            <i class="bi bi-box-seam"></i>
-            <div>
-              <h3>倉儲服務</h3>
-              <p>可預留行李，攤位道具請自行保管。</p>
+          <div class="hero-img">
+            <img [src]="market.image" [alt]="market.title" />
+          </div>
+        </section>
+
+        <section class="info-card">
+          <h2>
+            <i class="bi bi-person-hearts"></i>
+            市集簡介
+          </h2>
+          <p>
+            {{ market.title }} 以 {{ market.category }} 為主題，集結特色品牌、手作設計、生活選物與美食攤商，
+            共同打造適合民眾慢慢逛、自在交流的週末市集。
+          </p>
+          <p>
+            活動地點位於 {{ market.address }}，攤商可依品牌調性安排商品陳列，讓來訪民眾更容易認識你的特色。
+          </p>
+          <p>
+            本活動適合重視風格、品質與互動體驗的品牌參與，請於報名前確認活動日期、場次與攤位資訊。
+          </p>
+        </section>
+
+        <section class="info-card">
+          <h2>
+            <i class="bi bi-pin-map"></i>
+            招商資訊
+          </h2>
+          <p>本場採單一攤位報名方式，統一審核，不需另外選擇方案。</p>
+
+          <div class="info-grid">
+            <div class="mini-card">
+              <span>招商攤數</span>
+              <strong>{{ boothTotal }} 攤</strong>
+            </div>
+            <div class="mini-card">
+              <span>報名費用</span>
+              <strong>{{ priceText }}</strong>
+            </div>
+            <div class="mini-card wide">
+              <span>攤位資訊</span>
+              <strong>{{ boothSpec }}</strong>
             </div>
           </div>
 
-          <div class="notice-item">
-            <i class="bi bi-ticket-perforated"></i>
-            <div>
-              <h3>停車說明</h3>
-              <p>部分不配電，有需求請另行申請，每日每攤 50 元。</p>
+          <div class="tag-row-title">招商類別</div>
+          <div class="tag-group">
+            @for (tag of market.tags; track tag) {
+              <span>{{ tag }}</span>
+            }
+          </div>
+        </section>
+
+        <section class="info-card">
+          <h2>
+            <i class="bi bi-bounding-box-circles"></i>
+            場地須知
+          </h2>
+          <div class="notice-grid">
+            <div class="notice-item">
+              <i class="bi bi-bank"></i>
+              <div>
+                <h3>攤位設備</h3>
+                <p>提供 1 大桌、2 小桌、2 椅，帳篷及水電依配置提供。</p>
+              </div>
+            </div>
+            <div class="notice-item">
+              <i class="bi bi-box-seam"></i>
+              <div>
+                <h3>貨物服務</h3>
+                <p>可設置行李暫放區，攤位道具請自行保管。</p>
+              </div>
+            </div>
+            <div class="notice-item">
+              <i class="bi bi-ticket-perforated"></i>
+              <div>
+                <h3>停車說明</h3>
+                <p>部分不配電，有需求請另行申請，每日每攤 50 元。</p>
+              </div>
+            </div>
+            <div class="notice-item">
+              <i class="bi bi-trash3"></i>
+              <div>
+                <h3>垃圾處理</h3>
+                <p>垃圾請自行帶回，請維護現場環境整潔。</p>
+              </div>
+            </div>
+            <div class="notice-item">
+              <i class="bi bi-house-door"></i>
+              <div>
+                <h3>電器登記</h3>
+                <p>有使用電器請填寫電器品項，以利現場用電管理。</p>
+              </div>
+            </div>
+            <div class="notice-item">
+              <i class="bi bi-briefcase"></i>
+              <div>
+                <h3>車輛登記</h3>
+                <p>進場車先提供車號資訊，以利現場管理。</p>
+              </div>
+            </div>
+            <div class="notice-item">
+              <i class="bi bi-power"></i>
+              <div>
+                <h3>用火使用</h3>
+                <p>禁止使用明火。</p>
+              </div>
             </div>
           </div>
+        </section>
 
-          <div class="notice-item">
-            <i class="bi bi-gift"></i>
-            <div>
-              <h3>垃圾處理</h3>
-              <p>垃圾請自行帶回。</p>
+        <section class="info-card">
+          <h2>
+            <i class="bi bi-diagram-3"></i>
+            平台報名流程
+          </h2>
+          <ol class="flow-list">
+            <li>
+              <span>1</span>
+              <strong>先完成攤商資料填寫</strong>
+              <p>請先填寫完整品牌與攤位資料，之後報名其他市集可直接帶入。</p>
+            </li>
+            <li>
+              <span>2</span>
+              <strong>點擊活動頁的「立即報名」</strong>
+              <p>在想參加的市集活動頁，點擊「立即報名」開始申請。</p>
+            </li>
+            <li>
+              <span>3</span>
+              <strong>選擇出攤資訊並送出申請</strong>
+              <p>選擇參加日期，填寫攤位與用電設備，確認後送出。</p>
+            </li>
+            <li>
+              <span>4</span>
+              <strong>等待審核通知</strong>
+              <p>市集主辦方收到申請後，約 3 至 5 天內會通知審核結果。</p>
+            </li>
+            <li>
+              <span>5</span>
+              <strong>審核通過後完成繳費</strong>
+              <p>審核通過後，系統會通知繳費，請依期限內完成。</p>
+            </li>
+            <li>
+              <span>6</span>
+              <strong>選擇攤位</strong>
+              <p>完成繳費後，系統開放攤位選擇，攤主可依活動規則選位。</p>
+            </li>
+            <li>
+              <span>7</span>
+              <strong>確認出攤</strong>
+              <p>市集主辦確認後會顯示報到資訊，完成報名流程。</p>
+            </li>
+            <li>
+              <span>8</span>
+              <strong>準備出攤，開心參與市集！</strong>
+              <p>確認您的行程，準備出攤囉！</p>
+            </li>
+          </ol>
+        </section>
+
+        <section class="info-card">
+          <h2>
+            <i class="bi bi-bounding-box-circles"></i>
+            注意事項
+          </h2>
+          <div class="rule-grid">
+            <div class="rule-item">
+              <i class="bi bi-globe-asia-australia"></i>
+              <div>
+                <h3>市集規範</h3>
+                <ul>
+                  <li>禁止販售違法商品、仿冒品或侵權商品。</li>
+                  <li>攤位不得任意轉讓或出租，需符合報名品項。</li>
+                  <li>如違反規範者，主辦單位保留取消活動權利。</li>
+                </ul>
+              </div>
+            </div>
+            <div class="rule-item">
+              <i class="bi bi-share"></i>
+              <div>
+                <h3>請假與退款</h3>
+                <ul>
+                  <li>請假可申請退費 100 元。</li>
+                  <li>活動前七日請假，扣除 100% 費用，不退還。</li>
+                  <li>未告知缺席，逾期恕不退費。</li>
+                  <li>無故未到場，列黑名單。</li>
+                </ul>
+              </div>
+            </div>
+            <div class="rule-item">
+              <i class="bi bi-truck"></i>
+              <div>
+                <h3>雨天公告</h3>
+                <ul>
+                  <li>小雨照常，大雨或不可抗力因素主辦方有權取消。</li>
+                  <li>接獲取消一日內會公告通知。</li>
+                  <li>不另以電話或簡訊逐一通知。</li>
+                </ul>
+              </div>
+            </div>
+            <div class="rule-item">
+              <i class="bi bi-magic"></i>
+              <div>
+                <h3>其他注意事項</h3>
+                <ul>
+                  <li>販售產品須與報名品項相符。</li>
+                  <li>攤商需自備收款、找零及出攤雜項。</li>
+                  <li>攤位設備請自行帶回。</li>
+                  <li>有問題請聯繫主辦方。</li>
+                </ul>
+              </div>
             </div>
           </div>
-
-          <div class="notice-item">
-            <i class="bi bi-house-door"></i>
-            <div>
-              <h3>電器登記</h3>
-              <p>有使用電器請填寫電器品項。</p>
-            </div>
-          </div>
-
-          <div class="notice-item">
-            <i class="bi bi-briefcase"></i>
-            <div>
-              <h3>車輛登記</h3>
-              <p>進場車先提供車號資訊，以利現場管理。</p>
-            </div>
-          </div>
-
-          <div class="notice-item">
-            <i class="bi bi-power"></i>
-            <div>
-              <h3>用火使用</h3>
-              <p>禁止使用明火。</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 平台報名流程 -->
-      <section class="info-card">
-        <h2>
-          <i class="bi bi-diagram-3"></i>
-          平台報名流程
-        </h2>
-
-        <ol class="flow-list">
-          <li>
-            <span>1</span><strong>先完成攤商資料填寫</strong>
-            <p>請先填寫完整品牌與攤位資訊，之後報名其他市集可直接帶入。</p>
-          </li>
-          <li>
-            <span>2</span><strong>點擊活動頁的「立即報名」</strong>
-            <p>在想參加的市集活動頁，點擊「立即報名」開始申請。</p>
-          </li>
-          <li>
-            <span>3</span><strong>選擇出攤資訊並送出申請</strong>
-            <p>選擇參加日期，填寫攤位與用電設備，確認後送出。</p>
-          </li>
-          <li>
-            <span>4</span><strong>等待審核通知</strong>
-            <p>市集主辦方收到申請後，約 3–5 天內會通知結果。</p>
-          </li>
-          <li>
-            <span>5</span><strong>審核通過後完成繳費</strong>
-            <p>審核通過後，系統會通知繳費，請依期限內完成。</p>
-          </li>
-          <li>
-            <span>6</span><strong>選擇攤位</strong>
-            <p>完成繳費後，系統開放攤位選擇，攤主可依活動規則選位。</p>
-          </li>
-          <li>
-            <span>7</span><strong>確認出攤</strong>
-            <p>市集主辦確認後會顯示報到資訊，完成報名流程。</p>
-          </li>
-          <li>
-            <span>8</span><strong>準備出攤，開心參與市集！</strong>
-            <p>根據您的行程，準時出攤囉！</p>
-          </li>
-        </ol>
-      </section>
-
-      <!-- 注意事項 -->
-      <section class="info-card">
-        <h2>
-          <i class="bi bi-node-plus"></i>
-          注意事項
-        </h2>
-
-        <div class="notice-grid">
-          <div class="notice-item">
-            <i class="bi bi-megaphone"></i>
-            <div>
-              <h3>市集規範</h3>
-              <p>禁止販售違法商品、仿冒品或侵權商品。攤位不得任意轉讓或出租。</p>
-            </div>
-          </div>
-
-          <div class="notice-item">
-            <i class="bi bi-grid-3x3-gap"></i>
-            <div>
-              <h3>請假與退款</h3>
-              <p>請假可申請退費 100 元，活動前七日請假不退還。</p>
-            </div>
-          </div>
-
-          <div class="notice-item">
-            <i class="bi bi-cloud-rain"></i>
-            <div>
-              <h3>雨天公告</h3>
-              <p>小雨照常，大雨或不可抗力因素將公告延期或取消。</p>
-            </div>
-          </div>
-
-          <div class="notice-item">
-            <i class="bi bi-hammer"></i>
-            <div>
-              <h3>其他注意事項</h3>
-              <p>販售商品須與報名品項相符，現場需配合主辦單位指示。</p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- Right Sidebar -->
-    <aside class="signup-sidebar">
-      <div class="signup-card">
-        <h2>報名資訊</h2>
-
-        <div class="deadline-box">
-          <i class="bi bi-calendar2-week"></i>
-          <div>
-            <span>報名截止日</span>
-            <strong>2026/05/31（日）</strong>
-          </div>
-        </div>
-
-        <div class="form-block">
-          <h3>選擇參加場次</h3>
-
-          <label class="session-option active">
-            <input type="radio" name="session" checked />
-            <div>
-              <strong>05/30（六）</strong>
-              <span>13:30 - 20:30</span>
-            </div>
-          </label>
-
-          <label class="session-option">
-            <input type="radio" name="session" />
-            <div>
-              <strong>05/31（日）</strong>
-              <span>13:30 - 20:30</span>
-            </div>
-          </label>
-        </div>
-
-        <div class="booth-box">
-          <h3>攤位資訊</h3>
-          <ul>
-            <li>單一攤位</li>
-            <li>2*3米 / 2.7*3米 / 1.5米</li>
-            <li>$650 / 攤</li>
-          </ul>
-          <p>剩餘 41 個</p>
-        </div>
-
-        <button type="button" class="signup-btn">立即報名</button>
-        <button type="button" class="outline-btn">查看報名流程</button>
-
-        <div class="tips">
-          <p><i class="bi bi-check-circle"></i> 提交申請即視為同意注意事項</p>
-          <p><i class="bi bi-check-circle"></i> 主辦單位保留審核之權力</p>
-        </div>
+        </section>
       </div>
-    </aside>
-  </div>
+
+      <aside class="signup-sidebar">
+        <div class="signup-card">
+          <h2>報名資訊</h2>
+
+          <div class="deadline-box">
+            <i class="bi bi-calendar2-week"></i>
+            <div>
+              <span>報名截止日</span>
+              <strong>{{ signupDeadline }}</strong>
+            </div>
+          </div>
+
+          <div class="form-block">
+            <h3>選擇參加場次</h3>
+            @for (slot of slots; track slot.date; let index = $index) {
+              <label class="session-option" [class.active]="isSelectedSlot(index)">
+                <input
+                  type="radio"
+                  name="session"
+                  [checked]="isSelectedSlot(index)"
+                  (change)="selectSlot(index)"
+                />
+                <div>
+                  <strong>{{ slot.date }}</strong>
+                  <span>{{ market.time }}</span>
+                  <small>剩餘 {{ slot.remaining }} 個</small>
+                </div>
+              </label>
+            }
+          </div>
+
+          <div class="booth-box">
+            <h3>攤位資訊</h3>
+            <ul>
+              <li>單一攤位</li>
+              <li>{{ boothSpec }}</li>
+              <li>{{ priceText }}</li>
+            </ul>
+            <p>剩餘 {{ remainingBooths }} 個</p>
+          </div>
+
+          <button type="button" class="signup-btn" (click)="goToSignUpForm()">立即報名</button>
+          <button type="button" class="outline-btn">查看報名流程</button>
+
+          <div class="tips">
+            <p><i class="bi bi-check-circle"></i> 提交申請即視為同意注意事項</p>
+            <p><i class="bi bi-check-circle"></i> 主辦單位保留審核之權力</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  } @else {
+    <section class="info-card empty-state">
+      <h2>
+        <i class="bi bi-info-circle"></i>
+        找不到市集資料
+      </h2>
+      <p>請回到市集報名列表，重新選擇要查看的市集。</p>
+    </section>
+  }
 </main>
 
 <app-user-footer></app-user-footer>

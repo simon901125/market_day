@@ -6,6 +6,7 @@ import { BrandType } from '../../../../models/type/BrandType ';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { MarketCardItem } from '../../../../models/MarketCardItem';
 import { VendorMarketSearchPanel } from "../vendor-market-search-panel/vendor-market-search-panel";
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-vendor-market-signup-list',
   imports: [VendorHeader, UserFooter, VendorMarketCard, VendorMarketSearchPanel],
@@ -13,6 +14,7 @@ import { VendorMarketSearchPanel } from "../vendor-market-search-panel/vendor-ma
   styleUrl: './vendor-market-signup-list.scss',
 })
 export class VendorMarketSignupList {
+  constructor(private router: Router) {}
   keyword = '';
   selectedCity = '';
   selectedStatus = '';
@@ -474,5 +476,12 @@ export class VendorMarketSignupList {
 
   resetPage(): void {
     this.currentPage = 1;
+  }
+
+  /** 導航到市集報名詳情頁 */
+  goToSignUpDetail(market: MarketCardItem): void {
+    this.router.navigate(['/vendor/sign-up-detail'], {
+      state: { market },
+    });
   }
 }

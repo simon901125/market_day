@@ -1,0 +1,106 @@
+<main class="complete-page container">
+  <button type="button" class="back-link" (click)="backToDetail()">
+    <i class="bi bi-arrow-left"></i>
+    返回市集詳情
+  </button>
+
+  @if (market; as market) {
+    <div class="page-head">
+      <!-- 市集名稱由確認頁帶入的 market 資料綁定。 -->
+      <h1>市集報名｜{{ market.title }}</h1>
+
+      <div class="stepper">
+        <div class="step done">
+          <span><i class="bi bi-check-lg"></i></span>
+          <strong>報名資料填寫</strong>
+        </div>
+        <div class="line"></div>
+        <div class="step done">
+          <span><i class="bi bi-check-lg"></i></span>
+          <strong>確認報名細節</strong>
+        </div>
+        <div class="line"></div>
+        <div class="step active">
+          <span>3</span>
+          <strong>送出申請</strong>
+        </div>
+      </div>
+    </div>
+
+    <section class="complete-card">
+      <div class="complete-title">
+        <i class="bi bi-check-lg"></i>
+
+        <div>
+          <h2>報名申請已送出！</h2>
+          <p>感謝您的報名，我們已收到您的申請資料，主辦方將依流程審核，請留意後續通知。</p>
+        </div>
+      </div>
+
+      <!-- 完成頁摘要皆使用 Router state 帶入的 market/signup 資料。 -->
+      <div class="summary-box">
+        <div class="summary-row">
+          <span>報名編號</span>
+          <strong>{{ applicationNo }}</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>申請時間</span>
+          <strong>{{ submittedAtText }}</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>市集名稱</span>
+          <strong>{{ market.title }}</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>參加場次</span>
+          <strong>{{ sessionText }}</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>攤位類型</span>
+          <strong>{{ boothSpec }}</strong>
+        </div>
+
+        <div class="summary-row total">
+          <span>總計金額</span>
+          <strong>${{ totalFee }}元</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="notice-card">
+      <div class="notice-icon">
+        <i class="bi bi-bell"></i>
+      </div>
+
+      <div>
+        <h2>注意事項</h2>
+
+        <ul>
+          <li>主辦方會在報名送出後 3 天內完成資格審核，審核結果可至「我的報名紀錄」查看。</li>
+          <li>審核通過後，請於 3 天內完成信用卡付款，逾期系統將自動取消報名。</li>
+          <li>付款成功後，系統會開放攤位選擇，請於選位截止前完成攤位選擇。</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="action-row">
+      <button type="button" class="outline-action" (click)="backToDetail()">返回市集詳情</button>
+      <a routerLink="/vendor/dash-board/notification" class="primary-action">前往我的報名紀錄</a>
+    </div>
+  } @else {
+    <section class="complete-card empty-state">
+      <div class="complete-title">
+        <i class="bi bi-info-lg"></i>
+        <div>
+          <h2>找不到報名資料</h2>
+          <p>請回到市集報名列表，重新選擇要報名的市集。</p>
+        </div>
+      </div>
+      <a routerLink="/vendor/sign-up" class="outline-action">返回市集報名</a>
+    </section>
+  }
+</main>

@@ -50,9 +50,9 @@
       border-color 0.2s ease;
 
     &.active {
-      background: #ff7900;
-      color: #fff;
-      border-color: #ff7900;
+      background: var(--primary-color);
+      color: var(--bg-white);
+      border-color: var(--primary-hover);
       box-shadow: var(--shadow-soft);
     }
 

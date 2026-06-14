@@ -77,7 +77,7 @@ main.container {
 .primary-btn {
   max-width: 190px;
   background: var(--primary-color);
-  color: #fff;
+  color: var(--bg-white);
   border: 1px solid var(--primary-hover);
 
   &::before {
@@ -261,7 +261,7 @@ main.container {
       place-items: center;
       border-radius: 50%;
       background: var(--primary-color);
-      color: #fff;
+      color: var(--bg-white);
       font-size: 14px;
     }
   }
