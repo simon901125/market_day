@@ -1,275 +1,274 @@
-//整體Layout
 .about-us {
+  box-sizing: border-box;
+  min-height: calc(100svh - 72px);
+  display: grid;
+  grid-template-columns: minmax(0, 55%) minmax(0, 45%);
+  grid-template-rows: auto minmax(190px, 1fr);
+  gap: 24px 32px;
+  padding: 36px max(5.4vw, 32px) 28px;
   background: var(--bg-soft);
-  //版面配置
-  padding: 64px 96px;
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  grid-template-columns: 3fr 2fr;
-  gap: 32px;
-
-  .about-topleft {
-    grid-row: 1 / 2;
-    grid-column: 1 / 2;
-  }
-
-  .about-topright {
-    grid-row: 1 / 2;
-    grid-column: 2 / 3;
-    display: flex;
-    flex-direction: column;
-
-    .contact-card {
-      flex: 1;
-    }
-  }
-
-  .about-bottom {
-    grid-row: 2 / 3;
-    grid-column: 1 / 3;
-  }
-
 }
 
-//左欄：文字與照片
-.intro-container {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  grid-template-rows: auto 1fr;
-  gap: 16px;
+.about-intro {
+  min-width: 0;
+}
 
-  .intro-title {
-    grid-column: 1 /3;
-    grid-row: 1 / 2;
-    position: relative;
-    //文字設定
-    color: var(--primary-color);
-    font-weight: 800;
-    font-size: 1.2rem;
+.section-title {
+  position: relative;
+  margin: 0 0 30px;
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
 
-    div {
-      position: absolute;
-      bottom: -8px;
-      height: 3px;
-      width: 3rem;
-      border-radius: 999px;
-      background-color: var(--primary-color);
-    }
-  }
-
-  .intro-photo {
-    grid-column: 1 / 2;
-    grid-row: 2 / 3;
-    aspect-ratio: 3 / 4;
-    border-radius: var(--radius-card);
-    overflow: hidden;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  .intro-text {
-    grid-column: 2 / 3;
-    grid-row: 2 / 3;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    padding: 8px 16px;
-    gap: 16px;
-
-    h2 {
-      color: var(--text-dark);
-      font-weight: bolder;
-      font-size: 1.5rem;
-      line-height: 2.2rem;
-    }
-
-    p {
-      display: flex;
-      align-items: center;
-      color: var(--text-normal);
-      font-weight: 700;
-      font-size: 0.93rem;
-      line-height: 2rem;
-    }
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 48px;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--primary-color);
   }
 }
 
-//右欄：聯絡資訊
-.contact-card {
+.intro-content {
   display: grid;
-  grid-template-rows: auto auto 1fr;
-  gap: 8px;
-  padding: 16px;
-  border: 3px solid var(--border-primary);
-  border-radius: var(--radius-card);
-  background-color: var(--bg-white);
+  grid-template-columns: 190px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 36px;
+}
 
+.intro-photo {
+  height: 100%;
+  overflow: hidden;
+  border-radius: 18px;
 
-  .card-title {
+  img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+  }
+}
+
+.intro-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6px 0;
+
+  h2 {
+    margin: 0;
     color: var(--text-dark);
+    font-size: clamp(1.35rem, 1.45vw, 1.75rem);
     font-weight: 800;
-    font-size: 1.08rem;
+    line-height: 1.55;
+    letter-spacing: 0.04em;
   }
+}
 
-  .card-subtitle {
+.intro-description {
+  margin-top: 20px;
+
+  p {
+    margin: 0 0 8px;
     color: var(--text-normal);
-    font-weight: 700;
-    font-size: 1rem;
-    padding-bottom: 16px;
-  }
-
-  .card-list {
-    display: flex;
-    flex-direction: column;
-
-    .contact-item {
-      flex: 1;
-      display: flex;
-      align-items: center;
-
-      & + .contact-item {
-        border-top: 3px solid var(--border-primary);
-      }
-
-      .contact-label {
-        flex: 2;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-
-        i {
-          font-size: 1.2rem;
-          color: var(--primary-color);
-        }
-
-        span {
-          margin: 0;
-          font-size: 0.93rem;
-          font-weight: 700;
-          color: var(--text-dark);
-        }
-      }
-
-      .contact-value {
-        flex: 3;
-        color: var(--text-normal);
-        font-weight: 600;
-        font-size: 0.93rem;
-
-      }
-
-    }
+    font-size: 0.94rem;
+    font-weight: 500;
+    line-height: 1.65;
+    letter-spacing: 0.025em;
   }
 }
 
-//下欄：平台理念
-.values-container {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  border: 3px solid var(--border-primary);
-  border-radius: var(--radius-card);
-  padding: 32px;
-  background-color: var(--bg-white);
+.contact-card {
+  align-self: center;
+  min-height: 0;
+  width: 100%;
+  padding: 26px 38px 20px;
+  border: 2px solid var(--border-primary);
+  border-radius: 16px;
+  background: var(--bg-white);
 
-
-  .values-title {
-    grid-row: 1 / 2;
+  h2 {
+    margin: 0 0 12px;
     color: var(--text-dark);
+    font-size: 1.3rem;
     font-weight: 800;
-    font-size: 1.08rem;
   }
+}
 
-  .values-grid {
-    grid-row: 2 / 3;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+.contact-intro {
+  margin: 0 0 18px;
+  color: var(--text-normal);
+  font-size: 0.94rem;
+  line-height: 1.5;
+  letter-spacing: 0.025em;
+}
 
-    .value-card + .value-card {
-      border-left: 2px solid var(--border-primary);
-      padding-left: 24px;
-    }
+.contact-list {
+  margin-top: 4px;
+}
+
+.contact-item {
+  display: grid;
+  grid-template-columns: 42% 58%;
+  align-items: center;
+  min-height: 64px;
+
+  & + & {
+    border-top: 2px dashed var(--border-primary);
   }
+}
+
+.contact-label {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-dark);
+  font-size: 0.94rem;
+  font-weight: 700;
+
+  i {
+    width: 30px;
+    color: var(--primary-color);
+    font-size: 1.45rem;
+    text-align: center;
+  }
+}
+
+.contact-value {
+  color: var(--text-normal);
+  font-size: 0.94rem;
+  font-weight: 500;
+}
+
+.values-container {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 28px 26px;
+  border: 2px solid var(--border-primary);
+  border-radius: 16px;
+  background: var(--bg-white);
+
+  > h2 {
+    margin: 0 0 20px;
+    color: var(--text-dark);
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+}
+
+.values-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
 }
 
 .value-card {
-  background: var(--bg-white);
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
+  align-items: center;
+  gap: 24px;
+  min-width: 0;
+  padding: 0 28px 0 10px;
 
-  .value-icon {
-    flex-shrink: 0;
-    height: 96px;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: var(--primary-soft);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  & + & {
+    padding-left: 34px;
+    border-left: 2px solid var(--border-primary);
+  }
+}
 
-    i {
-      font-size: 40px;
-      color: var(--primary-color);
-    }
+.value-icon {
+  display: flex;
+  flex: 0 0 88px;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+
+  i {
+    color: var(--primary-color);
+    font-size: 2.4rem;
+  }
+}
+
+.value-content {
+  h3 {
+    margin: 0 0 6px;
+    color: var(--text-dark);
+    font-size: 0.94rem;
+    font-weight: 700;
   }
 
-  .value-content {
-    h3 {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text-dark);
-      margin: 0 0 8px;
-    }
+  p {
+    margin: 0;
+    color: var(--text-normal);
+    font-size: 0.86rem;
+    font-weight: 500;
+    line-height: 1.55;
+  }
+}
 
-    p {
-      font-size: 0.93rem;
-      font-weight: 600;
-      color: var(--text-normal);
-      line-height: 1.7;
-      margin: 0;
-    }
+@media (max-width: 1100px) {
+  .about-us {
+    min-height: calc(100svh - 64px);
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .intro-photo {
+    height: 218px;
+  }
+
+  .contact-card,
+  .values-container {
+    grid-column: 1;
   }
 }
 
 @media (max-width: 767px) {
-
-  //Layout調整
   .about-us {
-    padding: 32px 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    padding: 32px 20px;
   }
 
-  .intro-container {
-    display: flex;
-    flex-direction: column;
-
-    .intro-photo {
-      aspect-ratio: 4 / 3;
-    }
-
-    .intro-text {
-      padding: 16px 0;
-    }
-  }
-
-  .values-container .values-grid {
+  .intro-content,
+  .values-grid {
     grid-template-columns: 1fr;
-    gap: 0;
-    margin: 16px;
-
-    .value-card + .value-card {
-      border-left: none;
-      padding-left: 0;
-      border-top: 2px solid var(--border-primary);
-      padding-top: 24px;
-      margin-top: 24px;
-    }
   }
 
+  .intro-photo {
+    width: 100%;
+    height: 300px;
+  }
+
+  .intro-copy h2 {
+    font-size: 1.45rem;
+  }
+
+  .contact-card {
+    min-height: 0;
+    padding: 24px 20px;
+  }
+
+  .contact-item {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 18px 0;
+  }
+
+  .value-card,
+  .value-card + .value-card {
+    padding: 22px 0;
+    border-left: 0;
+  }
+
+  .value-card + .value-card {
+    border-top: 2px solid var(--border-primary);
+  }
 }
