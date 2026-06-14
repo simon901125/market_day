@@ -13,8 +13,8 @@
       </p>
 
       <div class="hero-actions">
-        <a routerLink="/organizer/register" class="primary-btn">立即加入攤主</a>
-        <a routerLink="/organizer/login" class="outline-btn">查看可報名市集</a>
+        <a routerLink="/vendor/register" class="primary-btn">立即加入攤主</a>
+        <a routerLink="/vendor/sign-up" class="outline-btn">查看可報名市集</a>
       </div>
     </div>
 
@@ -31,16 +31,20 @@
         近期可報名市集
       </h2>
 
-      <a routerLink="/market/list">
+      <a routerLink="/vendor/sign-up">
         查看所有市集
         <i class="bi bi-arrow-right"></i>
       </a>
     </div>
 
     <div class="market-grid">
-      @for (market of markets; track $index; let i = $index;) {
-        <app-user-market-card [market]="market" (click)="goToActivityDetail(market)"></app-user-market-card>
-      }
+      <div class="row g-4">
+        @for (market of recentMarkets; track market.title) {
+          <div class="col-12 col-md-6 col-lg-4">
+            <app-vendor-market-card [market]="market"></app-vendor-market-card>
+          </div>
+        }
+      </div>
     </div>
   </section>
 

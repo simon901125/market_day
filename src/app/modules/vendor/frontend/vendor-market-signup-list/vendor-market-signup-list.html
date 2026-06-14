@@ -1,0 +1,41 @@
+<app-vendor-header></app-vendor-header>
+
+<main class="market-signup-page">
+  <section class="page-heading container">
+    <h1>市集報名</h1>
+  </section>
+
+  <app-vendor-market-search-panel></app-vendor-market-search-panel>
+
+  <section class="market-grid container">
+    <div class="row g-4">
+      @for (market of pagedMarkets; track market.title) {
+        <div class="col-12 col-md-6 col-lg-4">
+          <app-vendor-market-card [market]="market"></app-vendor-market-card>
+        </div>
+      }
+    </div>
+  </section>
+
+  <div class="pagination-wrap">
+    <button type="button" (click)="prevPage()" [disabled]="currentPage === 1">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+
+    @for (page of pages; track page) {
+      <button
+        type="button"
+        [class.active]="currentPage === page"
+        (click)="setPage(page)"
+      >
+        {{ page }}
+      </button>
+    }
+
+    <button type="button" (click)="nextPage()" [disabled]="currentPage === totalPages">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+</main>
+
+<app-user-footer></app-user-footer>

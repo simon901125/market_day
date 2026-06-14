@@ -1,3 +1,5 @@
+import { MarketSlot } from "./MarketSlot";
+
 /** 市集卡片項目 */
 export interface MarketCardItem {
   /** 市集標題 */
@@ -31,9 +33,12 @@ export interface MarketCardItem {
   /** 市集主辦單位 */
   organizer: string;
   /** 市集交通資訊 */
-  Transportation: string[];
+  transportation: string[];
   /** 公開攤位日期 */
   infoDate?: string; 
+  /** 各場次剩餘攤位 */
+  slots?: MarketSlot[];
+  price?: number;
 
 }
 

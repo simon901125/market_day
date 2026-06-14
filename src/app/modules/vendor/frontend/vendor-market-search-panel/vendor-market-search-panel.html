@@ -1,0 +1,64 @@
+<section class="market-search-section">
+  <div class="container">
+    
+
+    <div class="search-card">
+      <div class="search-row">
+        <div class="search-col search-keyword">
+          <div class="search-field">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="搜尋" [(ngModel)]="keyword" />
+          </div>
+        </div>
+
+        <div class="search-col search-area">
+          <div class="search-field">
+            <i class="bi bi-geo-alt"></i>
+            <select [(ngModel)]="selectedArea">
+              <option value="">地區</option>
+              @for (area of areas; track area) {
+                <option [value]="area">{{ area }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="search-col search-date">
+          <div class="search-field">
+            <i class="bi bi-calendar4"></i>
+            <input type="text" placeholder="起始日" [(ngModel)]="startDate" />
+          </div>
+        </div>
+
+        <span class="dash">-</span>
+
+        <div class="search-col search-date">
+          <div class="search-field">
+            <i class="bi bi-calendar4"></i>
+            <input type="text" placeholder="截止日" [(ngModel)]="endDate" />
+          </div>
+        </div>
+
+        <div class="search-col search-select-col">
+          <select class="form-select search-select" [(ngModel)]="selectedCity">
+            <option value="">全部地區</option>
+            @for (city of cities; track city) {
+              <option [value]="city">{{ city }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="search-col search-select-col">
+          <select class="form-select search-select" [(ngModel)]="selectedStatus">
+            <option value="">全部狀態</option>
+            @for (status of statuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </div>
+
+        <button type="button" class="search-btn">搜尋</button>
+      </div>
+    </div>
+  </div>
+</section>

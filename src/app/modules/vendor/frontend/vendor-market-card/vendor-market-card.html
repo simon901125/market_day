@@ -1,0 +1,50 @@
+<article class="market-card">
+  <div class="market-img">
+    <img [src]="market.image" [alt]="market.title" />
+
+    <span class="status-badge" [class]="getStatusClass(market.status)">
+      {{ market.status }}
+    </span>
+  </div>
+
+  <div class="market-body">
+    <div class="market-info-row">
+      <span class="deadline">{{ getDeadlineText(market.start_date) }}</span>
+      <span class="city">{{ market.city }}</span>
+    </div>
+
+    <h3>{{ market.title }}</h3>
+
+    <p class="market-date">
+      <i class="bi bi-calendar4"></i>
+      {{ market.start_date }} - {{ market.end_date }}
+    </p>
+
+    <p class="market-location">
+      <i class="bi bi-geo-alt"></i>
+      {{ market.location }}
+    </p>
+
+    <div class="market-price-row">
+      <div class="price">
+        <strong>${{ market.price }}</strong>
+        <span>/ 攤位</span>
+      </div>
+
+      <span class="slot-label">各場次攤位</span>
+    </div>
+
+    <div class="market-slot-row">
+      @for (slot of market.slots; track slot.date) {
+        <span class="slot-item">
+          {{ slot.date }} 剩 {{ slot.remaining }} 格
+        </span>
+      }
+
+      <a class="more-link" [routerLink]="['/vendor/market']">
+        查看更多
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    </div>
+  </div>
+</article>
