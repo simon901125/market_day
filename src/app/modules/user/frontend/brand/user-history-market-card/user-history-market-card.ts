@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
-import { HistoryMarketCardItem } from '../../../../models/HistoryMarketCardItem';
-import { MarketCardItem } from '../../../../models/MarketCardItem';
 import { Router} from '@angular/router';
+import { HistoryMarketCardItem } from '../../../../../models/HistoryMarketCardItem';
+import { MarketCardItem } from '../../../../../models/MarketCardItem';
 
 @Component({
   selector: 'app-user-history-market-card',
