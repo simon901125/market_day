@@ -7,6 +7,9 @@
   align-items: center;
   gap: 16px;
   position: relative;
+  box-sizing: border-box;
+  // box-shadow: var(--shadow-soft);
+
 
   .todo-icon-wrap {
     width: 48px;
@@ -24,7 +27,7 @@
 
   .todo-body {
     flex: 1;
-    
+
     .todo-label {
       font-size: 0.875rem;
       color: var(--text-normal);
