@@ -1,10 +1,9 @@
 import { Routes } from '@angular/router';
 import { UserLayout } from './modules/user/frontend/user-layout/user-layout';
 import { UserHome } from './modules/user/frontend/user-home/user-home';
-import { UserActivityList } from './modules/user/frontend/user-activity-list/user-activity-list';
-import { UserActivityDetail } from './modules/user/frontend/user-activity-detail/user-activity-detail';
-import { UserBrandserch } from './modules/user/frontend/user-brandserch/user-brandserch';
-import { UserBrandDetail } from './modules/user/frontend/user-brand-detail/user-brand-detail';
+import { UserActivityList } from './modules/user/frontend/activity/user-activity-list/user-activity-list';
+import { UserActivityDetail } from './modules/user/frontend/activity/user-activity-detail/user-activity-detail';
+import { UserBrandDetail } from './modules/user/frontend/brand/user-brand-detail/user-brand-detail';
 import { AdminLogin } from './modules/admin/admin-login/admin-login';
 import { AdminDashboardHome } from './modules/admin/admin-dashboard-home/admin-dashboard-home';
 import { AdminDashboardNotification } from './modules/admin/admin-dashboard-notification/admin-dashboard-notification';
@@ -23,6 +22,7 @@ import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organ
 import { VendorHome } from './modules/vendor/frontend/vendor-home/vendor-home';
 import { VendorMarketSignupList } from './modules/vendor/frontend/vendor-market-signup-list/vendor-market-signup-list';
 import { VendorMarketSignupDetail } from './modules/vendor/frontend/vendor-market-signup-detail/vendor-market-signup-detail';
+import { UserBrandSearch } from './modules/user/frontend/brand/user-brand-search/user-brand-search';
 
 export const routes: Routes = [
   /** 預設導向 */
@@ -47,16 +47,16 @@ export const routes: Routes = [
         component: UserHome,
       },
       {
-        path: 'brands',
-        component: UserBrandserch,
-      },
-      {
         path: 'activity-list',
         component: UserActivityList,
       },
       {
         path: 'activity-detail',
         component: UserActivityDetail,
+      },
+      {
+        path: 'brands',
+        component: UserBrandSearch,
       },
       {
         path: 'brand-detail',

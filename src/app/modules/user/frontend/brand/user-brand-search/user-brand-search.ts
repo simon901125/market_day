@@ -1,18 +1,18 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { BrandItem } from '../../../../models/BrandItem';
-import { UserBrandserchCard } from '../user-brandserch-card/user-brandserch-card';
-import { UserDropdown } from '../user-dropdown/user-dropdown';
-import { Pagination } from '../../../shared/pagination/pagination';
-import { BrandType } from '../../../../models/type/BrandType ';
+import { BrandItem } from '../../../../../models/BrandItem';
+import { UserDropdown } from '../../shared/user-dropdown/user-dropdown';
+import { Pagination } from '../../../../shared/pagination/pagination';
+import { BrandType } from '../../../../../models/type/BrandType ';
+import { UserBrandSearchCard } from '../user-brand-search-card/user-brand-search-card';
 
 @Component({
   selector: 'app-user-brandserch',
-  imports: [UserBrandserchCard, UserDropdown, Pagination],
-  templateUrl: './user-brandserch.html',
-  styleUrl: './user-brandserch.scss',
+  imports: [UserBrandSearchCard, UserDropdown, Pagination],
+  templateUrl: './user-brand-search.html',
+  styleUrl: './user-brand-search.scss',
 })
-export class UserBrandserch {
+export class UserBrandSearch {
   /** 品牌類型下拉選單 */
   brandTypeOptions = BrandType.filterList;
 

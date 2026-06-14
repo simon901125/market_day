@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { BrandItem } from '../../../../models/BrandItem';
+import { BrandItem } from '../../../../../models/BrandItem';
 import { CommonModule } from '@angular/common';
 
 interface ProductItem {

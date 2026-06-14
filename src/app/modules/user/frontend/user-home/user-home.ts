@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink,Router } from '@angular/router';
-import { UserMarketSearchPanel } from '../user-market-search-panel/user-market-search-panel';
+import { UserMarketSearchPanel } from '../shared/user-market-search-panel/user-market-search-panel';
 import { MarketCardItem } from '../../../../models/MarketCardItem';
 import { UserMarketCard } from '../user-market-card/user-market-card';
 import { BrandType } from '../../../../models/type/BrandType ';
