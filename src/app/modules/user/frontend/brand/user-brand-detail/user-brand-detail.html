@@ -2,19 +2,25 @@
 
   <!-- Hero Banner -->
   <section class="detail-hero">
-    <img class="hero-bg" [src]="brand?.image || defaultImage" alt="品牌封面" />
+    <img class="hero-bg" [src]="brand.image" alt="品牌封面" />
     <div class="hero-overlay"></div>
+
+    <nav class="detail-breadcrumb" aria-label="麵包屑">
+      <a routerLink="/user/brands">品牌探索</a>
+      <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      <span aria-current="page">{{ brand.name }}</span>
+    </nav>
 
     <div class="hero-content">
       <div class="brand-avatar">
-        <img [src]="brand?.logo || defaultImage" [alt]="brand?.name" />
+        <img [src]="brand.logo" [alt]="brand.name + ' Logo'" />
       </div>
       <div class="brand-headline">
-        <h1>{{ brand?.name || '品牌名稱' }}</h1>
-        <p class="brand-tagline">{{ brand?.description || '品牌介紹' }}</p>
+        <h1>{{ brand.name }}</h1>
+        <p class="brand-tagline">{{ brand.description }}</p>
         <div class="brand-market-count">
           <i class="bi bi-calendar"></i>
-          <span>參與過 <b>{{ mockMarketRecords.length }}</b> 場市集</span>
+          <span>參與過 <b>{{ marketRecords.length }}</b> 場市集</span>
         </div>
       </div>
     </div>
@@ -33,27 +39,27 @@
             <i class="bi bi-person-lines-fill"></i>
             <h2>品牌介紹</h2>
           </div>
-          <p class="brand-intro">{{ brand?.description || '品牌介紹內容待填入。' }}</p>
+          <p class="brand-intro">{{ brand.introduction }}</p>
         </div>
 
-        <!-- 代表商品 -->
+        <!-- 品牌代表作品 -->
         <div class="content-card">
           <div class="card-heading">
             <i class="bi bi-box2-heart"></i>
-            <h2>代表商品</h2>
+            <h2>品牌代表作品</h2>
           </div>
           <div class="products-grid">
-            @for (product of mockProducts; track $index) {
+            @for (product of brand.products; track product.name) {
             <div class="product-card">
               <div class="product-img">
                 <img [src]="product.image" [alt]="product.name" />
               </div>
               <div class="product-info">
                 <div class="product-title">
-                  <div class="product-name">{{ product.name || '商品名稱'}}</div>
-                  <div class="product-price">NT$ {{ product.price || '商品價格'}}</div>
+                  <div class="product-name">{{ product.name}}</div>
+                  <div class="product-price">NT$ {{ product.price}}</div>
                 </div>
-                <p class="product-description">{{ product.description || '商品描述'}}</p>
+                <p class="product-description">{{ product.description}}</p>
               </div>
             </div>
             }
@@ -65,14 +71,14 @@
       <!-- Right Column (Sidebar) -->
       <div class="main-right">
 
-        <!-- 品牌標籤 -->
+        <!-- 品牌類型 -->
         <div class="content-card">
           <div class="card-heading">
             <i class="bi bi-tags"></i>
-            <h2>品牌標籤</h2>
+            <h2>品牌類型</h2>
           </div>
           <div class="tag-list">
-            @for (tag of mockTags; track $index) {
+            @for (tag of brand.tags; track $index) {
             <span class="tag-chip">{{ tag }}</span>
             }
           </div>
@@ -84,18 +90,24 @@
             <i class="bi bi-calendar"></i>
             <h2>參與市集記錄</h2>
           </div>
-          <ul class="market-records">
-            <li class="record-item ">
-              <span class="record-name">市集活動名稱</span>
-              <span class="record-date">活動日期</span>
-            </li>
-            @for (record of mockMarketRecords; track $index) {
-            <li class="record-item">
-              <span class="record-name">{{ record.name }}</span>
-              <span class="record-date">{{ record.year }}/{{record.startDate}} ~ {{record.endDate}}</span>
-            </li>
-            }
-          </ul>
+          <div class="market-records">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">市集活動名稱</th>
+                  <th scope="col">活動日期</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (record of marketRecords; track record.name) {
+                <tr>
+                  <td>{{ record.name }}</td>
+                  <td>{{ record.year }}/{{ record.startDate }} - {{ record.endDate }}</td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- 聯絡品牌 -->
@@ -108,17 +120,23 @@
             <li>
               <i class="bi bi-instagram"></i>
               <span>Instagram</span>
-              <a [href]="mocklink.instagram">{{ mocklink.instagram || '品牌instagram連結'}}</a>
+              <a [href]="brand.links.instagram" target="_blank" rel="noopener noreferrer">
+                {{ getSocialAccount(brand.links.instagram) }}
+              </a>
             </li>
             <li>
               <i class="bi bi-facebook"></i>
               <span>Facebook</span>
-              <a [href]="mocklink.facebook">{{ mocklink.facebook || '品牌facebook連結'}}</a>
+              <a [href]="brand.links.facebook" target="_blank" rel="noopener noreferrer">
+                {{ getSocialAccount(brand.links.facebook) }}
+              </a>
             </li>
             <li>
               <i class="bi bi-globe2"></i>
               <span>官方網站</span>
-              <a [href]="mocklink.officialWebsite">{{ mocklink.officialWebsite || '品牌官網連結'}}</a>
+              <a [href]="brand.links.officialWebsite" target="_blank" rel="noopener noreferrer">
+                {{ getWebsiteHost(brand.links.officialWebsite) }}
+              </a>
             </li>
           </ul>
         </div>

@@ -1,84 +1,49 @@
-import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { BrandItem } from '../../../../../models/BrandItem';
 import { CommonModule } from '@angular/common';
-
-interface ProductItem {
-  image: string;
-  name: string;
-  price: number;
-  description: string;
-}
-
-interface MarketRecord {
-  name: string;
-  year: string;
-  startDate:string;
-  endDate:string;
-}
-
-interface contactLinks{
-  instagram:string;
-  facebook:string;
-  officialWebsite:string;
-}
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { BrandItem } from '../../../../../models/BrandItem';
+import { BRANDS, findBrandById } from '../user-brand-search/user-brand-search';
 
 @Component({
   selector: 'app-user-brand-detail',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './user-brand-detail.html',
   styleUrl: './user-brand-detail.scss',
 })
 export class UserBrandDetail {
-  brand: BrandItem | null = null;
+  brand: BrandItem = BRANDS[0];
 
-  readonly defaultImage = 'assets/images/user/brand/promotional-photo-02.png';
-
-  mockProducts: ProductItem[] = [
-    { 
-      image: 'assets/images/user/brand/promotional-photo-02.png',
-      name: '蜂蜜蛋糕禮盒', 
-      price: 380, 
-      description:'美味好吃的東西' 
-    },
-    { 
-      image: 'assets/images/user/brand/promotional-photo-02.png',
-      name: '手工瑪德蓮', 
-      price: 240, 
-      description:'美味好吃的東西' 
-    },
-    { 
-      image: 'assets/images/user/brand/promotional-photo-02.png',
-      name: '低糖布丁組', 
-      price: 290, 
-      description:'美味好吃的東西' 
-    },
-  ];
-
-  mockMarketRecords: MarketRecord[] = [
-    { name: '草悟野餐市集', year: '2025', startDate: '03/27', endDate: '03/30' },
-    { name: '咖啡生活節', year: '2025', startDate: '05/10', endDate: '05/11' },
-    { name: '夏日風格服裝市集', year: '2025', startDate: '07/02', endDate: '07/05' },
-  ];
-
-  mockTags = ['台灣品牌', '純手工', '低糖', '無添加'];
-
-  mocklink: contactLinks = {
-    instagram: "@example.ig",
-    facebook: "example.fb",
-    officialWebsite: "example.com.tw"
-  }
-
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {
     const navigation = this.router.currentNavigation();
-    this.brand = navigation?.extras.state?.['brand'] || null;
+    const stateBrand =
+      navigation?.extras.state?.['brand'] ??
+      (history.state?.brand as BrandItem | undefined);
+    const brandId = this.route.snapshot.queryParamMap.get('brand') ?? stateBrand?.id;
+
+    this.brand = findBrandById(brandId) ?? stateBrand ?? BRANDS[0];
   }
 
-  getDaysRemaining(startDate: string): number {
-    const today = new Date();
-    const parts = startDate.split('/');
-    const start = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-    const timeDiff = start.getTime() - today.getTime();
-    return Math.max(0, Math.ceil(timeDiff / (1000 * 3600 * 24)));
+  get marketRecords() {
+    return this.brand.historyMarkets;
+  }
+
+  getSocialAccount(url: string): string {
+    try {
+      const account = new URL(url).pathname.split('/').filter(Boolean)[0];
+      return account ? `@${account}` : '@marketday.brand';
+    } catch {
+      return '@marketday.brand';
+    }
+  }
+
+  getWebsiteHost(url: string): string {
+    try {
+      return new URL(url).hostname.replace(/^www\./, '');
+    } catch {
+      return 'brand.marketday.tw';
+    }
   }
 }

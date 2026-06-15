@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-user-header',
@@ -9,6 +11,18 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class UserHeader {
   protected isMenuOpen = false;
+  protected isBrandSection = false;
+  private readonly destroyRef = inject(DestroyRef);
+
+  constructor(private router: Router) {
+    this.updateBrandSection(this.router.url);
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((event) => this.updateBrandSection(event.urlAfterRedirects));
+  }
 
   protected toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
@@ -16,5 +30,10 @@ export class UserHeader {
 
   protected closeMenu(): void {
     this.isMenuOpen = false;
+  }
+
+  private updateBrandSection(url: string): void {
+    this.isBrandSection =
+      url.startsWith('/user/brands') || url.startsWith('/user/brand-detail');
   }
 }

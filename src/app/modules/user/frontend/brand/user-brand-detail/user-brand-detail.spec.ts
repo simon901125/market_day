@@ -21,16 +21,12 @@ describe('UserBrandDetail', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have 3 mock products', () => {
-    expect(component.mockProducts.length).toBe(3);
+  it('should use the selected brand products', () => {
+    expect(component.brand.products.length).toBe(3);
   });
 
-  it('should have 3 mock market records', () => {
-    expect(component.mockMarketRecords.length).toBe(3);
-  });
-
-  it('getDaysRemaining should return a non-negative number', () => {
-    const result = component.getDaysRemaining('2099/12/31');
-    expect(result).toBeGreaterThanOrEqual(0);
+  it('should create market records from the selected brand history', () => {
+    expect(component.marketRecords.length).toBe(component.brand.historyMarkets.length);
+    expect(component.marketRecords[0].name).toBe('草悟野餐市集');
   });
 });

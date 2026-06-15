@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { UserBrandSearch } from './user-brand-search';
 
@@ -8,7 +9,8 @@ describe('UserBrandSearch', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserBrandSearch]
+      imports: [UserBrandSearch],
+      providers: [provideRouter([])],
     })
     .compileComponents();
 
