@@ -20,6 +20,9 @@ export class UserDropdown {
   /** 尚未選擇時顯示的提示文字 */
   @Input() placeholder: string = '';
 
+  /** 顯示在選單左側的選用圖示 class */
+  @Input() iconClass: string = '';
+
   /** 選擇選項後，將選到的文字傳給父元件 */
   @Output() optionSelected = new EventEmitter<string>();
 

@@ -1,15 +1,48 @@
 import { Component } from '@angular/core';
 import { CategoryItem } from '../../../../../models/CategoryItem';
-import { RouterLink } from "@angular/router";
+import { RouterLink } from '@angular/router';
+import { UserDropdown } from '../user-dropdown/user-dropdown';
 
 @Component({
   selector: 'app-user-market-search-panel',
-  imports: [RouterLink],
+  imports: [RouterLink, UserDropdown],
   templateUrl: './user-market-search-panel.html',
   styleUrl: './user-market-search-panel.scss',
 })
 
 export class UserMarketSearchPanel {
+  /** 全台縣市 */
+  readonly cityOptions = [
+    '臺北市',
+    '新北市',
+    '桃園市',
+    '臺中市',
+    '臺南市',
+    '高雄市',
+    '基隆市',
+    '新竹市',
+    '嘉義市',
+    '新竹縣',
+    '苗栗縣',
+    '彰化縣',
+    '南投縣',
+    '雲林縣',
+    '嘉義縣',
+    '屏東縣',
+    '宜蘭縣',
+    '花蓮縣',
+    '臺東縣',
+    '澎湖縣',
+    '金門縣',
+    '連江縣',
+  ];
+
+  /** 市集活動狀態 */
+  readonly statusOptions = ['活動預告', '即將開始', '進行中'];
+
+  selectedCity = '';
+  selectedStatus = '';
+
   /** 攤位類別 */
   categories: CategoryItem[] = [
     { name: '全部市集', icon: 'bi bi-shop-window', active: true },
@@ -29,5 +62,11 @@ export class UserMarketSearchPanel {
     }));
   }
 
-  
+  selectCity(city: string): void {
+    this.selectedCity = city;
+  }
+
+  selectStatus(status: string): void {
+    this.selectedStatus = status;
+  }
 }

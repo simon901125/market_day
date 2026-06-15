@@ -29,6 +29,13 @@
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
+}
+
+.select-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
 
   span {
     min-width: 0;
@@ -36,21 +43,27 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+}
 
-  i {
-    color: var(--text-normal);
-    font-size: 1rem;
-    line-height: 1;
-  }
+.select-btn > i {
+  color: var(--text-normal);
+  font-size: 1rem;
+  line-height: 1;
+}
 
-  &:hover {
+.select-leading-icon {
+  flex: 0 0 auto;
+  color: var(--primary-color);
+  font-size: 1rem;
+}
+
+.select-btn:hover {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
+
+  > i {
     color: var(--primary-color);
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
-
-    i {
-      color: var(--primary-color);
-    }
   }
 }
 

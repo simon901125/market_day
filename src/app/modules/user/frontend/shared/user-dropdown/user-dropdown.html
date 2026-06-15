@@ -1,6 +1,11 @@
 <div class="select-wrapper">
   <button class="select-btn" type="button" (click)="toggle()">
-    <span>{{ displayLabel }}</span>
+    <span class="select-label">
+      @if (iconClass) {
+        <i [class]="'select-leading-icon ' + iconClass"></i>
+      }
+      <span>{{ displayLabel }}</span>
+    </span>
     <i class="bi bi-chevron-down"></i>
   </button>
   @if (isOpen) {
