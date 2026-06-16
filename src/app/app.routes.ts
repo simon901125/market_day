@@ -20,6 +20,8 @@ import { OrganizerDashboardHome } from './modules/organizer/dashboard/organizer-
 import { OrganizerDashboardNotification } from './modules/organizer/dashboard/organizer-dashboard-notification/organizer-dashboard-notification';
 import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organizer-home';
 import { VendorHome } from './modules/vendor/frontend/vendor-home/vendor-home';
+import { OrganizerAbout } from './modules/organizer/frontend/organizer-about/organizer-about';
+import { VendorAbout } from './modules/vendor/frontend/vendor-about/vendor-about';
 import { VendorMarketSignupList } from './modules/vendor/frontend/vendor-market-signup-list/vendor-market-signup-list';
 import { VendorMarketSignupDetail } from './modules/vendor/frontend/vendor-market-signup-detail/vendor-market-signup-detail';
 import { UserBrandSearch } from './modules/user/frontend/brand/user-brand-search/user-brand-search';
@@ -83,6 +85,7 @@ export const routes: Routes = [
     path: 'vendor',
     children: [
       { path: 'home', component: VendorHome },
+      { path: 'about', component: VendorAbout },
       { path: 'sign-up', component:VendorMarketSignupList},
       {path: 'sign-up-detail', component:VendorMarketSignupDetail},
       { path: 'sign-up-form',component:VendorSignupForm}, 
@@ -100,6 +103,7 @@ export const routes: Routes = [
     path: 'organizer',
     children: [
       { path: 'home', component: OrganizerHome },
+      { path: 'about', component: OrganizerAbout },
       { path: 'login', component: Auth, data: AUTH_ROUTE_DATA.organizerLogin },
       { path: 'register', component: Auth, data: AUTH_ROUTE_DATA.organizerRegister },
       { path: 'forgot-password', component: Auth, data: AUTH_ROUTE_DATA.organizerForgotPassword },
