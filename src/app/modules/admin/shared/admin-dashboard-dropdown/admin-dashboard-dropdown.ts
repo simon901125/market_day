@@ -99,4 +99,11 @@ export class AdminDashboardDropdown {
     this.isOpen = false;
   }
 
+  /** 清空目前選擇，畫面恢復為 placeholder 顯示 */
+  reset(): void {
+    this.selectedValue = '';
+    this.activeIndex = -1;
+    this.isOpen = false;
+  }
+
 }

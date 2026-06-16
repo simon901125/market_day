@@ -20,4 +20,16 @@ describe('AdminDashboardDropdown', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('reset() 應清空已選擇的值，displayLabel 恢復為 placeholder', () => {
+    component.options = ['A', 'B'];
+    component.placeholder = '全部';
+    component.selectOption(0);
+    expect(component.displayLabel).toBe('A');
+
+    component.reset();
+
+    expect(component.selectedValue).toBe('');
+    expect(component.displayLabel).toBe('全部');
+  });
 });

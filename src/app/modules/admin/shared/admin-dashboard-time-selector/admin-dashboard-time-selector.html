@@ -3,12 +3,12 @@
     <div class="select-section">
         <div class="selector-input">
             <i class="bi bi-calendar4-week"></i>
-            <input type="text" placeholder="開始日期" onfocus="this.type='date'" onblur="if(!this.value) this.type='text'" (change)="onStartDateChange($event)" />
+            <input type="text" #startInputEl placeholder="開始日期" onfocus="this.type='date'" onblur="if(!this.value) this.type='text'" (change)="onStartDateChange($event)" />
         </div>
         <span> - </span>
         <div class="selector-input">
             <i class="bi bi-calendar4-week"></i>
-            <input type="text" placeholder="結束日期" onfocus="this.type='date'" onblur="if(!this.value) this.type='text'" (change)="onEndDateChange($event)" />
+            <input type="text" #endInputEl placeholder="結束日期" onfocus="this.type='date'" onblur="if(!this.value) this.type='text'" (change)="onEndDateChange($event)" />
         </div>
     </div>
 </div>
