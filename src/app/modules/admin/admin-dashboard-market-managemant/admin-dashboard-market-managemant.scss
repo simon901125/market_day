@@ -1,0 +1,115 @@
+:host {
+  display: block;
+}
+
+.admin-market-managemant {
+  padding: 0 32px 0;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: calc(100vh - 60px); // 60px = dashboard-main 上下各 30px padding
+  overflow: hidden;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.search-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  app-admin-dashboard-serch-input,
+  app-admin-dashboard-dropdown,
+  app-admin-dashboard-time-selector {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  app-admin-dashboard-button {
+    flex: 0 0 auto;
+  }
+}
+
+.table-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+}
+
+.activity-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    height: 48px; // 需與 TS 的 headerHeight 一致
+  }
+
+  th {
+    text-align: left;
+    padding: 0 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-normal);
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  tbody tr {
+    height: 56px; // 需與 TS 的 rowHeight 一致
+
+    &:hover {
+      background: var(--bg-primary);
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--border-light);
+    }
+  }
+
+  td {
+    padding: 0 16px;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+  }
+
+  td:last-child {
+    width: 110px;
+  }
+}
+
+.activity-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-tag);
+    object-fit: cover;
+  }
+}
+
+.status-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--radius-tag);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.empty-row {
+  text-align: center;
+  color: var(--text-light);
+  height: 56px;
+}
