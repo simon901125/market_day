@@ -24,12 +24,19 @@
   align-items: flex-end;
   gap: 16px;
   flex-wrap: wrap;
+  border: 2px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  padding: 10px;
 
   app-admin-dashboard-serch-input,
-  app-admin-dashboard-dropdown,
   app-admin-dashboard-time-selector {
-    flex: 1;
+    flex: 2;
     min-width: 180px;
+  }
+
+  app-admin-dashboard-dropdown {
+    flex: 1;
+    min-width: 120px;
   }
 
   app-admin-dashboard-button {
@@ -42,13 +49,14 @@
   min-height: 0;
   overflow: hidden;
   background: var(--bg-white);
-  border: 1px solid var(--border-light);
+  border: 2px solid var(--border-soft);
   border-radius: var(--radius-card);
 }
 
 .activity-table {
   width: 100%;
   border-collapse: collapse;
+  font-weight: 600;
 
   thead tr {
     height: 48px; // 需與 TS 的 headerHeight 一致

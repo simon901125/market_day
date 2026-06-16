@@ -53,11 +53,11 @@
               </div>
             </td>
             <td>{{ activity.organizer }}</td>
-            <td>{{ activity.startDate }} ~ {{ activity.endDate }}</td>
+            <td class="activity-date">{{ activity.startDate }} ~ {{ activity.endDate }}</td>
             <td>
               <span class="status-tag" [class]="getStatusClass(activity.status)">{{ activity.status }}</span>
             </td>
-            <td>{{ activity.createdAt }}</td>
+            <td class="activity-cdate">{{ activity.createdAt }}</td>
             <td>
               @if (isReviewNeeded(activity.status)) {
                 <app-admin-dashboard-button type="primary" text="審核" [todo]="getDetailHandler(activity)"></app-admin-dashboard-button>
