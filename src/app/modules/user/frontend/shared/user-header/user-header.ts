@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, HostListener, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs';
@@ -21,7 +21,10 @@ export class UserHeader {
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((event) => this.updateBrandSection(event.urlAfterRedirects));
+      .subscribe((event) => {
+        this.updateBrandSection(event.urlAfterRedirects);
+        this.closeMenu();
+      });
   }
 
   protected toggleMenu(): void {
@@ -30,6 +33,11 @@ export class UserHeader {
 
   protected closeMenu(): void {
     this.isMenuOpen = false;
+  }
+
+  @HostListener('document:keydown.escape')
+  protected closeMenuOnEscape(): void {
+    this.closeMenu();
   }
 
   private updateBrandSection(url: string): void {

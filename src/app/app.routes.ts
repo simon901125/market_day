@@ -56,6 +56,10 @@ export const routes: Routes = [
         component: UserActivityList,
       },
       {
+        path: 'activity-list/history',
+        component: UserActivityList,
+      },
+      {
         path: 'activity-detail',
         component: UserActivityDetail,
       },

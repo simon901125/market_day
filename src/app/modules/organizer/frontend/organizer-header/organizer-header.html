@@ -1,15 +1,22 @@
 <header class="organizer-header">
   <div class="header-inner">
+    <button
+      type="button"
+      class="menu-btn"
+      aria-label="開啟主辦方導覽選單"
+      [attr.aria-expanded]="isMenuOpen"
+      aria-controls="organizer-mobile-menu"
+      (click)="toggleMenu()"
+    >
+      <i class="bi" [class.bi-list]="!isMenuOpen" [class.bi-x-lg]="isMenuOpen"></i>
+    </button>
+
     <a routerLink="/organizer/home" class="brand" (click)="closeMenu()">
       <img src="/assets/images/logo/logo-market-day-organizer.png" alt="小集日 Market Day" routerLink="/organizer/home"/>
       <span>主辦方專區</span>
     </a>
 
-    <button type="button" class="menu-btn" (click)="toggleMenu()">
-      <i class="bi" [class.bi-list]="!isMenuOpen" [class.bi-x-lg]="isMenuOpen"></i>
-    </button>
-
-    <nav class="nav-links" [class.open]="isMenuOpen">
+    <nav class="nav-links">
       <a
         routerLink="/organizer/home"
         routerLinkActive="active"
@@ -19,18 +26,54 @@
         首頁
       </a>
 
-      <a routerLink="/organizer/dashboard" routerLinkActive="active" (click)="closeMenu()">
+      <a routerLink="/organizer/dash-board" routerLinkActive="active" (click)="closeMenu()">
         管理後台
       </a>
 
-      <a routerLink="/about" routerLinkActive="active" (click)="closeMenu()">
+      <a routerLink="/user/about" routerLinkActive="active" (click)="closeMenu()">
         關於我們
       </a>
     </nav>
 
-    <div class="header-actions" [class.open]="isMenuOpen">
+    <div class="header-actions">
       <a routerLink="/organizer/login" class="login-btn" (click)="closeMenu()">登入</a>
       <a routerLink="/organizer/register" class="register-btn" (click)="closeMenu()">註冊</a>
     </div>
   </div>
 </header>
+
+<button
+  class="menu-backdrop"
+  type="button"
+  aria-label="關閉主辦方導覽選單"
+  [class.open]="isMenuOpen"
+  (click)="closeMenu()"
+></button>
+
+<aside
+  id="organizer-mobile-menu"
+  class="mobile-drawer"
+  [class.open]="isMenuOpen"
+  [attr.aria-hidden]="!isMenuOpen"
+>
+  <div class="drawer-header">
+    <div class="drawer-brand">
+      <img src="/assets/images/logo/logo-market-day-organizer.png" alt="小集日 Market Day" />
+      <span>主辦方專區</span>
+    </div>
+    <button type="button" aria-label="關閉主辦方導覽選單" (click)="closeMenu()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <nav aria-label="手機主辦方導覽">
+    <a routerLink="/organizer/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">首頁</a>
+    <a routerLink="/organizer/dash-board" routerLinkActive="active">管理後台</a>
+    <a routerLink="/user/about" routerLinkActive="active">關於我們</a>
+  </nav>
+
+  <div class="drawer-actions">
+    <a routerLink="/organizer/login" class="login-btn">登入</a>
+    <a routerLink="/organizer/register" class="register-btn">註冊</a>
+  </div>
+</aside>

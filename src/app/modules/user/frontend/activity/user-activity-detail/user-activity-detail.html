@@ -30,8 +30,7 @@
       <h1>{{ market?.title }}</h1>
 
       <p class="market-desc">
-        在春日的午後，一起散步在集聚之間，<br />
-        發現生活的美好與驚喜。
+        {{ market?.description }}
       </p>
 
       <div class="info-card">
@@ -170,7 +169,7 @@
       <ul class="plain-list">
         <li>
           <span>主辦單位：</span>
-          <strong>小集日 Market Day</strong>
+          <strong>{{ market?.organizer }}</strong>
         </li>
         <li>
           <span>聯絡信箱：</span>
@@ -194,18 +193,12 @@
       </div>
 
       <ul class="traffic-list">
-        <li>
-          <i class="bi bi-train-front"></i>
-          <p>捷運：文心森林公園站 G10，步行約 8 分鐘</p>
-        </li>
-        <li>
-          <i class="bi bi-bus-front"></i>
-          <p>公車：豐榮 53、73、75、85、99，於「文心森林公園站」</p>
-        </li>
-        <li>
-          <i class="bi bi-car-front"></i>
-          <p>開車：公園周邊設有收費停車場</p>
-        </li>
+        @for (item of market?.transportation; track item; let index = $index) {
+          <li>
+            <i [class]="index === 0 ? 'bi bi-train-front' : 'bi bi-bus-front'"></i>
+            <p>{{ item }}</p>
+          </li>
+        }
       </ul>
     </article>
   </section>

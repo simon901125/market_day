@@ -1,15 +1,22 @@
 <header class="organizer-header">
   <div class="header-inner">
+    <button
+      type="button"
+      class="menu-btn"
+      aria-label="開啟攤主導覽選單"
+      [attr.aria-expanded]="isMenuOpen"
+      aria-controls="vendor-mobile-menu"
+      (click)="toggleMenu()"
+    >
+      <i class="bi" [class.bi-list]="!isMenuOpen" [class.bi-x-lg]="isMenuOpen"></i>
+    </button>
+
     <a routerLink="/vendor/home" class="brand" (click)="closeMenu()">
       <img src="/assets/images/logo/logo-market-day-vendor.png" alt="小集日 Market Day" routerLink="/vendor/home"/>
       <span>攤主專區</span>
     </a>
 
-    <button type="button" class="menu-btn" (click)="toggleMenu()">
-      <i class="bi" [class.bi-list]="!isMenuOpen" [class.bi-x-lg]="isMenuOpen"></i>
-    </button>
-
-    <nav class="nav-links" [class.open]="isMenuOpen">
+    <nav class="nav-links">
       <a
         routerLink="/vendor/home"
         routerLinkActive="active"
@@ -23,7 +30,7 @@
         市集報名
       </a>
 
-      <a routerLink="/vendor/dashboard" routerLinkActive="active" (click)="closeMenu()">
+      <a routerLink="/vendor/dash-board" routerLinkActive="active" (click)="closeMenu()">
         攤主後台
       </a>
 
@@ -32,9 +39,46 @@
       </a>
     </nav>
 
-    <div class="header-actions" [class.open]="isMenuOpen">
+    <div class="header-actions">
       <a routerLink="/vendor/login" class="login-btn" (click)="closeMenu()">登入</a>
       <a routerLink="/vendor/register" class="register-btn" (click)="closeMenu()">註冊</a>
     </div>
   </div>
 </header>
+
+<button
+  class="menu-backdrop"
+  type="button"
+  aria-label="關閉攤主導覽選單"
+  [class.open]="isMenuOpen"
+  (click)="closeMenu()"
+></button>
+
+<aside
+  id="vendor-mobile-menu"
+  class="mobile-drawer"
+  [class.open]="isMenuOpen"
+  [attr.aria-hidden]="!isMenuOpen"
+>
+  <div class="drawer-header">
+    <div class="drawer-brand">
+      <img src="/assets/images/logo/logo-market-day-vendor.png" alt="小集日 Market Day" />
+      <span>攤主專區</span>
+    </div>
+    <button type="button" aria-label="關閉攤主導覽選單" (click)="closeMenu()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <nav aria-label="手機攤主導覽">
+    <a routerLink="/vendor/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">首頁</a>
+    <a routerLink="/vendor/sign-up" routerLinkActive="active">市集報名</a>
+    <a routerLink="/vendor/dash-board" routerLinkActive="active">攤主後台</a>
+    <a routerLink="/user/about" routerLinkActive="active">關於我們</a>
+  </nav>
+
+  <div class="drawer-actions">
+    <a routerLink="/vendor/login" class="login-btn">登入</a>
+    <a routerLink="/vendor/register" class="register-btn">註冊</a>
+  </div>
+</aside>

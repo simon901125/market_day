@@ -47,18 +47,21 @@
         (pageChange)="changePage($event)">
       </app-pagination>
     } @else {
-      <div class="history-header">
-        <h2>共 12 場歷史市集</h2>
-      </div>
-
       <div class="history-list">
-        @for (market of historyMarkets; track market.title) {
+        @for (market of pagedHistoryMarkets; track market.title) {
           <app-user-history-market-card
             [market]="market"
-            (click)="goToActivityHistory(market)"
+            (click)="goToActivityDetail(market)"
           ></app-user-history-market-card>
         }
       </div>
+
+      <app-pagination
+        [currentPage]="currentPage"
+        [pageSize]="pageSize"
+        [totalItems]="historyMarkets.length"
+        (pageChange)="changePage($event)">
+      </app-pagination>
     }
   </section>
 </div>

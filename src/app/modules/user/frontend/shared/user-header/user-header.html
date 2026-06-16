@@ -1,6 +1,17 @@
 <header class="user-header">
   <div class="header-container">
-    <a class="brand" routerLink="/user/home">
+    <button
+      class="menu-btn"
+      type="button"
+      aria-label="開啟導覽選單"
+      [attr.aria-expanded]="isMenuOpen"
+      aria-controls="user-mobile-menu"
+      (click)="toggleMenu()"
+    >
+      <i class="bi bi-list"></i>
+    </button>
+
+    <a class="brand" routerLink="/user/home" (click)="closeMenu()">
       <img src="assets/images/logo/logo-market-day.png" alt="小集日 Market Day" class="brand-logo" />
     </a>
 
@@ -19,5 +30,39 @@
       <a routerLink="/organizer/home" routerLinkActive="active">主辦方專區</a>
       <a routerLink="/user/about" routerLinkActive="active">關於我們</a>
     </nav>
+
   </div>
 </header>
+
+<button
+  class="menu-backdrop"
+  type="button"
+  aria-label="關閉導覽選單"
+  [class.open]="isMenuOpen"
+  (click)="closeMenu()"
+></button>
+
+<aside
+  id="user-mobile-menu"
+  class="mobile-drawer"
+  [class.open]="isMenuOpen"
+  [attr.aria-hidden]="!isMenuOpen"
+>
+  <div class="drawer-header">
+    <img src="assets/images/logo/logo-market-day.png" alt="小集日 Market Day" />
+    <button type="button" aria-label="關閉導覽選單" (click)="closeMenu()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <nav aria-label="手機主要導覽">
+    <a routerLink="/user/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      首頁
+    </a>
+    <a routerLink="/user/activity-list" routerLinkActive="active">市集活動</a>
+    <a routerLink="/user/brands" [class.active]="isBrandSection">品牌探索</a>
+    <a routerLink="/vendor/home" routerLinkActive="active">攤主專區</a>
+    <a routerLink="/organizer/home" routerLinkActive="active">主辦方專區</a>
+    <a routerLink="/user/about" routerLinkActive="active">關於我們</a>
+  </nav>
+</aside>

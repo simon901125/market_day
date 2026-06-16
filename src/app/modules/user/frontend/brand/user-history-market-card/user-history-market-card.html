@@ -8,19 +8,13 @@
       {{ market.status }}
     </span>
     <div class="history-meta">
-      <span>
-        <i class="bi bi-bezier2"></i>
+      <span class="category-tag">
         {{ market.category }}
       </span>
 
-      <span>
+      <span class="location">
         <i class="bi bi-geo-alt-fill"></i>
-        {{ market.city }}
-      </span>
-
-      <span>
-        <i class="bi bi-geo-alt-fill"></i>
-        {{ market.area }}
+        {{ market.city }} {{ market.area }}
       </span>
     </div>
 
@@ -31,15 +25,13 @@
     <div class="history-bottom">
       <span class="history-date">
         <i class="bi bi-calendar3"></i>
-        {{ market.start_date }}
+        {{ market.start_date }} - {{ market.end_date }}
       </span>
 
-      
-      <button class="detail-link" type="button" >
+      <span class="detail-link">
         查看詳情
         <i class="bi bi-arrow-right"></i>
-      </button>
-
+      </span>
     </div>
   </div>
 </article>
