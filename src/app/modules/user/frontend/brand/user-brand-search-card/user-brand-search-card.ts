@@ -11,6 +11,10 @@ export class UserBrandSearchCard {
   @Input({ required: true }) brand!: BrandItem;
   @Output() cardClick = new EventEmitter<BrandItem>();
 
+  get representativeProducts(): string {
+    return this.brand.products.map((product) => product.name).join('、');
+  }
+
   onCardClick(): void {
     this.cardClick.emit(this.brand);
   }

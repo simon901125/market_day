@@ -198,7 +198,7 @@
     gap: 10px;
   }
 
-  :host ::ng-deep app-user-brandserch-dropdown {
+  :host ::ng-deep app-user-dropdown {
     flex: 1;
     width: auto;
   }
@@ -214,7 +214,7 @@
 
 @media (max-width: 768px) {
   .brandserch-hero {
-    height: 200px;
+    height: 188px;
     background-size: cover;
     background-position: 63% center;
   }
@@ -222,7 +222,7 @@
   .hero-content,
   .filter-inner,
   .brand-inner {
-    width: calc(100% - 32px);
+    width: calc(100% - 48px);
   }
 
   .hero-content {
@@ -241,19 +241,32 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .filter-panel {
+    padding: 22px 0 16px;
+  }
+
+  .filter-top {
+    gap: 12px;
+  }
+
+  .brand-grid {
+    gap: 18px;
   }
 }
 
 @media (max-width: 576px) {
   .brandserch-hero {
-    height: 180px;
-    background-position: 66% center;
+    height: 160px;
+    background-position: 68% center;
   }
 
   .hero-content,
   .filter-inner,
   .brand-inner {
-    width: calc(100% - 24px);
+    width: calc(100% - 48px);
   }
 
   .hero-content {
@@ -269,11 +282,34 @@
   }
 
   .filter-panel {
-    padding: 20px 0 16px;
+    padding: 20px 0 14px;
   }
 
   .filter-actions {
     flex-direction: column;
     gap: 10px;
+  }
+
+  .search-input,
+  .search-btn {
+    height: 46px;
+  }
+
+  .brand-section {
+    padding: 4px 0 20px;
+  }
+
+  .brand-section-title {
+    margin-bottom: 14px;
+
+    div {
+      h4 {
+        font-size: 1.08rem;
+      }
+
+      p {
+        font-size: 0.84rem;
+      }
+    }
   }
 }
