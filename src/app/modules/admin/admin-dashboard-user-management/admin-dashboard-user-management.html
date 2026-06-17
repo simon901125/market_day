@@ -1,1 +1,79 @@
-<p>admin-dashboard-user-management works!</p>
+<section class="admin-user-managemant page-transition">
+  <h1 class="page-title">使用者管理</h1>
+
+  <div class="search-bar">
+    <app-admin-dashboard-serch-input
+      searchTitle="使用者"
+      placeholder="搜尋姓名/Email"
+    ></app-admin-dashboard-serch-input>
+
+    <app-admin-dashboard-dropdown
+      #organizerDropdown
+      title="角色"
+      placeholder="全部"
+      [options]="roleOptions"
+      (optionSelected)="onOrganizerSelected($event)"
+    ></app-admin-dashboard-dropdown>
+
+    <app-admin-dashboard-dropdown
+      #statusDropdown
+      title="狀態"
+      placeholder="全部"
+      [options]="userStatusOptions"
+      (optionSelected)="onStatusSelected($event)"
+    ></app-admin-dashboard-dropdown>
+
+    <app-admin-dashboard-button type="search" [todo]="onSearchHandler"></app-admin-dashboard-button>
+    <app-admin-dashboard-button type="clear" [todo]="onClearHandler"></app-admin-dashboard-button>
+  </div>
+
+  <div class="table-wrapper" #tableWrapper>
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th class="user-name">使用者名稱</th>
+          <th class="user-email">Email</th>
+          <th class="user-role">角色</th>
+          <th class="user-cdate">註冊時間</th>
+          <th class="user-ldate">最後登入</th>
+          <th class="user-status">帳號狀態</th>
+          <th class="action-btn">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users; track user.id) {
+          <tr>
+            <td class="user-name">{{ user.name }}</td>
+            <td class="user-email">{{ user.email }}</td>
+            <td class="user-role">
+              <span class="role-tag" [class]="getRoleClass(user.role)">{{ user.role }}</span>
+            </td>
+            <td class="user-cdate">{{ user.createdAt }}</td>
+            <td class="user-ldate">{{ user.lastLoginAt }}</td>
+            <td class="user-status">
+              <span class="status-tag" [class]="getStatusClass(user.status)">{{ user.status }}</span>
+            </td>
+            <td class="action-btn">
+              <div class="btn-group">
+                <app-admin-dashboard-button type="primary" text="查看"></app-admin-dashboard-button>
+                <app-admin-dashboard-button type="secondary" text="停用"></app-admin-dashboard-button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="empty-row">查無符合條件的使用者</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <app-dashboard-pagination
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems"
+    (pageChange)="onPageChange($event)"
+  ></app-dashboard-pagination>
+</section>
+
