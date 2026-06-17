@@ -1,98 +1,117 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+
 import { MarketCardItem } from '../../../../../models/MarketCardItem';
-import { CommonModule } from '@angular/common';
+import { MarketStatus } from '../../../../../models/status/MarketStatus';
+
+interface TrafficItem {
+  icon: string;
+  label: string;
+  text: string;
+}
+
+const DAY_MS = 1000 * 60 * 60 * 24;
 
 @Component({
   selector: 'app-user-activity-detail',
-  imports: [CommonModule,  RouterLink],
+  imports: [CommonModule, RouterLink],
   templateUrl: './user-activity-detail.html',
   styleUrl: './user-activity-detail.scss',
 })
 export class UserActivityDetail {
-  /** 市集詳細資訊 */
   market: MarketCardItem | null = null;
-  
-  /** 是否顯示市集攤位資訊 */
-  isMarketMapInfo: boolean = false;
 
-  diffDays: number = 0;
-  diffTxt: string = '';
+  readonly trafficItems: TrafficItem[] = [
+    {
+      icon: 'bi bi-train-front',
+      label: '捷運',
+      text: '文心森林公園站（G10），步行約 8 分鐘',
+    },
+    {
+      icon: 'bi bi-bus-front',
+      label: '公車',
+      text: '豐樂 53、73、75、85、99，於「文心森林公園站」下車',
+    },
+    {
+      icon: 'bi bi-car-front-fill',
+      label: '開車',
+      text: '公園周邊設有收費停車場',
+    },
+  ];
 
   constructor(private router: Router) {
-    // 使用 currentNavigation 信號獲取傳遞的數據
     const navigation = this.router.currentNavigation();
-    //navigation?.extras.state?.['market']：從 Angular Router 的當前導航資料取得
-    //history.state?.['market']：從瀏覽器歷史紀錄取得
-    //這樣可以避免刷新或回上一頁後 currentNavigation() 為 null 時，頁面拿不到資料
     this.market = navigation?.extras.state?.['market'] || history.state?.['market'] || null;
   }
 
-  //這裡先寫假資料，等串接後再改成傳入的資料
-  /**
-   * 公開市集攤位資訊
-   * @returns Boolean：是否顯示攤位資訊公告
-   */
-  openMarketInfo(){
-    /** 當前日期 */
-    let today: Date = new Date();
-    /** 攤位公開日期 */
-    let infoDate = new Date(2026, 7, 20); // 假設攤位公開日期是 2026/05/20
-    if(infoDate > today){
-      this.isMarketMapInfo = false;
-      return true;
-    }else{
-      this.isMarketMapInfo = true;
-      return false;
-    }
+  get showBoothInfo(): boolean {
+    return this.market?.status !== MarketStatus.preview;
   }
 
-  /**
-   * 計算剩餘天數
-   * @param startDate 市集開始日期
-   * @returns 剩餘市集天數
-   */
-  countMarketDays(startDate: string) {
-    /** 當前日期 */
-    let today = new Date();
-    // 計算活動天數的邏輯
-    let formatStartDate = startDate.split('/');
-    /** 格式化日期 */
-    let newStartDate = new Date(Number(formatStartDate[0]), Number(formatStartDate[1]) - 1, Number(formatStartDate[2]));
-    // 計算活動天數
-    // 計算活動開始日期與今天的時間差
-    /** 時間差 */
-    let timeDiff = newStartDate.getTime() - today.getTime();
-    /** 活動天數 */
-    let dayDiff =  Math.abs(Math.ceil(timeDiff / (1000 * 3600 * 24)));
-    let dayDiffTxt = String(dayDiff);
-    if(dayDiff == 0){
-      dayDiffTxt = '';
-    }
-    return dayDiff;
-
+  get showAnnouncement(): boolean {
+    return !this.showBoothInfo;
   }
 
-  marketDaysText(startDate: string): string {
-    /** 當前日期 */
-    let today = new Date();
-    // 計算活動天數的邏輯
-    let formatStartDate = startDate.split('/');
-    /** 格式化日期 */
-    let newStartDate = new Date(Number(formatStartDate[0]), Number(formatStartDate[1]) - 1, Number(formatStartDate[2]));
-    // 計算活動天數
-    // 計算活動開始日期與今天的時間差
-    /** 時間差 */
-    let timeDiff = newStartDate.getTime() - today.getTime();
-    /** 活動天數 */
-    let dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+  get activityIntroExtra(): string {
+    return '這場市集活動將串連在地創作者、精選品牌與生活風格攤位，規劃適合慢慢逛、好好交流的市集動線。現場除了選物與輕食，也會依活動主題安排互動體驗與品牌展示，讓逛市集不只是購物，而是把週末留給生活感的一段小旅行。';
+  }
 
-    if(dayDiff > 0) {
-      return `距離活動開始`;
-    } else if(dayDiff === 0) {
-      return '活動今天開始';
-    } else {
-      return `活動已經開始了`;
+  get organizerName(): string {
+    return this.market?.organizer ?? '小集日活動企劃';
+  }
+
+  get breadcrumbSectionLabel(): string {
+    return this.market?.status === MarketStatus.ended ? '歷史活動' : '目前活動';
+  }
+
+  get breadcrumbSectionLink(): string {
+    return this.market?.status === MarketStatus.ended
+      ? '/user/activity-list/history'
+      : '/user/activity-list';
+  }
+
+  openMarketInfo(): boolean {
+    return !this.showBoothInfo;
+  }
+
+  countMarketDays(startDate: string): number {
+    if (!startDate) {
+      return 0;
     }
+
+    const today = this.todayStart();
+    const start = this.parseDate(startDate);
+    return Math.max(0, Math.ceil((start.getTime() - today.getTime()) / DAY_MS));
+  }
+
+  marketDaysText(startDate: string, endDate = this.market?.end_date ?? ''): string {
+    if (!startDate) {
+      return '';
+    }
+
+    const today = this.todayStart();
+    const start = this.parseDate(startDate);
+    const end = endDate ? this.parseDate(endDate) : start;
+
+    if (today > end) {
+      return '活動已結束';
+    }
+
+    if (today >= start && today <= end) {
+      return '活動進行中';
+    }
+
+    return '距離活動開始還有';
+  }
+
+  private parseDate(value: string): Date {
+    const [year, month, day] = value.split('/').map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  private todayStart(): Date {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
   }
 }

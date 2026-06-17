@@ -1,25 +1,22 @@
-/** 市集狀態 */
+/** 市集活動狀態 */
 export class MarketStatus {
-  /** 活動預告 */
+  /** 活動預告：資訊尚未公開 */
   static readonly preview = '活動預告';
-  /** 即將開始 */
+  /** 即將開始：資訊已公開 */
   static readonly upcoming = '即將開始';
-  /** 進行中 */
+  /** 活動進行中 */
   static readonly active = '進行中';
-  /** 已結束 */
+  /** 歷史活動 */
   static readonly ended = '已結束';
-  /** 狀態對應的 CSS 類別 */
+
+  /** 狀態對應 CSS class */
   static readonly classMap: Record<string, string> = {
     [MarketStatus.preview]: 'preview',
     [MarketStatus.upcoming]: 'upcoming',
     [MarketStatus.active]: 'active',
     [MarketStatus.ended]: 'ended',
   };
-  /**
-   * 根據市集狀態獲取對應的 CSS 類別
-   * @param status 狀態名稱
-   * @returns CSS 類別名稱，如果狀態未定義則返回空字串
-   */
+
   static getClass(status: string): string {
     return MarketStatus.classMap[status] ?? '';
   }
