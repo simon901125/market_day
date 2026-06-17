@@ -98,3 +98,60 @@
     font-weight: 700;
   }
 }
+
+@media (max-width: 768px) {
+  .market-card {
+    border-radius: 14px;
+  }
+
+  .market-img {
+    height: 190px;
+  }
+
+  .market-body {
+    padding: 18px 18px 20px;
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+      line-height: 1.45;
+    }
+  }
+
+  .market-date,
+  .market-location {
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+  }
+
+  .tag-list {
+    gap: 8px;
+    margin-top: 10px;
+
+    span {
+      padding: 4px 9px;
+      font-size: 0.78rem;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .market-img {
+    height: 168px;
+  }
+
+  .status-badge {
+    top: 12px;
+    left: 12px;
+    padding: 4px 9px;
+    font-size: 0.76rem;
+  }
+
+  .market-body {
+    padding: 16px;
+
+    h3 {
+      font-size: 1rem;
+    }
+  }
+}
