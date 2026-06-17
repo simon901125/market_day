@@ -11,6 +11,53 @@ import { Pagination } from '../../../../shared/pagination/pagination';
 import { UserMarketCard } from '../../shared/user-market-card/user-market-card';
 import { UserHistoryMarketCard } from '../../brand/user-history-market-card/user-history-market-card';
 
+type MarketSample = Omit<MarketCardItem, 'status' | 'statusClass'>;
+type HistoryMarketSample = Omit<HistoryMarketCardItem, 'status' | 'statusClass'>;
+
+const DAY_MS = 1000 * 60 * 60 * 24;
+
+const parseMarketDate = (value: string): Date => {
+  const [year, month, day] = value.split('/').map(Number);
+  return new Date(year, month - 1, day);
+};
+
+const todayStart = (): Date => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+};
+
+const resolveCurrentMarketStatus = (market: Pick<MarketCardItem, 'start_date' | 'end_date' | 'infoDate'>): string => {
+  const today = todayStart();
+  const startDate = parseMarketDate(market.start_date);
+  const endDate = parseMarketDate(market.end_date);
+  const infoDate = market.infoDate ? parseMarketDate(market.infoDate) : startDate;
+
+  if (today > endDate) {
+    return MarketStatus.ended;
+  }
+
+  if (today >= startDate && today <= endDate) {
+    return MarketStatus.active;
+  }
+
+  return today >= infoDate ? MarketStatus.upcoming : MarketStatus.preview;
+};
+
+const withCurrentStatus = (market: MarketSample): MarketCardItem => {
+  const status = resolveCurrentMarketStatus(market);
+  return {
+    ...market,
+    status,
+    statusClass: MarketStatus.getClass(status),
+  };
+};
+
+const withEndedStatus = (market: HistoryMarketSample): HistoryMarketCardItem => ({
+  ...market,
+  status: MarketStatus.ended,
+  statusClass: MarketStatus.getClass(MarketStatus.ended),
+});
+
 @Component({
   selector: 'app-user-activity-list',
   imports: [
@@ -29,29 +76,280 @@ export class UserActivityList {
       : 'current';
   }
 
-  /** 目前所在的標籤 */
   activeTab: 'current' | 'history' = 'current';
-
-  /** 目前頁碼 */
   currentPage = 1;
-
-  /** 每頁顯示筆數 */
   pageSize = 6;
 
-  /** 目前頁面要顯示的市集 */
+  private readonly marketSamples: MarketSample[] = [
+    {
+      title: '草悟野餐市集',
+      start_date: '2026/06/15',
+      end_date: '2026/06/21',
+      infoDate: '2026/05/20',
+      description: '在城市綠意裡展開週末野餐，集合手作甜點、植栽選物與親子互動體驗。',
+      time: '10:00 - 18:00',
+      location: '台中市北區 審計新村',
+      address: '台中市北區育才街99號',
+      city: '台中市',
+      area: '北區',
+      category: BrandType.family,
+      image: 'assets/images/market/cards/market-card-01.png',
+      tags: [BrandType.food, BrandType.handmade, BrandType.family],
+      organizer: '小集日活動企劃',
+      transportation: [
+        '捷運：文心森林公園站（G10），步行約 8 分鐘',
+        '公車：豐樂 53、73、75、85、99，於「文心森林公園站」下車',
+        '開車：公園周邊設有收費停車場',
+      ],
+    },
+    {
+      title: '台北插畫生活節',
+      start_date: '2026/06/27',
+      end_date: '2026/06/28',
+      infoDate: '2026/05/28',
+      description: '以插畫、紙品與小物為主題，讓創作者用溫柔筆觸說出生活裡的故事。',
+      time: '11:00 - 19:00',
+      location: '台北市中正區 華山1914文化創意產業園區',
+      address: '台北市中正區八德路一段1號',
+      city: '台北市',
+      area: '中正區',
+      category: BrandType.handmade,
+      image: 'assets/images/market/cards/market-card-02.png',
+      tags: [BrandType.handmade, BrandType.fashion],
+      organizer: '台北創作生活協會',
+      transportation: ['捷運：忠孝新生站 1 號出口', '公車：藍5、藍7、藍10路'],
+    },
+    {
+      title: '府城慢食選物市集',
+      start_date: '2026/07/04',
+      end_date: '2026/07/05',
+      infoDate: '2026/06/05',
+      description: '串連台南在地小農、甜點與風味飲品，把日常飲食變成一場慢慢逛的旅行。',
+      time: '10:30 - 18:30',
+      location: '台南市中西區 藍晒圖文創園區',
+      address: '台南市中西區西門路一段689巷',
+      city: '台南市',
+      area: '中西區',
+      category: BrandType.food,
+      image: 'assets/images/market/cards/market-card-03.png',
+      tags: [BrandType.food, BrandType.family],
+      organizer: '府城生活策展',
+      transportation: ['公車：藍幹線、紅幹線', '台南火車站轉乘公車約 12 分鐘'],
+    },
+    {
+      title: '新竹風土手作日',
+      start_date: '2026/07/18',
+      end_date: '2026/07/19',
+      infoDate: '2026/06/18',
+      description: '把竹風、木作與布藝帶進午後廣場，適合慢慢挑選有溫度的生活器物。',
+      time: '10:00 - 18:00',
+      location: '新竹市東區 將軍村開放圖書資訊園區',
+      address: '新竹市東區金城一路69號',
+      city: '新竹市',
+      area: '東區',
+      category: BrandType.handmade,
+      image: 'assets/images/market/cards/market-card-04.png',
+      tags: [BrandType.handmade, BrandType.fashion],
+      organizer: '新竹手作文化推廣會',
+      transportation: ['台鐵：新竹站轉乘公車', '公車：綠1、綠2、藍1路'],
+    },
+    {
+      title: '港邊寵物生活市集',
+      start_date: '2026/08/01',
+      end_date: '2026/08/02',
+      infoDate: '2026/07/01',
+      description: '寵物友善品牌、手作零食與戶外用品一次集結，陪毛孩一起吹海風。',
+      time: '15:00 - 21:00',
+      location: '高雄市鹽埕區 駁二大義倉庫',
+      address: '高雄市鹽埕區大義街2號',
+      city: '高雄市',
+      area: '鹽埕區',
+      category: BrandType.pet,
+      image: 'assets/images/market/cards/market-card-05.png',
+      tags: [BrandType.pet, BrandType.family],
+      organizer: '高雄港邊生活節',
+      transportation: ['捷運：鹽埕埔站步行約 8 分鐘', '輕軌：駁二大義站下車'],
+    },
+    {
+      title: '綠意植感週末市集',
+      start_date: '2026/08/15',
+      end_date: '2026/08/16',
+      infoDate: '2026/07/20',
+      description: '從多肉植物到居家植栽，邀請大家在城市裡找到一點柔軟的綠。',
+      time: '10:00 - 18:00',
+      location: '台中市西區 勤美草悟道',
+      address: '台中市西區公益路68號周邊',
+      city: '台中市',
+      area: '西區',
+      category: BrandType.plant,
+      image: 'assets/images/market/cards/market-card-06.png',
+      tags: [BrandType.plant, BrandType.handmade],
+      organizer: '草悟植感企劃',
+      transportation: ['公車：300、301、302路', '開車：周邊收費停車場'],
+    },
+    {
+      title: '松菸夏夜文創市集',
+      start_date: '2026/09/05',
+      end_date: '2026/09/06',
+      infoDate: '2026/08/01',
+      description: '夜間限定的文創選物、香氛與輕食品牌，讓夏夜多一點散步的理由。',
+      time: '16:00 - 21:00',
+      location: '台北市信義區 松山文創園區',
+      address: '台北市信義區光復南路133號',
+      city: '台北市',
+      area: '信義區',
+      category: BrandType.handmade,
+      image: 'assets/images/market/cards/market-card-07.png',
+      tags: [BrandType.handmade, BrandType.food],
+      organizer: '松菸城市生活企劃',
+      transportation: ['捷運：國父紀念館站步行約 10 分鐘', '公車：204、212、278路'],
+    },
+    {
+      title: '桃園親子遊藝市集',
+      start_date: '2026/09/19',
+      end_date: '2026/09/20',
+      infoDate: '2026/08/18',
+      description: '結合玩具、繪本與親子體驗課程，讓孩子自由探索，也讓大人慢慢逛。',
+      time: '10:00 - 18:00',
+      location: '桃園市中壢區 青埔公園',
+      address: '桃園市中壢區高鐵南路二段旁',
+      city: '桃園市',
+      area: '中壢區',
+      category: BrandType.family,
+      image: 'assets/images/market/cards/market-card-08.png',
+      tags: [BrandType.family, BrandType.toy],
+      organizer: '桃園親子生活節',
+      transportation: ['高鐵：桃園站', '捷運：A18 高鐵桃園站'],
+    },
+    {
+      title: '中央公園夜光手作祭',
+      start_date: '2026/10/03',
+      end_date: '2026/10/04',
+      infoDate: '2026/10/01',
+      description: '活動資訊即將公開，將帶來夜間手作、燈飾選物與秋季限定體驗。',
+      time: '15:00 - 21:00',
+      location: '台中市西屯區 中央公園',
+      address: '台中市西屯區中科路2966號',
+      city: '台中市',
+      area: '西屯區',
+      category: BrandType.handmade,
+      image: 'assets/images/market/cards/market-card-09.png',
+      tags: [BrandType.handmade, BrandType.fashion],
+      organizer: '中央公園城市企劃',
+      transportation: ['公車：300、301、302路', '開車：中央公園停車場'],
+    },
+    {
+      title: '冬日陶作暖光市集',
+      start_date: '2026/11/14',
+      end_date: '2026/11/15',
+      infoDate: '2026/11/01',
+      description: '活動資訊即將公開，預計集結陶作、香氛、織品與暖冬飲品品牌。',
+      time: '12:00 - 19:00',
+      location: '台北市大同區 迪化街街區',
+      address: '台北市大同區迪化街一段周邊',
+      city: '台北市',
+      area: '大同區',
+      category: BrandType.handmade,
+      image: 'assets/images/market/cards/market-card-10.png',
+      tags: [BrandType.handmade, BrandType.food],
+      organizer: '大稻埕生活選物',
+      transportation: ['捷運：北門站步行約 8 分鐘', '公車：9、206、274路'],
+    },
+  ];
+
+  private readonly historyMarketSamples: HistoryMarketSample[] = [
+    {
+      title: '小樹市集',
+      start_date: '2025/04/12',
+      end_date: '2025/04/13',
+      time: '10:00 - 18:00',
+      location: '台南市安南區 國立臺灣歷史博物館',
+      address: '台南市安南區長和路一段250號',
+      image: 'assets/images/user/activity/history/history-market-01.png',
+      tags: [BrandType.family],
+      category: BrandType.family,
+      city: '台南市',
+      area: '安南區',
+      desc: '在歷史與綠意之間，孩子們自在奔跑，大小朋友都能找到喜歡的故事與手作好物。',
+      description: '這場市集以親子與戶外生活為主軸，邀請手作品牌、繪本攤位與輕食品牌共同參與，讓參觀博物館的午後多了散步與交流的溫度。',
+      organizer: '小樹親子生活節',
+      transportation: ['台南火車站轉乘公車至臺灣歷史博物館站', '館區設有汽機車停車場'],
+    },
+    {
+      title: '小火柴文創市集',
+      start_date: '2025/05/18',
+      end_date: '2025/05/19',
+      time: '11:00 - 18:00',
+      location: '台南市南區 水交社文化園區',
+      address: '台南市南區興中街118號',
+      image: 'assets/images/user/activity/history/history-market-02.png',
+      tags: [BrandType.handmade],
+      category: BrandType.handmade,
+      city: '台南市',
+      area: '南區',
+      desc: '老眷村裡的新故事，文創與手作的溫度，一起感受生活的美好與創意的力量。',
+      description: '以眷村文化、插畫紙品與手作飾品為主題，讓創作者與來逛市集的人在園區街角相遇，留下日常裡難得的慢步調。',
+      organizer: '小火柴文創企劃',
+      transportation: ['台南火車站轉乘市區公車至水交社站', '園區周邊設有公有停車場'],
+    },
+    {
+      title: '舊城午後手作市集',
+      start_date: '2025/06/07',
+      end_date: '2025/06/08',
+      time: '11:00 - 19:00',
+      location: '台中市北區 審計新村',
+      address: '台中市北區民生路368巷',
+      image: 'assets/images/user/activity/history/history-market-03.png',
+      tags: [BrandType.handmade],
+      category: BrandType.handmade,
+      city: '台中市',
+      area: '北區',
+      desc: '在老屋巷弄中展開的午後市集，聚集陶作、織品、香氛與生活選物品牌。',
+      description: '以手作與生活選物為核心，邀請攤主分享創作背後的故事，也讓來訪者在老屋街區裡找到適合自己的日常小物。',
+      organizer: '舊城生活策展',
+      transportation: ['台中火車站轉乘公車至英才郵局站', '建議搭乘大眾運輸前往'],
+    },
+    {
+      title: '港邊風格服飾市集',
+      start_date: '2025/07/12',
+      end_date: '2025/07/13',
+      time: '14:00 - 20:00',
+      location: '高雄市鹽埕區 駁二大義倉庫',
+      address: '高雄市鹽埕區大義街2號',
+      image: 'assets/images/user/activity/history/history-market-04.png',
+      tags: [BrandType.fashion],
+      category: BrandType.fashion,
+      city: '高雄市',
+      area: '鹽埕區',
+      desc: '把夏日海風與穿搭靈感放在一起，逛見獨立服飾、配件與風格小物。',
+      description: '以服飾配件與風格選物為主題，搭配港邊夕陽與倉庫空間，讓每個攤位都像是一個小小的生活提案。',
+      organizer: '港邊風格選物所',
+      transportation: ['高雄捷運鹽埕埔站步行約8分鐘', '輕軌駁二大義站下車即可抵達'],
+    },
+  ];
+
+  get markets(): MarketCardItem[] {
+    return this.marketSamples
+      .map(withCurrentStatus)
+      .filter((market) => market.status !== MarketStatus.ended);
+  }
+
+  get historyMarkets(): HistoryMarketCardItem[] {
+    return this.historyMarketSamples.map(withEndedStatus);
+  }
+
   get pagedMarkets(): MarketCardItem[] {
     const startIndex = (this.currentPage - 1) * this.pageSize;
     return this.markets.slice(startIndex, startIndex + this.pageSize);
   }
 
-  /** 目前頁面要顯示的歷史市集 */
   get pagedHistoryMarkets(): HistoryMarketCardItem[] {
     const startIndex = (this.currentPage - 1) * this.pageSize;
     return this.historyMarkets.slice(startIndex, startIndex + this.pageSize);
   }
 
-  /** 切換目前/歷史活動 */
   changeTab(tab: 'current' | 'history'): void {
+    this.activeTab = tab;
     this.currentPage = 1;
     this.router.navigate([
       tab === 'history'
@@ -60,279 +358,13 @@ export class UserActivityList {
     ]);
   }
 
-  /** 接收共用分頁元件傳回的頁碼 */
   changePage(page: number): void {
     this.currentPage = page;
   }
 
-  /** 導航到市集詳情頁 */
   goToActivityDetail(market: MarketCardItem): void {
     this.router.navigate(['/user/activity-detail'], {
       state: { market },
     });
   }
-
-  /** 目前市集列表 */
-  markets: MarketCardItem[] = [
-    {
-      title: '草地野餐市集',
-      start_date: '2026/06/04',
-      end_date: '2026/06/20',
-      description: '在草地上享受美食和音樂，與家人朋友共度美好時光。',
-      time: '10:00 - 18:00',
-      location: '台中市西區 草悟道',
-      address: '台中市西區英才路534號',
-      city: '台中市',
-      area: '西區',
-      category: '親子家庭',
-      image: 'assets/images/market/cards/market-card-01.png',
-      status: MarketStatus.active,
-      statusClass: MarketStatus.getClass(MarketStatus.active),
-      tags: [BrandType.food, BrandType.handmade, BrandType.family],
-      organizer: '台中市政府',
-      transportation: ['捷運綠線：草悟道站', '公車：5、10、20、30路'],
-    },
-    {
-      title: '台北精品咖啡生活節',
-      start_date: '2024/05/24',
-      end_date: '2024/05/26',
-      description: '體驗精品咖啡的香醇與文化，享受慢活的愜意時光。',
-      time: '10:00 - 18:00',
-      location: '台北市中山區 華山1914文創園區',
-      address: '台北市中山區復興南路一段1號',
-      city: '台北市',
-      area: '中山區',
-      category: '咖啡茶飲',
-      image: 'assets/images/market/cards/market-card-02.png',
-      status: MarketStatus.active,
-      statusClass: MarketStatus.getClass(MarketStatus.active),
-      tags: [BrandType.food, BrandType.handmade, BrandType.fashion],
-      organizer: '台北市政府',
-      transportation: ['捷運紅線：忠孝新生站', '公車：藍5、藍7、藍10路'],
-    },
-    {
-      title: '手作設計市集',
-      start_date: '2026/05/25',
-      end_date: '2026/06/26',
-      description: '匯聚各式手作設計品牌，展現創意與工藝的魅力。',
-      time: '10:00 - 18:00',
-      location: '台南市中西區 藍晒圖文創園區',
-      address: '台南市中西區創意路123號',
-      city: '台南市',
-      area: '中西區',
-      category: '手作設計',
-      image: 'assets/images/market/cards/market-card-03.png',
-      status: MarketStatus.active,
-      statusClass: MarketStatus.getClass(MarketStatus.active),
-      tags: [BrandType.handmade, BrandType.fashion, BrandType.toy],
-      organizer: '台南市政府',
-      transportation: ['公車：綠幹線、藍幹線', '計程車：台南火車站搭乘約10分鐘'],
-    },
-    {
-      title: '山系生活戶外市集',
-      start_date: '2024/05/07',
-      end_date: '2024/06/09',
-      description: '結合戶外活動與生活風格，提供山系愛好者一個交流的平台。',
-      time: '10:00 - 18:00',
-      location: '新竹市西區 新竹公園',
-      address: '新竹市西區公園路123號',
-      city: '新竹市',
-      area: '西區',
-      category: '戶外生活',
-      image: 'assets/images/market/cards/market-card-04.png',
-      status: MarketStatus.upcoming,
-      statusClass: MarketStatus.getClass(MarketStatus.upcoming),
-      tags: [BrandType.fashion, BrandType.family],
-      organizer: '新竹市政府',
-      transportation: ['捷運：新竹站', '公車：綠1、綠2、藍1路'],
-    },
-    {
-      title: '毛孩友善市集',
-      start_date: '2024/06/08',
-      end_date: '2024/06/09',
-      description: '專為毛孩和主人打造的友善市集，提供各式寵物用品和活動。',
-      time: '10:00 - 18:00',
-      location: '高雄市鼓山區 駁二藝術特區',
-      address: '高雄市鼓山區駁二藝術特區',
-      city: '高雄市',
-      area: '鼓山區',
-      category: '寵物',
-      image: 'assets/images/market/cards/market-card-05.png',
-      status: MarketStatus.upcoming,
-      statusClass: MarketStatus.getClass(MarketStatus.upcoming),
-      tags: [BrandType.pet, BrandType.family],
-      organizer: '高雄市政府',
-      transportation: ['捷運紅線：鹽埕埔站', '公車：紅1、紅2、藍1路'],
-    },
-    {
-      title: '植感生活市集',
-      start_date: '2024/06/15',
-      end_date: '2024/06/16',
-      description: '以植物為主題的生活市集，提供多樣化的植栽和綠色生活用品。',
-      time: '10:00 - 18:00',
-      location: '台中市北區 審計新村',
-      address: '台中市北區育才街99號',
-      city: '台中市',
-      area: '北區',
-      category: '植物',
-      image: 'assets/images/market/cards/market-card-06.png',
-      status: MarketStatus.preview,
-      statusClass: MarketStatus.getClass(MarketStatus.preview),
-      tags: [BrandType.plant, BrandType.handmade, BrandType.family],
-      organizer: '台中市政府',
-      transportation: ['捷運：台中站', '公車：綠1、綠2、藍1路'],
-    },
-    {
-      title: '城市甜點生活市集',
-      start_date: '2024/07/05',
-      end_date: '2024/07/07',
-      description: '集合甜點、咖啡與生活選物，打造週末午後的小旅行。',
-      time: '11:00 - 19:00',
-      location: '台北市信義區 松山文創園區',
-      address: '台北市信義區光復南路133號',
-      city: '台北市',
-      area: '信義區',
-      category: '餐飲美食',
-      image: 'assets/images/market/cards/market-card-07.png',
-      status: MarketStatus.upcoming,
-      statusClass: MarketStatus.getClass(MarketStatus.upcoming),
-      tags: [BrandType.food, BrandType.handmade],
-      organizer: '台北市政府',
-      transportation: ['捷運：國父紀念館站', '公車：204、212、278路'],
-    },
-    {
-      title: '親子童趣假日市集',
-      start_date: '2024/07/12',
-      end_date: '2024/07/14',
-      description: '親子手作、童書、玩具與戶外活動，一起度過療癒假日。',
-      time: '10:00 - 18:00',
-      location: '桃園市中壢區 青埔公園',
-      address: '桃園市中壢區高鐵南路二段',
-      city: '桃園市',
-      area: '中壢區',
-      category: '親子家庭',
-      image: 'assets/images/market/cards/market-card-08.png',
-      status: MarketStatus.upcoming,
-      statusClass: MarketStatus.getClass(MarketStatus.upcoming),
-      tags: [BrandType.family, BrandType.toy],
-      organizer: '桃園市政府',
-      transportation: ['高鐵：桃園站', '捷運：A18 高鐵桃園站'],
-    },
-    {
-      title: '夏夜音樂手作市集',
-      start_date: '2024/07/19',
-      end_date: '2024/07/21',
-      description: '結合音樂表演與手作品牌，打造夏夜限定市集體驗。',
-      time: '15:00 - 21:00',
-      location: '台中市西屯區 中央公園',
-      address: '台中市西屯區經貿五路',
-      city: '台中市',
-      area: '西屯區',
-      category: '文創手作',
-      image: 'assets/images/market/cards/market-card-09.png',
-      status: MarketStatus.preview,
-      statusClass: MarketStatus.getClass(MarketStatus.preview),
-      tags: [BrandType.handmade, BrandType.fashion],
-      organizer: '台中市政府',
-      transportation: ['公車：300、301、302路', '自行開車：中央公園停車場'],
-    },
-    {
-      title: '港邊海風選物市集',
-      start_date: '2024/08/02',
-      end_date: '2024/08/04',
-      description: '在港邊吹著海風，探索在地品牌與生活風格選物。',
-      time: '12:00 - 20:00',
-      location: '高雄市鹽埕區 駁二藝術特區',
-      address: '高雄市鹽埕區大勇路1號',
-      city: '高雄市',
-      area: '鹽埕區',
-      category: '生活風格',
-      image: 'assets/images/market/cards/market-card-10.png',
-      status: MarketStatus.upcoming,
-      statusClass: MarketStatus.getClass(MarketStatus.upcoming),
-      tags: [BrandType.fashion, BrandType.handmade],
-      organizer: '高雄市政府',
-      transportation: ['捷運：鹽埕埔站', '輕軌：駁二大義站'],
-    },
-  ];
-
-  /** 歷史市集列表 */
-  historyMarkets: HistoryMarketCardItem[] = [
-    {
-      title: '小樹市集｜台灣歷史博物館戶外廣場',
-      start_date: '2024/06/15',
-      end_date: '2024/06/16',
-      time: '10:00 - 18:00',
-      location: '國立臺灣歷史博物館戶外廣場',
-      address: '台南市安南區長和路一段250號',
-      image: 'assets/images/user/activity/history/history-market-01.png',
-      status: '已結束',
-      statusClass: 'ended',
-      tags: [BrandType.family],
-      category: BrandType.family,
-      city: '台南市',
-      area: '安南區',
-      desc: '在歷史與綠意之間，孩子們自在奔跑，大小朋友都能找到喜歡的故事與手作好物。',
-      description: '在歷史與綠意交織的戶外廣場，集合親子手作、特色選物與在地美食，讓大小朋友一起度過輕鬆愉快的週末。',
-      organizer: '小樹生活市集',
-      transportation: ['台南火車站轉乘公車至臺灣歷史博物館站', '館區設有汽機車停車場'],
-    },
-    {
-      title: '小火柴文創市集｜水交社文化園區',
-      start_date: '2024/05/18',
-      end_date: '2024/05/19',
-      time: '11:00 - 18:00',
-      location: '水交社文化園區',
-      address: '台南市南區興中街118號',
-      image: 'assets/images/user/activity/history/history-market-02.png',
-      status: '已結束',
-      statusClass: 'ended',
-      tags: [BrandType.handmade],
-      category: BrandType.handmade,
-      city: '台南市',
-      area: '南區',
-      desc: '老眷村裡的新故事，文創與手作的溫度，一起感受生活的美好與創意的力量。',
-      description: '以老眷村的人文景色為舞台，邀請插畫、陶作、布品與獨立甜點品牌，延續水交社的生活記憶與創作溫度。',
-      organizer: '小火柴文創團隊',
-      transportation: ['台南火車站轉乘市區公車至水交社站', '園區周邊設有公有停車場'],
-    },
-    {
-      title: '森林手作生活節｜台中審計新村',
-      start_date: '2024/04/20',
-      end_date: '2024/04/21',
-      time: '11:00 - 19:00',
-      location: '審計新村',
-      address: '台中市西區民生路368巷',
-      image: 'assets/images/user/activity/history/history-market-03.png',
-      status: '已結束',
-      statusClass: 'ended',
-      tags: [BrandType.handmade],
-      category: BrandType.handmade,
-      city: '台中市',
-      area: '西區',
-      desc: '在老屋與綠樹之間，慢下腳步，享受手作、設計與生活風格的美好日常。',
-      description: '老屋巷弄裡聚集木作、花藝、香氛與生活選品，透過創作者的作品，感受城市中自然柔和的生活節奏。',
-      organizer: '森林手作生活節',
-      transportation: ['台中火車站轉乘公車至英才郵局站', '建議搭乘大眾運輸前往'],
-    },
-    {
-      title: '夏日選物散步市集｜高雄駁二藝術特區',
-      start_date: '2024/03/09',
-      end_date: '2024/03/10',
-      time: '14:00 - 20:00',
-      location: '駁二藝術特區大勇區',
-      address: '高雄市鹽埕區大勇路1號',
-      image: 'assets/images/user/activity/history/history-market-04.png',
-      status: '已結束',
-      statusClass: 'ended',
-      tags: [BrandType.fashion],
-      category: BrandType.fashion,
-      city: '高雄市',
-      area: '鹽埕區',
-      desc: '海風、陽光與好物相遇，在駁二散步挖寶，感受港都的夏日魅力。',
-      description: '沿著港灣展開的夏日散步市集，集結服飾配件、風格選物與特色飲品，在海風與夕陽中探索生活好物。',
-      organizer: '港都散步企劃',
-      transportation: ['高雄捷運鹽埕埔站步行約8分鐘', '輕軌駁二大義站下車即可抵達'],
-    },
-  ];
 }

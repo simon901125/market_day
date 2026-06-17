@@ -33,17 +33,19 @@
     </button>
   </div>
 
-  <div class="category-tags">
-    @for (category of categories; track $index; let i = $index;) {
-      <button
-        class="category-tag"
-        [class.active]="category.active"
-        type="button"
-        (click)="selectCategory(i)"
-      >
-        <i [class]="category.icon"></i>
-        <span>{{ category.name }}</span>
-      </button>
-    }
+  <div class="category-scroll-wrap">
+    <div class="category-tags">
+      @for (category of categories; track $index; let i = $index;) {
+        <button
+          class="category-tag"
+          [class.active]="category.active"
+          type="button"
+          (click)="selectCategory(i)"
+        >
+          <i [class]="category.icon"></i>
+          <span>{{ category.name }}</span>
+        </button>
+      }
+    </div>
   </div>
 </section>

@@ -230,6 +230,10 @@
   }
 }
 
+.mobile-more-link {
+  display: none;
+}
+
 /* 近期市集卡片 */
 .market-grid {
   display: grid;
@@ -417,25 +421,63 @@
 @media (max-width: 768px) {
   .hero-section {
     width: calc(100% - 32px);
-    height: 340px;
+    height: 320px;
+  }
+
+  .hero-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.08) 0%,
+      rgba(0, 0, 0, 0.32) 42%,
+      rgba(0, 0, 0, 0.72) 100%
+    );
   }
 
   .hero-content {
     max-width: none;
-    padding: 0 28px;
+    padding: 0 22px 52px;
+    justify-content: flex-end;
 
     h1 {
-      font-size: 2rem;
+      margin-bottom: 10px;
+      font-size: 1.72rem;
+      line-height: 1.28;
     }
 
     p {
-      font-size: 0.92rem;
-      line-height: 1.7;
+      margin-bottom: 16px;
+      font-size: 0.84rem;
+      line-height: 1.62;
     }
   }
 
   .hero-actions {
-    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    min-width: 112px;
+    height: 38px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+  }
+
+  .hero-arrow {
+    display: none;
+  }
+
+  .hero-dots {
+    bottom: 20px;
+
+    button {
+      width: 8px;
+      height: 8px;
+
+      &.active {
+        width: 24px;
+      }
+    }
   }
 
   .market-section,
@@ -448,6 +490,30 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 12px;
+  }
+
+  .more-link {
+    display: none;
+  }
+
+  .mobile-more-link {
+    width: 100%;
+    height: 42px;
+    margin-top: 18px;
+    border-radius: 8px;
+    color: #fff;
+    background: var(--primary-color);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    &:hover {
+      background: var(--primary-hover);
+    }
   }
 
   .market-grid {
@@ -489,51 +555,43 @@
 }
 
 @media (max-width: 576px) {
+  .hero-section,
+  .market-section,
+  .vendor-section,
+  .organizer-section {
+    width: calc(100% - 48px);
+  }
+
+  .vendor-section {
+    margin: 32px auto 32px;
+  }
+
+  .organizer-section {
+    margin: 0 auto 32px;
+  }
+
   .hero-section {
-    width: calc(100% - 24px);
-    height: 320px;
+    height: 288px;
   }
 
   .hero-content {
-    padding: 0 22px;
+    padding: 0 20px 48px;
 
     h1 {
-      font-size: 1.75rem;
+      font-size: 1.5rem;
     }
 
     p {
-      font-size: 0.88rem;
+      font-size: 0.78rem;
+      line-height: 1.58;
     }
   }
 
   .primary-btn,
   .secondary-btn {
-    min-width: 124px;
-    height: 40px;
-    font-size: 0.9rem;
-  }
-
-  .hero-arrow {
-    width: 34px;
-    height: 34px;
-  }
-
-  .hero-arrow-left {
-    left: 10px;
-  }
-
-  .hero-arrow-right {
-    right: 10px;
-  }
-
-  /* 手機版市集卡片：左右留白增加 */
-  .market-section {
-    width: calc(100% - 72px);
-  }
-
-  .vendor-section,
-  .organizer-section {
-    width: calc(100% - 24px);
+    min-width: 104px;
+    height: 36px;
+    font-size: 0.8rem;
   }
 
   /* 手機版：市集卡片改成一欄 */

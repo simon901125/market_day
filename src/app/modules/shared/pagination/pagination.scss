@@ -55,14 +55,18 @@
 @media (max-width: 768px) {
   .pagination-row {
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
+    margin-top: 28px;
   }
 
   .page-info {
     position: static;
+    order: 2;
+    line-height: 1.5;
   }
 
   .pagination {
+    order: 1;
     gap: 12px;
 
     button {
@@ -73,6 +77,11 @@
 }
 
 @media (max-width: 576px) {
+  .pagination-row {
+    gap: 20px;
+    margin-top: 24px;
+  }
+
   .pagination {
     gap: 8px;
 
@@ -81,5 +90,9 @@
       height: 34px;
       font-size: 0.86rem;
     }
+  }
+
+  .page-info {
+    color: var(--text-light);
   }
 }

@@ -2,13 +2,10 @@
   <nav class="breadcrumb-wrap" aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a routerLink="/user/home">首頁</a>
+        <a routerLink="/user/activity-list">市集活動</a>
       </li>
       <li class="breadcrumb-item">
-        <a routerLink="/user/home">市集活動</a>
-      </li>
-      <li class="breadcrumb-item">
-        <a routerLink="/user/activity-list">活動列表</a>
+        <a [routerLink]="breadcrumbSectionLink">{{ breadcrumbSectionLabel }}</a>
       </li>
       <li class="breadcrumb-item active" aria-current="page">
         {{ market?.title }}
@@ -16,13 +13,11 @@
     </ol>
   </nav>
 
-  <!-- Hero -->
   <section class="market-section">
     <div class="market-image-wrap">
       <span class="status-badge" [class]="market?.statusClass">
         {{ market?.status }}
       </span>
-
       <img [src]="market?.image" [alt]="market?.title" />
     </div>
 
@@ -53,19 +48,21 @@
 
           <li>
             <i class="bi bi-geo-alt"></i>
-            <div>
-              <span>活動地點</span>
-              <strong>{{ market?.location }}</strong>
-              <p>{{ market?.address }}</p>
+            <div class="location-lines">
+              <strong>活動地點：{{ market?.location }}</strong>
+              <strong>活動地址：{{ market?.address }}</strong>
             </div>
           </li>
 
           <li>
             <i class="bi bi-stopwatch"></i>
-            <div>
-              <span class="primary-text">{{marketDaysText(market?.start_date || '')}}</span>
-              <!-- {{(market?.start_date || '') | countMarketDays}} -->
-              <strong>{{countMarketDays(market?.start_date || '')}} 天</strong>
+            <div class="countdown-info">
+              <span class="primary-text">
+                {{ marketDaysText(market?.start_date || '', market?.end_date || '') }}
+              </span>
+              @if (countMarketDays(market?.start_date || '') > 0) {
+                <strong>{{ countMarketDays(market?.start_date || '') }} 天</strong>
+              }
             </div>
           </li>
         </ul>
@@ -73,16 +70,14 @@
     </div>
   </section>
 
-  <!-- 活動介紹 -->
   <section class="intro-card">
     <div class="section-heading">
       <i class="bi bi-clipboard-check"></i>
       <h2>活動介紹</h2>
     </div>
 
-    <p>
-      {{ market?.description }}
-    </p>
+    <p>{{ market?.description }}</p>
+    <p>{{ activityIntroExtra }}</p>
 
     <div class="tag-list">
       <span *ngFor="let tag of market?.tags">
@@ -91,15 +86,12 @@
     </div>
   </section>
 
-  <!-- 資訊公開：攤位地圖 -->
   <section class="booth-section" [hidden]="openMarketInfo()">
     <div class="booth-title">
       <div>
         <i class="bi bi-map"></i>
         <h2>攤位地圖</h2>
       </div>
-
-      <span>點選攤位查看品牌資訊</span>
     </div>
 
     <div class="map-card">
@@ -113,13 +105,13 @@
       <img
         class="booth-image"
         src="https://via.placeholder.com/360x180/DCC5A0/ffffff?text=Brand+Image"
-        alt="品牌圖片"
+        alt="參與品牌示意圖"
       />
 
       <div class="booth-info">
         <div class="booth-heading">
           <span class="booth-number">B03</span>
-          <h3>台北精品咖啡生活商</h3>
+          <h3>拾甜製菓</h3>
         </div>
 
         <div class="tag-list">
@@ -127,40 +119,31 @@
         </div>
 
         <p>
-          嚴選台灣在地特色精品咖啡豆，提供手沖精品咖啡與咖啡相關商品。 每一杯咖啡都品嚐生活的講究。
+          以當季蜂蜜與手作甜點為主題，帶來適合市集午後享用的輕甜風味，也提供禮盒與小份量點心選擇。
         </p>
       </div>
 
       <ul class="social-list">
         <li>
-          <i class="bi bi-facebook"></i>
-          <a href="#" target="_blank" rel="noopener noreferrer"> 台北精品咖啡生活商 </a>
+          <i class="bi bi-instagram"></i>
+          <a href="#" target="_blank" rel="noopener noreferrer">@sweet.ten.market</a>
         </li>
 
         <li>
-          <i class="bi bi-instagram"></i>
-          <a
-            href="https://www.instagram.com/taipecoffee.life/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            @taipecoffee.life
-          </a>
+          <i class="bi bi-facebook"></i>
+          <a href="#" target="_blank" rel="noopener noreferrer">拾甜製菓</a>
         </li>
 
         <li>
           <i class="bi bi-globe"></i>
-          <a href="https://www.taipeicoffeelife.tw/" target="_blank" rel="noopener noreferrer">
-            官方網站
-          </a>
+          <a href="#" target="_blank" rel="noopener noreferrer">前往官網</a>
         </li>
       </ul>
     </aside>
   </section>
 
-  <!-- 主辦方 + 交通 -->
   <section class="bottom-info-grid">
-    <article class="detail-card">
+    <article class="detail-card compact-card">
       <div class="section-heading">
         <i class="bi bi-person"></i>
         <h3>主辦方資訊</h3>
@@ -169,7 +152,7 @@
       <ul class="plain-list">
         <li>
           <span>主辦單位：</span>
-          <strong>{{ market?.organizer }}</strong>
+          <strong>{{ organizerName }}</strong>
         </li>
         <li>
           <span>聯絡信箱：</span>
@@ -186,31 +169,35 @@
       </ul>
     </article>
 
-    <article class="detail-card">
+    <article class="detail-card compact-card">
       <div class="section-heading">
         <i class="bi bi-bus-front"></i>
         <h3>交通方式</h3>
       </div>
 
       <ul class="traffic-list">
-        @for (item of market?.transportation; track item; let index = $index) {
+        @for (item of trafficItems; track item.label) {
           <li>
-            <i [class]="index === 0 ? 'bi bi-train-front' : 'bi bi-bus-front'"></i>
-            <p>{{ item }}</p>
+            <strong>{{ item.label }}：</strong>
+            <span>{{ item.text }}</span>
           </li>
         }
       </ul>
     </article>
   </section>
-  <!-- 活動預告：尚未公開攤位資訊 -->
-  <section class="announcement-banner" [hidden]="isMarketMapInfo">
-    <div class="announcement-icon">
-      <i class="bi bi-megaphone-fill"></i>
+
+  <section class="announcement-banner" [hidden]="!showAnnouncement">
+    <div class="announcement-heading">
+      <div class="announcement-icon">
+        <i class="bi bi-megaphone-fill"></i>
+      </div>
+
+      <h3>
+        <span>參與品牌與攤位資訊</span>
+        <span>將於報名截止後公開</span>
+      </h3>
     </div>
 
-    <div>
-      <h3>參與品牌與攤位資訊將於報名截止後公開</h3>
-      <p>目前您可先瀏覽活動基本資訊，更多精彩內容敬請期待！</p>
-    </div>
+    <p>目前活動仍在預告階段，完整攤位地圖與品牌名單會在資訊公開後更新。</p>
   </section>
 </div>

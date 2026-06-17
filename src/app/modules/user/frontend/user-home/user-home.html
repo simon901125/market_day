@@ -1,5 +1,4 @@
 <div class="user-home">
-  <!-- Hero -->
   <section class="hero-section">
     <div
       class="hero-bg"
@@ -48,12 +47,11 @@
 
   <app-user-market-search-panel></app-user-market-search-panel>
 
-  <!-- Recent Markets -->
   <section class="market-section">
     <div class="section-header">
       <div>
         <h2>近期市集活動</h2>
-        <p>精選市集活動推薦，快來尋找你的週末計畫！</p>
+        <p>精選小集日推薦的生活市集，快來尋找你的週末計畫！</p>
       </div>
 
       <a routerLink="/user/activity-list" class="more-link">
@@ -67,9 +65,13 @@
         <app-user-market-card [market]="market" (click)="goToActivityDetail(market)"></app-user-market-card>
       }
     </div>
+
+    <a routerLink="/user/activity-list" class="mobile-more-link">
+      查看更多市集活動
+      <i class="bi bi-arrow-right"></i>
+    </a>
   </section>
 
-  <!-- Vendor CTA -->
   <section class="vendor-section">
     <div class="vendor-info">
       <h2>

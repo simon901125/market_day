@@ -12,17 +12,18 @@ import { filter } from 'rxjs';
 export class UserHeader {
   protected isMenuOpen = false;
   protected isBrandSection = false;
+  protected isActivitySection = false;
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(private router: Router) {
-    this.updateBrandSection(this.router.url);
+    this.updateActiveSections(this.router.url);
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((event) => {
-        this.updateBrandSection(event.urlAfterRedirects);
+        this.updateActiveSections(event.urlAfterRedirects);
         this.closeMenu();
       });
   }
@@ -40,8 +41,10 @@ export class UserHeader {
     this.closeMenu();
   }
 
-  private updateBrandSection(url: string): void {
+  private updateActiveSections(url: string): void {
     this.isBrandSection =
       url.startsWith('/user/brands') || url.startsWith('/user/brand-detail');
+    this.isActivitySection =
+      url.startsWith('/user/activity-list') || url.startsWith('/user/activity-detail');
   }
 }

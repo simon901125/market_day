@@ -83,6 +83,10 @@
 }
 
 /* 分類標籤 */
+.category-scroll-wrap {
+  position: relative;
+}
+
 .category-tags {
   display: flex;
   flex-wrap: wrap;
@@ -143,7 +147,6 @@
     color: #fff;
     border-color: var(--primary-color);
     background: var(--primary-color);
-    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.22);
 
     i {
       color: #fff;
@@ -169,6 +172,7 @@
   .search-panel {
     width: calc(100% - 32px);
     padding: 16px;
+    margin-top: 26px;
   }
 
   .search-row {
@@ -191,17 +195,54 @@
     overflow-x: auto;
     gap: 8px;
     margin-top: 16px;
-    padding-bottom: 6px;
+    padding: 0 32px 8px 2px;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .category-scroll-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 8px;
+    width: 24px;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      var(--bg-white) 100%
+    );
   }
 
   .category-tag {
     flex: 0 0 auto;
     height: 36px;
-    padding: 0 16px;
-    font-size: 0.9rem;
+    padding: 0 14px;
+    font-size: 0.86rem;
 
     i {
       font-size: 0.95rem;
     }
+  }
+}
+
+@media (max-width: 576px) {
+  .search-panel {
+    width: calc(100% - 48px);
+    padding: 14px;
+  }
+
+  .search-row {
+    gap: 10px;
+  }
+
+  .search-input,
+  app-user-dropdown,
+  .search-btn {
+    height: 46px;
   }
 }

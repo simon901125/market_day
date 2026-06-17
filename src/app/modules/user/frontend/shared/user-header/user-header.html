@@ -19,7 +19,7 @@
       <a routerLink="/user/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         首頁
       </a>
-      <a routerLink="/user/activity-list" routerLinkActive="active">市集活動</a>
+      <a routerLink="/user/activity-list" [class.active]="isActivitySection">市集活動</a>
       <a
         routerLink="/user/brands"
         [class.active]="isBrandSection"
@@ -59,7 +59,7 @@
     <a routerLink="/user/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
       首頁
     </a>
-    <a routerLink="/user/activity-list" routerLinkActive="active">市集活動</a>
+    <a routerLink="/user/activity-list" [class.active]="isActivitySection">市集活動</a>
     <a routerLink="/user/brands" [class.active]="isBrandSection">品牌探索</a>
     <a routerLink="/vendor/home" routerLinkActive="active">攤主專區</a>
     <a routerLink="/organizer/home" routerLinkActive="active">主辦方專區</a>
