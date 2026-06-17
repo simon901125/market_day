@@ -24,7 +24,7 @@ export class AdminDashboardUserManagement implements AfterViewInit{
   constructor(private router: Router) {}
 
   @ViewChild(AdminDashboardSerchInput) searchInputRef!: AdminDashboardSerchInput;
-  @ViewChild('organizerDropdown') organizerDropdownRef!: AdminDashboardDropdown;
+  @ViewChild('roleDropdown') roleDropdownRef!: AdminDashboardDropdown;
   @ViewChild('statusDropdown') statusDropdownRef!: AdminDashboardDropdown;
   @ViewChild('tableWrapper') tableWrapperRef!: ElementRef<HTMLDivElement>;
 
@@ -56,8 +56,6 @@ export class AdminDashboardUserManagement implements AfterViewInit{
     [UserType.vendor]: 'purple',
     [UserType.organizer]: 'blue',
   };
-
-
 
   /** 假資料：模擬後端回傳的使用者列表，之後可替換成真正的 API 呼叫結果 */
   private readonly mockUsers: UserListItem[] = [
@@ -116,7 +114,7 @@ export class AdminDashboardUserManagement implements AfterViewInit{
     }
   }
 
-  onOrganizerSelected(value: string): void {
+  onRoleSelected(value: string): void {
     this.selectedRole = value;
   }
 
@@ -135,7 +133,7 @@ export class AdminDashboardUserManagement implements AfterViewInit{
     this.selectedRole = '';
     this.selectedStatus = '';
     this.searchInputRef.reset();
-    this.organizerDropdownRef.reset();
+    this.roleDropdownRef.reset();
     this.statusDropdownRef.reset();
     this.currentPage = 1;
     this.fetchusers();
