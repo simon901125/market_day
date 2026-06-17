@@ -8,6 +8,7 @@ import { AdminLogin } from './modules/admin/admin-login/admin-login';
 import { AdminDashboardHome } from './modules/admin/admin-dashboard-home/admin-dashboard-home';
 import { AdminDashboardNotification } from './modules/admin/admin-dashboard-notification/admin-dashboard-notification';
 import { AdminDashboardMarketManagemant } from './modules/admin/admin-dashboard-market-managemant/admin-dashboard-market-managemant';
+import { AdminDashboardMarketDetail } from './modules/admin/admin-dashboard-market-detail/admin-dashboard-market-detail';
 import { AdminDashboardUserManagement } from './modules/admin/admin-dashboard-user-management/admin-dashboard-user-management';
 import { AdminDashboardLogs } from './modules/admin/admin-dashboard-logs/admin-dashboard-logs';
 import { Auth } from './modules/auth/auth/auth';
@@ -192,6 +193,10 @@ export const routes: Routes = [
       {
         path: 'activity',
         component: AdminDashboardMarketManagemant,
+      },
+      {
+        path: 'activity/detail',
+        component: AdminDashboardMarketDetail,
       },
       {
         path: 'users',

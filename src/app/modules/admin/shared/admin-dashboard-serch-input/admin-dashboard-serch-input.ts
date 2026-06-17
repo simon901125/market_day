@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-admin-dashboard-serch-input',
@@ -16,6 +16,8 @@ export class AdminDashboardSerchInput {
   /** 觸發搜尋時輸出目前的輸入值（按 Enter 或父元素呼叫 triggerSearch()） */
   @Output() search = new EventEmitter<string>();
 
+  @ViewChild('searchInputEl') private searchInputElRef!: ElementRef<HTMLInputElement>;
+
   inputValue: string = '';
 
   onInput(event: Event) {
@@ -29,5 +31,11 @@ export class AdminDashboardSerchInput {
   /** 供父元素透過 ViewChild 主動觸發，取得目前輸入值 */
   triggerSearch() {
     this.search.emit(this.inputValue);
+  }
+
+  /** 清空輸入框的值，包含畫面上顯示的文字 */
+  reset(): void {
+    this.inputValue = '';
+    this.searchInputElRef.nativeElement.value = '';
   }
 }
