@@ -121,17 +121,17 @@
 /* 手機 */
 @media (max-width: 576px) {
   .user-footer {
-    margin-top: 48px;
+    margin-top: 8px;
   }
 
   .footer-container {
-    width: calc(100% - 32px);
+    width: calc(100% - 48px);
   }
 
   .footer-content {
     grid-template-columns: 1fr;
-    gap: 32px;
-    padding: 40px 0 28px;
+    gap: 22px;
+    padding: 34px 0 24px;
   }
 
   .footer-section {
@@ -140,8 +140,10 @@
   }
 
   .footer-logo {
+    margin-bottom: 6px;
+
     img {
-      width: 120px;
+      width: 160px;
     }
   }
 
