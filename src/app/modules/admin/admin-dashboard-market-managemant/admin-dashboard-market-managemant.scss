@@ -28,9 +28,13 @@
   border-radius: var(--radius-card);
   padding: 10px;
 
-  app-admin-dashboard-serch-input,
-  app-admin-dashboard-time-selector {
+  app-admin-dashboard-serch-input {
     flex: 2;
+    min-width: 180px;
+  }
+
+  app-admin-dashboard-time-selector {
+    flex: 3;
     min-width: 180px;
   }
 
@@ -70,6 +74,11 @@
     color: var(--text-normal);
     background: var(--bg-soft);
     border-bottom: 1px solid var(--border-light);
+
+    &.activity-status,
+    &.activity-btn {
+      text-align: center;
+    }
   }
 
   tbody tr {
@@ -88,6 +97,16 @@
     padding: 0 16px;
     font-size: 0.85rem;
     color: var(--text-dark);
+
+    &.activity-status,
+    &.activity-btn {
+      text-align: center;
+    }
+  
+    &.activity-date,
+    &.activity-cdate {
+      color: var(--text-light);
+    }
   }
 
   td:last-child {

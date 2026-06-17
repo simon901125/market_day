@@ -35,30 +35,30 @@
     <table class="activity-table">
       <thead>
         <tr>
-          <th>活動名稱</th>
-          <th>主辦方</th>
-          <th>活動日期</th>
-          <th>狀態</th>
-          <th>建立時間</th>
-          <th>操作</th>
+          <th class="activity-name">活動名稱</th>
+          <th class="activity-organizer">主辦方</th>
+          <th class="activity-date">活動日期</th>
+          <th class="activity-status">狀態</th>
+          <th class="activity-cdate">建立時間</th>
+          <th class="activity-btn">操作</th>
         </tr>
       </thead>
       <tbody>
         @for (activity of activities; track activity.id) {
           <tr>
-            <td>
+            <td class="activity-name">
               <div class="activity-name-cell">
                 <img [src]="activity.image" [alt]="activity.name" />
                 <span>{{ activity.name }}</span>
               </div>
             </td>
-            <td>{{ activity.organizer }}</td>
+            <td class="activity-organizer">{{ activity.organizer }}</td>
             <td class="activity-date">{{ activity.startDate }} ~ {{ activity.endDate }}</td>
-            <td>
+            <td class="activity-status">
               <span class="status-tag" [class]="getStatusClass(activity.status)">{{ activity.status }}</span>
-            </td>
+            </td >
             <td class="activity-cdate">{{ activity.createdAt }}</td>
-            <td>
+            <td class="activity-btn">
               @if (isReviewNeeded(activity.status)) {
                 <app-admin-dashboard-button type="primary" text="審核" [todo]="getDetailHandler(activity)"></app-admin-dashboard-button>
               } @else {
