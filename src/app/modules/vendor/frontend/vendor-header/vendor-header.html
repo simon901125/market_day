@@ -1,8 +1,8 @@
-<header class="organizer-header">
-  <div class="header-inner">
+<header class="vendor-header">
+  <div class="vendor-header-inner">
     <button
       type="button"
-      class="menu-btn"
+      class="vendor-menu-btn"
       aria-label="開啟攤主導覽選單"
       [attr.aria-expanded]="isMenuOpen"
       aria-controls="vendor-mobile-menu"
@@ -11,11 +11,11 @@
       <i class="bi" [class.bi-list]="!isMenuOpen" [class.bi-x-lg]="isMenuOpen"></i>
     </button>
 
-    <a routerLink="/vendor/home" class="brand" (click)="closeMenu()">
-      <img src="/assets/images/logo/logo-market-day-vendor-zone.png" alt="小集日攤主專區" routerLink="/vendor/home"/>
+    <a routerLink="/vendor/home" class="vendor-brand" (click)="closeMenu()">
+      <img src="/assets/images/logo/logo-market-day-vendor-zone.png" alt="小集日攤主專區" routerLink="/vendor/home" />
     </a>
 
-    <nav class="nav-links">
+    <nav class="vendor-nav-links" aria-label="攤主導覽">
       <a routerLink="/user/home" routerLinkActive="active" (click)="closeMenu()">
         回小集日首頁
       </a>
@@ -42,15 +42,15 @@
       </a>
     </nav>
 
-    <div class="header-actions">
-      <a href="/vendor/login" target="_blank" rel="noopener noreferrer" class="login-btn" (click)="closeMenu()">登入</a>
-      <a href="/vendor/register" target="_blank" rel="noopener noreferrer" class="register-btn" (click)="closeMenu()">註冊</a>
+    <div class="vendor-header-actions">
+      <a href="/vendor/login" target="_blank" rel="noopener noreferrer" class="vendor-login-btn" (click)="closeMenu()">登入</a>
+      <a href="/vendor/register" target="_blank" rel="noopener noreferrer" class="vendor-register-btn" (click)="closeMenu()">註冊</a>
     </div>
   </div>
 </header>
 
 <button
-  class="menu-backdrop"
+  class="vendor-menu-backdrop"
   type="button"
   aria-label="關閉攤主導覽選單"
   [class.open]="isMenuOpen"
@@ -59,12 +59,12 @@
 
 <aside
   id="vendor-mobile-menu"
-  class="mobile-drawer"
+  class="vendor-mobile-drawer"
   [class.open]="isMenuOpen"
   [attr.aria-hidden]="!isMenuOpen"
 >
-  <div class="drawer-header">
-    <div class="drawer-brand">
+  <div class="vendor-drawer-header">
+    <div class="vendor-drawer-brand">
       <img src="/assets/images/logo/logo-market-day-vendor-zone.png" alt="小集日攤主專區" />
     </div>
     <button type="button" aria-label="關閉攤主導覽選單" (click)="closeMenu()">
@@ -80,8 +80,8 @@
     <a routerLink="/vendor/about" routerLinkActive="active">關於我們</a>
   </nav>
 
-  <div class="drawer-actions">
-    <a href="/vendor/login" target="_blank" rel="noopener noreferrer" class="login-btn">登入</a>
-    <a href="/vendor/register" target="_blank" rel="noopener noreferrer" class="register-btn">註冊</a>
+  <div class="vendor-drawer-actions">
+    <a href="/vendor/login" target="_blank" rel="noopener noreferrer" class="vendor-login-btn">登入</a>
+    <a href="/vendor/register" target="_blank" rel="noopener noreferrer" class="vendor-register-btn">註冊</a>
   </div>
 </aside>
