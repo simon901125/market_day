@@ -51,20 +51,6 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
     ActivityStatus.unpublished,
   ];
 
-  /** 狀態 -> 標籤顏色 class 對應 */
-  private readonly statusColorMap: Record<string, string> = {
-    [ActivityStatus.pendingReview]: 'orange',
-    [ActivityStatus.revisionRequired]: 'red',
-    [ActivityStatus.mapBuilding]: 'yellow',
-    [ActivityStatus.readyToPublish]: 'blue',
-    [ActivityStatus.registrationOpen]: 'blue',
-    [ActivityStatus.full]: 'purple',
-    [ActivityStatus.published]: 'teal',
-    [ActivityStatus.active]: 'green',
-    [ActivityStatus.ended]: 'grey',
-    [ActivityStatus.unpublished]: 'grey',
-  };
-
   /** 需要管理員處理（顯示「審核」按鈕）的狀態，其餘顯示「查看」 */
   private readonly needsReviewStatuses: string[] = [
     ActivityStatus.pendingReview,
@@ -233,7 +219,7 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
 
   /** 取得狀態對應的標籤顏色 class */
   getStatusClass(status: string): string {
-    return this.statusColorMap[status] ?? 'grey';
+    return ActivityStatus.getClass(status);
   }
 
   /** 是否需要顯示「審核」按鈕（否則顯示「查看」） */
