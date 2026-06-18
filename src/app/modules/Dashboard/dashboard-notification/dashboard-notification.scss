@@ -169,12 +169,12 @@
 
 .notification-page.home-mode {
   max-width: none;
-  height: 100%;
+  height: auto;
   padding: 14px 20px;
   border: 1px solid var(--border-light);
   border-radius: 8px;
   background: var(--bg-white);
-  overflow: hidden;
+  overflow: visible;
 
   .page-header {
     margin-bottom: 10px;

@@ -10,12 +10,10 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 24px;
   overflow: hidden;
 
   app-dashboard-notification {
-    flex: 1;
-    min-height: 0;
     display: block;
   }
 }
