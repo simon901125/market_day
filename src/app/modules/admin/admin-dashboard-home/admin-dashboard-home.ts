@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { DashboardHomeTodoCard } from '../../shared/dashboard-home-todo-card/dashboard-home-todo-card';
-import { DashboardHomeNotifications, NotificationItem } from '../../shared/dashboard-home-notifications/dashboard-home-notifications';
+import { DashboardHomeTodoCard } from '../../dashboard/dashboard-home-todo-card/dashboard-home-todo-card';
+import { DashboardHomeNotifications, NotificationItem } from '../../dashboard/dashboard-home-notifications/dashboard-home-notifications';
 
 interface TodoItem {
   icon: string;

@@ -6,7 +6,7 @@ import { AdminDashboardSerchInput } from '../shared/admin-dashboard-serch-input/
 import { UserStatus } from '../../../models/status/UserStatus';
 import { UserType } from '../../../models/type/UserType';
 import { UserListItem } from '../../../models/UserListItem';
-import { DashboardPagination } from '../../shared/dashboard-pagination/dashboard-pagination';
+import { DashboardPagination } from '../../dashboard/dashboard-pagination/dashboard-pagination';
 
 @Component({
   selector: 'app-admin-dashboard-user-management',

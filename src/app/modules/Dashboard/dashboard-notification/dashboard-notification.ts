@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnInit, HostListener } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { NotificationItem, NotificationType } from '../../../models/NotificationItem';
 import { NotificationStatus } from '../../../models/status/NotificationStatus';
-import { DashboardPagination } from '../../shared/dashboard-pagination/dashboard-pagination';
+import { DashboardPagination } from '../dashboard-pagination/dashboard-pagination';
 
 /** 通知頁籤類型 */
 type NotificationTab =
