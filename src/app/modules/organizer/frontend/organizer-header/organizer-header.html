@@ -12,14 +12,11 @@
     </button>
 
     <a routerLink="/organizer/home" class="brand" (click)="closeMenu()">
-      <img src="/assets/images/logo/logo-market-day-organizer-zone.png" alt="小集日主辦方專區" routerLink="/organizer/home"/>
+      <img src="/assets/images/logo/logo-market-day-organizer-zone.png" alt="小集日主辦方專區" />
     </a>
 
-    <nav class="nav-links">
-      <a routerLink="/user/home" routerLinkActive="active" (click)="closeMenu()">
-        回小集日首頁
-      </a>
-
+    <nav class="nav-links" aria-label="主辦方導覽">
+      <a routerLink="/user/home" (click)="closeMenu()">回小集日首頁</a>
       <a
         routerLink="/organizer/home"
         routerLinkActive="active"
@@ -28,19 +25,13 @@
       >
         首頁
       </a>
-
-      <a routerLink="/organizer/dash-board" routerLinkActive="active" (click)="closeMenu()">
-        管理後台
-      </a>
-
-      <a routerLink="/organizer/about" routerLinkActive="active" (click)="closeMenu()">
-        關於我們
-      </a>
+      <a routerLink="/organizer/dash-board" routerLinkActive="active" (click)="closeMenu()">管理後台</a>
+      <a routerLink="/organizer/about" routerLinkActive="active" (click)="closeMenu()">關於我們</a>
     </nav>
 
     <div class="header-actions">
-      <a href="/organizer/login" target="_blank" rel="noopener noreferrer" class="login-btn" (click)="closeMenu()">登入</a>
-      <a href="/organizer/register" target="_blank" rel="noopener noreferrer" class="register-btn" (click)="closeMenu()">註冊</a>
+      <a routerLink="/organizer/login" target="_blank" rel="noopener noreferrer" class="login-btn" (click)="closeMenu()">登入</a>
+      <a routerLink="/organizer/register" target="_blank" rel="noopener noreferrer" class="register-btn" (click)="closeMenu()">註冊</a>
     </div>
   </div>
 </header>
@@ -69,7 +60,7 @@
   </div>
 
   <nav aria-label="手機主辦方導覽">
-    <a routerLink="/user/home" routerLinkActive="active">回小集日首頁</a>
+    <a routerLink="/user/home">回小集日首頁</a>
     <a routerLink="/organizer/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">首頁</a>
     <a routerLink="/organizer/dash-board" routerLinkActive="active">管理後台</a>
     <a routerLink="/organizer/about" routerLinkActive="active">關於我們</a>

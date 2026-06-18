@@ -1,166 +1,101 @@
 <app-organizer-header></app-organizer-header>
+
 <main class="organizer-home">
-  <section class="hero">
-    <div class="hero-content">
+  <section class="organizer-hero">
+    <div class="hero-copy">
       <h1>
         讓你的市集，<br />
         被更多攤主看見
       </h1>
 
       <p>
-        小集日開放主辦方合作加入，協助你曝光市集活動、招募攤主報名，
-        並集中管理審核、付款與攤位資訊，讓活動籌備更清楚、更有效率。
+        小集日開放主辦方合作加入，協助你曝光市集活動、招募攤主報名，並集中管理審核、付款與攤位資訊，讓活動籌備更清楚、更有效率。
       </p>
 
       <div class="hero-actions">
-        <a routerLink="/organizer/register" class="primary-btn">成為主辦方</a>
-        <a routerLink="/organizer/login" class="outline-btn">主辦方登入</a>
+        <a routerLink="/organizer/register" target="_blank" class="primary-btn">成為主辦方</a>
+        <a routerLink="/organizer/login" target="_blank" class="outline-btn">主辦方登入</a>
       </div>
     </div>
 
     <div class="hero-image">
-      <img src="/assets/images/user/home/user-home-hero-market-01.png" alt="市集活動" />
+      <img src="/assets/images/organizer/organizer-home-hero.png" alt="主辦方市集活動管理" />
     </div>
   </section>
 
   <section class="section-block">
-    <h2>為什麼選擇小集日？</h2>
-    <div class="title-line"></div>
+    <div class="section-title">
+      <img src="/assets/images/logo/logo-market-day-little.png" alt="" />
+      <h2>為什麼選擇小集日？</h2>
+    </div>
 
     <div class="feature-grid">
-      <article class="feature-card">
-        <i class="bi bi-megaphone"></i>
-        <h3>提升活動曝光</h3>
-        <p>平台協助活動曝光，讓更多攤主看見你的市集。</p>
-      </article>
-
-      <article class="feature-card">
-        <i class="bi bi-clipboard-check"></i>
-        <h3>集中管理攤主報名</h3>
-        <p>線上報名表單、資料收集與審核一次完成。</p>
-      </article>
-
-      <article class="feature-card">
-        <i class="bi bi-card-checklist"></i>
-        <h3>掌握審核與付款進度</h3>
-        <p>清楚查看報名審核、付款狀態與攤位分配進度。</p>
-      </article>
+      @for (feature of features; track $index) {
+        <article class="feature-card">
+          <div class="icon-circle">
+            <i [class]="feature.icon"></i>
+          </div>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
+        </article>
+      }
     </div>
   </section>
 
   <section class="section-block">
-    <h2>主辦方可以做什麼？</h2>
-    <div class="title-line"></div>
+    <div class="section-title">
+      <img src="/assets/images/logo/logo-market-day-little.png" alt="" />
+      <h2>主辦方可以做什麼？</h2>
+    </div>
 
     <div class="action-grid">
-      <article class="action-card">
-        <img src="/assets/images/user/home/user-home-hero-market-01.png" alt="建立市集活動" />
-        <h3>建立市集活動</h3>
-        <p>快速建立活動頁面，設定活動資訊、報名時間與攤位類型。</p>
-      </article>
-
-      <article class="action-card">
-        <img src="/assets/images/user/home/user-home-hero-market-02.png" alt="管理攤主報名" />
-        <h3>管理攤主報名</h3>
-        <p>查看報名列表、審核資料，與攤主溝通更方便。</p>
-      </article>
-
-      <article class="action-card">
-        <img src="/assets/images/user/home/user-home-hero-market-03.png" alt="確認付款狀態" />
-        <h3>確認付款狀態</h3>
-        <p>掌握攤主付款進度，支援多種付款方式與狀態管理。</p>
-      </article>
-
-      <article class="action-card">
-        <img src="/assets/images/user/home/user-home-hero-market-04.png" alt="管理攤位資訊" />
-        <h3>管理攤位資訊</h3>
-        <p>分配攤位、管理攤位地圖與攤號，讓活動現場更有秩序。</p>
-      </article>
+      @for (action of actions; track $index) {
+        <article class="action-card">
+          <img [src]="action.image" [alt]="action.title" />
+          <div class="action-body">
+            <h3>{{ action.title }}</h3>
+            <p>{{ action.description }}</p>
+          </div>
+        </article>
+      }
     </div>
   </section>
 
   <section class="section-block">
-    <h2>使用流程</h2>
-    <div class="title-line"></div>
+    <div class="section-title">
+      <img src="/assets/images/logo/logo-market-day-little.png" alt="" />
+      <h2>使用流程</h2>
+    </div>
 
     <div class="step-list">
-      <article class="step-item">
-        <span>1</span>
-        <i class="bi bi-person-plus"></i>
-        <h3>註冊主辦方帳號</h3>
-        <p>填寫基本資料並送出申請。</p>
-      </article>
-
-      <article class="step-item">
-        <span>2</span>
-        <i class="bi bi-file-earmark-check"></i>
-        <h3>等待平台審核通過</h3>
-        <p>平台將審核您的資料。</p>
-      </article>
-
-      <article class="step-item">
-        <span>3</span>
-        <i class="bi bi-shop"></i>
-        <h3>建立市集活動</h3>
-        <p>建立活動頁與攤位資訊。</p>
-      </article>
-
-      <article class="step-item">
-        <span>4</span>
-        <i class="bi bi-people"></i>
-        <h3>開放攤主報名</h3>
-        <p>攤主可線上瀏覽活動並報名。</p>
-      </article>
-
-      <article class="step-item">
-        <span>5</span>
-        <i class="bi bi-pie-chart"></i>
-        <h3>管理審核、付款與攤位</h3>
-        <p>審核資料、確認付款並分配攤位。</p>
-      </article>
+      @for (step of steps; track $index; let i = $index) {
+        <article class="step-item">
+          <div class="step-icon">
+            <span class="step-number">{{ i + 1 }}</span>
+            <i [class]="step.icon"></i>
+          </div>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.description }}</p>
+        </article>
+      }
     </div>
   </section>
 
   <section class="section-block">
-    <h2>常見問題</h2>
-    <div class="title-line"></div>
+    <div class="section-title">
+      <img src="/assets/images/logo/logo-market-day-little.png" alt="" />
+      <h2>常見問題</h2>
+    </div>
 
     <div class="faq-list">
-      <details open>
-        <summary>主辦方如何申請加入？</summary>
-        <p>點擊「成為主辦方」並填寫基本資料，送出後平台將進行審核。</p>
-      </details>
-
-      <details>
-        <summary>審核需要多久？</summary>
-        <p>一般 1～3 個工作天內完成審核，結果會透過 Email 通知。</p>
-      </details>
-
-      <details>
-        <summary>可以建立多場活動嗎？</summary>
-        <p>可以，審核通過後可依需求建立並管理多場市集活動。</p>
-      </details>
-
-      <details>
-        <summary>如何管理攤主報名與付款？</summary>
-        <p>可在後台查看報名狀態、審核資料、付款進度並分配攤位。</p>
-      </details>
+      @for (faq of faqs; track $index; let i = $index) {
+        <details [open]="i === 0">
+          <summary>{{ faq.question }}</summary>
+          <p>{{ faq.answer }}</p>
+        </details>
+      }
     </div>
-  </section>
-
-  <section class="cta-banner">
-    <img src="/assets/images/organizer/organizer-stall-photo.png" alt="" />
-
-    <div>
-      <h2>立即加入小集日，開始建立你的市集活動！</h2>
-
-      <div class="cta-actions">
-        <a routerLink="/organizer/register" class="primary-btn">成為主辦方</a>
-        <a routerLink="/contact" class="outline-btn">聯絡我們</a>
-      </div>
-    </div>
-
-    <img src="/assets/images/organizer/organizer-cat-photo.png"alt="" />
   </section>
 </main>
+
 <app-user-footer></app-user-footer>
