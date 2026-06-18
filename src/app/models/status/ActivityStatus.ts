@@ -26,17 +26,17 @@ export class ActivityStatus {
 
   /** 狀態對應 CSS class */
     static readonly classMap: Record<string, string> = {
-      [ActivityStatus.draft]: 'ActivityStatus-draft',
-      [ActivityStatus.pendingReview]: 'ActivityStatus-pendingReview',
-      [ActivityStatus.revisionRequired]: 'ActivityStatus-revisionRequired',
-      [ActivityStatus.mapBuilding]: 'ActivityStatus-mapBuilding',
-      [ActivityStatus.readyToPublish]: 'ActivityStatus-readyToPublish',
-      [ActivityStatus.registrationOpen]: 'ActivityStatus-registrationOpen',
-      [ActivityStatus.full]: 'ActivityStatus-full',
-      [ActivityStatus.published]: 'ActivityStatus-published',
-      [ActivityStatus.active]: 'ActivityStatus-active',
-      [ActivityStatus.ended]: 'ActivityStatus-ended',
-      [ActivityStatus.unpublished]: 'ActivityStatus-unpublished',
+      [ActivityStatus.draft]: 'tag-grey',
+      [ActivityStatus.pendingReview]: 'tag-orange',
+      [ActivityStatus.revisionRequired]: 'tag-red',
+      [ActivityStatus.mapBuilding]: 'tag-blue',
+      [ActivityStatus.readyToPublish]: 'tag-purple',
+      [ActivityStatus.registrationOpen]: 'tag-green',
+      [ActivityStatus.full]: 'tag-orange',
+      [ActivityStatus.published]: 'tag-teal',
+      [ActivityStatus.active]: 'tag-blue',
+      [ActivityStatus.ended]: 'tag-grey',
+      [ActivityStatus.unpublished]: 'tag-red',
     };
   
     static getClass(status: string): string {
