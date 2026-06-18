@@ -55,7 +55,7 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
   private readonly needsReviewStatuses: string[] = [
     ActivityStatus.pendingReview,
     ActivityStatus.revisionRequired,
-    ActivityStatus.mapBuilding,
+    // ActivityStatus.mapBuilding,
   ];
 
   /** 假資料：模擬後端回傳的活動列表，之後可替換成真正的 API 呼叫結果 */
