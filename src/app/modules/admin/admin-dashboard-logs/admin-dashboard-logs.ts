@@ -5,7 +5,7 @@ import { AdminDashboardButton } from '../shared/admin-dashboard-button/admin-das
 import { AdminDashboardSerchInput } from '../shared/admin-dashboard-serch-input/admin-dashboard-serch-input';
 import { AdminDashboardTimeSelector } from '../shared/admin-dashboard-time-selector/admin-dashboard-time-selector';
 import { DashboardPagination } from '../../shared/dashboard-pagination/dashboard-pagination';
-import { AdminOprationType } from '../../../models/type/AdminOperationType';
+import { OperationType } from '../../../models/type/OperationType';
 import { AdminLogItem } from '../../../models/AdminLogItem';
 
 @Component({
@@ -35,42 +35,44 @@ export class AdminDashboardLogs implements AfterViewInit {
 
   /** 操作類型下拉選單*/
   oprationOptions: string[] = [
-    AdminOprationType.SuspendAccount,
-    AdminOprationType.RestoreAccount,
-    AdminOprationType.ReviewActivity,
-    AdminOprationType.RequestSupplement,
+    OperationType.activityReview,
+    OperationType.requestRevision,
+    OperationType.accountRestored,
+    OperationType.accountDisabled,
+    OperationType.systemSetting,
   ];
 
   /** 操作類型 -> 標籤顏色 class 對應 */
   private readonly oprationColorMap: Record<string, string> = {
-    [AdminOprationType.SuspendAccount]: 'red',
-    [AdminOprationType.RestoreAccount]: 'green',
-    [AdminOprationType.ReviewActivity]: 'blue',
-    [AdminOprationType.RequestSupplement]: 'yellow',
+    [OperationType.activityReview]: 'admin-blue',
+    [OperationType.requestRevision]: 'admin-orange',
+    [OperationType.accountRestored]: 'admin-green',
+    [OperationType.accountDisabled]: 'admin-red',
+    [OperationType.systemSetting]: 'admin-purple',
   };
 
   /** 假資料：模擬後端回傳的活動列表，之後可替換成真正的 API 呼叫結果 */
   private readonly mockLogs: AdminLogItem[] = [
-    { id: 1, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.SuspendAccount, target: '市集', details: '操作內容'},
-    { id: 2, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.ReviewActivity, target: '市集', details: '操作內容'},
-    { id: 3, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.SuspendAccount, target: '市集', details: '操作內容'},
-    { id: 4, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.RestoreAccount, target: '市集', details: '操作內容'},
-    { id: 5, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.RequestSupplement, target: '市集', details: '操作內容'},
-    { id: 6, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.SuspendAccount, target: '市集', details: '操作內容'},
-    { id: 7, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.RestoreAccount, target: '市集', details: '操作內容'},
-    { id: 8, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.SuspendAccount, target: '市集', details: '操作內容'},
-    { id: 9, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.ReviewActivity, target: '市集', details: '操作內容'},
-    { id: 10, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.SuspendAccount, target: '市集', details: '操作內容'},
-    { id: 11, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.SuspendAccount, target: '市集', details: '操作內容'},
-    { id: 12, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.RestoreAccount, target: '市集', details: '操作內容'},
-    { id: 13, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.SuspendAccount, target: '市集', details: '操作內容'},
-    { id: 14, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.ReviewActivity, target: '市集', details: '操作內容'},
-    { id: 15, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.SuspendAccount, target: '市集', details: '操作內容'},
-    { id: 16, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.RestoreAccount, target: '市集', details: '操作內容'},
-    { id: 17, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.SuspendAccount, target: '市集', details: '操作內容'},
-    { id: 18, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.RequestSupplement, target: '市集', details: '操作內容'},
-    { id: 19, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.RequestSupplement, target: '市集', details: '操作內容'},
-    { id: 20, createdAt: '2026-01-01', operator: '管理員A', actionType: AdminOprationType.RequestSupplement, target: '市集', details: '操作內容'},
+    { id: 1, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '市集', details: '操作內容'},
+    { id: 2, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.accountRestored, target: '市集', details: '操作內容'},
+    { id: 3, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '市集', details: '操作內容'},
+    { id: 4, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.requestRevision, target: '市集', details: '操作內容'},
+    { id: 5, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '市集', details: '操作內容'},
+    { id: 6, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '市集', details: '操作內容'},
+    { id: 7, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.requestRevision, target: '市集', details: '操作內容'},
+    { id: 8, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.systemSetting, target: '市集', details: '操作內容'},
+    { id: 9, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.accountRestored, target: '市集', details: '操作內容'},
+    { id: 10, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '市集', details: '操作內容'},
+    { id: 11, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '市集', details: '操作內容'},
+    { id: 12, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.requestRevision, target: '市集', details: '操作內容'},
+    { id: 13, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '市集', details: '操作內容'},
+    { id: 14, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.systemSetting, target: '市集', details: '操作內容'},
+    { id: 15, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '市集', details: '操作內容'},
+    { id: 16, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.requestRevision, target: '市集', details: '操作內容'},
+    { id: 17, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '市集', details: '操作內容'},
+    { id: 18, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '市集', details: '操作內容'},
+    { id: 19, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '市集', details: '操作內容'},
+    { id: 20, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '市集', details: '操作內容'},
     
   ];
 
