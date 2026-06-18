@@ -3,121 +3,102 @@
 }
 
 .admin-home {
-  padding: 0 32px 0;
-  margin: auto;
+  width: 100%;
+  max-width: 1200px;
+  height: calc(100vh - 60px);
+  margin: 0 auto;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  height: calc(100vh - 60px); // 60px = dashboard-main 上下各 30px padding
+  gap: 25px;
   overflow: hidden;
 
-  app-dashboard-home-notifications {
+  app-dashboard-notification {
     flex: 1;
     min-height: 0;
     display: block;
   }
 }
 
-/* 歡迎區塊 */
 .welcome-header {
+  padding-top: 4px;
+
   .welcome-title {
-    font-size: 26px;
+    margin: 0 0 6px;
+    font-size: 28px;
     font-weight: 900;
+    line-height: 1.25;
     color: var(--text-dark);
-    margin-bottom: 6px;
   }
 
   .welcome-subtitle {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-light);
     margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-light);
   }
 }
 
-/* 區塊標題 */
 .section-title {
-  font-size: 1.1rem;
-  font-weight: 600;
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 900;
   color: var(--text-dark);
-  margin-bottom: 8px;
 }
 
-/* 待辦事項 */
-.todo-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* 平台概況 */
+.todo-cards,
 .stats-cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 12px;
+}
 
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.todo-cards {
+  grid-template-columns: repeat(3, minmax(260px, 320px));
+  justify-content: start;
+}
 
-  @media (max-width: 576px) {
-    grid-template-columns: 1fr;
+.stats-cards {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1200px) {
+  .stats-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.stat-card {
-  background: var(--bg-white);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-card);
-  padding: 20px 24px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  box-shadow: var(--shadow-soft);
+@media (max-width: 992px) {
+  .admin-home {
+    height: auto;
+    min-height: calc(100vh - 60px);
+    padding: 0 0 24px;
+    overflow: visible;
+  }
 
-  .stat-icon-wrap {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-card);
-    background: var(--bg-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+  .todo-cards {
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+  }
+}
 
-    i {
-      font-size: 1.4rem;
-      color: var(--primary-color);
+@media (max-width: 576px) {
+  .admin-home {
+    padding: 0 0 20px;
+    gap: 16px;
+  }
+
+  .welcome-header {
+    .welcome-title {
+      font-size: 24px;
+    }
+
+    .welcome-subtitle {
+      font-size: 14px;
+      line-height: 1.6;
     }
   }
 
-  .stat-body {
-    .stat-value {
-      margin: 0 0 2px;
-      line-height: 1;
-
-      .value-num {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: var(--text-dark);
-      }
-
-      .value-unit {
-        font-size: 0.875rem;
-        color: var(--text-normal);
-        margin-left: 2px;
-      }
-    }
-
-    .stat-label {
-      font-size: 0.875rem;
-      color: var(--text-light);
-      margin: 0;
-      font-weight: 400;
-    }
+  .todo-cards,
+  .stats-cards {
+    grid-template-columns: 1fr;
   }
 }

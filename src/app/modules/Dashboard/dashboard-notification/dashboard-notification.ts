@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { NotificationItem, NotificationType } from '../../../models/NotificationItem';
 import { NotificationStatus } from '../../../models/status/NotificationStatus';
 import { DashboardPagination } from '../dashboard-pagination/dashboard-pagination';
@@ -12,7 +13,7 @@ type NotificationTab =
 
 @Component({
   selector: 'app-dashboard-notification',
-  imports: [CommonModule, DashboardPagination],
+  imports: [CommonModule, RouterLink, DashboardPagination],
   templateUrl: './dashboard-notification.html',
   styleUrl: './dashboard-notification.scss',
 })
@@ -22,6 +23,21 @@ export class DashboardNotification implements OnChanges, OnInit {
 
   /** 通知資料 */
   @Input() notifications: NotificationItem[] = [];
+
+  /** 區塊標題 */
+  @Input() title = '通知中心';
+
+  /** 是否顯示分頁 */
+  @Input() showPagination = true;
+
+  /** 是否顯示分類 tabs */
+  @Input() showTabs = true;
+
+  /** 查看全部連結，首頁最新通知使用 */
+  @Input() viewAllLink?: string;
+
+  /** 固定顯示筆數，首頁最新通知使用 */
+  @Input() maxItems?: number;
 
   /** 目前選中的分類 */
   activeTab: NotificationTab = NotificationStatus.all;
@@ -47,6 +63,11 @@ export class DashboardNotification implements OnChanges, OnInit {
   /** 依照視窗高度自動調整每頁筆數 */
   @HostListener('window:resize')
   updatePageSize(): void {
+    if (this.maxItems) {
+      this.pageSize = this.maxItems;
+      return;
+    }
+
     const headerHeight = 130;
     const itemHeight = 70;
 

@@ -1,15 +1,13 @@
 .todo-card {
   background: var(--bg-white);
-  border: 2px solid var(--border-soft);
-  border-radius: var(--radius-card);
-  padding: 16px 24px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 14px 22px;
   display: flex;
   align-items: center;
   gap: 16px;
   position: relative;
   box-sizing: border-box;
-  // box-shadow: var(--shadow-soft);
-
 
   .todo-icon-wrap {
     width: 48px;
@@ -23,6 +21,36 @@
     i {
       font-size: 1.8rem;
     }
+
+    &.orange {
+      background: var(--bg-primary);
+      color: var(--primary-color);
+    }
+
+    &.red {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    &.green {
+      background: #ecfdf3;
+      color: #16a34a;
+    }
+
+    &.blue {
+      background: #eaf5ff;
+      color: #1680e5;
+    }
+
+    &.teal {
+      background: #ecfeff;
+      color: #14b8a6;
+    }
+
+    &.purple {
+      background: #f5f3ff;
+      color: #9333ea;
+    }
   }
 
   .todo-body {
@@ -32,8 +60,7 @@
       font-size: 0.875rem;
       color: var(--text-normal);
       font-weight: 600;
-      margin: 0;
-      margin-bottom: 12px;
+      margin: 0 0 8px;
     }
 
     .todo-count {
@@ -41,7 +68,7 @@
       line-height: 1;
 
       .count-num {
-        font-size: 1.75rem;
+        font-size: 1.7rem;
         font-weight: 800;
         color: var(--text-dark);
       }
@@ -66,10 +93,52 @@
     gap: 2px;
     position: absolute;
     bottom: 16px;
-    right: 24px;
+    right: 22px;
 
     &:hover {
       color: var(--primary-hover);
     }
+  }
+}
+
+:host-context(.admin-home) {
+  .todo-card {
+    min-height: 96px;
+    padding: 20px 18px;
+    gap: 13px;
+  }
+
+  .todo-icon-wrap {
+    width: 44px;
+    height: 44px;
+
+    i {
+      font-size: 1.45rem;
+    }
+  }
+
+  .todo-body {
+    .todo-label {
+      margin-bottom: 6px;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .todo-count {
+      .count-num {
+        font-size: 1.65rem;
+      }
+
+      .count-unit {
+        margin-left: 8px;
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .todo-link {
+    right: 18px;
+    bottom: 18px;
+    font-size: 0.8rem;
   }
 }
