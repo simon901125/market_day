@@ -85,51 +85,34 @@ body {
 }
 
 //活動管理狀態顏色class設定
-.ActivityStatus-draft {
-  background-color: #F3F4F6 ;
-  color: #6B7280;
-}
-.ActivityStatus-pendingReview {
-  background-color: #FFF4E8 ;
-  color: #FB9837;
-}
-.ActivityStatus-revisionRequired {
+.tag-red {
   background-color: #FDECEC ;
   color: #EF4444;
 }
-.ActivityStatus-mapBuilding {
-  background-color: #EAF2FF ;
-  color: #3B82F6;
+.tag-orange {
+  background-color: #FFF4E8 ;
+  color: #FB9837;
 }
-.ActivityStatus-readyToPublish {
-  background-color: #F3E8FF ;
-  color: #9333EA;
-}
-.ActivityStatus-registrationOpen {
+.tag-green {
   background-color: #EAF8E8 ;
   color: #22C55E;
 }
-.ActivityStatus-full {
-  background-color: #FFF4E8 ;
-  color: #FB9837;
-}
-.ActivityStatus-published {
+.tag-teal {
   background-color: #E6FFFB ;
   color: #14B8A6;
 }
-.ActivityStatus-active {
+.tag-blue {
   background-color: #EAF2FF ;
   color: #3B82F6;
 }
-.ActivityStatus-ended {
-  background-color: #F3F4F6  ;
+.tag-purple {
+  background-color: #F3E8FF ;
+  color: #9333EA;
+}
+.tag-grey {
+  background-color: #F3F4F6 ;
   color: #6B7280;
 }
-.ActivityStatus-unpublished {
-  background-color: #FDECEC ;
-  color: #EF4444;
-}
-
 
 //dashboard 可用狀態配色
 .green {
