@@ -16,7 +16,7 @@ export class DashboardPagination {
   /** 總筆數 */
   @Input() totalItems = 0;
 
-  /** 切換頁碼 */
+  /** 切換頁碼事件 */
   @Output() pageChange = new EventEmitter<number>();
 
   /** 總頁數 */
@@ -24,12 +24,12 @@ export class DashboardPagination {
     return Math.max(Math.ceil(this.totalItems / this.pageSize), 1);
   }
 
-  /** 頁碼 */
+  /** 頁碼列表 */
   pages(): number[] {
     return Array.from({ length: this.totalPages() }, (_, i) => i + 1);
   }
 
-  /** 目前頁第一筆編號 */
+  /** 目前頁第一筆序號 */
   startItemNumber(): number {
     if (this.totalItems === 0) {
       return 0;
@@ -38,7 +38,7 @@ export class DashboardPagination {
     return (this.currentPage - 1) * this.pageSize + 1;
   }
 
-  /** 目前頁最後一筆編號 */
+  /** 目前頁最後一筆序號 */
   endItemNumber(): number {
     return Math.min(this.currentPage * this.pageSize, this.totalItems);
   }
