@@ -22,4 +22,24 @@ export class ActivityStatus {
   static readonly ended = '已結束';
   /** 已下架 */
   static readonly unpublished = '已下架';
+
+
+  /** 狀態對應 CSS class */
+    static readonly classMap: Record<string, string> = {
+      [ActivityStatus.draft]: 'ActivityStatus-draft',
+      [ActivityStatus.pendingReview]: 'ActivityStatus-pendingReview',
+      [ActivityStatus.revisionRequired]: 'ActivityStatus-revisionRequired',
+      [ActivityStatus.mapBuilding]: 'ActivityStatus-mapBuilding',
+      [ActivityStatus.readyToPublish]: 'ActivityStatus-readyToPublish',
+      [ActivityStatus.registrationOpen]: 'ActivityStatus-registrationOpen',
+      [ActivityStatus.full]: 'ActivityStatus-full',
+      [ActivityStatus.published]: 'ActivityStatus-published',
+      [ActivityStatus.active]: 'ActivityStatus-active',
+      [ActivityStatus.ended]: 'ActivityStatus-ended',
+      [ActivityStatus.unpublished]: 'ActivityStatus-unpublished',
+    };
+  
+    static getClass(status: string): string {
+      return ActivityStatus.classMap[status] ?? '';
+    }
 }
