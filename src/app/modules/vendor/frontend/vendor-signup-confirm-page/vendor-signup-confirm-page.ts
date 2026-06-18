@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { MarketCardItem } from '../../../../models/MarketCardItem';
 import { MarketSlot } from '../../../../models/MarketSlot';
 
+//這個要移出去
 interface SignupConfirmData {
   slot: MarketSlot | null;
   slotDate: string;
