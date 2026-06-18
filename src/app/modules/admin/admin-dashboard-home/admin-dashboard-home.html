@@ -1,14 +1,11 @@
 <section class="admin-home page-transition">
-
-  <!-- 歡迎區塊 -->
   <header class="welcome-header">
     <h1 class="welcome-title">歡迎回來，管理員！👋</h1>
     <p class="welcome-subtitle">一起打造精彩的市集活動，讓好品牌被更多人看見！</p>
   </header>
 
-  <!-- 待辦事項 -->
   <section class="todo-section">
-    <h2 class="section-title">待辦事項</h2>
+    <h2 class="section-title">待處理事項</h2>
     <div class="todo-cards">
       @for (item of todoItems; track item.label) {
         <app-dashboard-home-todo-card
@@ -23,7 +20,6 @@
     </div>
   </section>
 
-  <!-- 平台概況 -->
   <section class="stats-section">
     <h2 class="section-title">平台概況</h2>
     <div class="stats-cards">
@@ -39,9 +35,13 @@
     </div>
   </section>
 
-  <!-- 最新通知 -->
-  <app-dashboard-home-notifications
-    [notifications]="recentNotifications"
+  <app-dashboard-notification
+    title="最新通知"
+    [tabs]="tabs"
+    [notifications]="notifications"
+    [maxItems]="3"
+    [showTabs]="false"
+    [showPagination]="false"
+    viewAllLink="/admin/dash-board/notification"
   />
-
 </section>
