@@ -14,7 +14,8 @@ main.container {
   */
 
 .hero {
-  min-height: 370px;
+  height: 320px;
+  min-height: 320px;
   display: grid;
   grid-template-columns: 1.4fr 1.45fr;
   margin-top: 30px;
@@ -31,14 +32,19 @@ main.container {
 
 .hero-content {
   z-index: 1;
-  padding: 30px 20px 50px 40px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 18px 34px 36px;
 
   h1 {
-    margin: 0 0 20px;
+    margin: 0 0 16px;
     color: var(--text-dark);
-    font-size: 38px;
+    font-size: 34px;
     font-weight: 800;
-    line-height: 1.5;
+    line-height: 1.45;
 
     span {
       color: var(--primary-color);
@@ -46,7 +52,7 @@ main.container {
   }
 
   p {
-    margin: 0 0 28px;
+    margin: 0 0 34px;
     color: var(--text-normal);
     font-size: 15px;
     font-weight: 700;
@@ -57,28 +63,29 @@ main.container {
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 14px;
 
   a {
-    height: 52px;
+    min-width: 180px;
+    height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 0 28px;
+    gap: 6px;
+    padding: 0 22px;
     border-radius: 8px;
     font-size: 15px;
     font-weight: 900;
+    white-space: nowrap;
     text-decoration: none;
     transition: all 0.2s ease;
   }
 }
 
 .primary-btn {
-  max-width: 190px;
   background: var(--primary-color);
   color: var(--bg-white);
-  border: 1px solid var(--primary-hover);
+  border: 1px solid var(--primary-color);
 
   &::before {
     content: "\F4D7";
@@ -86,15 +93,15 @@ main.container {
   }
 
   &:hover {
+    border-color: var(--primary-hover);
     background: var(--primary-hover);
   }
 }
 
 .outline-btn {
-  max-width: 190px;
   background: var(--bg-white);
   color: var(--primary-color);
-  border: 1px solid var(--primary-hover);
+  border: 1px solid var(--primary-color);
 
   &::before {
     content: "\F52A";
@@ -102,12 +109,14 @@ main.container {
   }
 
   &:hover {
+    border-color: var(--primary-hover);
     background: var(--bg-primary);
   }
 }
 
 .hero-image {
-  min-height: 370px;
+  min-height: 0;
+  height: 100%;
 
   img {
     width: 100%;
@@ -160,6 +169,12 @@ main.container {
   i {
     color: var(--primary-color);
   }
+}
+
+.section-title-icon {
+  width: 30px;
+  height: auto;
+  flex-shrink: 0;
 }
 
 /*  Market */
@@ -289,24 +304,36 @@ main.container {
   margin-bottom: 25px;
 }
 
-.faq-item {
-  padding: 18px 40px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  background: var(--bg-soft);
+.faq-list {
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: var(--bg-white);
+  box-shadow: var(--shadow-soft);
+}
 
-  h3 {
-    margin: 0 0 6px;
-    font-size: 18px;
+details {
+  padding: 16px 26px;
+  border-bottom: 1px solid var(--border-soft);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  summary {
+    color: var(--text-dark);
+    cursor: pointer;
+    font-size: 0.98rem;
     font-weight: 900;
+    letter-spacing: 0.03em;
   }
 
   p {
-    margin: 0;
+    margin: 8px 0 0;
     color: var(--text-normal);
-    font-size: 15px;
-    font-weight: 700;
-    line-height: 1.7;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.75;
   }
 }
 
@@ -318,12 +345,18 @@ main.container {
   }
 
   .hero {
+    height: auto;
+    min-height: 0;
     grid-template-columns: 1fr;
     background: var(--bg-white);
   }
 
+  .hero-image {
+    min-height: 260px;
+  }
+
   .hero-content {
-    padding: 48px 36px;
+    padding: 36px 32px;
   }
 
   .feature-strip {
@@ -353,10 +386,10 @@ main.container {
   }
 
   .hero-content {
-    padding: 32px 24px;
+    padding: 28px 22px;
 
     h1 {
-      font-size: 32px;
+      font-size: 30px;
     }
   }
 
@@ -389,7 +422,7 @@ main.container {
     font-size: 32px;
   }
 
-  .faq-item {
-    padding: 16px 20px;
+  details {
+    padding: 15px 18px;
   }
 }
