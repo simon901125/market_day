@@ -439,6 +439,7 @@ export class VendorMarketSignupList {
     },
   ];
 
+  //這個之後會改成API
   get filteredMarkets(): MarketCardItem[] {
     return this.markets.filter((market) => {
       const keyword = this.keyword.trim();
