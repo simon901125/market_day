@@ -6,8 +6,7 @@ import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { BrandItem } from '../../../../models/interface/BrandItem';
 import { BrandType } from '../../../../models/type/BrandType ';
 import { RouterLink, Router } from '@angular/router';
-import { VendorMarketCard } from "../vendor-market-card/vendor-market-card";
-
+import { VendorMarketCard } from '../vendor-market-card/vendor-market-card';
 
 // interface MarketSlot {
 //   date: string;
@@ -16,7 +15,7 @@ import { VendorMarketCard } from "../vendor-market-card/vendor-market-card";
 
 @Component({
   selector: 'app-vendor-home',
-  imports: [VendorHeader, UserFooter,  VendorMarketCard, RouterLink],
+  imports: [VendorHeader, UserFooter, VendorMarketCard, RouterLink],
   templateUrl: './vendor-home.html',
   styleUrl: './vendor-home.scss',
 })
@@ -27,8 +26,8 @@ export class VendorHome {
   markets: MarketCardItem[] = [
     {
       title: '草地野餐市集',
-      start_date: '2024/05/24',
-      end_date: '2024/05/26',
+      start_date: '2026/08/17',
+      end_date: '2026/08/19',
       description: '在草地上享受美食和音樂，與家人朋友共度美好時光。',
       time: '10:00 - 18:00',
       location: '台中市西區 草悟道',
@@ -45,8 +44,8 @@ export class VendorHome {
     },
     {
       title: '台北精品咖啡生活節',
-      start_date: '2024/05/24',
-      end_date: '2024/05/26',
+      start_date: '2026/08/24',
+      end_date: '2026/08/26',
       description: '體驗精品咖啡的香醇與文化，享受慢活的惬意時光。',
       time: '10:00 - 18:00',
       location: '台北市中山區 華山1914文創園區',
@@ -63,8 +62,8 @@ export class VendorHome {
     },
     {
       title: '手作設計市集',
-      start_date: '2024/05/25',
-      end_date: '2024/05/26',
+      start_date: '2026/08/31',
+      end_date: '2026/09/02',
       description: '匯聚各式手作設計品牌，展現創意與工藝的魅力。',
       time: '10:00 - 18:00',
       location: '台南市中西區 藍晒圖文創園區',
@@ -86,15 +85,12 @@ export class VendorHome {
   }
 
   /**
-   * 導航到市集詳情頁
+   * 導航到市集報名詳情頁
    * @param market 選擇的市集
    */
-  goToActivityDetail(market: MarketCardItem) {
-    // 這裡可以根據實際路由設定來導航到市集詳情頁
-    this.router.navigate(['/user/activity-detail'], {
-      // 使用 state 傳遞選擇的市集數據
-      state: { market: market },
+  goToSignUpDetail(market: MarketCardItem): void {
+    this.router.navigate(['/vendor/sign-up-detail'], {
+      state: { market },
     });
-    console.log(market);
   }
 }

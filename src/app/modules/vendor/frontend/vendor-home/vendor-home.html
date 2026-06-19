@@ -41,7 +41,10 @@
       <div class="row g-4">
         @for (market of recentMarkets; track market.title) {
           <div class="col-12 col-md-6 col-lg-4">
-            <app-vendor-market-card [market]="market"></app-vendor-market-card>
+            <app-vendor-market-card
+              [market]="market"
+              (click)="goToSignUpDetail(market)"
+            ></app-vendor-market-card>
           </div>
         }
       </div>

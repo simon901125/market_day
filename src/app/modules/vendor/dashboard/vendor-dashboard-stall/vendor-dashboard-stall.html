@@ -1,0 +1,163 @@
+<main class="vendor-stall-page">
+  <header class="page-title">
+    <h1>我的攤位</h1>
+    <i class="bi bi-brightness-high"></i>
+  </header>
+
+  <form class="stall-form" (ngSubmit)="saveChanges()">
+    <section class="stall-card">
+      <h2 class="card-title">
+        <span></span>
+        基本資料
+      </h2>
+
+      <div class="form-grid">
+        @for (field of basicFields; track field.name) {
+          <label class="form-group">
+            <span>{{ field.label }}</span>
+
+            @if (field.type === 'select') {
+              <select [(ngModel)]="field.value" [name]="field.name">
+                @for (option of field.options; track option) {
+                  <option [value]="option">{{ option }}</option>
+                }
+              </select>
+            } @else {
+              <input [type]="field.type" [(ngModel)]="field.value" [name]="field.name" />
+            }
+          </label>
+        }
+      </div>
+    </section>
+
+    <section class="stall-card">
+      <div class="card-head">
+        <h2 class="card-title">
+          <span></span>
+          品牌大頭貼
+        </h2>
+
+        <button type="button" class="outline-btn">
+          <i class="bi bi-plus-lg"></i>
+          新增照片
+        </button>
+      </div>
+
+      <div class="avatar-row">
+        <label class="avatar-upload" aria-label="上傳品牌大頭貼">
+          <input type="file" hidden />
+          <i class="bi bi-camera"></i>
+        </label>
+
+        <div class="upload-note">
+          @for (guide of avatarGuides; track guide.text) {
+            <p>{{ guide.text }}</p>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="stall-card">
+      <div class="card-head">
+        <h2 class="card-title">
+          <span></span>
+          品牌封面
+          <small>（限制 1 個）</small>
+        </h2>
+
+        <button type="button" class="outline-btn">
+          <i class="bi bi-plus-lg"></i>
+          新增封面
+        </button>
+      </div>
+
+      <div class="cover-row">
+        <label class="cover-upload" aria-label="上傳品牌封面">
+          <input type="file" hidden />
+          <i class="bi bi-image"></i>
+          <strong>上傳封面圖片（僅限 1 個）</strong>
+        </label>
+
+        <div class="upload-note">
+          @for (guide of coverGuides; track guide.text) {
+            <p>{{ guide.text }}</p>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="stall-card">
+      <h2 class="card-title">
+        <span></span>
+        品牌資訊
+      </h2>
+
+      <div class="brand-grid">
+        <label class="form-group">
+          <span>品牌簡介</span>
+          <div class="textarea-box">
+            <textarea
+              name="brandDescription"
+              [(ngModel)]="brandInfo.description"
+              [attr.maxlength]="brandInfo.maxDescriptionLength"
+              placeholder="介紹你的品牌理念、商品特色與故事..."
+            ></textarea>
+            <small>{{ brandInfo.description.length }} / {{ brandInfo.maxDescriptionLength }}</small>
+          </div>
+        </label>
+
+        <label class="form-group">
+          <span>品牌類型</span>
+          <select name="brandCategory" [(ngModel)]="brandInfo.category">
+            @for (category of brandInfo.categories; track category) {
+              <option [value]="category">{{ category }}</option>
+            }
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="stall-card product-card">
+      <div class="card-head">
+        <h2 class="card-title">
+          <span></span>
+          品牌商品
+          <small>（最多 3 個）</small>
+        </h2>
+
+        <button type="button" class="outline-btn">
+          <i class="bi bi-plus-lg"></i>
+          新增商品
+        </button>
+      </div>
+
+      <div class="product-list">
+        @for (product of products; track product.name) {
+          <article class="product-item">
+            <img [src]="product.image" [alt]="product.name" />
+
+            <div class="product-info">
+              <h3>{{ product.name }}</h3>
+              <p>{{ product.description }}</p>
+            </div>
+
+            <strong class="product-price">${{ product.price }} 元</strong>
+
+            <div class="product-actions">
+              <button type="button" [attr.aria-label]="'編輯 ' + product.name">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button type="button" [attr.aria-label]="'刪除 ' + product.name">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+
+      <div class="save-row">
+        <button type="submit" class="save-btn">儲存變更</button>
+      </div>
+    </section>
+  </form>
+</main>
