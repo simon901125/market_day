@@ -35,6 +35,7 @@ export class AdminDashboardLogs implements AfterViewInit {
 
   /** 操作類型下拉選單*/
   oprationOptions: string[] = [
+    "全部",
     OperationType.activityReview,
     OperationType.requestRevision,
     OperationType.accountRestored,
@@ -108,7 +109,7 @@ export class AdminDashboardLogs implements AfterViewInit {
   }
 
   onOprationSelected(value: string): void {
-    this.selectedOpration = value;
+    this.selectedOpration = value === "全部" ? '' : value;
   }
 
 
