@@ -10,6 +10,8 @@ import { AdminDashboardNotification } from './modules/admin/admin-dashboard-noti
 import { AdminDashboardMarketManagemant } from './modules/admin/admin-dashboard-market-managemant/admin-dashboard-market-managemant';
 import { AdminDashboardMarketDetail } from './modules/admin/admin-dashboard-market-detail/admin-dashboard-market-detail';
 import { AdminDashboardUserManagement } from './modules/admin/admin-dashboard-user-management/admin-dashboard-user-management';
+import { AdminDashboardUserDetailOrganizer } from './modules/admin/admin-dashboard-user-detail-organizer/admin-dashboard-user-detail-organizer';
+import { AdminDashboardUserDetailVender } from './modules/admin/admin-dashboard-user-detail-vender/admin-dashboard-user-detail-vender';
 import { AdminDashboardLogs } from './modules/admin/admin-dashboard-logs/admin-dashboard-logs';
 import { Auth } from './modules/auth/auth/auth';
 import { UserAboutUs } from './modules/user/frontend/user-about-us/user-about-us';
@@ -201,6 +203,14 @@ export const routes: Routes = [
       {
         path: 'users',
         component: AdminDashboardUserManagement,
+      },
+      {
+        path: 'user/detail/organizer',
+        component: AdminDashboardUserDetailOrganizer,
+      },
+      {
+        path: 'user/detail/vender',
+        component: AdminDashboardUserDetailVender,
       },
       {
         path: 'logs',
