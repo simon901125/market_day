@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
-import { MenuItem } from '../../../models/MenuItem';
-import { UserMenuItem } from '../../../models/UserMenuItem';
+import { MenuItem } from '../../../models/interface/MenuItem';
+import { UserMenuItem } from '../../../models/interface/UserMenuItem';
 import { DashboardSidebar } from '../dashboard-sidebar/dashboard-sidebar';
 
 @Component({

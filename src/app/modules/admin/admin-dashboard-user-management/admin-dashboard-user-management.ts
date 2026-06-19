@@ -5,7 +5,7 @@ import { AdminDashboardButton } from '../shared/admin-dashboard-button/admin-das
 import { AdminDashboardSerchInput } from '../shared/admin-dashboard-serch-input/admin-dashboard-serch-input';
 import { UserStatus } from '../../../models/status/UserStatus';
 import { UserType } from '../../../models/type/UserType';
-import { UserListItem } from '../../../models/UserListItem';
+import { UserListItem } from '../../../models/interface/UserListItem';
 import { DashboardPagination } from '../../dashboard/dashboard-pagination/dashboard-pagination';
 
 @Component({

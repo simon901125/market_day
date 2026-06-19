@@ -3,7 +3,7 @@ import { DashboardNotification } from '../../../dashboard/dashboard-notification
 import {
   NotificationItem,
   NotificationType,
-} from '../../../../models/NotificationItem';
+} from '../../../../models/interface/NotificationItem';
 
 @Component({
   selector: 'app-organizer-dashboard-notification',

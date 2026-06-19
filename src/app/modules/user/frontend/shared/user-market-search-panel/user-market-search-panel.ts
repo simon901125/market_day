@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CategoryItem } from '../../../../../models/CategoryItem';
+import { CategoryItem } from '../../../../../models/interface/CategoryItem';
 import { RouterLink } from '@angular/router';
 import { UserDropdown } from '../user-dropdown/user-dropdown';
 

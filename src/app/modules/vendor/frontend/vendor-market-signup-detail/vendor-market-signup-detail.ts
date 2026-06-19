@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { MarketCardItem } from '../../../../models/MarketCardItem';
-import { MarketSlot } from '../../../../models/MarketSlot';
+import { MarketCardItem } from '../../../../models/interface/MarketCardItem';
+import { MarketSlot } from '../../../../models/interface/MarketSlot';
 import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
 import { VendorHeader } from '../vendor-header/vendor-header';
 

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
-import { MarketCardItem } from '../../../../../models/MarketCardItem';
+import { MarketCardItem } from '../../../../../models/interface/MarketCardItem';
 import { MarketStatus } from '../../../../../models/status/MarketStatus';
 
 interface TrafficItem {

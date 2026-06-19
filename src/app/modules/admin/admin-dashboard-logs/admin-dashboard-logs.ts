@@ -6,7 +6,7 @@ import { AdminDashboardSerchInput } from '../shared/admin-dashboard-serch-input/
 import { AdminDashboardTimeSelector } from '../shared/admin-dashboard-time-selector/admin-dashboard-time-selector';
 import { DashboardPagination } from '../../dashboard/dashboard-pagination/dashboard-pagination';
 import { OperationType } from '../../../models/type/OperationType';
-import { AdminLogItem } from '../../../models/AdminLogItem';
+import { AdminLogItem } from '../../../models/interface/AdminLogItem';
 
 @Component({
   selector: 'app-admin-dashboard-logs',

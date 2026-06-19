@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { BrandItem } from '../../../../../models/BrandItem';
+import { BrandItem } from '../../../../../models/interface/BrandItem';
 import { BRANDS, findBrandById } from '../user-brand-search/user-brand-search';
 
 @Component({

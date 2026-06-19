@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { MarketCardItem } from '../../../../../models/MarketCardItem';
-import { HistoryMarketCardItem } from '../../../../../models/HistoryMarketCardItem';
+import { MarketCardItem } from '../../../../../models/interface/MarketCardItem';
+import { HistoryMarketCardItem } from '../../../../../models/interface/HistoryMarketCardItem';
 import { BrandType } from '../../../../../models/type/BrandType ';
 import { MarketStatus } from '../../../../../models/status/MarketStatus';
 

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { MarketCardItem } from '../../../../models/MarketCardItem';
+import { MarketCardItem } from '../../../../models/interface/MarketCardItem';
 
 @Component({
   selector: 'app-vendor-signup-form',

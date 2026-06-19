@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { BrandItem } from '../../../../../models/BrandItem';
+import { BrandItem } from '../../../../../models/interface/BrandItem';
 
 @Component({
   selector: 'app-user-brandserch-card',

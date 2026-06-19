@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { HistoryMarketCardItem } from '../../../../../models/HistoryMarketCardItem';
+import { HistoryMarketCardItem } from '../../../../../models/interface/HistoryMarketCardItem';
 
 @Component({
   selector: 'app-user-history-market-card',

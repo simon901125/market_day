@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { VendorHeader } from '../vendor-header/vendor-header';
 import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
-import { MarketCardItem } from '../../../../models/MarketCardItem';
+import { MarketCardItem } from '../../../../models/interface/MarketCardItem';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
-import { BrandItem } from '../../../../models/BrandItem';
+import { BrandItem } from '../../../../models/interface/BrandItem';
 import { BrandType } from '../../../../models/type/BrandType ';
 import { RouterLink, Router } from '@angular/router';
 import { VendorMarketCard } from "../vendor-market-card/vendor-market-card";

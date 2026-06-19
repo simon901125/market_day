@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { NotificationItem, NotificationType } from '../../../models/NotificationItem';
+import { NotificationItem, NotificationType } from '../../../models/interface/NotificationItem';
 import { NotificationStatus } from '../../../models/status/NotificationStatus';
 import { DashboardPagination } from '../dashboard-pagination/dashboard-pagination';
 

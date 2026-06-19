@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DashboardNotification } from '../../../../models/DashboardNotification';
-import { DashboardSummaryCard } from '../../../../models/DashboardSummaryCard';
+import { DashboardNotification } from '../../../../models/interface/DashboardNotification';
+import { DashboardSummaryCard } from '../../../../models/interface/DashboardSummaryCard';
 
 @Component({
   selector: 'app-vendor-dashboard-home',

@@ -1,3 +1,4 @@
+/**通知中心項目 */
 export interface NotificationItem {
   icon: string;
   iconClass: string;

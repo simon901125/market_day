@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { MarketCardItem } from '../../../../models/MarketCardItem';
-import { MarketSlot } from '../../../../models/MarketSlot';
+import { MarketCardItem } from '../../../../models/interface/MarketCardItem';
+import { MarketSlot } from '../../../../models/interface/MarketSlot';
 
 interface SignupCompleteData {
   slot: MarketSlot | null;

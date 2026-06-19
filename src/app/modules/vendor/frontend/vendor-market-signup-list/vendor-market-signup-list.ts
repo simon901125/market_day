@@ -4,7 +4,7 @@ import { UserFooter } from '../../../user/frontend/shared/user-footer/user-foote
 import { VendorMarketCard } from '../vendor-market-card/vendor-market-card';
 import { BrandType } from '../../../../models/type/BrandType ';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
-import { MarketCardItem } from '../../../../models/MarketCardItem';
+import { MarketCardItem } from '../../../../models/interface/MarketCardItem';
 import { VendorMarketSearchPanel } from "../vendor-market-search-panel/vendor-market-search-panel";
 import { Router } from '@angular/router';
 @Component({
