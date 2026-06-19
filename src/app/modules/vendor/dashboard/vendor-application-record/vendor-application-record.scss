@@ -1,0 +1,275 @@
+:host {
+  display: block;
+  min-height: 100%;
+  color: var(--text-dark);
+}
+
+.application-page {
+  width: 100%;
+  padding: 18px 8px 28px;
+}
+
+h1 {
+  margin: 0 0 34px;
+  color: var(--text-dark);
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  margin-bottom: 26px;
+  border-bottom: 1px solid var(--border-light);
+  overflow-x: auto;
+
+  button {
+    position: relative;
+    flex: 0 0 auto;
+    padding: 0 0 18px;
+    border: 0;
+    background: transparent;
+    color: var(--text-dark);
+    font-size: 17px;
+    font-weight: 900;
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &.active {
+      color: var(--primary-color);
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -1px;
+        width: 100%;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--primary-color);
+      }
+    }
+  }
+}
+
+.record-card {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-section);
+  background: var(--bg-white);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 1180px;
+  border-collapse: collapse;
+
+  th,
+  td {
+    vertical-align: middle;
+  }
+
+  th {
+    padding: 18px 16px;
+    background: var(--primary-soft);
+    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 900;
+    text-align: left;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  td {
+    padding: 16px;
+    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 24%;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 17%;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 22%;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 15%;
+  }
+
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 11%;
+  }
+
+  th:nth-child(6),
+  td:nth-child(6) {
+    width: 11%;
+    text-align: right;
+  }
+
+  tr:last-child td {
+    border-bottom: 0;
+  }
+}
+
+.event-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 260px;
+
+  img {
+    width: 64px;
+    height: 54px;
+    flex: 0 0 64px;
+    border-radius: var(--radius-tag);
+    object-fit: cover;
+  }
+
+  strong {
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1.35;
+  }
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--radius-tag);
+  font-size: 15px;
+  font-weight: 900;
+  white-space: nowrap;
+
+  &.reviewing,
+  &.payment,
+  &.refund-applying {
+    background: var(--bg-primary);
+    color: var(--primary-color);
+  }
+
+  &.booth {
+    background: #eaf5ff;
+    color: #1680e5;
+  }
+
+  &.completed {
+    background: #ecfdf3;
+    color: #16a34a;
+  }
+
+  &.refund-processing {
+    background: #f5f3ff;
+    color: #7c3aed;
+  }
+
+  &.refunded {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+
+  &.history {
+    background: #eee;
+    color: #888;
+  }
+}
+
+.action-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.primary-btn,
+.outline-btn {
+  min-width: 72px;
+  height: 36px;
+  padding: 0 18px;
+  border-radius: var(--radius-tag);
+  font-size: 15px;
+  font-weight: 900;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.primary-btn {
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: var(--bg-white);
+
+  &:hover {
+    border-color: var(--primary-hover);
+    background: var(--primary-hover);
+  }
+}
+
+.outline-btn {
+  border: 1px solid var(--primary-color);
+  background: var(--bg-white);
+  color: var(--primary-color);
+
+  &:hover {
+    background: var(--primary-soft);
+  }
+}
+
+.empty-cell {
+  height: 160px;
+  color: var(--text-light);
+  text-align: center;
+}
+
+app-dashboard-pagination {
+  display: block;
+  margin-top: 12px;
+}
+
+@media (max-width: 992px) {
+  .application-page {
+    padding: 12px 0 24px;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  .tabs {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 576px) {
+  h1 {
+    margin-bottom: 26px;
+    font-size: 28px;
+  }
+
+  .tabs button {
+    font-size: 15px;
+  }
+}
