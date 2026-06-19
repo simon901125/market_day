@@ -50,13 +50,23 @@
               <td>
                 <div class="action-group">
                   @for (action of item.actions; track action.label) {
-                    <button
-                      type="button"
-                      [class.primary-btn]="action.style === 'primary'"
-                      [class.outline-btn]="action.style === 'outline'"
-                    >
-                      {{ action.label }}
-                    </button>
+                    @if (action.link) {
+                      <a
+                        [routerLink]="[action.link, item.applicationNo]"
+                        [class.primary-btn]="action.style === 'primary'"
+                        [class.outline-btn]="action.style === 'outline'"
+                      >
+                        {{ action.label }}
+                      </a>
+                    } @else {
+                      <button
+                        type="button"
+                        [class.primary-btn]="action.style === 'primary'"
+                        [class.outline-btn]="action.style === 'outline'"
+                      >
+                        {{ action.label }}
+                      </button>
+                    }
                   }
                 </div>
               </td>

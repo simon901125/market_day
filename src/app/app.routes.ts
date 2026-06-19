@@ -34,7 +34,7 @@ import { VendorAccountSettings } from './modules/vendor/dashboard/vendor-account
 import { VendorPasswordSettings } from './modules/vendor/dashboard/vendor-password-settings/vendor-password-settings';
 import { VendorDashboardStall } from './modules/vendor/dashboard/vendor-dashboard-stall/vendor-dashboard-stall';
 import { VendorApplicationRecord } from './modules/vendor/dashboard/vendor-application-record/vendor-application-record';
-import { VendorPaymentPage } from './modules/vendor/dashboard/vendor-payment-page/vendor-payment-page';
+import { VendorApplicationDetail } from './modules/vendor/dashboard/vendor-application-detail/vendor-application-detail';
 
 /** 頁面設定檔 */
 import { AUTH_ROUTE_DATA } from './config/auth-route-data';
@@ -158,8 +158,12 @@ export const routes: Routes = [
         component: VendorApplicationRecord,
       },
       {
-        path: 'payment',
-        component: VendorPaymentPage,
+        path: 'register-record/detail/:applicationNo',
+        component: VendorApplicationDetail,
+      },
+      {
+        path: 'register-record/detail',
+        component: VendorApplicationDetail,
       },
       {
         path: 'account-settings',

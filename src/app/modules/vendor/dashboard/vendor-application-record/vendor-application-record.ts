@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { DashboardPagination } from '../../../shared/dashboard-pagination/dashboard-pagination';
+import { RouterLink } from '@angular/router';
+import { DashboardPagination } from '../../../dashboard/dashboard-pagination/dashboard-pagination';
 
 interface RecordTab {
   label: string;
@@ -20,6 +21,7 @@ type ApplicationRecordStatus =
 interface RecordAction {
   label: string;
   style: 'primary' | 'outline';
+  link?: string;
 }
 
 interface ApplicationRecord {
@@ -37,7 +39,7 @@ interface ApplicationRecord {
 
 @Component({
   selector: 'app-vendor-application-record',
-  imports: [CommonModule, DashboardPagination],
+  imports: [CommonModule, RouterLink, DashboardPagination],
   templateUrl: './vendor-application-record.html',
   styleUrl: './vendor-application-record.scss',
 })
@@ -78,7 +80,7 @@ export class VendorApplicationRecord {
       statusClass: 'refund-applying',
       actions: [
         { label: '前往收款管理', style: 'primary' },
-        { label: '查看', style: 'outline' },
+        { label: '查看', style: 'outline', link: '/vendor/dash-board/register-record/detail' },
       ],
     },
     {
@@ -91,7 +93,7 @@ export class VendorApplicationRecord {
       status: 'refundProcessing',
       statusText: '退款處理中',
       statusClass: 'refund-processing',
-      actions: [{ label: '查看', style: 'outline' }],
+      actions: [{ label: '查看', style: 'outline', link: '/vendor/dash-board/register-record/detail' }],
     },
     {
       id: 3,
@@ -103,7 +105,7 @@ export class VendorApplicationRecord {
       status: 'refunded',
       statusText: '已退款',
       statusClass: 'refunded',
-      actions: [{ label: '查看', style: 'outline' }],
+      actions: [{ label: '查看', style: 'outline', link: '/vendor/dash-board/register-record/detail' }],
     },
     {
       id: 4,
@@ -115,7 +117,7 @@ export class VendorApplicationRecord {
       status: 'completed',
       statusText: '報名完成',
       statusClass: 'completed',
-      actions: [{ label: '查看', style: 'outline' }],
+      actions: [{ label: '查看', style: 'outline', link: '/vendor/dash-board/register-record/detail' }],
     },
     {
       id: 5,
@@ -130,7 +132,7 @@ export class VendorApplicationRecord {
       actions: [
         { label: '選擇攤位', style: 'primary' },
         { label: '退款', style: 'primary' },
-        { label: '查看', style: 'outline' },
+        { label: '查看', style: 'outline', link: '/vendor/dash-board/register-record/detail' },
       ],
     },
     {
@@ -145,7 +147,7 @@ export class VendorApplicationRecord {
       statusClass: 'payment',
       actions: [
         { label: '付款', style: 'primary' },
-        { label: '查看', style: 'outline' },
+        { label: '查看', style: 'outline', link: '/vendor/dash-board/register-record/detail' },
       ],
     },
     {
@@ -160,7 +162,7 @@ export class VendorApplicationRecord {
       statusClass: 'reviewing',
       actions: [
         { label: '審核', style: 'primary' },
-        { label: '查看', style: 'outline' },
+        { label: '查看', style: 'outline', link: '/vendor/dash-board/register-record/detail' },
       ],
     },
     {
@@ -173,7 +175,7 @@ export class VendorApplicationRecord {
       status: 'history',
       statusText: '已取消',
       statusClass: 'history',
-      actions: [{ label: '查看', style: 'outline' }],
+      actions: [{ label: '查看', style: 'outline', link: '/vendor/dash-board/register-record/detail' }],
     },
     {
       id: 9,
@@ -185,7 +187,7 @@ export class VendorApplicationRecord {
       status: 'completed',
       statusText: '報名完成',
       statusClass: 'completed',
-      actions: [{ label: '查看', style: 'outline' }],
+      actions: [{ label: '查看', style: 'outline', link: '/vendor/dash-board/register-record/detail' }],
     },
     {
       id: 10,
@@ -200,7 +202,7 @@ export class VendorApplicationRecord {
       actions: [
         { label: '選擇攤位', style: 'primary' },
         { label: '退款', style: 'primary' },
-        { label: '查看', style: 'outline' },
+        { label: '查看', style: 'outline', link: '/vendor/dash-board/register-record/detail' },
       ],
     },
   ];
