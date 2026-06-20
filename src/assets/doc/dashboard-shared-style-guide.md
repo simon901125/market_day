@@ -1,21 +1,32 @@
 # 後台共用樣式與元件規範
 
-> 範例畫面：主辦方後台 / 活動管理  
-![主辦方活動管理範例](./dashboard-shared-style-guide.png)
+> 範例畫面：主辦方後台－活動管理
 
 ---
 
 ## 目的
 
-後台頁面請統一使用共用樣式與元件，不要每個頁面各自重寫搜尋列、按鈕、表格、分頁樣式。
+為了統一後台介面風格與程式架構，後續開發後台頁面時請優先使用共用樣式與元件，避免每個頁面各自重寫搜尋列、按鈕、表格與分頁樣式。
 
-主辦方活動管理是目前的範例頁。
+本文件以「主辦方後台－活動管理」作為開發範例。
+
+---
+
+## 適用範圍
+
+以下類型頁面請優先依照本規範開發：
+
+* 列表頁
+* 管理頁
+* 搜尋頁
+* 表格頁
+* 後台 CRUD 頁面
 
 ---
 
 ## 共用 SCSS
 
-後台通用控制項樣式放在：
+後台通用控制項樣式：
 
 ```txt
 src/assets/scss/_dashboard-controls.scss
@@ -27,64 +38,14 @@ src/assets/scss/_dashboard-controls.scss
 @use "./assets/scss/dashboard-controls";
 ```
 
-這支檔案負責：
+目前包含：
 
-- 後台頁首
-- 頁面標題
-- 搜尋列外框
-- 搜尋 input
-- 後台按鈕
-- 建立按鈕
-
----
-
-## 頁首寫法
-
-```html
-<header class="dashboard-page-header">
-  <h1 class="dashboard-page-title">活動管理</h1>
-
-  <button type="button" class="dashboard-btn primary dashboard-create-btn">
-    <i class="bi bi-plus-lg"></i>
-    建立活動
-  </button>
-</header>
-```
-
----
-
-## 搜尋列寫法
-
-```html
-<section class="dashboard-filter-bar organizer-event-filter">
-  <label class="dashboard-search-field">
-    <span class="dashboard-control-title">活動名稱</span>
-
-    <span class="dashboard-search-input">
-      <i class="bi bi-search"></i>
-      <input type="search" placeholder="請輸入活動名稱" />
-    </span>
-  </label>
-
-  <app-dropdown
-    title="狀態"
-    [options]="statusOptions"
-    placeholder="全部狀態"
-  ></app-dropdown>
-
-  <app-date-range-selector selectorTitle="活動日期"></app-date-range-selector>
-
-  <button type="button" class="dashboard-btn search">搜尋</button>
-</section>
-```
-
-頁面 SCSS 只保留欄位比例：
-
-```scss
-.organizer-event-filter {
-  grid-template-columns: minmax(220px, 1.2fr) minmax(170px, 0.8fr) minmax(300px, 1.4fr) 92px;
-}
-```
+* 後台頁首
+* 頁面標題
+* 搜尋列外框
+* 搜尋 Input
+* 後台按鈕
+* 建立按鈕
 
 ---
 
@@ -93,87 +54,68 @@ src/assets/scss/_dashboard-controls.scss
 ### Dropdown
 
 ```html
-<app-dropdown
-  title="狀態"
-  placeholder="全部狀態"
-  [options]="statusOptions"
-></app-dropdown>
-```
-
-樣式位置：
-
-```txt
-src/app/modules/shared/dropdown/dropdown.scss
+<app-dropdown></app-dropdown>
 ```
 
 ### Date Range Selector
 
 ```html
-<app-date-range-selector selectorTitle="活動日期"></app-date-range-selector>
-```
-
-樣式位置：
-
-```txt
-src/app/modules/shared/date-range-selector/date-range-selector.scss
+<app-date-range-selector></app-date-range-selector>
 ```
 
 ### Data Table
 
 ```html
-<app-dashboard-data-table
-  [columns]="columns"
-  [rows]="displayRows"
-  emptyText="目前沒有活動資料"
-  (actionClick)="onTableAction($event)"
-></app-dashboard-data-table>
+<app-dashboard-data-table></app-dashboard-data-table>
 ```
-
-樣式位置：
-
-```txt
-src/app/modules/shared/dashboard/dashboard-data-table/dashboard-data-table.scss
-```
-
-表格內的「查看詳情」按鈕屬於表格元件，樣式寫在表格元件自己的 SCSS。
 
 ### Pagination
 
 ```html
-<app-dashboard-pagination
-  [currentPage]="currentPage"
-  [pageSize]="pageSize"
-  [totalItems]="totalItems"
-  (pageChange)="onPageChange($event)"
-></app-dashboard-pagination>
+<app-dashboard-pagination></app-dashboard-pagination>
 ```
-
-樣式位置：
-
-```txt
-src/app/modules/shared/dashboard/dashboard-pagination/dashboard-pagination.scss
-```
-
-分頁元件本身不設定 `margin-top`，和上方內容的距離由使用頁面自己決定。
 
 ---
 
-## 寫法原則
+## 開發原則
 
-頁面 SCSS 只負責：
+### 頁面 SCSS 負責
 
-- 頁面寬度
-- 高度
-- grid 欄位比例
-- RWD 排版
+* 頁面寬度
+* 高度
+* Grid 欄位比例
+* RWD 排版
 
-不要在頁面 SCSS 重寫：
+### 共用 SCSS 負責
 
-- input 樣式
-- dropdown 樣式
-- date input 樣式
-- button 樣式
-- table action button 樣式
+* 控制項外觀
+* 按鈕樣式
+* 搜尋列樣式
+* Input 樣式
+
+### 共用元件負責
+
+* 元件內部結構
+* 元件內部樣式
+* 元件互動行為
+
+---
+
+## 不建議做法
+
+頁面 SCSS 不要重寫：
+
+* Input 樣式
+* Dropdown 樣式
+* Date Input 樣式
+* Button 樣式
+* Table Action Button 樣式
+
+若需要調整樣式：
+
+1. 優先修改共用 SCSS
+2. 優先修改共用元件
+3. 避免只修改單一頁面造成樣式不一致
 
 ---
 
@@ -181,6 +123,8 @@ src/app/modules/shared/dashboard/dashboard-pagination/dashboard-pagination.scss
 
 頁面管排版。
 
-`_dashboard-controls.scss` 管後台通用控制項。
+共用 SCSS 管後台控制項。
 
-共用 component 管自己的內部樣式。
+共用 Component 管自己的樣式與功能。
+
+以主辦方後台「活動管理」頁面作為後續開發參考範例。
