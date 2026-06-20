@@ -15,18 +15,18 @@
       <input type="text" placeholder="結束日" />
     </div>
 
-    <app-user-dropdown
+    <app-dropdown
       [options]="cityOptions"
       placeholder="全部縣市"
       iconClass="bi bi-geo-alt-fill"
       (optionSelected)="selectCity($event)">
-    </app-user-dropdown>
+    </app-dropdown>
 
-    <app-user-dropdown
+    <app-dropdown
       [options]="statusOptions"
       placeholder="全部狀態"
       (optionSelected)="selectStatus($event)">
-    </app-user-dropdown>
+    </app-dropdown>
     
     <button class="search-btn" type="button" routerLink="/user/activity-list">
       搜尋

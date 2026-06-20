@@ -1,0 +1,50 @@
+<section class="organizer-event-management page-transition">
+  <header class="page-header">
+    <h1>活動管理</h1>
+    <button type="button" class="create-btn">
+      <i class="bi bi-plus-lg"></i>
+      建立活動
+    </button>
+  </header>
+
+  <section class="filter-panel" aria-label="活動篩選">
+    <label class="search-field">
+      <input type="search" placeholder="搜尋活動名稱" />
+      <i class="bi bi-search"></i>
+    </label>
+
+    <app-dropdown
+      [options]="statusOptions"
+      placeholder="全部狀態"
+      (optionSelected)="selectStatus($event)"
+    ></app-dropdown>
+
+    <label class="date-field">
+      <i class="bi bi-calendar3"></i>
+      <input type="text" placeholder="開始日" />
+    </label>
+
+    <span class="date-separator">-</span>
+
+    <label class="date-field">
+      <i class="bi bi-calendar3"></i>
+      <input type="text" placeholder="結束日" />
+    </label>
+
+    <button type="button" class="search-btn">搜尋</button>
+  </section>
+
+  <app-dashboard-data-table
+    [columns]="columns"
+    [rows]="displayRows"
+    emptyText="目前沒有活動資料"
+    (actionClick)="onTableAction($event)"
+  ></app-dashboard-data-table>
+
+  <app-dashboard-pagination
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems"
+    (pageChange)="onPageChange($event)"
+  ></app-dashboard-pagination>
+</section>

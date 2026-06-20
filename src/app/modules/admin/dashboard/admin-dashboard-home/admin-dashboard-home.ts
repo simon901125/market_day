@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { DashboardHomeTodoCard } from '../../dashboard/dashboard-home-todo-card/dashboard-home-todo-card';
-import { DashboardNotification } from '../../dashboard/dashboard-notification/dashboard-notification';
 import { AdminDashboardNotification } from '../admin-dashboard-notification/admin-dashboard-notification';
+import { DashboardHomeTodoCard } from '../../../shared/dashboard/dashboard-home-todo-card/dashboard-home-todo-card';
+import { DashboardNotification } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
 
 /**
  * 管理員首頁待處理事項資料格式

@@ -1,0 +1,54 @@
+<div class="dashboard-table-wrap">
+  <table class="dashboard-table">
+    <thead>
+      <tr>
+        @for (column of columns; track column.key) {
+          <th [style.width]="column.width" [class.center]="column.align === 'center'" [class.end]="column.align === 'end'">
+            {{ column.label }}
+          </th>
+        }
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (row of rows; track row['id']) {
+        <tr>
+          @for (column of columns; track column.key) {
+            <td [class.center]="column.align === 'center'" [class.end]="column.align === 'end'">
+              @switch (column.type) {
+                @case ('imageText') {
+                  <div class="image-text-cell">
+                    <img [src]="row[column.key + 'Image']" [alt]="row[column.key]" />
+                    <span>{{ row[column.key] }}</span>
+                  </div>
+                }
+                @case ('status') {
+                  <span class="status-badge" [class]="getStatusClass(row[column.key])">
+                    {{ row[column.key] }}
+                  </span>
+                }
+                @case ('action') {
+                  <button
+                    type="button"
+                    class="table-action"
+                    [class.primary]="row[column.key + 'Variant'] === 'primary'"
+                    (click)="emitAction(column, row)"
+                  >
+                    {{ row[column.key + 'Label'] ?? '查看詳情' }}
+                  </button>
+                }
+                @default {
+                  {{ row[column.key] ?? '-' }}
+                }
+              }
+            </td>
+          }
+        </tr>
+      } @empty {
+        <tr>
+          <td class="empty-cell" [attr.colspan]="columns.length">{{ emptyText }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

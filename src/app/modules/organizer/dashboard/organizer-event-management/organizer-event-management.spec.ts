@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserDropdown } from './user-dropdown';
+import { OrganizerEventManagement } from './organizer-event-management';
 
-describe('UserDropdown', () => {
-  let component: UserDropdown;
-  let fixture: ComponentFixture<UserDropdown>;
+describe('OrganizerEventManagement', () => {
+  let component: OrganizerEventManagement;
+  let fixture: ComponentFixture<OrganizerEventManagement>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserDropdown]
+      imports: [OrganizerEventManagement]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(UserDropdown);
+    fixture = TestBed.createComponent(OrganizerEventManagement);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

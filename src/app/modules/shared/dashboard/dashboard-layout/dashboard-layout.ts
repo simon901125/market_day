@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, RouterOutlet } from '@angular/router';
-import { MenuItem } from '../../../models/interface/MenuItem';
-import { UserMenuItem } from '../../../models/interface/UserMenuItem';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';;
 import { DashboardSidebar } from '../dashboard-sidebar/dashboard-sidebar';
+import { UserMenuItem } from '../../../../models/interface/UserMenuItem';
+import { MenuItem } from '../../../../models/interface/MenuItem';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -48,7 +48,7 @@ export class DashboardLayout {
       this.menuItems = [
         { label: '首頁', icon: 'bi-house-door', path: '/organizer/dash-board/home' },
         { label: '通知中心', icon: 'bi-bell', path: '/organizer/dash-board/notification' },
-        { label: '市集管理', icon: 'bi-calendar-event', path: '/organizer/dash-board/activity' },
+        { label: '活動管理', icon: 'bi-calendar-event', path: '/organizer/dash-board/activity' },
         { label: '報名管理', icon: 'bi-clipboard-check', path: '/organizer/dash-board/register' },
         { label: '付款管理', icon: 'bi-cash-coin', path: '/organizer/dash-board/payment' },
         { label: '帳務管理', icon: 'bi-receipt', path: '/organizer/dash-board/account' },
@@ -68,7 +68,7 @@ export class DashboardLayout {
       this.menuItems = [
         { label: '首頁', icon: 'bi-house-door', path: '/admin/dash-board/home' },
         { label: '通知中心', icon: 'bi-bell', path: '/admin/dash-board/notification' },
-        { label: '市集管理', icon: 'bi-calendar-event', path: '/admin/dash-board/activity' },
+        { label: '活動管理', icon: 'bi-calendar-event', path: '/admin/dash-board/activity' },
         { label: '使用者管理', icon: 'bi-people', path: '/admin/dash-board/users' },
         { label: '系統紀錄', icon: 'bi-clock-history', path: '/admin/dash-board/logs' },
       ];

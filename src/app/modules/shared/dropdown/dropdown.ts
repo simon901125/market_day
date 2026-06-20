@@ -8,41 +8,29 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'app-user-dropdown',
+  selector: 'app-dropdown',
   imports: [],
-  templateUrl: './user-dropdown.html',
-  styleUrl: './user-dropdown.scss',
+  templateUrl: './dropdown.html',
+  styleUrl: './dropdown.scss',
 })
-export class UserDropdown {
-  /** 下拉選單的選項資料 */
+export class Dropdown {
+  @Input() title = '';
   @Input() options: string[] = [];
+  @Input() placeholder = '';
+  @Input() iconClass = '';
+  @Input() selectedValue = '';
 
-  /** 尚未選擇時顯示的提示文字 */
-  @Input() placeholder: string = '';
-
-  /** 顯示在選單左側的選用圖示 class */
-  @Input() iconClass: string = '';
-
-  /** 選擇選項後，將選到的文字傳給父元件 */
   @Output() optionSelected = new EventEmitter<string>();
 
-  /** 控制下拉選單是否展開 */
   isOpen = false;
-
-  /** 鍵盤上下選取時，目前停留的選項索引 */
   activeIndex = -1;
-
-  /** 目前選中的值 */
-  selectedValue = '';
 
   constructor(private el: ElementRef) {}
 
-  /** 顯示在按鈕上的文字，若尚未選擇則顯示 placeholder */
   get displayLabel(): string {
     return this.selectedValue || this.placeholder;
   }
 
-  /** 開啟或關閉下拉選單 */
   toggle(): void {
     this.isOpen = !this.isOpen;
 
@@ -51,7 +39,6 @@ export class UserDropdown {
     }
   }
 
-  /** 點擊元件外部時，關閉下拉選單 */
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
     if (!this.el.nativeElement.contains(event.target)) {
@@ -59,10 +46,9 @@ export class UserDropdown {
     }
   }
 
-  /** 鍵盤操作：上下選取、Enter 確認、Esc 關閉 */
   @HostListener('document:keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
-    if (!this.isOpen) return;
+    if (!this.isOpen || this.options.length === 0) return;
 
     switch (event.key) {
       case 'ArrowDown':
@@ -90,10 +76,15 @@ export class UserDropdown {
     }
   }
 
-  /** 選取指定選項，並通知父元件 */
   selectOption(index: number): void {
     this.selectedValue = this.options[index];
     this.optionSelected.emit(this.options[index]);
+    this.isOpen = false;
+  }
+
+  reset(): void {
+    this.selectedValue = '';
+    this.activeIndex = -1;
     this.isOpen = false;
   }
 }

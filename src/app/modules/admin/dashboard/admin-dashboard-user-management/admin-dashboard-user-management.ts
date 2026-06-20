@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AdminDashboardDropdown } from '../shared/admin-dashboard-dropdown/admin-dashboard-dropdown';
-import { AdminDashboardButton } from '../shared/admin-dashboard-button/admin-dashboard-button';
-import { AdminDashboardSerchInput } from '../shared/admin-dashboard-serch-input/admin-dashboard-serch-input';
-import { UserStatus } from '../../../models/status/UserStatus';
-import { UserType } from '../../../models/type/UserType';
-import { UserListItem } from '../../../models/interface/UserListItem';
-import { DashboardPagination } from '../../dashboard/dashboard-pagination/dashboard-pagination';
+import { AdminDashboardDropdown } from '../../shared/admin-dashboard-dropdown/admin-dashboard-dropdown';
+import { AdminDashboardButton } from '../../shared/admin-dashboard-button/admin-dashboard-button';
+import { AdminDashboardSerchInput } from '../../shared/admin-dashboard-serch-input/admin-dashboard-serch-input';
+import { UserStatus } from '../../../../models/status/UserStatus';
+import { UserType } from '../../../../models/type/UserType';
+import { UserListItem } from '../../../../models/interface/UserListItem';
+import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 
 @Component({
   selector: 'app-admin-dashboard-user-management',

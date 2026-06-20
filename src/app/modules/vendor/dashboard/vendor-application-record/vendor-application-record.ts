@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { DashboardPagination } from '../../../dashboard/dashboard-pagination/dashboard-pagination';
+import { RouterLink } from '@angular/router';import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
+;
 
 interface RecordTab {
   label: string;

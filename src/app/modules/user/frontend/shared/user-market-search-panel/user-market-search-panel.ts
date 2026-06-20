@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { CategoryItem } from '../../../../../models/interface/CategoryItem';
 import { RouterLink } from '@angular/router';
-import { UserDropdown } from '../user-dropdown/user-dropdown';
+import { Dropdown } from '../../../../shared/dropdown/dropdown';
 
 @Component({
   selector: 'app-user-market-search-panel',
-  imports: [RouterLink, UserDropdown],
+  imports: [RouterLink, Dropdown],
   templateUrl: './user-market-search-panel.html',
   styleUrl: './user-market-search-panel.scss',
 })

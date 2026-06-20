@@ -4,18 +4,18 @@ import { UserHome } from './modules/user/frontend/user-home/user-home';
 import { UserActivityList } from './modules/user/frontend/activity/user-activity-list/user-activity-list';
 import { UserActivityDetail } from './modules/user/frontend/activity/user-activity-detail/user-activity-detail';
 import { UserBrandDetail } from './modules/user/frontend/brand/user-brand-detail/user-brand-detail';
-import { AdminLogin } from './modules/admin/admin-login/admin-login';
-import { AdminDashboardHome } from './modules/admin/admin-dashboard-home/admin-dashboard-home';
-import { AdminDashboardNotification } from './modules/admin/admin-dashboard-notification/admin-dashboard-notification';
-import { AdminDashboardMarketManagemant } from './modules/admin/admin-dashboard-market-managemant/admin-dashboard-market-managemant';
-import { AdminDashboardMarketDetail } from './modules/admin/admin-dashboard-market-detail/admin-dashboard-market-detail';
-import { AdminDashboardUserManagement } from './modules/admin/admin-dashboard-user-management/admin-dashboard-user-management';
-import { AdminDashboardLogs } from './modules/admin/admin-dashboard-logs/admin-dashboard-logs';
+import { AdminLogin } from './modules/admin/dashboard/admin-login/admin-login';
+import { AdminDashboardHome } from './modules/admin/dashboard/admin-dashboard-home/admin-dashboard-home';
+import { AdminDashboardNotification } from './modules/admin/dashboard/admin-dashboard-notification/admin-dashboard-notification';
+import { AdminDashboardMarketManagemant } from './modules/admin/dashboard/admin-dashboard-market-managemant/admin-dashboard-market-managemant';
+import { AdminDashboardMarketDetail } from './modules/admin/dashboard/admin-dashboard-market-detail/admin-dashboard-market-detail';
+import { AdminDashboardUserManagement } from './modules/admin/dashboard/admin-dashboard-user-management/admin-dashboard-user-management';
+import { AdminDashboardLogs } from './modules/admin/dashboard/admin-dashboard-logs/admin-dashboard-logs';
 import { Auth } from './modules/auth/auth/auth';
 import { UserAboutUs } from './modules/user/frontend/user-about-us/user-about-us';
-import { DashboardLayout } from './modules/dashboard/dashboard-layout/dashboard-layout';
 import { OrganizerDashboardHome } from './modules/organizer/dashboard/organizer-dashboard-home/organizer-dashboard-home';
 import { OrganizerDashboardNotification } from './modules/organizer/dashboard/organizer-dashboard-notification/organizer-dashboard-notification';
+import { OrganizerEventManagement } from './modules/organizer/dashboard/organizer-event-management/organizer-event-management';
 import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organizer-home';
 import { OrganizerAbout } from './modules/organizer/frontend/organizer-about/organizer-about';
 import { UserBrandSearch } from './modules/user/frontend/brand/user-brand-search/user-brand-search';
@@ -38,6 +38,7 @@ import { VendorApplicationDetail } from './modules/vendor/dashboard/vendor-appli
 
 /** 頁面設定檔 */
 import { AUTH_ROUTE_DATA } from './config/auth-route-data';
+import { DashboardLayout } from './modules/shared/dashboard/dashboard-layout/dashboard-layout';
 
 export const routes: Routes = [
   /** 預設導向 */
@@ -194,6 +195,10 @@ export const routes: Routes = [
       {
         path: 'notification',
         component: OrganizerDashboardNotification,
+      },
+      {
+        path: 'activity',
+        component: OrganizerEventManagement,
       },
     ],
   },

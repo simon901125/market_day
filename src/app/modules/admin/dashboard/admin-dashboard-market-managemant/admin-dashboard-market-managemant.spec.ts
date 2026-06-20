@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 
 import { AdminDashboardMarketManagemant } from './admin-dashboard-market-managemant';
-import { ActivityStatus } from '../../../models/status/ActivityStatus';
-import { ActivityListItem } from '../../../models/interface/ActivityListItem';
+import { ActivityStatus } from '../../../../models/status/ActivityStatus';
+import { ActivityListItem } from '../../../../models/interface/ActivityListItem';
 
 describe('AdminDashboardMarketManagemant', () => {
   let component: AdminDashboardMarketManagemant;

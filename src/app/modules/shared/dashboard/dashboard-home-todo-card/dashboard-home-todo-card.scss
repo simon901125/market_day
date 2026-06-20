@@ -142,3 +142,45 @@
     font-size: 0.8rem;
   }
 }
+
+:host-context(.organizer-dashboard-home) {
+  .todo-card {
+    min-height: 96px;
+    padding: 20px 18px;
+    gap: 13px;
+  }
+
+  .todo-icon-wrap {
+    width: 44px;
+    height: 44px;
+
+    i {
+      font-size: 1.45rem;
+    }
+  }
+
+  .todo-body {
+    .todo-label {
+      margin-bottom: 6px;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .todo-count {
+      .count-num {
+        font-size: 1.65rem;
+      }
+
+      .count-unit {
+        margin-left: 8px;
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .todo-link {
+    right: 18px;
+    bottom: 18px;
+    font-size: 0.8rem;
+  }
+}

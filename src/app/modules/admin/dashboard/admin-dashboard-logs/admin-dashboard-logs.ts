@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AdminDashboardDropdown } from '../shared/admin-dashboard-dropdown/admin-dashboard-dropdown';
-import { AdminDashboardButton } from '../shared/admin-dashboard-button/admin-dashboard-button';
-import { AdminDashboardSerchInput } from '../shared/admin-dashboard-serch-input/admin-dashboard-serch-input';
-import { AdminDashboardTimeSelector } from '../shared/admin-dashboard-time-selector/admin-dashboard-time-selector';
-import { DashboardPagination } from '../../dashboard/dashboard-pagination/dashboard-pagination';
-import { OperationType } from '../../../models/type/OperationType';
-import { AdminLogItem } from '../../../models/interface/AdminLogItem';
+import { AdminDashboardDropdown } from '../../shared/admin-dashboard-dropdown/admin-dashboard-dropdown';
+import { AdminDashboardButton } from '../../shared/admin-dashboard-button/admin-dashboard-button';
+import { AdminDashboardSerchInput } from '../../shared/admin-dashboard-serch-input/admin-dashboard-serch-input';
+import { AdminDashboardTimeSelector } from '../../shared/admin-dashboard-time-selector/admin-dashboard-time-selector';
+import { OperationType } from '../../../../models/type/OperationType';
+import { AdminLogItem } from '../../../../models/interface/AdminLogItem';
+import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 
 @Component({
   selector: 'app-admin-dashboard-logs',

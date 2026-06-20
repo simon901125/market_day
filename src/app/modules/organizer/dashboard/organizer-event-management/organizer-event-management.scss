@@ -1,0 +1,155 @@
+:host {
+  display: block;
+}
+
+.organizer-event-management {
+  width: 100%;
+  max-width: 1200px;
+  height: calc(100vh - 60px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+
+  app-dashboard-data-table {
+    flex: 0 0 auto;
+    min-height: 0;
+    display: block;
+  }
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  h1 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--text-dark);
+  }
+}
+
+.create-btn,
+.search-btn {
+  border: 0;
+  border-radius: 8px;
+  background: var(--primary-color);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+}
+
+.create-btn {
+  height: 42px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  i {
+    font-size: 18px;
+  }
+}
+
+.filter-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.3fr) minmax(180px, 0.9fr) minmax(160px, 0.8fr) auto minmax(160px, 0.8fr) 100px;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background: var(--bg-white);
+}
+
+.search-field,
+.select-field,
+.date-field {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background: var(--bg-white);
+
+  input,
+  select {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  input::placeholder {
+    color: var(--text-light);
+  }
+
+  i {
+    color: var(--text-dark);
+    font-size: 18px;
+    flex: 0 0 auto;
+  }
+}
+
+.select-field {
+  select {
+    appearance: none;
+  }
+}
+
+.date-separator {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text-dark);
+}
+
+.search-btn {
+  height: 46px;
+}
+
+@media (max-width: 1200px) {
+  .filter-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .date-separator {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .organizer-event-management {
+    gap: 16px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .create-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .filter-panel {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+}

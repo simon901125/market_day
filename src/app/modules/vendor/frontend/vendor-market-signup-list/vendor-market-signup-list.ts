@@ -7,7 +7,7 @@ import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { MarketCardItem } from '../../../../models/interface/MarketCardItem';
 import { VendorMarketSearchPanel } from "../vendor-market-search-panel/vendor-market-search-panel";
 import { Router } from '@angular/router';
-import { DashboardPagination } from "../../../dashboard/dashboard-pagination/dashboard-pagination";
+import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 @Component({
   selector: 'app-vendor-market-signup-list',
   imports: [VendorHeader, UserFooter, VendorMarketCard, VendorMarketSearchPanel, DashboardPagination],
