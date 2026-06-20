@@ -1,11 +1,11 @@
-:host {
+﻿:host {
   display: block;
 }
 
 .admin-home {
   width: 100%;
   max-width: 1200px;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 48px);
   margin: 0 auto;
   padding: 0;
   display: flex;
@@ -68,7 +68,7 @@
 @media (max-width: 992px) {
   .admin-home {
     height: auto;
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 48px);
     padding: 0 0 24px;
     overflow: visible;
   }
