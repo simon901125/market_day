@@ -3,7 +3,12 @@
     <thead>
       <tr>
         @for (column of columns; track column.key) {
-          <th [style.width]="column.width" [class.center]="column.align === 'center'" [class.end]="column.align === 'end'">
+          <th
+            [style.width]="column.width"
+            [attr.data-column]="column.key"
+            [class.center]="column.align === 'center'"
+            [class.end]="column.align === 'end'"
+          >
             {{ column.label }}
           </th>
         }
@@ -14,7 +19,11 @@
       @for (row of rows; track row['id']) {
         <tr>
           @for (column of columns; track column.key) {
-            <td [class.center]="column.align === 'center'" [class.end]="column.align === 'end'">
+            <td
+              [attr.data-column]="column.key"
+              [class.center]="column.align === 'center'"
+              [class.end]="column.align === 'end'"
+            >
               @switch (column.type) {
                 @case ('imageText') {
                   <div class="image-text-cell">

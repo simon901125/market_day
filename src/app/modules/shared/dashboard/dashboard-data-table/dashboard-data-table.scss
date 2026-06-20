@@ -40,6 +40,28 @@
     font-weight: 900;
   }
 
+  [data-column='name'] {
+    width: 220px;
+  }
+
+  [data-column='date'] {
+    width: 210px;
+  }
+
+  [data-column='location'] {
+    width: 250px;
+  }
+
+  [data-column='status'],
+  [data-column='signupProgress'],
+  [data-column='action'] {
+    width: 130px;
+  }
+
+  [data-column='paidCount'] {
+    width: 110px;
+  }
+
   tbody tr {
     border-bottom: 1px solid var(--border-light);
     transition: background 0.2s ease;

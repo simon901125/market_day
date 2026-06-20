@@ -1,20 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
+import { OrganizerEventRow } from '../../../../models/interface/OrganizerEventRow';
 import { DashboardDataTable, DashboardTableAction, DashboardTableColumn } from '../../../shared/dashboard/dashboard-data-table/dashboard-data-table';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
-
-interface OrganizerEventRow {
-  id: number;
-  name: string;
-  nameImage: string;
-  date: string;
-  location: string;
-  status: string;
-  signupProgress: string;
-  paidCount: string;
-  actionLabel: string;
-}
 
 @Component({
   selector: 'app-organizer-event-management',
@@ -22,34 +11,29 @@ interface OrganizerEventRow {
   templateUrl: './organizer-event-management.html',
   styleUrl: './organizer-event-management.scss',
 })
+/** 主辦方後台活動管理頁 */
 export class OrganizerEventManagement implements OnInit {
+  /** 目前分頁頁碼 */
   currentPage = 1;
+  /** 每頁顯示筆數 */
   pageSize = 6;
+  /** 目前選取的狀態篩選 */
   selectedStatus = '';
-  readonly statusOptions = [
-    ActivityStatus.draft,
-    ActivityStatus.pendingReview,
-    ActivityStatus.revisionRequired,
-    ActivityStatus.mapBuilding,
-    ActivityStatus.readyToPublish,
-    ActivityStatus.registrationOpen,
-    ActivityStatus.full,
-    ActivityStatus.published,
-    ActivityStatus.active,
-    ActivityStatus.ended,
-    ActivityStatus.unpublished,
-  ];
+  /** 狀態篩選選項 */
+  readonly statusOptions = ActivityStatus.filterList;
 
+  /** 活動管理表格欄位設定 */
   columns: DashboardTableColumn[] = [
-    { key: 'name', label: '活動名稱', type: 'imageText', width: '220px' },
-    { key: 'date', label: '活動日期', width: '210px' },
-    { key: 'location', label: '活動地點', width: '250px' },
-    { key: 'status', label: '狀態', type: 'status', align: 'center', width: '130px' },
-    { key: 'signupProgress', label: '報名進度', align: 'center', width: '130px' },
-    { key: 'paidCount', label: '已付款', align: 'center', width: '110px' },
-    { key: 'action', label: '操作', type: 'action', align: 'center', width: '130px' },
+    { key: 'name', label: '活動名稱', type: 'imageText' },
+    { key: 'date', label: '活動日期' },
+    { key: 'location', label: '活動地點' },
+    { key: 'status', label: '狀態', type: 'status', align: 'center' },
+    { key: 'signupProgress', label: '報名進度', align: 'center' },
+    { key: 'paidCount', label: '已付款', align: 'center' },
+    { key: 'action', label: '操作', type: 'action', align: 'center' },
   ];
 
+  /** 活動管理假資料，之後可替換成 API 回傳資料 */
   rows: OrganizerEventRow[] = [
     {
       id: 1,
@@ -207,6 +191,7 @@ export class OrganizerEventManagement implements OnInit {
     },
   ];
 
+  /** 目前頁面要顯示的活動資料 */
   displayRows: OrganizerEventRow[] = [];
 
   ngOnInit(): void {
@@ -217,21 +202,25 @@ export class OrganizerEventManagement implements OnInit {
     return this.rows.length;
   }
 
+  /** 切換頁碼後更新表格資料 */
   onPageChange(page: number): void {
     this.currentPage = page;
     this.updateDisplayRows();
   }
 
+  /** 選取狀態篩選後重設到第一頁 */
   selectStatus(status: string): void {
-    this.selectedStatus = status;
+    this.selectedStatus = status === ActivityStatus.all ? '' : status;
     this.currentPage = 1;
     this.updateDisplayRows();
   }
 
+  /** 表格操作按鈕點擊事件 */
   onTableAction(action: DashboardTableAction): void {
     console.log('organizer event action', action);
   }
 
+  /** 依目前頁碼切出表格顯示資料 */
   private updateDisplayRows(): void {
     const startIndex = (this.currentPage - 1) * this.pageSize;
     this.displayRows = this.rows.slice(startIndex, startIndex + this.pageSize);
