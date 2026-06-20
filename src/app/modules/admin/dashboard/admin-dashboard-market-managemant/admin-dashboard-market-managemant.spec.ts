@@ -22,7 +22,6 @@ describe('AdminDashboardMarketManagemant', () => {
     router = TestBed.inject(Router);
     fixture.detectChanges();
 
-    component.searchInputRef = { inputValue: '', reset: () => {} } as any;
     component.timeSelectorRef = { getTimeRange: () => ({ startDate: null, endDate: null }), reset: () => {} } as any;
     component.organizerDropdownRef = { reset: () => {} } as any;
     component.statusDropdownRef = { reset: () => {} } as any;
@@ -57,7 +56,7 @@ describe('AdminDashboardMarketManagemant', () => {
 
   it('依關鍵字篩選活動名稱', () => {
     component.pageSize = 8;
-    component.searchInputRef.inputValue = '咖啡';
+    component.searchKeyword = '咖啡';
     component.onSearch();
 
     expect(component.totalItems).toBe(2);
@@ -80,18 +79,6 @@ describe('AdminDashboardMarketManagemant', () => {
 
     expect(component.totalItems).toBe(3);
     expect(component.activities.every((a: ActivityListItem) => a.status === ActivityStatus.pendingReview)).toBeTrue();
-  });
-
-  it('onClear 應清空篩選條件並還原完整列表', () => {
-    component.pageSize = 8;
-    component.onOrganizerSelected('森林生活市集');
-    component.onSearch();
-    expect(component.totalItems).toBe(6);
-
-    component.onClear();
-
-    expect(component.totalItems).toBe(24);
-    expect(component.currentPage).toBe(1);
   });
 
   it('onPageChange 應依目前頁碼切出正確的資料區間', () => {

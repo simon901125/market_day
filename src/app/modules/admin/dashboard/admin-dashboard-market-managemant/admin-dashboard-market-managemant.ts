@@ -1,9 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AdminDashboardDropdown } from '../../shared/admin-dashboard-dropdown/admin-dashboard-dropdown';
-import { AdminDashboardButton } from '../../shared/admin-dashboard-button/admin-dashboard-button';
-import { AdminDashboardSerchInput } from '../../shared/admin-dashboard-serch-input/admin-dashboard-serch-input';
-import { AdminDashboardTimeSelector } from '../../shared/admin-dashboard-time-selector/admin-dashboard-time-selector';
+import { Dropdown } from '../../../shared/dropdown/dropdown';
+import { DateRangeSelector } from '../../../shared/dashboard/date-range-selector/date-range-selector';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { ActivityListItem } from '../../../../models/interface/ActivityListItem';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
@@ -11,10 +9,8 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
 @Component({
   selector: 'app-admin-dashboard-market-managemant',
   imports: [
-    AdminDashboardDropdown,
-    AdminDashboardButton,
-    AdminDashboardSerchInput,
-    AdminDashboardTimeSelector,
+    Dropdown,
+    DateRangeSelector,
     DashboardPagination,
   ],
   templateUrl: './admin-dashboard-market-managemant.html',
@@ -23,10 +19,9 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
 export class AdminDashboardMarketManagemant implements AfterViewInit {
   constructor(private router: Router) {}
 
-  @ViewChild(AdminDashboardSerchInput) searchInputRef!: AdminDashboardSerchInput;
-  @ViewChild(AdminDashboardTimeSelector) timeSelectorRef!: AdminDashboardTimeSelector;
-  @ViewChild('organizerDropdown') organizerDropdownRef!: AdminDashboardDropdown;
-  @ViewChild('statusDropdown') statusDropdownRef!: AdminDashboardDropdown;
+  @ViewChild(DateRangeSelector) timeSelectorRef!: DateRangeSelector;
+  @ViewChild('organizerDropdown') organizerDropdownRef!: Dropdown;
+  @ViewChild('statusDropdown') statusDropdownRef!: Dropdown;
   @ViewChild('tableWrapper') tableWrapperRef!: ElementRef<HTMLDivElement>;
 
   /** 每列高度，需與 SCSS `.activity-table tbody tr` 的高度一致 */
@@ -90,6 +85,8 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
   private selectedOrganizer = '';
   /** 目前篩選條件：狀態 */
   private selectedStatus = '';
+  /** 目前輸入的搜尋關鍵字 */
+  searchKeyword = '';
 
   /** 目前頁面顯示的活動列表（已套用篩選＋分頁） */
   activities: ActivityListItem[] = [];
@@ -127,20 +124,13 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
     this.selectedStatus = value;
   }
 
-  /** 搜尋按鈕：彙整篩選條件後重新查詢（回到第一頁） */
-  onSearch(): void {
-    this.currentPage = 1;
-    this.fetchActivities();
+  /** 更新搜尋關鍵字 */
+  onSearchKeywordInput(event: Event): void {
+    this.searchKeyword = (event.target as HTMLInputElement).value;
   }
 
-  /** 清除按鈕：清空所有篩選條件與子元件畫面顯示，重新查詢 */
-  onClear(): void {
-    this.selectedOrganizer = '';
-    this.selectedStatus = '';
-    this.searchInputRef.reset();
-    this.timeSelectorRef.reset();
-    this.organizerDropdownRef.reset();
-    this.statusDropdownRef.reset();
+  /** 搜尋按鈕：彙整篩選條件後重新查詢（回到第一頁） */
+  onSearch(): void {
     this.currentPage = 1;
     this.fetchActivities();
   }
@@ -150,10 +140,6 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
     this.currentPage = page;
     this.fetchActivities();
   }
-
-  /** 搜尋／清除按鈕點擊事件，綁定給 app-admin-dashboard-button 的 [todo] */
-  onSearchHandler = (): void => this.onSearch();
-  onClearHandler = (): void => this.onClear();
 
   /** 產生操作欄位按鈕的點擊處理函式，導向活動詳細頁 */
   getDetailHandler(activity: ActivityListItem): () => void {
@@ -189,7 +175,7 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
    *   });
    */
   private fetchActivities(): void {
-    const keyword = this.searchInputRef?.inputValue?.trim() ?? '';
+    const keyword = this.searchKeyword.trim();
     const { startDate, endDate } = this.timeSelectorRef?.getTimeRange() ?? {
       startDate: null,
       endDate: null,

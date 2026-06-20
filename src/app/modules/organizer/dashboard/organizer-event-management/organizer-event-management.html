@@ -1,37 +1,31 @@
-<section class="organizer-event-management page-transition">
-  <header class="page-header">
-    <h1>活動管理</h1>
-    <button type="button" class="create-btn">
+﻿<section class="organizer-event-management page-transition">
+  <header class="dashboard-page-header">
+    <h1 class="dashboard-page-title">活動管理</h1>
+    <button type="button" class="dashboard-btn primary dashboard-create-btn">
       <i class="bi bi-plus-lg"></i>
       建立活動
     </button>
   </header>
 
-  <section class="filter-panel" aria-label="活動篩選">
-    <label class="search-field">
-      <input type="search" placeholder="搜尋活動名稱" />
-      <i class="bi bi-search"></i>
+  <section class="dashboard-filter-bar organizer-event-filter" aria-label="活動篩選">
+    <label class="dashboard-search-field">
+      <span class="dashboard-control-title">活動名稱</span>
+      <span class="dashboard-search-input">
+        <i class="bi bi-search"></i>
+        <input type="search" placeholder="請輸入活動名稱" />
+      </span>
     </label>
 
     <app-dropdown
+      title="狀態"
       [options]="statusOptions"
       placeholder="全部狀態"
       (optionSelected)="selectStatus($event)"
     ></app-dropdown>
 
-    <label class="date-field">
-      <i class="bi bi-calendar3"></i>
-      <input type="date" aria-label="開始日" />
-    </label>
+    <app-date-range-selector selectorTitle="活動日期"></app-date-range-selector>
 
-    <span class="date-separator">-</span>
-
-    <label class="date-field">
-      <i class="bi bi-calendar3"></i>
-      <input type="date" aria-label="結束日" />
-    </label>
-
-    <button type="button" class="search-btn">搜尋</button>
+    <button type="button" class="dashboard-btn search">搜尋</button>
   </section>
 
   <app-dashboard-data-table
@@ -48,3 +42,4 @@
     (pageChange)="onPageChange($event)"
   ></app-dashboard-pagination>
 </section>
+

@@ -1,30 +1,41 @@
-<section class="admin-user-managemant page-transition">
+﻿<section class="admin-user-managemant page-transition">
   <h1 class="page-title">使用者管理</h1>
 
-  <div class="search-bar">
-    <app-admin-dashboard-serch-input
-      searchTitle="使用者"
-      placeholder="搜尋姓名/Email"
-    ></app-admin-dashboard-serch-input>
+  <div class="dashboard-filter-bar user-management-filter">
+    <label class="dashboard-search-field">
+      <span class="dashboard-control-title">使用者</span>
+      <span class="dashboard-search-input">
+        <i class="bi bi-search"></i>
+        <input
+          type="search"
+          placeholder="搜尋姓名/Email"
+          [value]="searchKeyword"
+          (input)="onSearchKeywordInput($event)"
+          (keydown.enter)="onSearch()"
+        />
+      </span>
+    </label>
 
-    <app-admin-dashboard-dropdown
+    <app-dropdown
       #roleDropdown
       title="角色"
       placeholder="全部"
       [options]="roleOptions"
       (optionSelected)="onRoleSelected($event)"
-    ></app-admin-dashboard-dropdown>
+    ></app-dropdown>
 
-    <app-admin-dashboard-dropdown
+    <app-dropdown
       #statusDropdown
       title="狀態"
       placeholder="全部"
       [options]="userStatusOptions"
       (optionSelected)="onStatusSelected($event)"
-    ></app-admin-dashboard-dropdown>
+    ></app-dropdown>
 
-    <app-admin-dashboard-button type="search" [todo]="onSearchHandler"></app-admin-dashboard-button>
-    <app-admin-dashboard-button type="clear" [todo]="onClearHandler"></app-admin-dashboard-button>
+    <button type="button" class="dashboard-btn search" (click)="onSearch()">
+      <i class="bi bi-search"></i>
+      <span>搜尋</span>
+    </button>
   </div>
 
   <div class="table-wrapper" #tableWrapper>
@@ -55,8 +66,8 @@
             </td>
             <td class="action-btn">
               <div class="btn-group">
-                <app-admin-dashboard-button type="primary" text="查看"></app-admin-dashboard-button>
-                <app-admin-dashboard-button type="secondary" text="停用"></app-admin-dashboard-button>
+                <button type="button" class="dashboard-btn primary">查看</button>
+                <button type="button" class="dashboard-btn secondary">停用</button>
               </div>
             </td>
           </tr>
@@ -76,4 +87,6 @@
     (pageChange)="onPageChange($event)"
   ></app-dashboard-pagination>
 </section>
+
+
 

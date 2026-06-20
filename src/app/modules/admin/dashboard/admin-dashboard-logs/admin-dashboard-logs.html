@@ -1,26 +1,37 @@
-<section class="admin-logs page-transition">
+﻿<section class="admin-logs page-transition">
   <h1 class="page-title">操作紀錄</h1>
 
-  <div class="search-bar">
-    <app-admin-dashboard-serch-input
-      searchTitle="操作"
-      placeholder="請輸入操作人/操作內容"
-    ></app-admin-dashboard-serch-input>
+  <div class="dashboard-filter-bar logs-filter">
+    <label class="dashboard-search-field">
+      <span class="dashboard-control-title">操作</span>
+      <span class="dashboard-search-input">
+        <i class="bi bi-search"></i>
+        <input
+          type="search"
+          placeholder="請輸入操作人/操作內容"
+          [value]="searchKeyword"
+          (input)="onSearchKeywordInput($event)"
+          (keydown.enter)="onSearch()"
+        />
+      </span>
+    </label>
 
-    <app-admin-dashboard-dropdown
+    <app-dropdown
       #oprationDropdown
       title="操作類型"
       placeholder="全部"
       [options]="oprationOptions"
       (optionSelected)="onOprationSelected($event)"
-    ></app-admin-dashboard-dropdown>
+    ></app-dropdown>
 
-    <app-admin-dashboard-time-selector
+    <app-date-range-selector
       selectorTitle="日期區間"
-    ></app-admin-dashboard-time-selector>
+    ></app-date-range-selector>
 
-    <app-admin-dashboard-button type="search" [todo]="onSearchHandler"></app-admin-dashboard-button>
-    <app-admin-dashboard-button type="clear" [todo]="onClearHandler"></app-admin-dashboard-button>
+    <button type="button" class="dashboard-btn search" (click)="onSearch()">
+      <i class="bi bi-search"></i>
+      <span>搜尋</span>
+    </button>
   </div>
 
   <div class="table-wrapper" #tableWrapper>
@@ -61,3 +72,6 @@
     (pageChange)="onPageChange($event)"
   ></app-dashboard-pagination>
 </section>
+
+
+

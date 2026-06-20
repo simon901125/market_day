@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
+import { DateRangeSelector } from '../../../shared/dashboard/date-range-selector/date-range-selector';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { OrganizerEventRow } from '../../../../models/interface/OrganizerEventRow';
 import { DashboardDataTable, DashboardTableAction, DashboardTableColumn } from '../../../shared/dashboard/dashboard-data-table/dashboard-data-table';
@@ -7,7 +8,7 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
 
 @Component({
   selector: 'app-organizer-event-management',
-  imports: [DashboardDataTable, DashboardPagination, Dropdown],
+  imports: [DashboardDataTable, DashboardPagination, Dropdown, DateRangeSelector],
   templateUrl: './organizer-event-management.html',
   styleUrl: './organizer-event-management.scss',
 })

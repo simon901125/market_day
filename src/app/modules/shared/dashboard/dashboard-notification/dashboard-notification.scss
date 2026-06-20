@@ -65,6 +65,13 @@
   gap: 6px;
 }
 
+.notification-page:not(.home-mode) {
+  app-dashboard-pagination {
+    display: block;
+    margin-top: 16px;
+  }
+}
+
 .notification-card {
   display: grid;
   grid-template-columns: 18px 54px 1fr 170px;

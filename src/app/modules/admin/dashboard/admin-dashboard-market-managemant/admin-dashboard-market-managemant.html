@@ -1,34 +1,45 @@
-<section class="admin-market-managemant page-transition">
+﻿<section class="admin-market-managemant page-transition">
   <h1 class="page-title">活動管理</h1>
 
-  <div class="search-bar">
-    <app-admin-dashboard-serch-input
-      searchTitle="活動名稱"
-      placeholder="請輸入活動名稱"
-    ></app-admin-dashboard-serch-input>
+  <div class="dashboard-filter-bar market-management-filter">
+    <label class="dashboard-search-field">
+      <span class="dashboard-control-title">活動名稱</span>
+      <span class="dashboard-search-input">
+        <i class="bi bi-search"></i>
+        <input
+          type="search"
+          placeholder="請輸入活動名稱"
+          [value]="searchKeyword"
+          (input)="onSearchKeywordInput($event)"
+          (keydown.enter)="onSearch()"
+        />
+      </span>
+    </label>
 
-    <app-admin-dashboard-dropdown
+    <app-dropdown
       #organizerDropdown
       title="主辦方"
       placeholder="全部"
       [options]="organizerOptions"
       (optionSelected)="onOrganizerSelected($event)"
-    ></app-admin-dashboard-dropdown>
+    ></app-dropdown>
 
-    <app-admin-dashboard-dropdown
+    <app-dropdown
       #statusDropdown
       title="狀態"
       placeholder="全部"
       [options]="statusOptions"
       (optionSelected)="onStatusSelected($event)"
-    ></app-admin-dashboard-dropdown>
+    ></app-dropdown>
 
-    <app-admin-dashboard-time-selector
+    <app-date-range-selector
       selectorTitle="活動日期"
-    ></app-admin-dashboard-time-selector>
+    ></app-date-range-selector>
 
-    <app-admin-dashboard-button type="search" [todo]="onSearchHandler"></app-admin-dashboard-button>
-    <app-admin-dashboard-button type="clear" [todo]="onClearHandler"></app-admin-dashboard-button>
+    <button type="button" class="dashboard-btn search" (click)="onSearch()">
+      <i class="bi bi-search"></i>
+      <span>搜尋</span>
+    </button>
   </div>
 
   <div class="table-wrapper" #tableWrapper>
@@ -60,9 +71,9 @@
             <td class="activity-cdate">{{ activity.createdAt }}</td>
             <td class="activity-btn">
               @if (isReviewNeeded(activity.status)) {
-                <app-admin-dashboard-button type="primary" text="審核" [todo]="getDetailHandler(activity)"></app-admin-dashboard-button>
+                <button type="button" class="dashboard-btn primary" (click)="getDetailHandler(activity)()">審核</button>
               } @else {
-                <app-admin-dashboard-button type="secondary" text="查看" [todo]="getDetailHandler(activity)"></app-admin-dashboard-button>
+                <button type="button" class="dashboard-btn secondary" (click)="getDetailHandler(activity)()">查看</button>
               }
             </td>
           </tr>
@@ -82,3 +93,6 @@
     (pageChange)="onPageChange($event)"
   ></app-dashboard-pagination>
 </section>
+
+
+

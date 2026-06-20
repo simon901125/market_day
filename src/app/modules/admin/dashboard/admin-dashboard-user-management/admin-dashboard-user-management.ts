@@ -1,8 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AdminDashboardDropdown } from '../../shared/admin-dashboard-dropdown/admin-dashboard-dropdown';
-import { AdminDashboardButton } from '../../shared/admin-dashboard-button/admin-dashboard-button';
-import { AdminDashboardSerchInput } from '../../shared/admin-dashboard-serch-input/admin-dashboard-serch-input';
+import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { UserStatus } from '../../../../models/status/UserStatus';
 import { UserType } from '../../../../models/type/UserType';
 import { UserListItem } from '../../../../models/interface/UserListItem';
@@ -11,9 +9,7 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
 @Component({
   selector: 'app-admin-dashboard-user-management',
   imports: [
-    AdminDashboardDropdown,
-    AdminDashboardButton,
-    AdminDashboardSerchInput,
+    Dropdown,
     DashboardPagination,
   ],
   templateUrl: './admin-dashboard-user-management.html',
@@ -23,9 +19,8 @@ export class AdminDashboardUserManagement implements AfterViewInit{
   
   constructor(private router: Router) {}
 
-  @ViewChild(AdminDashboardSerchInput) searchInputRef!: AdminDashboardSerchInput;
-  @ViewChild('roleDropdown') roleDropdownRef!: AdminDashboardDropdown;
-  @ViewChild('statusDropdown') statusDropdownRef!: AdminDashboardDropdown;
+  @ViewChild('roleDropdown') roleDropdownRef!: Dropdown;
+  @ViewChild('statusDropdown') statusDropdownRef!: Dropdown;
   @ViewChild('tableWrapper') tableWrapperRef!: ElementRef<HTMLDivElement>;
 
   /** 每列高度，需與 SCSS `.activity-table tbody tr` 的高度一致 */
@@ -85,6 +80,8 @@ export class AdminDashboardUserManagement implements AfterViewInit{
   private selectedRole = '';
   /** 目前篩選條件：帳號狀態 */
   private selectedStatus = '';
+  /** 目前輸入的搜尋關鍵字 */
+  searchKeyword = '';
 
   /** 目前頁面顯示的活動列表（已套用篩選＋分頁） */
   users: UserListItem[] = [];
@@ -122,19 +119,13 @@ export class AdminDashboardUserManagement implements AfterViewInit{
     this.selectedStatus = value;
   }
 
-  /** 搜尋按鈕：彙整篩選條件後重新查詢（回到第一頁） */
-  onSearch(): void {
-    this.currentPage = 1;
-    this.fetchusers();
+  /** 更新搜尋關鍵字 */
+  onSearchKeywordInput(event: Event): void {
+    this.searchKeyword = (event.target as HTMLInputElement).value;
   }
 
-  /** 清除按鈕：清空所有篩選條件與子元件畫面顯示，重新查詢 */
-  onClear(): void {
-    this.selectedRole = '';
-    this.selectedStatus = '';
-    this.searchInputRef.reset();
-    this.roleDropdownRef.reset();
-    this.statusDropdownRef.reset();
+  /** 搜尋按鈕：彙整篩選條件後重新查詢（回到第一頁） */
+  onSearch(): void {
     this.currentPage = 1;
     this.fetchusers();
   }
@@ -144,10 +135,6 @@ export class AdminDashboardUserManagement implements AfterViewInit{
     this.currentPage = page;
     this.fetchusers();
   }
-
-  /** 搜尋／清除按鈕點擊事件，綁定給 app-admin-dashboard-button 的 [todo] */
-  onSearchHandler = (): void => this.onSearch();
-  onClearHandler = (): void => this.onClear();
 
   //TODO:按鈕按下後的動作
 
@@ -174,7 +161,7 @@ export class AdminDashboardUserManagement implements AfterViewInit{
    *   });
    */
   private fetchusers(): void {
-    const keyword = this.searchInputRef?.inputValue?.trim() ?? '';
+    const keyword = this.searchKeyword.trim();
 
     const filtered = this.mockUsers.filter((item) => {
       const matchKeyword = !keyword || item.name.includes(keyword);
