@@ -1,17 +1,27 @@
 <main class="application-page">
   <h1>我的報名紀錄</h1>
 
-  <nav class="tabs" aria-label="報名狀態篩選">
-    @for (tab of tabs; track tab.value) {
-      <button
-        type="button"
-        [class.active]="activeTab === tab.value"
-        (click)="setActiveTab(tab.value)"
-      >
-        {{ tab.label }}
-      </button>
-    }
-  </nav>
+  <section class="app-filter-bar vendor-record-filter" aria-label="報名紀錄篩選">
+    <label class="app-search-field">
+      <span class="app-control-title">活動名稱</span>
+      <span class="app-search-input">
+        <i class="bi bi-search"></i>
+        <input type="search" placeholder="請輸入活動名稱" />
+      </span>
+    </label>
+
+    <app-dropdown
+      title="報名狀態"
+      [options]="statusOptions"
+      placeholder="全部狀態"
+      [selectedValue]="selectedStatusLabel"
+      (optionSelected)="selectStatus($event)"
+    ></app-dropdown>
+
+    <app-date-range-selector selectorTitle="活動日期"></app-date-range-selector>
+
+    <button type="button" class="app-btn search">搜尋</button>
+  </section>
 
   <section class="record-card" aria-label="報名紀錄列表">
     <div class="table-wrap">
