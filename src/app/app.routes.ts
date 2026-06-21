@@ -151,19 +151,15 @@ export const routes: Routes = [
         component: VendorDashboardStall,
       },
       {
-        path: 'stall',
-        component: VendorDashboardStall,
-      },
-      {
-        path: 'register-record',
+        path: 'application-record',
         component: VendorApplicationRecord,
       },
       {
-        path: 'register-record/detail/:applicationNo',
+        path: 'appliction-record/detail/:applicationNo',
         component: VendorApplicationDetail,
       },
       {
-        path: 'register-record/detail',
+        path: 'appliction-record/detail',
         component: VendorApplicationDetail,
       },
       {
