@@ -32,7 +32,7 @@ export class DashboardLayout {
         { label: '首頁', icon: 'bi-house-door', path: '/vendor/dash-board/home' },
         { label: '通知中心', icon: 'bi-bell', path: '/vendor/dash-board/notification' },
         { label: '我的攤位', icon: 'bi-shop', path: '/vendor/dash-board/myStall' },
-        { label: '我的報名紀錄', icon: 'bi-clipboard-check', path: '/vendor/dash-board/register-record' },
+        { label: '我的報名紀錄', icon: 'bi-clipboard-check', path: '/vendor/dash-board/application-record' },
       ];
 
       this.userMenuItems = [

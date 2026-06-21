@@ -26,10 +26,32 @@ describe('VendorApplicationDetail', () => {
     const textContent: string = fixture.nativeElement.textContent;
 
     expect(component.currentStatus).toBe('refundApplying');
-    expect(textContent).toContain('報名詳細');
-    expect(textContent).toContain(component.detail.title);
     expect(textContent).toContain('退款申請中');
-    expect(textContent).toContain('退款資訊');
+    expect(textContent).toContain(component.detail.title);
+    expect(textContent).toContain('退款審核時間');
     expect(textContent).toContain('7 - 14 個工作天');
+  });
+
+  it('should render refund processing detail by binding', () => {
+    component.setStatus('refundProcessing');
+    fixture.detectChanges();
+
+    const textContent: string = fixture.nativeElement.textContent;
+
+    expect(textContent).toContain('退款處理中');
+    expect(textContent).toContain('退款審核時間');
+    expect(textContent).toContain('2026/06/10 10:55');
+  });
+
+  it('should render refund success dialog and booth action by binding', () => {
+    component.setStatus('refundSuccess');
+    fixture.detectChanges();
+
+    const textContent: string = fixture.nativeElement.textContent;
+
+    expect(textContent).toContain('申請退款');
+    expect(textContent).toContain('待選位');
+    expect(textContent).toContain('尚未選擇攤位');
+    expect(textContent).toContain('退款申請已送出！');
   });
 });

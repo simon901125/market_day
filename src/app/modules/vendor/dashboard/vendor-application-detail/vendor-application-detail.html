@@ -1,15 +1,29 @@
-<main class="application-detail-page">
+<main class="application-detail-page" [class.modal-open]="showDialog">
   <nav class="breadcrumb-line" aria-label="breadcrumb">
-    <a routerLink="/vendor/dash-board/register-record">我的報名紀錄</a>
+    <a routerLink="/vendor/dash-board/application-record">我的報名紀錄</a>
     <span>›</span>
     <strong>報名詳細</strong>
   </nav>
 
   <header class="page-title">
-    <a routerLink="/vendor/dash-board/register-record" class="back-btn" aria-label="返回我的報名紀錄">
+    <a
+      routerLink="/vendor/dash-board/application-record"
+      class="back-btn"
+      aria-label="返回我的報名紀錄"
+    >
       <i class="bi bi-arrow-left"></i>
     </a>
     <h1>報名詳細</h1>
+
+    @if (detail.actionButton) {
+      <button
+        type="button"
+        class="header-action"
+        (click)="handleAction(detail.actionButton.action)"
+      >
+        {{ detail.actionButton.label }}
+      </button>
+    }
   </header>
 
   <section class="summary-card">
@@ -30,7 +44,7 @@
 
     <div class="summary-actions">
       <span class="status-badge" [ngClass]="detail.statusClass">{{ detail.statusText }}</span>
-      <a routerLink="/user/activity-detail" class="outline-link">
+      <a routerLink="/user/activity-detail" [state]="{ market: market }" class="outline-link">
         查看活動詳細
         <i class="bi bi-arrow-right"></i>
       </a>
@@ -88,19 +102,35 @@
 
       @if (detail.paymentLines.length) {
         <div class="payment-detail">
-          <strong class="toggle-label">付款明細</strong>
+          <button
+            type="button"
+            class="toggle-label"
+            (click)="isPaymentDetailOpen = !isPaymentDetailOpen"
+          >
+            <i
+              class="bi"
+              [class.bi-chevron-down]="!isPaymentDetailOpen"
+              [class.bi-chevron-up]="isPaymentDetailOpen"
+            ></i>
 
-          @for (line of detail.paymentLines; track line.label) {
-            <div>
-              <span>{{ line.label }}</span>
-              <strong>{{ formatCurrency(line.amount) }}</strong>
+            付款明細
+          </button>
+
+          @if (isPaymentDetailOpen) {
+            <div class="payment-content">
+              @for (line of detail.paymentLines; track line.label) {
+                <div>
+                  <span>{{ line.label }}</span>
+                  <strong>{{ formatCurrency(line.amount) }}</strong>
+                </div>
+              }
+
+              <div class="total-line">
+                <span>總計</span>
+                <strong>{{ formatCurrency(paymentTotal) }}</strong>
+              </div>
             </div>
           }
-
-          <div class="total-line">
-            <span>總計</span>
-            <strong>{{ formatCurrency(paymentTotal) }}</strong>
-          </div>
         </div>
       }
     </section>
@@ -137,9 +167,29 @@
         </p>
       }
 
-      @if (detail.sideCard.type === 'booth' && detail.booth.selected) {
+      @if (detail.sideCard.type === 'booth' && detail.booth.actionLabel) {
         <button type="button" class="map-btn">{{ detail.booth.actionLabel }}</button>
       }
     </section>
   </div>
+
+  @if (showDialog && detail.dialog) {
+    <div class="dialog-backdrop">
+      <section
+        class="success-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="refundDialogTitle"
+      >
+        <div class="dialog-icon">
+          <i class="bi bi-check-lg"></i>
+        </div>
+
+        <h2 id="refundDialogTitle">{{ detail.dialog.title }}</h2>
+        <p>{{ detail.dialog.message }}</p>
+
+        <button type="button" (click)="closeDialog()">{{ detail.dialog.confirmLabel }}</button>
+      </section>
+    </div>
+  }
 </main>
