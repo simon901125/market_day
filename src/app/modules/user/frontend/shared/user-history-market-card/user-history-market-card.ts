@@ -3,6 +3,7 @@ import { HistoryMarketCardItem } from '../../../../../models/interface/HistoryMa
 
 @Component({
   selector: 'app-user-history-market-card',
+  standalone: true,
   imports: [],
   templateUrl: './user-history-market-card.html',
   styleUrl: './user-history-market-card.scss',

@@ -1,28 +1,28 @@
-// 後台頁面標題列，提供標題與主要操作按鈕的共用排列。
-.dashboard-page-header {
+// 全站共用頁面標題列：前台、後台列表頁都可以使用。
+.app-page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
 }
 
-// 後台頁面主標題。
-.dashboard-page-title {
+// 全站共用頁面標題文字。
+.app-page-title {
   margin: 0;
   color: var(--text-dark);
   font-size: 25px;
   font-weight: 900;
 }
 
-// 後台搜尋列欄位外層，提供標題與控制項垂直排列。
-.dashboard-search-field {
+// 搜尋 / 篩選欄位外層，負責包住標題與輸入框。
+.app-search-field {
   display: block;
   width: 100%;
   font-weight: 600;
 }
 
-// 後台搜尋列容器，統一搜尋區塊的外框、間距與控制項對齊方式。
-.dashboard-filter-bar {
+// 搜尋 / 篩選列容器，頁面可自行覆寫 grid-template-columns。
+.app-filter-bar {
   display: grid;
   align-items: end;
   gap: 16px;
@@ -30,20 +30,19 @@
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-card);
   background: var(--bg-white);
+  box-sizing: border-box;
 
-  app-dropdown,
-  app-date-range-selector,
-  .dashboard-search-field {
+  > * {
     min-width: 0;
   }
 
-  .dashboard-btn {
+  .app-btn {
     width: 100%;
   }
 }
 
-// 後台搜尋列欄位標題，和 Dropdown、日期區間標題共用同一個視覺節奏。
-.dashboard-control-title {
+// 欄位標題，搭配 app-search-field、dropdown、date-range-selector 使用。
+.app-control-title {
   display: block;
   margin: 0 auto 4px 8px;
   color: var(--text-normal);
@@ -51,8 +50,8 @@
   font-weight: 600;
 }
 
-// 後台搜尋列文字輸入框，和 Dropdown、日期區間統一高度、框線、圓角與 hover。
-.dashboard-search-input {
+// 共用搜尋輸入框樣式，讓前台與後台的高度、框線、圓角一致。
+.app-search-input {
   width: 100%;
   height: 40px;
   padding: 0 18px;
@@ -102,8 +101,8 @@
   }
 }
 
-// 後台主要操作按鈕，搜尋、新增與表格操作都以這裡作為基準。
-.dashboard-btn {
+// 共用按鈕樣式，依情境加上 search、primary、secondary、clear。
+.app-btn {
   width: 100%;
   height: 40px;
   padding: 0 18px;
@@ -160,20 +159,20 @@
   }
 }
 
-// 後台頁面右上角主要建立按鈕。
-.dashboard-create-btn {
+// 頁面主要新增按鈕，桌機不滿版、手機滿版。
+.app-create-btn {
   width: auto;
   flex: 0 0 auto;
   padding: 0 18px;
 }
 
 @media (max-width: 768px) {
-  .dashboard-page-header {
+  .app-page-header {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .dashboard-create-btn {
+  .app-create-btn {
     width: 100%;
   }
 }

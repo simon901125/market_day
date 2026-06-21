@@ -18,14 +18,14 @@
 
 .select-btn {
   width: 100%;
-  height: 40px;
-  padding: 0 18px;
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-tag);
+  height: var(--dropdown-control-height, 40px);
+  padding: var(--dropdown-control-padding, 0 18px);
+  border: 1px solid var(--dropdown-control-border-color, var(--border-soft));
+  border-radius: var(--dropdown-control-radius, var(--radius-tag));
   background: var(--bg-white);
   color: var(--text-normal);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: var(--dropdown-control-font-size, 0.85rem);
+  font-weight: var(--dropdown-control-font-weight, 600);
   box-sizing: border-box;
   display: flex;
   align-items: center;

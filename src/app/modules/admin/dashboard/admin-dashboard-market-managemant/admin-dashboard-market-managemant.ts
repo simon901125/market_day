@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
-import { DateRangeSelector } from '../../../shared/dashboard/date-range-selector/date-range-selector';
+import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { ActivityListItem } from '../../../../models/interface/ActivityListItem';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';

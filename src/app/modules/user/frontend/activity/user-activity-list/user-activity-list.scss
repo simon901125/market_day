@@ -77,7 +77,7 @@
   }
 }
 
-:host ::ng-deep app-user-market-search-panel .search-panel {
+:host ::ng-deep app-user-market-search-panel .market-search-panel {
   width: 100%;
   margin: 0;
 }
@@ -225,7 +225,7 @@
     }
   }
 
-  :host ::ng-deep app-user-market-search-panel .search-panel {
+  :host ::ng-deep app-user-market-search-panel .market-search-panel {
     padding: 14px;
   }
 }

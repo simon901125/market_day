@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
-import { DateRangeSelector } from '../../../shared/dashboard/date-range-selector/date-range-selector';
+import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { OrganizerEventRow } from '../../../../models/interface/OrganizerEventRow';
 import { DashboardDataTable, DashboardTableAction, DashboardTableColumn } from '../../../shared/dashboard/dashboard-data-table/dashboard-data-table';

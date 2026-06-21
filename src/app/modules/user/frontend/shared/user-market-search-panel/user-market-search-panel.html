@@ -1,37 +1,32 @@
-<section class="search-panel">
-  <div class="search-row">
-    <div class="search-input keyword-input">
+<section class="app-filter-bar market-search-panel">
+  <label class="app-search-field keyword-input">
+    <span class="app-control-title">關鍵字</span>
+    <span class="app-search-input">
       <i class="bi bi-search"></i>
       <input type="text" placeholder="搜尋市集名稱、地點或關鍵字" />
-    </div>
+    </span>
+  </label>
 
-    <div class="search-input date-input">
-      <i class="bi bi-calendar3"></i>
-      <input type="text" placeholder="起始日" />
-    </div>
+  <app-dropdown
+    title="縣市"
+    [options]="cityOptions"
+    placeholder="全部縣市"
+    iconClass="bi bi-geo-alt-fill"
+    (optionSelected)="selectCity($event)"
+  ></app-dropdown>
 
-    <div class="search-input date-input">
-      <i class="bi bi-calendar3"></i>
-      <input type="text" placeholder="結束日" />
-    </div>
+  <app-dropdown
+    title="狀態"
+    [options]="statusOptions"
+    placeholder="全部狀態"
+    (optionSelected)="selectStatus($event)"
+  ></app-dropdown>
 
-    <app-dropdown
-      [options]="cityOptions"
-      placeholder="全部縣市"
-      iconClass="bi bi-geo-alt-fill"
-      (optionSelected)="selectCity($event)">
-    </app-dropdown>
+  <app-date-range-selector [title]="dateRangeTitle"></app-date-range-selector>
 
-    <app-dropdown
-      [options]="statusOptions"
-      placeholder="全部狀態"
-      (optionSelected)="selectStatus($event)">
-    </app-dropdown>
-    
-    <button class="search-btn" type="button" routerLink="/user/activity-list">
-      搜尋
-    </button>
-  </div>
+  <button class="app-btn search" type="button" routerLink="/user/activity-list">
+    搜尋
+  </button>
 
   <div class="category-scroll-wrap">
     <div class="category-tags">
