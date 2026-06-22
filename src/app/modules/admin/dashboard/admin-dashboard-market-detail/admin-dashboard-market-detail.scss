@@ -46,6 +46,11 @@
   font-size: 0.7rem;
 }
 
+.breadcrumb-mark {
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
 .title-row {
   display: flex;
   align-items: center;
@@ -81,7 +86,307 @@
   align-items: center;
   gap: 12px;
 
-  app-admin-dashboard-button {
-    flex: 0 0 auto;
+  .app-btn {
+    width: auto;
   }
+}
+
+// 卡片捲動容器
+.cards-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+
+// 共用卡片
+.info-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  padding: 20px 24px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 16px 0;
+}
+
+// 兩欄 grid
+.cards-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 16px;
+}
+
+.cards-grid-booth {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 16px;
+}
+
+// 活動主資訊卡
+.activity-main-card {
+  display: flex;
+  gap: 24px;
+
+  .main-card-image {
+    flex: 0 0 200px;
+
+    img {
+      width: 200px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: var(--radius-card);
+    }
+  }
+
+  .main-card-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .main-card-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .activity-name {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--text-dark);
+    margin: 0;
+  }
+
+  .main-card-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 24px;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    i {
+    color: var(--text-normal);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    }
+
+    .meta-value {
+      color: var(--text-normal);
+      margin-left: 8px;
+    }
+  }
+}
+
+// 狀態標籤
+.status-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-tag);
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+// 活動介紹
+.card-description {
+  font-size: 0.95rem;
+  color: var(--text-normal);
+  font-weight: 600;
+  line-height: 1.85;
+  margin: 0;
+  white-space: pre-line;
+}
+
+// 時間流程
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  i {
+    color: var(--text-normal);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  div {
+    display: flex;
+    gap: 48px;
+  }
+}
+
+.timeline-label {
+    color: var(--text-normal);
+    white-space: nowrap;
+    min-width: 80px;
+}
+
+.timeline-value {
+  color: var(--text-dark);
+}
+
+// 主辦方 / 交通 通用列表
+.detail-list-organizer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 24px;
+}
+
+.detail-list-transportation {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detail-list-booth {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+
+  i {
+    color: var(--text-normal);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .detail-label {
+    color: var(--text-normal);
+    white-space: nowrap;
+    min-width: 80px;
+  }
+
+  .detail-value {
+    color: var(--text-dark);
+  }
+}
+
+.detail-item.booth {
+  flex-direction: column;
+  gap: 14px;
+
+
+  div {
+    display: flex;
+    gap: 14px;
+  }
+}
+
+// 攤位分區
+.booth-card-body {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+
+// 攤位配置圖
+.booth-layout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  .app-btn {
+    width: auto;
+    height: 32px;
+    margin-top: -6px;
+  }
+}
+
+.booth-layout-image {
+  img {
+    width: 100%;
+    border-radius: var(--radius-card);
+    object-fit: contain;
+    max-height: 260px;
+    background: var(--bg-soft);
+  }
+}
+
+// 狀態紀錄表格
+.status-log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  thead tr {
+    height: 44px;
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  th {
+    text-align: left;
+    padding: 0 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-normal);
+  }
+
+  tbody tr {
+    height: 52px;
+    border-bottom: 1px solid var(--border-light);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: var(--bg-primary);
+    }
+  }
+
+  td {
+    padding: 0 16px;
+    color: var(--text-dark);
+    vertical-align: middle;
+  }
+}
+
+.log-datetime,
+.log-description,
+.log-operator {
+  color: var(--text-normal) !important;
+  white-space: nowrap;
+}
+
+// 空資料
+.empty-detail {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-normal);
+  font-size: 1.2rem;
 }

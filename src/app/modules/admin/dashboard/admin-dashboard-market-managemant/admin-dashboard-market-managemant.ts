@@ -50,8 +50,8 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
   /** 需要管理員處理（顯示「審核」按鈕）的狀態，其餘顯示「查看」 */
   private readonly needsReviewStatuses: string[] = [
     ActivityStatus.pendingReview,
-    ActivityStatus.revisionRequired,
-    // ActivityStatus.mapBuilding,
+    // ActivityStatus.revisionRequired,
+    ActivityStatus.mapBuilding,
   ];
 
   /** 假資料：模擬後端回傳的活動列表，之後可替換成真正的 API 呼叫結果 */
