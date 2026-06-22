@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { ActivityListItem } from '../../../../models/interface/admin/ActivityListItem';
+import { AdminMarketDetail } from '../../../../models/interface/admin/AdminMarketDetail';
 
-/** 模擬後端資料，串接 API 後可移除 */
+/** 模擬後端列表資料，串接 API 後可移除 */
 const MOCK_ACTIVITIES: ActivityListItem[] = [
   { id: 1,  image: 'assets/images/market/cards/market-card-01.png', name: '夏日綠意市集',   organizer: '森林生活市集',   startDate: '2026-07-01', endDate: '2026-07-02', status: ActivityStatus.pendingReview,    createdAt: '2026-05-28 14:30' },
   { id: 2,  image: 'assets/images/market/cards/market-card-02.png', name: '秋季手作市集',   organizer: '日日好市',       startDate: '2026-09-15', endDate: '2026-09-16', status: ActivityStatus.registrationOpen, createdAt: '2026-05-27 10:00' },
@@ -31,9 +33,75 @@ const MOCK_ACTIVITIES: ActivityListItem[] = [
   { id: 24, image: 'assets/images/market/cards/market-card-04.png', name: '手沖咖啡市集',   organizer: '歡樂市集團隊',   startDate: '2026-08-15', endDate: '2026-08-16', status: ActivityStatus.full,             createdAt: '2026-05-21 10:25' },
 ];
 
+/** 模擬後端詳細資料，串接 API 後可移除 */
+const MOCK_DETAIL: AdminMarketDetail = {
+  activityId: 1,
+  activityStatus: ActivityStatus.pendingReview,
+  activityInfo: {
+    name: '夏日綠意市集',
+    type: '生活文創・生活選物・綠市場',
+    time: '2026/07/01 ~ 2026/08/02 10:00 ~ 19:00',
+    location: '台北市信義區君悅大道',
+    description: '夏天，是感受夏天好精選的季節。我們誠摯邀請一起品嚐這裡—在林蔭散策散步中，整城市到土地與人們的距離與共鳴。\n\n現場有豐富音樂現場演出和手作攤位，探索自然蔬食品和真實農夫，美食飲品音樂和演奏，適合全家人一起感受豐盛的美好時光。',
+  },
+  timeline: {
+    registrationStartTime: '2026/05/01  10:00',
+    registrationEndTime: '2026/05/15  23:59',
+    finalListConfirmation: '2026/05/29  12:00',
+    activityTime: '2026/07/01 ~ 2026/07/02',
+  },
+  organizerInfo: {
+    organizerName: '森林生活市集',
+    contactPerson: '林子庭',
+    contactPhone: '0912-345-678',
+    email: 'forest@marketday.com',
+    address: '台北市大安區忠孝東路四段127號8樓',
+    taxId: '98765432',
+    serviceHours: '週一 ~ 週五 09:00 ~ 18:00',
+  },
+  transportation: {
+    mrt: '捷運忠孝3號出口步行5分鐘',
+    bus: '藍5・紅12・北新幹線',
+    drivingDirections: '市政府地下停車場（步行約6分鐘）',
+  },
+  boothInfo: {
+    boothSpec: '3m x 3m x 2.5m',
+    boothCount: 90,
+    boothPrice: 2500,
+    boothZones: ['A區：50攤', 'B區：20攤', 'C區：20攤'],
+  },
+  boothLayoutImage: 'assets/images/market/cards/market-card-01.png',
+  statusLogs: [
+    {
+      dateTime: '2026/06/20  10:15',
+      status: ActivityStatus.pendingReview,
+      description: '主辦方已送出活動申請，等待審核。',
+      operator: { role: '主辦方', operatorName: '森林生活市集（林子庭）' },
+    },
+    {
+      dateTime: '2026/05/21  11:30',
+      status: ActivityStatus.revisionRequired,
+      description: '審核中發現問題，通知主辦方補件，請重新上傳資料。',
+      operator: { role: '管理員', operatorName: 'Admin' },
+    },
+    {
+      dateTime: '2026/05/22  14:00',
+      status: ActivityStatus.pendingReview,
+      description: '主辦方已完成補件，重新送出申請，等待審核。',
+      operator: { role: '主辦方', operatorName: '森林生活市集（林子庭）' },
+    },
+    {
+      dateTime: '2026/06/23  10:03',
+      status: ActivityStatus.pendingReview,
+      description: '主辦方已送出活動申請，等待管理員審核。',
+      operator: { role: '管理員', operatorName: 'Admin' },
+    },
+  ],
+};
+
 @Component({
   selector: 'app-admin-dashboard-market-detail',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './admin-dashboard-market-detail.html',
   styleUrl: './admin-dashboard-market-detail.scss',
 })
@@ -44,6 +112,7 @@ export class AdminDashboardMarketDetail implements OnInit {
   ) {}
 
   activity: ActivityListItem | null = null;
+  detail: AdminMarketDetail | null = null;
   readonly ActivityStatus = ActivityStatus;
 
   ngOnInit(): void {
@@ -52,11 +121,21 @@ export class AdminDashboardMarketDetail implements OnInit {
     if (stateActivity) {
       this.activity = stateActivity;
     } else {
-      // 頁面重新整理時，history.state 消失，改用路由 ID 模擬後端重抓
-      // 串接 API 後替換成：this.http.get<ActivityListItem>(`/api/admin/activities/${id}`).subscribe(...)
       const id = Number(this.route.snapshot.params['id']);
       this.activity = MOCK_ACTIVITIES.find(a => a.id === id) ?? null;
     }
+
+    if (this.activity?.id === MOCK_DETAIL.activityId) {
+      this.detail = MOCK_DETAIL;
+    }
+  }
+
+  getStatusClass(status: string): string {
+    return ActivityStatus.getClass(status);
+  }
+
+  goBack(): void {
+    this.router.navigate(['/admin/dash-board/activity']);
   }
 
   onRequireSupplementHandler = (): void => {
@@ -69,5 +148,9 @@ export class AdminDashboardMarketDetail implements OnInit {
 
   onMapBuildingDoneHandler = (): void => {
     // TODO: 呼叫後端 API，將活動狀態改為「待發布」
+  };
+
+  downloadImg = (): void => {
+    // TODO: 呼叫後端 API，下載圖片
   };
 }

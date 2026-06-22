@@ -2,12 +2,12 @@
   <div class="page-header">
     <div class="header-left">
       <p class="breadcrumb">
-        <span class="breadcrumb-link">活動管理</span>
+        <span class="breadcrumb-link" (click)="goBack()">活動管理</span>
         <span class="breadcrumb-sep">＞</span>
-        <span>活動詳情</span>
+        <span class="breadcrumb-mark">活動詳情</span>
       </p>
       <div class="title-row">
-        <button class="back-btn" type="button">
+        <button class="back-btn" type="button" (click)="goBack()">
           <i class="bi bi-arrow-left"></i>
         </button>
         <h1 class="page-title">活動詳情</h1>
@@ -15,8 +15,243 @@
     </div>
 
     <div class="header-actions">
+      @if (activity?.status === ActivityStatus.pendingReview) {
+      <button type="button" class="app-btn secondary" (click)="onRequireSupplementHandler()">要求補件</button>
+      <button type="button" class="app-btn primary" (click)="onApproveHandler()">審核通過</button>
+      }
+      @if (activity?.status === ActivityStatus.mapBuilding) {
+      <button type="button" class="app-btn primary" (click)="onMapBuildingDoneHandler()">地圖建置完成</button>
+      }
     </div>
   </div>
 
-  <!-- 卡片欄區塊（下次實作） -->
+  @if (detail) {
+  <div class="cards-container">
+
+    <!-- 活動主資訊卡 -->
+    <div class="info-card activity-main-card">
+      <div class="main-card-image">
+        <img [src]="activity?.image" [alt]="detail.activityInfo.name" />
+      </div>
+      <div class="main-card-body">
+        <div class="main-card-title-row">
+          <h2 class="activity-name">{{ detail.activityInfo.name }}</h2>
+        </div>
+        <div class="main-card-meta">
+          <div class="meta-item">
+            <i class="bi bi-tag"></i>
+            <span>活動類型</span>
+            <span class="meta-value">{{ detail.activityInfo.type }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="bi bi-calendar-check"></i>
+            <span>活動編號</span>
+            <span class="meta-value">{{ detail.activityId }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="bi bi-clock"></i>
+            <span>活動時間</span>
+            <span class="meta-value">{{ detail.activityInfo.time }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="bi bi-bookmark"></i>
+            <span>活動狀態</span>
+            <span class="status-tag" [class]="getStatusClass(detail.activityStatus)">{{ detail.activityStatus }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="bi bi-geo-alt"></i>
+            <span>活動地點</span>
+            <span class="meta-value">{{ detail.activityInfo.location }}</span>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 活動介紹 + 時間流程 -->
+    <div class="cards-grid">
+      <div class="info-card">
+        <h3 class="card-title">活動介紹</h3>
+        <p class="card-description">{{ detail.activityInfo.description }}</p>
+      </div>
+
+      <div class="info-card">
+        <h3 class="card-title">時間流程</h3>
+        <div class="timeline-list">
+          <div class="timeline-item">
+            <i class="bi bi-calendar-check"></i>
+            <div>
+              <span class="timeline-label">報名開始時間</span>
+              <span class="timeline-value">{{ detail.timeline.registrationStartTime }}</span>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <i class="bi bi-calendar-x"></i>
+            <div>
+              <span class="timeline-label">報名截止時間</span>
+              <span class="timeline-value">{{ detail.timeline.registrationEndTime }}</span>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <i class="bi bi-calendar2-check"></i>
+            <div>
+              <span class="timeline-label">最終名單確認</span>
+              <span class="timeline-value">{{ detail.timeline.finalListConfirmation }}</span>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <i class="bi bi-calendar-event"></i>
+            <div>
+              <span class="timeline-label">活動舉辦時間</span>
+              <span class="timeline-value">{{ detail.timeline.activityTime }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主辦方資料 + 交通方式 -->
+    <div class="cards-grid">
+      <div class="info-card">
+        <h3 class="card-title">主辦方資料</h3>
+        <div class="detail-list-organizer">
+          <div class="detail-item">
+            <i class="bi bi-building"></i>
+            <span class="detail-label">主辦方名稱</span>
+            <span class="detail-value">{{ detail.organizerInfo.organizerName }}</span>
+          </div>
+          <div class="detail-item">
+            <i class="bi bi-person"></i>
+            <span class="detail-label">聯絡人</span>
+            <span class="detail-value">{{ detail.organizerInfo.contactPerson }}</span>
+          </div>
+          <div class="detail-item">
+            <i class="bi bi-receipt"></i>
+            <span class="detail-label">統一編號</span>
+            <span class="detail-value">{{ detail.organizerInfo.taxId }}</span>
+          </div>
+          <div class="detail-item">
+            <i class="bi bi-telephone"></i>
+            <span class="detail-label">聯絡電話</span>
+            <span class="detail-value">{{ detail.organizerInfo.contactPhone }}</span>
+          </div>
+          <div class="detail-item">
+            <i class="bi bi-clock"></i>
+            <span class="detail-label">服務時間</span>
+            <span class="detail-value">{{ detail.organizerInfo.serviceHours }}</span>
+          </div>
+          <div class="detail-item">
+            <i class="bi bi-envelope"></i>
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ detail.organizerInfo.email }}</span>
+          </div>
+          <div class="detail-item">
+            <i class="bi bi-geo-alt"></i>
+            <span class="detail-label">地址</span>
+            <span class="detail-value">{{ detail.organizerInfo.address }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <h3 class="card-title">交通方式</h3>
+        <div class="detail-list-transportation">
+          <div class="detail-item">
+            <i class="bi bi-train-front"></i>
+            <span class="detail-label">捷運</span>
+            <span class="detail-value">{{ detail.transportation.mrt }}</span>
+          </div>
+          <div class="detail-item">
+            <i class="bi bi-bus-front"></i>
+            <span class="detail-label">公車</span>
+            <span class="detail-value">{{ detail.transportation.bus }}</span>
+          </div>
+          <div class="detail-item">
+            <i class="bi bi-car-front"></i>
+            <span class="detail-label">開車</span>
+            <span class="detail-value">{{ detail.transportation.drivingDirections }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 攤位資訊 + 攤位配置圖 -->
+    <div class="cards-grid-booth">
+      <div class="info-card">
+        <h3 class="card-title">攤位資訊</h3>
+        <div class="booth-card-body">
+          <div class="detail-list-booth">
+            <div class="detail-item ">
+              <span class="detail-label">攤位規格</span>
+              <span class="detail-value">{{ detail.boothInfo.boothSpec }}</span>
+            </div>
+            <div class="detail-item ">
+              <span class="detail-label">攤位數量</span>
+              <span class="detail-value">共 {{ detail.boothInfo.boothCount }} 攤</span>
+            </div>
+            <div class="detail-item ">
+              <span class="detail-label">攤位價格</span>
+              <span class="detail-value">{{ detail.boothInfo.boothPrice | number }} 元 / 攤</span>
+            </div>
+          </div>
+          <div class="detail-list-booth">
+            <div class="detail-item booth">
+              <span class="detail-label">攤位分區與數量</span>
+              @for (zone of detail.boothInfo.boothZones; track zone) {
+                <div>
+                  <i class="bi bi-circle-fill"></i>
+                  <span class="detail-value">{{ zone }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="booth-layout-header">
+          <h3 class="card-title">攤位配置圖</h3>
+          <button type="button" class="app-btn secondary" (click)="downloadImg()"><i
+              class="bi bi-download"></i>下載配置圖</button>
+        </div>
+        <div class="booth-layout-image">
+          <img [src]="detail.boothLayoutImage" alt="攤位配置圖" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 狀態紀錄 -->
+    <div class="info-card">
+      <h3 class="card-title">狀態紀錄</h3>
+      <table class="status-log-table">
+        <thead>
+          <tr>
+            <th>日期時間</th>
+            <th>狀態</th>
+            <th>說明</th>
+            <th>操作人</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (log of detail.statusLogs; track log.dateTime) {
+          <tr>
+            <td class="log-datetime">{{ log.dateTime }}</td>
+            <td class="log-status">
+              <span class="status-tag" [class]="getStatusClass(log.status)">{{ log.status }}</span>
+            </td>
+            <td class="log-description">{{ log.description }}</td>
+            <td class="log-operator">{{ log.operator.role }} : {{ log.operator.operatorName }}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  } @else {
+  <div class="empty-detail">
+    <p>找不到活動詳細資料</p>
+  </div>
+  }
 </section>
