@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
-import { ActivityListItem } from '../../../../models/interface/ActivityListItem';
+import { ActivityListItem } from '../../../../models/interface/admin/ActivityListItem';
 
 /** 模擬後端資料，串接 API 後可移除 */
 const MOCK_ACTIVITIES: ActivityListItem[] = [

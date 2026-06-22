@@ -17,9 +17,9 @@ export class DateRangeSelector {
   @ViewChild('endInputEl') private endInputElRef!: ElementRef<HTMLInputElement>;
 
   /** 起始日期，格式為 YYYY-MM-DD */
-  startDate: string | null = null;
+  @Input() startDate: string | null = null;
   /** 結束日期，格式為 YYYY-MM-DD */
-  endDate: string | null = null;
+  @Input() endDate: string | null = null;
 
   /** 顯示用標題 */
   get displayTitle(): string {

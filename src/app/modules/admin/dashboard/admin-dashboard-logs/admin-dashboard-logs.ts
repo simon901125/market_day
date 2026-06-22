@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { OperationType } from '../../../../models/type/OperationType';
-import { AdminLogItem } from '../../../../models/interface/AdminLogItem';
+import { AdminLogItem } from '../../../../models/interface/admin/AdminLogItem';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 
 @Component({

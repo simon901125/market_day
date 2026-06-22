@@ -1,4 +1,4 @@
-import { MarketCardItem } from './MarketCardItem';
+import { MarketCardItem } from '../shared/MarketCardItem';
 
 /** 歷史市集卡片項目 */
 export interface HistoryMarketCardItem extends MarketCardItem {

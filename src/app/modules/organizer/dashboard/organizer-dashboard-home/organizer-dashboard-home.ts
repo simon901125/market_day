@@ -2,15 +2,7 @@ import { Component } from '@angular/core';
 import { OrganizerDashboardNotification } from '../organizer-dashboard-notification/organizer-dashboard-notification';
 import { DashboardHomeTodoCard } from '../../../shared/dashboard/dashboard-home-todo-card/dashboard-home-todo-card';
 import { DashboardNotification } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
-
-interface TodoItem {
-  icon: string;
-  count: number;
-  unit: string;
-  label: string;
-  path: string;
-  iconColor?: string;
-}
+import { TodoItem } from '../../../../models/interface/organizer/OrganizerDashboardHomeTodo';
 
 @Component({
   selector: 'app-organizer-dashboard-home',

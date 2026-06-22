@@ -3,7 +3,7 @@
     <span class="select-title">{{ title }}</span>
   }
 
-  <button class="select-btn" type="button" (click)="toggle()">
+  <button class="select-btn" [class.invalid]="invalid" [attr.aria-invalid]="invalid" type="button" (click)="toggle()">
     <span class="select-label">
       @if (iconClass) {
         <i [class]="'select-leading-icon ' + iconClass"></i>
@@ -19,7 +19,7 @@
         <li
           class="dropdown-item"
           [class.active]="activeIndex === i"
-          (click)="selectOption(i)"
+          (click)="selectOption(i, $event)"
           role="option"
           [attr.aria-selected]="activeIndex === i">
           {{ option }}

@@ -1,17 +1,5 @@
 import { Component } from '@angular/core';
-
-interface SetupStep {
-  step: number;
-  icon: string;
-  title: string;
-  description: string;
-}
-
-interface ManageFeature {
-  icon: string;
-  title: string;
-  description: string;
-}
+import { ManageFeature, SetupStep } from '../../../../models/interface/organizer/OrganizerSetupGuide';
 
 @Component({
   selector: 'app-organizer-dashboard-setup-guide',

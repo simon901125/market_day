@@ -1,5 +1,5 @@
 import { Component,Input } from '@angular/core';
-import { MarketCardItem } from '../../../../models/interface/MarketCardItem';
+import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { BrandType } from '../../../../models/type/BrandType ';
 import { RouterLink } from '@angular/router';

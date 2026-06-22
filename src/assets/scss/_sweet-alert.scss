@@ -94,3 +94,18 @@
     background: #e5e7eb !important;
   }
 }
+
+.custom-swal-close {
+  top: 0.75rem !important;
+  right: 0.75rem !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  color: #222 !important;
+  font-size: 2rem !important;
+  box-shadow: none !important;
+
+  &:hover {
+    color: #f59e0b !important;
+    background: transparent !important;
+  }
+}

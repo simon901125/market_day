@@ -56,10 +56,13 @@ export class Alert {
     cancelButtonText: string = EnumSwalButton.Cancel
   ): Promise<boolean> {
     return Swal.fire({
-      html: this.getHtml('question', title, text),
+      html: this.getHtml('warning', title, text),
       showCancelButton: true,
+      showCloseButton: true,
+      allowOutsideClick: false,
       confirmButtonText,
       cancelButtonText,
+      reverseButtons: true,
       buttonsStyling: false,
       customClass: this.getCustomClass(),
     }).then((result) => result.isConfirmed);
@@ -74,6 +77,8 @@ export class Alert {
   ): Promise<SweetAlertResult> {
     return Swal.fire({
       html: this.getHtml(status, title, text),
+      showCloseButton: true,
+      allowOutsideClick: false,
       confirmButtonText,
       buttonsStyling: false,
       customClass: this.getCustomClass(),
@@ -98,7 +103,7 @@ export class Alert {
     const iconMap: Record<AlertStatus, string> = {
       success: 'bi-check-circle',
       error: 'bi-x-circle',
-      warning: 'bi-exclamation-triangle',
+      warning: 'bi-exclamation-circle',
       info: 'bi-info-circle',
       question: 'bi-question-circle',
     };
@@ -112,6 +117,7 @@ export class Alert {
       popup: 'custom-swal-popup',
       htmlContainer: 'custom-swal-html',
       actions: 'custom-swal-actions',
+      closeButton: 'custom-swal-close',
       confirmButton: 'custom-swal-confirm',
       cancelButton: 'custom-swal-cancel',
     };

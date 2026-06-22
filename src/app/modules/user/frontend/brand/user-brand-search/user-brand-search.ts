@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { BrandItem } from '../../../../../models/interface/BrandItem';
+import { BrandItem } from '../../../../../models/interface/shared/BrandItem';
 import { BrandType } from '../../../../../models/type/BrandType ';
 import { Pagination } from '../../../../shared/pagination/pagination';
 import { Dropdown } from '../../../../shared/dropdown/dropdown';

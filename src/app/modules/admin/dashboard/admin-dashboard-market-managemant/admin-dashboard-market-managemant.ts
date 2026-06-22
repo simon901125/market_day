@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
-import { ActivityListItem } from '../../../../models/interface/ActivityListItem';
+import { ActivityListItem } from '../../../../models/interface/admin/ActivityListItem';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 
 @Component({

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { UserStatus } from '../../../../models/status/UserStatus';
 import { UserType } from '../../../../models/type/UserType';
-import { UserListItem } from '../../../../models/interface/UserListItem';
+import { UserListItem } from '../../../../models/interface/admin/UserListItem';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 
 @Component({

@@ -3,29 +3,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { OrganizerHeader } from '../organizer-header/organizer-header';
 import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
-
-interface OrganizerFeature {
-  icon: string;
-  title: string;
-  description: string;
-}
-
-interface OrganizerAction {
-  image: string;
-  title: string;
-  description: string;
-}
-
-interface OrganizerStep {
-  icon: string;
-  title: string;
-  description: string;
-}
-
-interface OrganizerFaq {
-  question: string;
-  answer: string;
-}
+import { OrganizerAction, OrganizerFaq, OrganizerFeature, OrganizerStep } from '../../../../models/interface/organizer/OrganizerHomeContent';
 
 @Component({
   selector: 'app-organizer-home',

@@ -2,14 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
-import { MarketCardItem } from '../../../../../models/interface/MarketCardItem';
+import { MarketCardItem } from '../../../../../models/interface/shared/MarketCardItem';
+import { TrafficItem } from '../../../../../models/interface/user/TrafficItem';
 import { MarketStatus } from '../../../../../models/status/MarketStatus';
-
-interface TrafficItem {
-  icon: string;
-  label: string;
-  text: string;
-}
 
 const DAY_MS = 1000 * 60 * 60 * 24;
 

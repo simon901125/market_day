@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';;
 import { DashboardSidebar } from '../dashboard-sidebar/dashboard-sidebar';
-import { UserMenuItem } from '../../../../models/interface/UserMenuItem';
-import { MenuItem } from '../../../../models/interface/MenuItem';
+import { UserMenuItem } from '../../../../models/interface/shared/UserMenuItem';
+import { MenuItem } from '../../../../models/interface/shared/MenuItem';
 
 @Component({
   selector: 'app-dashboard-layout',

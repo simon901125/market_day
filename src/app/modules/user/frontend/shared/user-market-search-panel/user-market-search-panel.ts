@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { CategoryItem } from '../../../../../models/interface/CategoryItem';
+import { CategoryItem } from '../../../../../models/interface/user/CategoryItem';
 import { RouterLink } from '@angular/router';
 import { Dropdown } from '../../../../shared/dropdown/dropdown';
 import { DateRangeSelector } from '../../../../shared/date-range-selector/date-range-selector';
+import { TAIWAN_CITY_OPTIONS } from '../../../../../models/config/TaiwanAdministrativeDivisions';
 
 @Component({
   selector: 'app-user-market-search-panel',
@@ -16,30 +17,7 @@ export class UserMarketSearchPanel {
   @Input() dateRangeTitle = '';
 
   /** 全台縣市 */
-  readonly cityOptions = [
-    '臺北市',
-    '新北市',
-    '桃園市',
-    '臺中市',
-    '臺南市',
-    '高雄市',
-    '基隆市',
-    '新竹市',
-    '嘉義市',
-    '新竹縣',
-    '苗栗縣',
-    '彰化縣',
-    '南投縣',
-    '雲林縣',
-    '嘉義縣',
-    '屏東縣',
-    '宜蘭縣',
-    '花蓮縣',
-    '臺東縣',
-    '澎湖縣',
-    '金門縣',
-    '連江縣',
-  ];
+  readonly cityOptions = TAIWAN_CITY_OPTIONS;
 
   /** 市集活動狀態 */
   readonly statusOptions = ['活動預告', '即將開始', '進行中'];

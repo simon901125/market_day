@@ -11,6 +11,10 @@
   }
 }
 
+.notification-page.dashboard-list-page {
+  height: calc(100vh - 48px);
+}
+
 .page-header {
   display: flex;
   align-items: center;
@@ -65,10 +69,14 @@
   gap: 6px;
 }
 
+.notification-list-shell {
+  min-height: 0;
+}
+
 .notification-page:not(.home-mode) {
   app-dashboard-pagination {
     display: block;
-    margin-top: 16px;
+    padding-top: 16px;
   }
 }
 

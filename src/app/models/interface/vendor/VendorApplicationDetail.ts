@@ -1,4 +1,4 @@
-import { MarketCardItem } from './MarketCardItem';
+import { MarketCardItem } from '../shared/MarketCardItem';
 
 /** 報名詳細頁支援的報名狀態。 */
 export type ApplicationStatus =

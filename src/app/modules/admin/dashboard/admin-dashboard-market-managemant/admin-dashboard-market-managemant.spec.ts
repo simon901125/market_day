@@ -3,7 +3,7 @@ import { provideRouter, Router } from '@angular/router';
 
 import { AdminDashboardMarketManagemant } from './admin-dashboard-market-managemant';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
-import { ActivityListItem } from '../../../../models/interface/ActivityListItem';
+import { ActivityListItem } from '../../../../models/interface/admin/ActivityListItem';
 
 describe('AdminDashboardMarketManagemant', () => {
   let component: AdminDashboardMarketManagemant;

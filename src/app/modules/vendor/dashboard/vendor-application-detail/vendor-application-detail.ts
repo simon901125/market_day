@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import type { ApplicationDetail, ApplicationStatus } from '../../../../models/interface/VendorApplicationDetail';
-import type { MarketCardItem } from '../../../../models/interface/MarketCardItem';
+import type { ApplicationDetail, ApplicationStatus } from '../../../../models/interface/vendor/VendorApplicationDetail';
+import type { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { VENDOR_APPLICATION_RECORDS } from '../vendor-application-record/vendor-application-record';
 
 @Component({

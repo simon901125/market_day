@@ -207,6 +207,12 @@ export const routes: Routes = [
       {
         path: 'activity/detail',
         component: OrganizerDashboardEventDetail,
+        canDeactivate: [(component: OrganizerDashboardEventDetail) => component.canDeactivate()],
+      },
+      {
+        path: 'activity/detail/:id',
+        component: OrganizerDashboardEventDetail,
+        canDeactivate: [(component: OrganizerDashboardEventDetail) => component.canDeactivate()],
       },
     ],
   },

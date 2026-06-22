@@ -48,6 +48,12 @@
     border-color: var(--primary-hover);
     box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
   }
+
+  &.invalid,
+  &.invalid:hover {
+    border-color: var(--validation-border, #ff4d4f);
+    box-shadow: 0 0 0 1px var(--validation-ring, rgba(255, 77, 79, 0.12));
+  }
 }
 
 .select-label {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import type { NotificationItem, NotificationType } from '../../../../models/interface/NotificationItem';
+import type { NotificationItem, NotificationType } from '../../../../models/interface/shared/NotificationItem';
 import { NotificationStatus } from '../../../../models/status/NotificationStatus';
 import { DashboardNotification } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
 

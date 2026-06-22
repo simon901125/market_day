@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
-import { MarketCardItem } from '../../../../models/interface/MarketCardItem';
+import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { BrandType } from '../../../../models/type/BrandType ';
 import { UserMarketCard } from '../shared/user-market-card/user-market-card';

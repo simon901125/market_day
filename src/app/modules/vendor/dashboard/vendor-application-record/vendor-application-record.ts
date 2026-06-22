@@ -12,8 +12,8 @@ import type {
   PaymentLine,
   ProgressStep,
   RecordTab,
-} from '../../../../models/interface/VendorApplicationDetail';
-import type { MarketCardItem } from '../../../../models/interface/MarketCardItem';
+} from '../../../../models/interface/vendor/VendorApplicationDetail';
+import type { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 

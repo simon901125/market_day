@@ -1,4 +1,4 @@
-<section class="notification-page" [class.home-mode]="limitItems">
+<section class="notification-page" [class.home-mode]="limitItems" [class.dashboard-list-page]="!limitItems">
   <div class="page-header">
     <h1>{{ title }}</h1>
 
@@ -23,31 +23,34 @@
     </div>
   }
 
-  @if (pagedNotifications().length) {
-    <div class="notification-list">
-      @for (item of pagedNotifications(); track item.title) {
-        <article
-          class="notification-card"
-          [class.unread]="item.unread"
-          (click)="markAsRead(item)"
-        >
-          <div class="dot" [class.show]="item.unread"></div>
+  <div class="notification-list-shell" [class.dashboard-list-content]="!limitItems">
+    @if (pagedNotifications().length) {
+      <div class="notification-list">
+        @for (item of pagedNotifications(); track item.title) {
+          <article
+            class="notification-card"
+            [class.unread]="item.unread"
+            (click)="markAsRead(item)"
+          >
+            <div class="dot" [class.show]="item.unread"></div>
 
-          <i class="notice-icon" [class]="item.icon" [ngClass]="item.iconClass"></i>
+            <i class="notice-icon" [class]="item.icon" [ngClass]="item.iconClass"></i>
 
-          <h3>
-            <span class="status-text">【{{ item.status }}】</span>
-            {{ item.title }}
-          </h3>
+            <h3>
+              <span class="status-text">{{ item.status }}</span>
+              {{ item.title }}
+            </h3>
 
-          <time>{{ item.date }}</time>
-        </article>
-      }
-    </div>
-  }
+            <time>{{ item.date }}</time>
+          </article>
+        }
+      </div>
+    }
+  </div>
 
   @if (showPagination) {
     <app-dashboard-pagination
+      class="dashboard-list-pagination"
       [currentPage]="currentPage"
       [pageSize]="pageSize"
       [totalItems]="filteredNotifications.length"

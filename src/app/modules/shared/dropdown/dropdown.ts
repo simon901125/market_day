@@ -19,6 +19,7 @@ export class Dropdown {
   @Input() placeholder = '';
   @Input() iconClass = '';
   @Input() selectedValue = '';
+  @Input() invalid = false;
 
   @Output() optionSelected = new EventEmitter<string>();
 
@@ -76,10 +77,17 @@ export class Dropdown {
     }
   }
 
-  selectOption(index: number): void {
+  selectOption(index: number, event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    this.isOpen = false;
     this.selectedValue = this.options[index];
     this.optionSelected.emit(this.options[index]);
-    this.isOpen = false;
+
+    // 等父元件完成連動更新後再次確認關閉，避免 Input 更新使選單殘留。
+    setTimeout(() => {
+      this.isOpen = false;
+    });
   }
 
   reset(): void {

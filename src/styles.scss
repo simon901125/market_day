@@ -44,12 +44,6 @@ body {
   --shadow-card: 0 12px 32px rgba(47, 41, 36, 0.1);
 }
 
-// 驗證紅框
-.required {
-  color: var(--required-color);
-  font-weight: bold;
-}
-
 //滾輪
 ::-webkit-scrollbar {
   width: 6px;
@@ -64,6 +58,26 @@ body {
 // 共用換頁動畫淡入淡出
 .page-transition {
   animation: page-fade-in 0.28s ease;
+}
+
+// Dashboard 列表頁共用版型：內容區可伸縮，分頁固定在頁面底部
+.dashboard-list-page {
+  width: 100%;
+  height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dashboard-list-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.dashboard-list-pagination {
+  flex: 0 0 auto;
+  margin-top: auto;
 }
 
 @keyframes page-fade-in {
