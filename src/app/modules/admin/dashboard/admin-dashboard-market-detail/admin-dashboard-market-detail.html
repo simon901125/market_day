@@ -2,12 +2,12 @@
   <div class="page-header">
     <div class="header-left">
       <p class="breadcrumb">
-        <span class="breadcrumb-link" (click)="goToList()">活動管理</span>
+        <span class="breadcrumb-link">活動管理</span>
         <span class="breadcrumb-sep">＞</span>
         <span>活動詳情</span>
       </p>
       <div class="title-row">
-        <button class="back-btn" type="button" (click)="goBack()">
+        <button class="back-btn" type="button">
           <i class="bi bi-arrow-left"></i>
         </button>
         <h1 class="page-title">活動詳情</h1>
@@ -15,12 +15,6 @@
     </div>
 
     <div class="header-actions">
-      @if (activity?.status === ActivityStatus.pendingReview) {
-        <app-admin-dashboard-button type="secondary" text="要求補件" [todo]="onRequireSupplementHandler" />
-        <app-admin-dashboard-button type="primary"   text="審核通過" [todo]="onApproveHandler" />
-      } @else if (activity?.status === ActivityStatus.mapBuilding) {
-        <app-admin-dashboard-button type="primary" text="地圖建置完成" [todo]="onMapBuildingDoneHandler" />
-      }
     </div>
   </div>
 

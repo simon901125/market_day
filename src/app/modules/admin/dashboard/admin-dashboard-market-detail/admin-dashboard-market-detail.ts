@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AdminDashboardButton } from '../shared/admin-dashboard-button/admin-dashboard-button';
-import { ActivityStatus } from '../../../models/status/ActivityStatus';
-import { ActivityListItem } from '../../../models/interface/ActivityListItem';
+import { ActivityStatus } from '../../../../models/status/ActivityStatus';
+import { ActivityListItem } from '../../../../models/interface/ActivityListItem';
 
 /** 模擬後端資料，串接 API 後可移除 */
 const MOCK_ACTIVITIES: ActivityListItem[] = [
@@ -34,7 +33,7 @@ const MOCK_ACTIVITIES: ActivityListItem[] = [
 
 @Component({
   selector: 'app-admin-dashboard-market-detail',
-  imports: [AdminDashboardButton],
+  imports: [],
   templateUrl: './admin-dashboard-market-detail.html',
   styleUrl: './admin-dashboard-market-detail.scss',
 })
@@ -59,9 +58,6 @@ export class AdminDashboardMarketDetail implements OnInit {
       this.activity = MOCK_ACTIVITIES.find(a => a.id === id) ?? null;
     }
   }
-
-  goBack = (): void => this.router.navigate(['/admin/dash-board/activity']);
-  goToList = (): void => this.router.navigate(['/admin/dash-board/activity']);
 
   onRequireSupplementHandler = (): void => {
     // TODO: 呼叫後端 API，將活動狀態改為「補件中」
