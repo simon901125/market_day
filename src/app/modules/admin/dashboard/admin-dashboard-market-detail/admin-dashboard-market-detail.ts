@@ -149,4 +149,8 @@ export class AdminDashboardMarketDetail implements OnInit {
   onMapBuildingDoneHandler = (): void => {
     // TODO: 呼叫後端 API，將活動狀態改為「待發布」
   };
+
+  downloadImg = (): void => {
+    // TODO: 呼叫後端 API，下載圖片
+  };
 }
