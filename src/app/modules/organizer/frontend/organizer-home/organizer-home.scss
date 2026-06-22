@@ -295,7 +295,7 @@
 .step-number {
   position: absolute;
   top: -6px;
-  right: -6px;
+  left: -6px;
   width: 24px;
   height: 24px;
   display: grid;
@@ -379,16 +379,30 @@ details {
     height: auto;
     min-height: 0;
     grid-template-columns: 1fr;
-    background: var(--bg-white);
+    background: var(--bg-primary);
   }
 
   .hero-image {
-    min-height: 260px;
-    height: 260px;
+    order: -1;
+    min-height: 220px;
+    height: 220px;
   }
 
   .hero-copy {
-    padding: 36px 32px;
+    padding: 28px 24px 30px;
+  }
+
+  .hero-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .primary-btn,
+  .outline-btn {
+    width: 100%;
+    min-width: 0;
   }
 
   .feature-grid {
@@ -407,8 +421,6 @@ details {
   }
 
   .hero-copy {
-    padding: 32px 24px;
-
     h1 {
       font-size: 1.72rem;
       line-height: 1.35;
@@ -421,13 +433,8 @@ details {
     }
   }
 
-  .hero-actions {
-    gap: 10px;
-  }
-
   .primary-btn,
   .outline-btn {
-    min-width: 136px;
     height: 40px;
     padding: 0 16px;
     font-size: 0.9rem;
@@ -484,8 +491,7 @@ details {
 
   .step-number {
     top: -6px;
-    right: -6px;
-    left: auto;
+    left: -6px;
     z-index: 1;
     width: 22px;
     height: 22px;
@@ -508,7 +514,6 @@ details {
 
   .organizer-hero {
     margin-bottom: 32px;
-    background: var(--bg-primary);
   }
 
   .hero-copy {
@@ -527,9 +532,6 @@ details {
   }
 
   .hero-actions {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
 
