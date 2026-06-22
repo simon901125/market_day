@@ -1,0 +1,81 @@
+<div class="zone-dialog-backdrop" role="presentation" (click)="closeDialog.emit()">
+  <section
+    class="zone-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="zone-dialog-title"
+    (click)="$event.stopPropagation()"
+  >
+    <header>
+      <h2 id="zone-dialog-title">{{ editing ? '編輯攤位分區' : '新增攤位分區' }}</h2>
+      <button type="button" aria-label="關閉分區視窗" (click)="closeDialog.emit()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </header>
+
+    <label class="field zone-dialog-name">
+      <span>分區名稱 <b>*</b></span>
+      <div class="zone-name-row">
+        <span class="text-control zone-dialog-name-input">
+          <input
+            type="text"
+            maxlength="12"
+            placeholder="請輸入分區名稱（例如：A）"
+            [(ngModel)]="draft.name"
+            name="zoneDialogName"
+          />
+          <small>區</small>
+        </span>
+      </div>
+    </label>
+
+    <div class="zone-color-field">
+      <span>分區顏色 <b>*</b></span>
+      <div class="zone-color-row">
+        <div class="zone-color-options" aria-label="基本顏色">
+          @for (color of zoneColors; track color) {
+            <button
+              type="button"
+              [class.active]="draft.color.toLowerCase() === color.toLowerCase()"
+              [style.background]="color"
+              [attr.aria-label]="'選擇顏色 ' + color"
+              (click)="colorSelected.emit(color)"
+            ></button>
+          }
+        </div>
+        <span class="text-control zone-color-code-control">
+          <i class="zone-color-preview" [style.background]="draft.color"></i>
+          <input
+            type="text"
+            maxlength="7"
+            pattern="^#[0-9A-Fa-f]{6}$"
+            placeholder="#ffffff"
+            [ngModel]="draft.color"
+            name="zoneDialogColor"
+            (ngModelChange)="onColorCodeChange($event)"
+          />
+        </span>
+      </div>
+    </div>
+
+    <p class="zone-dialog-hint">
+      <i class="bi bi-lightbulb"></i>
+      <span>分區僅用於區域範圍劃分，並不代表不同攤位類別，供使用者選擇攤位位置。</span>
+    </p>
+
+    <label class="field">
+      <span>攤位數量 <b>*</b></span>
+      <span class="unit-control">
+        <input type="number" min="0" [(ngModel)]="draft.count" name="zoneDialogCount" />
+        <small>攤</small>
+      </span>
+    </label>
+
+    <footer>
+      <button type="button" class="zone-dialog-cancel" (click)="closeDialog.emit()">取消</button>
+      <button type="button" class="zone-dialog-save" (click)="saveDialog.emit()">
+        {{ editing ? '儲存變更' : '新增分區' }}
+      </button>
+    </footer>
+  </section>
+</div>

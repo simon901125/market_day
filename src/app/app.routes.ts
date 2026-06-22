@@ -39,7 +39,7 @@ import { VendorApplicationRecord } from './modules/vendor/dashboard/vendor-appli
 import { VendorApplicationDetail } from './modules/vendor/dashboard/vendor-application-detail/vendor-application-detail';
 
 /** 頁面設定檔 */
-import { AUTH_ROUTE_DATA } from './config/auth-route-data';
+import { AUTH_ROUTE_DATA } from './models/config/auth-route-data';
 import { DashboardLayout } from './modules/shared/dashboard/dashboard-layout/dashboard-layout';
 
 export const routes: Routes = [

@@ -50,7 +50,8 @@ export class DashboardLayout {
         { label: '通知中心', icon: 'bi-bell', path: '/organizer/dash-board/notification' },
         { label: '活動管理', icon: 'bi-calendar-event', path: '/organizer/dash-board/activity' },
         { label: '報名管理', icon: 'bi-clipboard-check', path: '/organizer/dash-board/register' },
-        { label: '付款管理', icon: 'bi-cash-coin', path: '/organizer/dash-board/payment' },
+        { label: '收款管理', icon: 'bi-cash-coin', path: '/organizer/dash-board/collection' },
+        { label: '攤位管理', icon: 'bi-shop', path: '/organizer/dash-board/stall' },
         { label: '帳務管理', icon: 'bi-receipt', path: '/organizer/dash-board/account' },
       ];
 

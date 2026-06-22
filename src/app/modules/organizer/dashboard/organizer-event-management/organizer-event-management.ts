@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { OrganizerEventRow } from '../../../../models/interface/OrganizerEventRow';
 import { DashboardDataTable, DashboardTableAction, DashboardTableColumn } from '../../../shared/dashboard/dashboard-data-table/dashboard-data-table';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-organizer-event-management',
