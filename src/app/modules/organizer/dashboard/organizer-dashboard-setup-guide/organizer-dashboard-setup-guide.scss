@@ -40,6 +40,39 @@
   }
 }
 
+// 首次設定是本頁主要操作，使用獨立尺寸與互動樣式。
+.setup-action-btn {
+  min-width: 180px;
+  height: 52px;
+  padding: 0 28px;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  background: var(--primary-color);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  i {
+    font-size: 21px;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--primary-hover);
+    background: var(--primary-hover);
+    box-shadow: 0 8px 18px rgba(245, 158, 11, 0.22);
+    transform: translateY(-1px);
+  }
+}
+
 .setup-hero-visual {
   position: relative;
   min-height: 146px;
@@ -273,6 +306,10 @@
 
   .setup-hero-copy p {
     white-space: normal;
+  }
+
+  .setup-action-btn {
+    width: 100%;
   }
 
   .setup-steps {

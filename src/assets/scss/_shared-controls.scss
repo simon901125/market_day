@@ -146,6 +146,19 @@
     }
   }
 
+  // 中性操作按鈕，例如取消；維持次要層級但保有足夠辨識度。
+  &.neutral {
+    background-color: var(--bg-white);
+    color: var(--text-normal);
+    border-color: var(--border-soft);
+
+    &:hover {
+      background-color: var(--bg-primary);
+      color: var(--text-dark);
+      border-color: var(--primary-color);
+    }
+  }
+
   &.secondary {
     background-color: var(--bg-white);
     color: var(--primary-color);
@@ -164,6 +177,138 @@
   width: auto;
   flex: 0 0 auto;
   padding: 0 18px;
+}
+
+// 詳情與編輯頁共用的麵包屑，連結預設保持黑色且不顯示底線。
+.app-breadcrumb {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 800;
+
+  a,
+  span {
+    color: var(--text-dark);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--primary-color);
+  }
+}
+
+// 共用返回按鈕，使用淡灰底呈現清楚且簡潔的可點擊提示。
+.app-back-link {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: #f3f4f6;
+  color: var(--text-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px;
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+
+  &:hover {
+    background: var(--bg-primary);
+    color: var(--primary-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(245, 158, 11, 0.45);
+    outline-offset: 2px;
+  }
+
+  i {
+    -webkit-text-stroke: 0.45px currentColor;
+  }
+}
+
+// 表單中的補充用途文字，例如列表摘要或詳情內容。
+.app-field-context {
+  color: var(--text-light);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+// 共用多行輸入框不允許拖曳縮放，避免與字數計數器重疊。
+.app-textarea {
+  resize: none;
+}
+
+// 共用圖片選擇控制，選取後可並列顯示縮圖、檔名與更換操作。
+.app-image-upload {
+  height: 40px;
+  min-width: 0;
+  border: 1px dashed var(--primary-color);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  &.has-preview {
+    height: 52px;
+    padding: 4px 4px 4px 6px;
+    border-style: solid;
+    border-color: var(--border-soft);
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  img {
+    width: 56px;
+    height: 42px;
+    flex: 0 0 auto;
+    border-radius: 5px;
+    object-fit: cover;
+  }
+
+  .file-name {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    color: var(--text-normal);
+    font-size: 12px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.app-image-upload-btn {
+  height: 100%;
+  margin-left: auto;
+  padding: 0 18px;
+  border: 0;
+  background: transparent;
+  color: var(--primary-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 900;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--bg-primary);
+  }
+
+  .app-image-upload:not(.has-preview) & {
+    width: 100%;
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 768px) {

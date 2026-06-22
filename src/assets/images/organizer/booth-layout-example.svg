@@ -1,0 +1,84 @@
+<svg width="980" height="560" viewBox="0 0 980 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .label { fill: #111827; font-family: Arial, "Microsoft JhengHei", sans-serif; font-weight: 700; font-size: 28px; }
+    .booth { fill: #111827; font-family: Arial, "Microsoft JhengHei", sans-serif; font-weight: 700; font-size: 12px; text-anchor: middle; dominant-baseline: central; }
+    .small { fill: #111827; font-family: Arial, "Microsoft JhengHei", sans-serif; font-weight: 700; font-size: 16px; }
+  </style>
+
+  <text x="56" y="278" class="label">A區</text>
+  <text x="500" y="42" class="label" text-anchor="middle">B區</text>
+  <text x="335" y="178" class="label">C區</text>
+  <text x="555" y="178" class="label">D區</text>
+  <text x="350" y="490" class="label">E區</text>
+  <text x="742" y="278" class="label">F區</text>
+
+  <g fill="#D6C68A">
+    <rect x="235" y="72" width="42" height="42"/><text x="256" y="93" class="booth">B01</text>
+    <rect x="282" y="72" width="42" height="42"/><text x="303" y="93" class="booth">B02</text>
+    <rect x="329" y="72" width="42" height="42"/><text x="350" y="93" class="booth">B03</text>
+    <rect x="376" y="72" width="42" height="42"/><text x="397" y="93" class="booth">B04</text>
+    <rect x="423" y="72" width="42" height="42"/><text x="444" y="93" class="booth">B05</text>
+    <rect x="470" y="72" width="42" height="42"/><text x="491" y="93" class="booth">B06</text>
+    <rect x="517" y="72" width="42" height="42"/><text x="538" y="93" class="booth">B07</text>
+    <rect x="564" y="72" width="42" height="42"/><text x="585" y="93" class="booth">B08</text>
+    <rect x="611" y="72" width="42" height="42"/><text x="632" y="93" class="booth">B09</text>
+    <rect x="658" y="72" width="42" height="42"/><text x="679" y="93" class="booth">B10</text>
+    <rect x="705" y="72" width="42" height="42"/><text x="726" y="93" class="booth">B11</text>
+    <rect x="752" y="72" width="42" height="42"/><text x="773" y="93" class="booth">B12</text>
+    <rect x="842" y="177" width="38" height="38"/><text x="861" y="196" class="booth">B13</text>
+    <rect x="842" y="279" width="38" height="38"/><text x="861" y="298" class="booth">B14</text>
+  </g>
+
+  <g fill="#FFC4E7">
+    <rect x="80" y="150" width="42" height="42"/><text x="101" y="171" class="booth">A01</text>
+    <rect x="127" y="150" width="42" height="42"/><text x="148" y="171" class="booth">A02</text>
+    <rect x="127" y="197" width="42" height="42"/><text x="148" y="218" class="booth">A03</text>
+    <rect x="127" y="244" width="42" height="42"/><text x="148" y="265" class="booth">A04</text>
+    <rect x="127" y="291" width="42" height="42"/><text x="148" y="312" class="booth">A05</text>
+    <rect x="127" y="338" width="42" height="42"/><text x="148" y="359" class="booth">A06</text>
+    <rect x="127" y="385" width="42" height="42"/><text x="148" y="406" class="booth">A07</text>
+    <rect x="127" y="432" width="42" height="42"/><text x="148" y="453" class="booth">A08</text>
+    <rect x="80" y="432" width="42" height="42"/><text x="101" y="453" class="booth">A09</text>
+  </g>
+
+  <g fill="#8BD27D">
+    <rect x="300" y="220" width="42" height="42"/><text x="321" y="241" class="booth">C08</text>
+    <rect x="347" y="220" width="42" height="42"/><text x="368" y="241" class="booth">C01</text>
+    <rect x="394" y="220" width="42" height="42"/><text x="415" y="241" class="booth">C02</text>
+    <rect x="300" y="267" width="42" height="42"/><text x="321" y="288" class="booth">C07</text>
+    <rect x="394" y="267" width="42" height="42"/><text x="415" y="288" class="booth">C03</text>
+    <rect x="300" y="314" width="42" height="42"/><text x="321" y="335" class="booth">C06</text>
+    <rect x="347" y="314" width="42" height="42"/><text x="368" y="335" class="booth">C05</text>
+    <rect x="394" y="314" width="42" height="42"/><text x="415" y="335" class="booth">C04</text>
+  </g>
+
+  <g fill="#F6C900">
+    <rect x="540" y="220" width="42" height="42"/><text x="561" y="241" class="booth">D08</text>
+    <rect x="587" y="220" width="42" height="42"/><text x="608" y="241" class="booth">D01</text>
+    <rect x="634" y="220" width="42" height="42"/><text x="655" y="241" class="booth">D02</text>
+    <rect x="540" y="267" width="42" height="42"/><text x="561" y="288" class="booth">D07</text>
+    <rect x="634" y="267" width="42" height="42"/><text x="655" y="288" class="booth">D03</text>
+    <rect x="540" y="314" width="42" height="42"/><text x="561" y="335" class="booth">D06</text>
+    <rect x="587" y="314" width="42" height="42"/><text x="608" y="335" class="booth">D05</text>
+    <rect x="634" y="314" width="42" height="42"/><text x="655" y="335" class="booth">D04</text>
+  </g>
+
+  <g fill="#FF7A59">
+    <rect x="790" y="278" width="42" height="42"/><text x="811" y="299" class="booth">F01</text>
+    <rect x="790" y="325" width="42" height="42"/><text x="811" y="346" class="booth">F03</text>
+    <rect x="790" y="372" width="42" height="42"/><text x="811" y="393" class="booth">F04</text>
+  </g>
+
+  <rect x="80" y="498" width="72" height="44" fill="#777"/>
+  <text x="116" y="520" text-anchor="middle" dominant-baseline="central" fill="white" font-family="Arial, Microsoft JhengHei, sans-serif" font-size="24" font-weight="700">涼亭</text>
+  <circle cx="258" cy="522" r="22" fill="#44C532"/>
+  <text x="258" y="522" text-anchor="middle" dominant-baseline="central" fill="white" font-family="Arial, Microsoft JhengHei, sans-serif" font-size="20" font-weight="700">樹</text>
+  <text x="292" y="516" class="small">E區</text>
+  <text x="292" y="538" class="small">桌椅集合</text>
+
+  <rect x="885" y="82" width="64" height="300" fill="#C7B8FF"/>
+  <text x="916" y="190" fill="#111827" font-family="Arial, Microsoft JhengHei, sans-serif" font-size="20" font-weight="700" writing-mode="tb">遊客中心</text>
+  <text x="900" y="180" fill="#111827" font-family="Arial, Microsoft JhengHei, sans-serif" font-size="14" font-weight="700" writing-mode="tb">Visitor Center</text>
+  <text x="835" y="408" fill="#EC4899" font-family="Arial, Microsoft JhengHei, sans-serif" font-size="17" font-weight="700">下樓往</text>
+  <text x="835" y="432" fill="#EC4899" font-family="Arial, Microsoft JhengHei, sans-serif" font-size="17" font-weight="700">市集區</text>
+</svg>

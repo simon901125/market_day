@@ -1,0 +1,38 @@
+<div class="layout-example-backdrop" role="presentation" (click)="closeDialog.emit()">
+  <section
+    class="layout-example-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="layout-example-title"
+    (click)="$event.stopPropagation()"
+  >
+    <header>
+      <h2 id="layout-example-title">攤位配置圖範例</h2>
+      <button type="button" aria-label="關閉範例" (click)="closeDialog.emit()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </header>
+
+    <div class="sample-layout-map">
+      <img src="assets/images/organizer/booth-layout-example.svg" alt="攤位配置圖範例" />
+    </div>
+
+    <div class="layout-example-copy">
+      <p>請上傳清楚的攤位配置圖，須和上方攤位分區一致，建議包含以下資訊：</p>
+      <ol>
+        <li>攤位配置與區域編號</li>
+        <li>入口、服務台、廁所、休息區等重要位置</li>
+        <li>若有不同類型攤位，請在圖上清楚標示</li>
+      </ol>
+    </div>
+
+    <p class="layout-example-alert">
+      <i class="bi bi-exclamation-circle"></i>
+      <span><strong>注意：</strong>攤位配置圖中的分區名稱，須與上方設定的攤位分區一致。</span>
+    </p>
+
+    <footer>
+      <button type="button" class="layout-example-confirm" (click)="closeDialog.emit()">我知道了</button>
+    </footer>
+  </section>
+</div>

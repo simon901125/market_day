@@ -33,7 +33,7 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification {
       count: 3,
       unit: '筆',
       label: '退款申請中',
-      path: '/organizer/dash-board/payment',
+      path: '/organizer/dash-board/collection',
       iconColor: 'red',
     },
     {
