@@ -348,15 +348,29 @@ details {
     height: auto;
     min-height: 0;
     grid-template-columns: 1fr;
-    background: var(--bg-white);
+    background: var(--bg-primary);
   }
 
   .hero-image {
-    min-height: 260px;
+    order: -1;
+    min-height: 220px;
+    height: 220px;
   }
 
   .hero-content {
-    padding: 36px 32px;
+    padding: 28px 24px 30px;
+  }
+
+  .hero-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+
+    a {
+      width: 100%;
+      min-width: 0;
+    }
   }
 
   .feature-strip {
@@ -386,7 +400,7 @@ details {
   }
 
   .hero-content {
-    padding: 28px 22px;
+    padding: 24px 20px 26px;
 
     h1 {
       font-size: 30px;
@@ -394,10 +408,17 @@ details {
   }
 
   .hero-actions {
+    gap: 8px;
+
     a {
       width: 100%;
       max-width: none;
     }
+  }
+
+  .hero-image {
+    height: 172px;
+    min-height: 172px;
   }
 
   .section-title-row {
