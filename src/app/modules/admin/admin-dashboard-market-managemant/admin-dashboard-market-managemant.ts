@@ -162,7 +162,7 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
   }
 
   private goToDetail(activity: ActivityListItem): void {
-    this.router.navigate(['/admin/dash-board/activity/detail'], {
+    this.router.navigate(['/admin/dash-board/activity/detail', activity.id], {
       state: { activity },
     });
   }

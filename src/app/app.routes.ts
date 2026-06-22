@@ -197,7 +197,7 @@ export const routes: Routes = [
         component: AdminDashboardMarketManagemant,
       },
       {
-        path: 'activity/detail',
+        path: 'activity/detail/:id',
         component: AdminDashboardMarketDetail,
       },
       {
