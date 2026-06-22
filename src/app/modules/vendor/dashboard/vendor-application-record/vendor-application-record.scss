@@ -1,158 +1,134 @@
 :host {
   display: block;
-  min-height: 100%;
-  color: var(--text-dark);
 }
 
 .application-page {
   width: 100%;
-  padding: 10px 30px -20px 10px;
+  max-width: 1200px;
+  height: calc(100vh - 48px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+  color: var(--text-dark);
 }
 
 h1 {
-  margin: -5px 10px 20px;
+  margin: 0;
   color: var(--text-dark);
-  font-size: 24px;
+  font-size: 25px;
   font-weight: 900;
-  letter-spacing: 0.5px;
+  line-height: 1.2;
 }
 
-.tabs {
-  display: flex;
-  align-items: center;
-  gap: 48px;
-  margin-bottom: 16px;
-  padding-left: 25px;
-  border-bottom: 1px solid var(--border-light);
-
-  button {
-    position: relative;
-    flex: 0 0 auto;
-    padding: 0 0 17px;
-    border: 0;
-    background: transparent;
-    color: var(--text-dark);
-    font-size: 14px;
-    font-weight: 900;
-    line-height: 1.1;
-    white-space: nowrap;
-    cursor: pointer;
-
-    &.active {
-      color: var(--primary-color);
-
-      &::after {
-        content: "";
-        position: absolute;
-        left: 50%;
-        bottom: -1px;
-        width: 64px;
-        height: 3px;
-        border-radius: 999px;
-        background: var(--primary-color);
-        transform: translateX(-50%);
-      }
-    }
-  }
+.vendor-record-filter {
+  grid-template-columns: minmax(220px, 1.2fr) minmax(170px, 0.8fr) minmax(300px, 1.4fr) 92px;
 }
 
 .record-card {
+  flex: 0 0 auto;
+  min-height: 0;
   border: 1px solid var(--border-light);
-  border-radius: 10px;
+  border-radius: var(--radius-card);
   background: var(--bg-white);
-  box-shadow: var(--shadow-soft);
   overflow: hidden;
 }
 
 .table-wrap {
+  width: 100%;
   overflow-x: auto;
+  overflow-y: visible;
 }
 
 table {
   width: 100%;
-  min-width: 1100px;
+  min-width: 1120px;
   border-collapse: collapse;
+  color: var(--text-dark);
+
+  thead {
+    background: linear-gradient(90deg, var(--bg-primary), var(--primary-soft));
+  }
 
   th,
   td {
+    padding: 13px 14px;
+    text-align: left;
     vertical-align: middle;
+    font-size: 13.5px;
+    font-weight: 800;
   }
 
   th {
-    padding: 12px 18px;
-    background: var(--primary-soft);
-    color: var(--text-dark);
-    font-size: 14px;
-    font-weight: 900;
-    text-align: left;
     border-bottom: 1px solid var(--border-light);
   }
 
-  td {
-    height: 60px;
-    padding: 9px 14px;
-    color: var(--text-dark);
-    font-size: 13px;
-    font-weight: 700;
+  tbody tr {
     border-bottom: 1px solid var(--border-light);
+    transition: background 0.2s ease;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: var(--bg-primary);
+    }
   }
 
   th:nth-child(1),
   td:nth-child(1) {
-    width: 20%;
+    width: 210px;
   }
 
   th:nth-child(2),
   td:nth-child(2) {
-    width: 18%;
+    width: 270px;
   }
 
   th:nth-child(3),
   td:nth-child(3) {
-    width: 17%;
+    width: 300px;
   }
 
   th:nth-child(4),
   td:nth-child(4) {
-    width: 10%;
+    width: 140px;
   }
 
   th:nth-child(5),
   td:nth-child(5) {
-    width: 8%;
+    width: 130px;
     text-align: center;
   }
 
   th:nth-child(6),
   td:nth-child(6) {
-    width: 10%;
+    width: 150px;
     text-align: right;
-  }
-
-  tr:last-child td {
-    border-bottom: 0;
   }
 }
 
 .event-info {
   display: flex;
   align-items: center;
-  gap: 14px;
-  min-width: 200px;
+  gap: 12px;
+  min-width: 220px;
 
   img {
-    width: 38px;
-    height: 40px;
-    flex: 0 0 58px;
-    border-radius: 5px;
+    width: 48px;
+    height: 36px;
+    flex: 0 0 auto;
+    border-radius: var(--radius-tag);
     object-fit: cover;
   }
 
   strong {
     color: var(--text-dark);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 900;
-    line-height: 1.35;
+    line-height: 1.15;
   }
 }
 
@@ -160,10 +136,10 @@ table {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 90px;
-  height: 30px;
-  padding: 0 12px;
-  border-radius: 5px;
+  min-width: 74px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: var(--radius-tag);
   font-size: 13px;
   font-weight: 900;
   white-space: nowrap;
@@ -205,7 +181,7 @@ table {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: nowrap;
 }
 
@@ -214,82 +190,69 @@ table {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 70px;
+  min-width: 76px;
   height: 34px;
-  padding: 0 16px;
-  border-radius: 5px;
+  padding: 0 14px;
+  border: 1px solid var(--primary-color);
+  border-radius: var(--radius-tag);
   font-size: 13px;
   font-weight: 900;
   line-height: 1;
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
 }
 
 .primary-btn {
-  border: 1px solid var(--primary-color);
   background: var(--primary-color);
   color: var(--bg-white);
 
   &:hover {
     border-color: var(--primary-hover);
     background: var(--primary-hover);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
   }
 }
 
 .outline-btn {
-  border: 1px solid var(--primary-color);
   background: var(--bg-white);
   color: var(--primary-color);
 
   &:hover {
-    background: var(--primary-soft);
+    background: var(--primary-color);
+    color: var(--bg-white);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
   }
 }
 
 .empty-cell {
-  height: 160px;
+  height: 72px;
   color: var(--text-light);
   text-align: center;
 }
 
 app-dashboard-pagination {
+  flex: 0 0 40px;
   display: block;
-  margin-top: 10px;
 }
 
 @media (max-width: 1200px) {
-  .application-page {
-    padding: 18px 18px 28px;
-  }
-
-  .tabs {
-    gap: 34px;
+  .vendor-record-filter {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 768px) {
   .application-page {
-    padding: 12px 0 24px;
+    gap: 16px;
   }
 
-  h1 {
-    font-size: 32px;
-  }
-
-  .tabs {
-    padding-left: 0;
-    gap: 28px;
-  }
-}
-
-@media (max-width: 576px) {
-  h1 {
-    margin-bottom: 26px;
-    font-size: 28px;
-  }
-
-  .tabs button {
-    font-size: 15px;
+  .vendor-record-filter {
+    grid-template-columns: 1fr;
   }
 }

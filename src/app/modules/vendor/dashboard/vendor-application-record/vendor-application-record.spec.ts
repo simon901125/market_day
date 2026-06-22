@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { VendorApplicationRecord } from './vendor-application-record';
 
@@ -8,7 +9,8 @@ describe('VendorApplicationRecord', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VendorApplicationRecord]
+      imports: [VendorApplicationRecord],
+      providers: [provideRouter([])],
     })
     .compileComponents();
 

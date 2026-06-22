@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
+import { Dropdown } from '../../../shared/dropdown/dropdown';
 import type {
   ApplicationDetail,
   ApplicationRecord,
@@ -294,7 +296,7 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
 
 @Component({
   selector: 'app-vendor-application-record',
-  imports: [CommonModule, RouterLink, DashboardPagination],
+  imports: [CommonModule, RouterLink, DashboardPagination, Dropdown, DateRangeSelector],
   templateUrl: './vendor-application-record.html',
   styleUrl: './vendor-application-record.scss',
 })
@@ -306,7 +308,33 @@ export class VendorApplicationRecord {
   currentPage = 1;
 
   /** 每頁顯示筆數，依設計稿頁尾顯示 1 - 8 筆設定。 */
-  pageSize = 8;
+  pageSize = 6;
+
+  /** 報名狀態下拉選單選項，對齊 OrganizerEventManagement 的活動篩選使用方式。 */
+  readonly statusOptions = [
+    '全部狀態',
+    '待審核',
+    '待付款',
+    '待選位',
+    '報名完成',
+    '退款申請中',
+    '退款處理中',
+    '已退款',
+    '歷史紀錄',
+  ];
+
+  /** 下拉選單文字與資料狀態代碼的對應。 */
+  private readonly statusValueMap: Record<string, RecordTab['value']> = {
+    全部狀態: 'all',
+    待審核: 'reviewing',
+    待付款: 'payment',
+    待選位: 'booth',
+    報名完成: 'completed',
+    退款申請中: 'refundApplying',
+    退款處理中: 'refundProcessing',
+    已退款: 'refunded',
+    歷史紀錄: 'history',
+  };
 
   /** 報名狀態分頁資料，之後可依 API 狀態欄位調整 value。 */
   tabs: RecordTab[] = [
@@ -323,6 +351,11 @@ export class VendorApplicationRecord {
 
   /** 報名紀錄假資料；每筆資料內的 detail 可供詳細頁直接使用。 */
   records: ApplicationRecord[] = VENDOR_APPLICATION_RECORDS;
+
+  /** 目前下拉選單顯示文字。 */
+  get selectedStatusLabel(): string {
+    return this.statusOptions.find((option) => this.statusValueMap[option] === this.activeTab) ?? '';
+  }
 
   /** 依目前分頁篩選後的紀錄。 */
   get filteredRecords(): ApplicationRecord[] {
@@ -342,6 +375,12 @@ export class VendorApplicationRecord {
   /** 切換狀態分頁時回到第一頁。 */
   setActiveTab(tab: RecordTab['value']): void {
     this.activeTab = tab;
+    this.currentPage = 1;
+  }
+
+  /** 選取報名狀態後重設到第一頁，行為對齊 OrganizerEventManagement 的 selectStatus。 */
+  selectStatus(status: string): void {
+    this.activeTab = this.statusValueMap[status] ?? 'all';
     this.currentPage = 1;
   }
 
