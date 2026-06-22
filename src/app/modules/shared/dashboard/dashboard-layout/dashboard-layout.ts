@@ -71,7 +71,7 @@ export class DashboardLayout {
         { label: '通知中心', icon: 'bi-bell', path: '/admin/dash-board/notification' },
         { label: '活動管理', icon: 'bi-calendar-event', path: '/admin/dash-board/activity' },
         { label: '使用者管理', icon: 'bi-people', path: '/admin/dash-board/users' },
-        { label: '系統紀錄', icon: 'bi-clock-history', path: '/admin/dash-board/logs' },
+        { label: '操作紀錄', icon: 'bi-clock-history', path: '/admin/dash-board/logs' },
       ];
 
       this.userMenuItems = [

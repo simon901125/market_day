@@ -30,10 +30,11 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
   private readonly headerHeight = 48;
 
   /** 主辦方下拉選單 */
-  organizerOptions = ['森林生活市集', '日日好市', '春語市集', '歡樂市集團隊'];
+  organizerOptions = ['全部', '森林生活市集', '日日好市', '春語市集', '歡樂市集團隊'];
 
   /** 狀態下拉選單（排除草稿，草稿由後端過濾不會出現在此頁） */
   statusOptions: string[] = [
+    '全部',
     ActivityStatus.pendingReview,
     ActivityStatus.revisionRequired,
     ActivityStatus.mapBuilding,
@@ -117,11 +118,11 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
   }
 
   onOrganizerSelected(value: string): void {
-    this.selectedOrganizer = value;
+    this.selectedOrganizer = value === '全部' ? '' : value;
   }
 
   onStatusSelected(value: string): void {
-    this.selectedStatus = value;
+    this.selectedStatus = value === '全部' ? '' : value;
   }
 
   /** 更新搜尋關鍵字 */
@@ -147,7 +148,7 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
   }
 
   private goToDetail(activity: ActivityListItem): void {
-    this.router.navigate(['/admin/dash-board/activity/detail'], {
+    this.router.navigate(['/admin/dash-board/activity/detail', activity.id], {
       state: { activity },
     });
   }

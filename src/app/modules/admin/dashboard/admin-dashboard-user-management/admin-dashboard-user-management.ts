@@ -30,6 +30,7 @@ export class AdminDashboardUserManagement implements AfterViewInit{
 
   /** 使用者帳號狀態下拉選單 */
   userStatusOptions: string[] = [
+    '全部',
     UserStatus.active,
     UserStatus.disabled,
   ];
@@ -42,6 +43,7 @@ export class AdminDashboardUserManagement implements AfterViewInit{
 
   /** 帳號角色下拉選單 */
   roleOptions: string[] = [
+    '全部',
     UserType.vendor,
     UserType.organizer,
   ];
@@ -112,11 +114,11 @@ export class AdminDashboardUserManagement implements AfterViewInit{
   }
 
   onRoleSelected(value: string): void {
-    this.selectedRole = value;
+    this.selectedRole = value === '全部' ? '' : value;
   }
 
   onStatusSelected(value: string): void {
-    this.selectedStatus = value;
+    this.selectedStatus = value === '全部' ? '' : value;
   }
 
   /** 更新搜尋關鍵字 */
@@ -137,6 +139,22 @@ export class AdminDashboardUserManagement implements AfterViewInit{
   }
 
   //TODO:按鈕按下後的動作
+    /** 產生操作欄位按鈕的點擊處理函式，導向使用者詳細頁 */
+    getDetailHandler(user: UserListItem): () => void {
+      return () => this.goToDetail(user, user.role);
+    }
+  
+    private goToDetail(user: UserListItem, role: String): void {
+      if (role == UserType.organizer) {        
+        this.router.navigate(['/admin/dash-board/user/detail/organizer'], {
+          state: { user },
+        });
+      } else {
+        this.router.navigate(['/admin/dash-board/user/detail/vender'], {
+          state: { user },
+        });        
+      }
+    }
 
   /**
    * 取得活動列表（目前為假資料模擬，之後請替換成真正的後端 API 呼叫）

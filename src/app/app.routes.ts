@@ -4,13 +4,6 @@ import { UserHome } from './modules/user/frontend/user-home/user-home';
 import { UserActivityList } from './modules/user/frontend/activity/user-activity-list/user-activity-list';
 import { UserActivityDetail } from './modules/user/frontend/activity/user-activity-detail/user-activity-detail';
 import { UserBrandDetail } from './modules/user/frontend/brand/user-brand-detail/user-brand-detail';
-import { AdminLogin } from './modules/admin/dashboard/admin-login/admin-login';
-import { AdminDashboardHome } from './modules/admin/dashboard/admin-dashboard-home/admin-dashboard-home';
-import { AdminDashboardNotification } from './modules/admin/dashboard/admin-dashboard-notification/admin-dashboard-notification';
-import { AdminDashboardMarketManagemant } from './modules/admin/dashboard/admin-dashboard-market-managemant/admin-dashboard-market-managemant';
-import { AdminDashboardMarketDetail } from './modules/admin/dashboard/admin-dashboard-market-detail/admin-dashboard-market-detail';
-import { AdminDashboardUserManagement } from './modules/admin/dashboard/admin-dashboard-user-management/admin-dashboard-user-management';
-import { AdminDashboardLogs } from './modules/admin/dashboard/admin-dashboard-logs/admin-dashboard-logs';
 import { Auth } from './modules/auth/auth/auth';
 import { UserAboutUs } from './modules/user/frontend/user-about-us/user-about-us';
 import { OrganizerDashboardHome } from './modules/organizer/dashboard/organizer-dashboard-home/organizer-dashboard-home';
@@ -21,7 +14,16 @@ import { OrganizerEventManagement } from './modules/organizer/dashboard/organize
 import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organizer-home';
 import { OrganizerAbout } from './modules/organizer/frontend/organizer-about/organizer-about';
 import { UserBrandSearch } from './modules/user/frontend/brand/user-brand-search/user-brand-search';
-
+//--- admin ---
+import { AdminLogin } from './modules/admin/dashboard/admin-login/admin-login';
+import { AdminDashboardHome } from './modules/admin/dashboard/admin-dashboard-home/admin-dashboard-home';
+import { AdminDashboardNotification } from './modules/admin/dashboard/admin-dashboard-notification/admin-dashboard-notification';
+import { AdminDashboardMarketManagemant } from './modules/admin/dashboard/admin-dashboard-market-managemant/admin-dashboard-market-managemant';
+import { AdminDashboardMarketDetail } from './modules/admin/dashboard/admin-dashboard-market-detail/admin-dashboard-market-detail';
+import { AdminDashboardUserManagement } from './modules/admin/dashboard/admin-dashboard-user-management/admin-dashboard-user-management';
+import { AdminDashboardUserDetailOrganizer } from './modules/admin/dashboard/admin-dashboard-user-detail-organizer/admin-dashboard-user-detail-organizer';
+import { AdminDashboardUserDetailVender } from './modules/admin/dashboard/admin-dashboard-user-detail-vender/admin-dashboard-user-detail-vender';
+import { AdminDashboardLogs } from './modules/admin/dashboard/admin-dashboard-logs/admin-dashboard-logs';
 //--- vendor ----
 import { VendorHome } from './modules/vendor/frontend/vendor-home/vendor-home';
 import { VendorDashboardHome } from './modules/vendor/dashboard/vendor-dashboard-home/vendor-dashboard-home';
@@ -233,12 +235,20 @@ export const routes: Routes = [
         component: AdminDashboardMarketManagemant,
       },
       {
-        path: 'activity/detail',
+        path: 'activity/detail/:id',
         component: AdminDashboardMarketDetail,
       },
       {
         path: 'users',
         component: AdminDashboardUserManagement,
+      },
+      {
+        path: 'user/detail/organizer',
+        component: AdminDashboardUserDetailOrganizer,
+      },
+      {
+        path: 'user/detail/vender',
+        component: AdminDashboardUserDetailVender,
       },
       {
         path: 'logs',
