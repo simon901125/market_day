@@ -1,0 +1,149 @@
+﻿:host {
+  display: block;
+}
+
+.admin-user-managemant {
+  padding: 0 32px 0;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: calc(100vh - 48px);
+  overflow: hidden;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.user-management-filter {
+  grid-template-columns: minmax(180px, 1.6fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) 112px;
+}
+
+.table-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg-white);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-weight: 600;
+
+  thead tr {
+    height: 48px; // ???TS ??headerHeight 銝??
+  }
+
+  th {
+    text-align: left;
+    padding: 0 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-normal);
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--border-light);
+
+    &.user-name {
+        width: 10%;
+    }
+
+    &.user-role,
+    &.user-status {
+        width: 10%;
+        text-align: center;
+    }
+
+    &.user-cdate,
+    &.user-ldate {
+        width: 15%;
+        text-align: center;
+    }
+
+    &.action-btn {
+        width: 150px;
+        text-align:center;
+    }
+  }
+
+
+
+  tbody tr {
+    height: 56px; // ???TS ??rowHeight 銝??
+    
+    &:hover {
+      background: var(--bg-primary);
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--border-light);
+    }
+  }
+//    vertical-align: inherit;
+
+  td {
+    padding: 0 16px;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+
+    &.user-role,
+    &.user-status {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    &.user-cdate,
+    &.user-ldate {
+        text-align: center;
+    }
+
+    &.action-btn {
+        text-align: center;
+
+        .btn-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            .app-btn {
+                flex: 0 0 auto;
+            }
+        }
+    }
+  }
+}
+
+.status-tag,
+.role-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--radius-tag);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.empty-row {
+  text-align: center;
+  color: var(--text-light);
+  height: 56px;
+}
+
+@media (max-width: 1200px) {
+  .user-management-filter {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .user-management-filter {
+    grid-template-columns: 1fr;
+  }
+}
+

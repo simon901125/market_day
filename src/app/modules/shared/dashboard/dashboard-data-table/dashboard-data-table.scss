@@ -1,0 +1,132 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.dashboard-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  background: var(--bg-white);
+}
+
+.dashboard-table {
+  width: 100%;
+  min-width: 960px;
+  border-collapse: collapse;
+  color: var(--text-dark);
+
+  thead {
+    background: linear-gradient(90deg, var(--bg-primary), var(--primary-soft));
+  }
+
+  th,
+  td {
+    padding: 13px 16px;
+    text-align: left;
+    vertical-align: middle;
+    font-size: 14px;
+    font-weight: 800;
+
+    &.center {
+      text-align: center;
+    }
+
+    &.end {
+      text-align: right;
+    }
+  }
+
+  [data-column='name'] {
+    width: 220px;
+  }
+
+  [data-column='date'] {
+    width: 210px;
+  }
+
+  [data-column='location'] {
+    width: 250px;
+  }
+
+  [data-column='status'],
+  [data-column='signupProgress'],
+  [data-column='action'] {
+    width: 130px;
+  }
+
+  [data-column='paidCount'] {
+    width: 110px;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border-light);
+    transition: background 0.2s ease;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: var(--bg-primary);
+    }
+  }
+}
+
+.image-text-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  img {
+    width: 48px;
+    height: 36px;
+    border-radius: var(--radius-tag);
+    object-fit: cover;
+    flex: 0 0 auto;
+  }
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 74px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: var(--radius-tag);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.table-action {
+  min-width: 96px;
+  height: 34px;
+  border: 1px solid var(--primary-color);
+  border-radius: var(--radius-tag);
+  background: var(--bg-white);
+  color: var(--primary-color);
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
+
+  &:hover,
+  &.primary {
+    background: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
+  }
+}
+
+.empty-cell {
+  height: 72px;
+  text-align: center;
+  color: var(--text-light);
+}

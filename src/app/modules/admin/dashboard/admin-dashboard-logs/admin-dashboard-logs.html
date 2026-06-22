@@ -1,0 +1,77 @@
+﻿<section class="admin-logs page-transition">
+  <h1 class="page-title">操作紀錄</h1>
+
+  <div class="app-filter-bar logs-filter">
+    <label class="app-search-field">
+      <span class="app-control-title">操作</span>
+      <span class="app-search-input">
+        <i class="bi bi-search"></i>
+        <input
+          type="search"
+          placeholder="請輸入操作人/操作內容"
+          [value]="searchKeyword"
+          (input)="onSearchKeywordInput($event)"
+          (keydown.enter)="onSearch()"
+        />
+      </span>
+    </label>
+
+    <app-dropdown
+      #oprationDropdown
+      title="操作類型"
+      placeholder="全部"
+      [options]="oprationOptions"
+      (optionSelected)="onOprationSelected($event)"
+    ></app-dropdown>
+
+    <app-date-range-selector
+      selectorTitle="日期區間"
+    ></app-date-range-selector>
+
+    <button type="button" class="app-btn search" (click)="onSearch()">
+      <i class="bi bi-search"></i>
+      <span>搜尋</span>
+    </button>
+  </div>
+
+  <div class="table-wrapper" #tableWrapper>
+    <table class="logs-table">
+      <thead>
+        <tr>
+          <th class="log-ctime">操作時間</th>
+          <th class="log-operator">操作人</th>
+          <th class="log-actionType">操作類型</th>
+          <th class="log-target">操作對象</th>
+          <th class="log-details">操作內容</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (log of logs; track log.id) {
+          <tr>
+            <td class="log-ctime">{{ log.createdAt }}</td>
+            <td class="log-operator">{{ log.operator }}</td>
+            <td class="log-actionType">
+              <span class="actionType-tag" [class]="getOprationClass(log.actionType)">{{ log.actionType }}</span>
+            </td >
+            <td class="log-target">{{ log.target }}</td>
+            <td class="log-details">{{ log.details }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="empty-row">查無符合條件的活動</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <app-dashboard-pagination
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems"
+    (pageChange)="onPageChange($event)"
+  ></app-dashboard-pagination>
+</section>
+
+
+

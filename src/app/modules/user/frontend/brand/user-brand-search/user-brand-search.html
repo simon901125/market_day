@@ -2,31 +2,36 @@
   <section class="brandserch-hero">
     <div class="hero-content">
       <h1>品牌探索</h1>
-      <p>探索小集日精心挑選的市集品牌，認識他們的故事與作品。</p>
+      <p>精選小集日推薦的生活品牌，從選物故事、職人風格到參與市集，找到最適合你的下一個日常收藏。</p>
     </div>
   </section>
 
-  <section class="filter-panel">
+  <section class="brand-filter-panel">
     <div class="filter-inner">
-      <div class="filter-top">
-        <div class="search-input">
-          <i class="bi bi-search"></i>
-          <input type="text" placeholder="搜尋品牌名稱、關鍵字" />
-        </div>
+      <div class="app-filter-bar brand-search-row">
+        <label class="app-search-field">
+          <span class="app-control-title">品牌名稱</span>
+          <span class="app-search-input">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="搜尋品牌名稱、關鍵字" />
+          </span>
+        </label>
 
         <div class="filter-actions">
-          <app-user-dropdown
+          <app-dropdown
+            title="品牌類型"
             [options]="brandTypeOptions"
-            placeholder="品牌類型">
-          </app-user-dropdown>
+            placeholder="全部品牌"
+          ></app-dropdown>
 
-          <app-user-dropdown
+          <app-dropdown
+            title="參與市集"
             [options]="marketOptions"
-            placeholder="參與市集">
-          </app-user-dropdown>
+            placeholder="全部市集"
+          ></app-dropdown>
         </div>
 
-        <button class="search-btn" type="button">
+        <button class="app-btn search" type="button">
           搜尋
         </button>
       </div>
@@ -37,8 +42,8 @@
     <div class="brand-inner">
       <div class="brand-section-title">
         <div>
-          <h4>探索品牌</h4>
-          <p>發掘參與小集日市集的優質品牌</p>
+          <h4>精選品牌</h4>
+          <p>瀏覽人氣攤主與特色選物，收藏喜歡的生活靈感。</p>
         </div>
       </div>
 
@@ -46,8 +51,8 @@
         @for (brand of pagedBrands; track $index) {
           <app-user-brandserch-card
             [brand]="brand"
-            (cardClick)="goToBrandDetail($event)">
-          </app-user-brandserch-card>
+            (cardClick)="goToBrandDetail($event)"
+          ></app-user-brandserch-card>
         }
       </div>
 
@@ -55,8 +60,8 @@
         [currentPage]="currentPage"
         [pageSize]="pageSize"
         [totalItems]="brands.length"
-        (pageChange)="onPageChange($event)">
-      </app-pagination>
+        (pageChange)="onPageChange($event)"
+      ></app-pagination>
     </div>
   </section>
 </div>

@@ -1,0 +1,258 @@
+:host {
+  display: block;
+}
+
+.application-page {
+  width: 100%;
+  max-width: 1200px;
+  height: calc(100vh - 48px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+  color: var(--text-dark);
+}
+
+h1 {
+  margin: 0;
+  color: var(--text-dark);
+  font-size: 25px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.vendor-record-filter {
+  grid-template-columns: minmax(220px, 1.2fr) minmax(170px, 0.8fr) minmax(300px, 1.4fr) 92px;
+}
+
+.record-card {
+  flex: 0 0 auto;
+  min-height: 0;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  background: var(--bg-white);
+  overflow: hidden;
+}
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+table {
+  width: 100%;
+  min-width: 1120px;
+  border-collapse: collapse;
+  color: var(--text-dark);
+
+  thead {
+    background: linear-gradient(90deg, var(--bg-primary), var(--primary-soft));
+  }
+
+  th,
+  td {
+    padding: 13px 14px;
+    text-align: left;
+    vertical-align: middle;
+    font-size: 13.5px;
+    font-weight: 800;
+  }
+
+  th {
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border-light);
+    transition: background 0.2s ease;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: var(--bg-primary);
+    }
+  }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 210px;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 270px;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 300px;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 140px;
+  }
+
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 130px;
+    text-align: center;
+  }
+
+  th:nth-child(6),
+  td:nth-child(6) {
+    width: 150px;
+    text-align: right;
+  }
+}
+
+.event-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 220px;
+
+  img {
+    width: 48px;
+    height: 36px;
+    flex: 0 0 auto;
+    border-radius: var(--radius-tag);
+    object-fit: cover;
+  }
+
+  strong {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1.15;
+  }
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 74px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: var(--radius-tag);
+  font-size: 13px;
+  font-weight: 900;
+  white-space: nowrap;
+
+  &.reviewing,
+  &.payment,
+  &.refund-applying {
+    background: var(--bg-primary);
+    color: var(--primary-color);
+  }
+
+  &.booth {
+    background: #eaf5ff;
+    color: #1680e5;
+  }
+
+  &.completed {
+    background: #ecfdf3;
+    color: #16a34a;
+  }
+
+  &.refund-processing {
+    background: #f5f3ff;
+    color: #7c3aed;
+  }
+
+  &.refunded {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+
+  &.history {
+    background: #eee;
+    color: #888;
+  }
+}
+
+.action-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+.primary-btn,
+.outline-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 76px;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--primary-color);
+  border-radius: var(--radius-tag);
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
+}
+
+.primary-btn {
+  background: var(--primary-color);
+  color: var(--bg-white);
+
+  &:hover {
+    border-color: var(--primary-hover);
+    background: var(--primary-hover);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
+  }
+}
+
+.outline-btn {
+  background: var(--bg-white);
+  color: var(--primary-color);
+
+  &:hover {
+    background: var(--primary-color);
+    color: var(--bg-white);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
+  }
+}
+
+.empty-cell {
+  height: 72px;
+  color: var(--text-light);
+  text-align: center;
+}
+
+app-dashboard-pagination {
+  flex: 0 0 40px;
+  display: block;
+}
+
+@media (max-width: 1200px) {
+  .vendor-record-filter {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .application-page {
+    gap: 16px;
+  }
+
+  .vendor-record-filter {
+    grid-template-columns: 1fr;
+  }
+}

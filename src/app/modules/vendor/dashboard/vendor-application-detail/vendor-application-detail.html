@@ -1,0 +1,195 @@
+<main class="application-detail-page" [class.modal-open]="showDialog">
+  <nav class="breadcrumb-line" aria-label="breadcrumb">
+    <a routerLink="/vendor/dash-board/application-record">我的報名紀錄</a>
+    <span>›</span>
+    <strong>報名詳細</strong>
+  </nav>
+
+  <header class="page-title">
+    <a
+      routerLink="/vendor/dash-board/application-record"
+      class="back-btn"
+      aria-label="返回我的報名紀錄"
+    >
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <h1>報名詳細</h1>
+
+    @if (detail.actionButton) {
+      <button
+        type="button"
+        class="header-action"
+        (click)="handleAction(detail.actionButton.action)"
+      >
+        {{ detail.actionButton.label }}
+      </button>
+    }
+  </header>
+
+  <section class="summary-card">
+    <img [src]="detail.image" [alt]="detail.title" />
+
+    <div class="summary-info">
+      <h2>{{ detail.title }}</h2>
+      <p>報名編號：{{ detail.applicationNo }}</p>
+      <p>
+        <i class="bi bi-calendar4"></i>
+        {{ detail.dateRange }}
+      </p>
+      <p>
+        <i class="bi bi-geo-alt"></i>
+        {{ detail.location }}
+      </p>
+    </div>
+
+    <div class="summary-actions">
+      <span class="status-badge" [ngClass]="detail.statusClass">{{ detail.statusText }}</span>
+      <a routerLink="/user/activity-detail" [state]="{ market: market }" class="outline-link">
+        查看活動詳細
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  </section>
+
+  <section class="progress-card">
+    <h2>報名進度</h2>
+
+    <div class="progress-steps">
+      @for (step of detail.progress; track step.label; let last = $last) {
+        <article class="progress-step">
+          <span>{{ step.label }}</span>
+          <strong>{{ step.value }}</strong>
+        </article>
+
+        @if (!last) {
+          <i class="bi bi-chevron-right step-arrow"></i>
+        }
+      }
+    </div>
+  </section>
+
+  <div class="detail-grid">
+    <section class="detail-card">
+      <h2>
+        <i class="bi bi-clipboard-check"></i>
+        報名內容
+      </h2>
+
+      <div class="info-list">
+        @for (row of detail.applicationRows; track row.label) {
+          <div>
+            <span>{{ row.label }}</span>
+            <strong [class.highlight-text]="row.highlight">{{ row.value }}</strong>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="detail-card">
+      <h2>
+        <i class="bi bi-wallet2"></i>
+        付款資訊
+      </h2>
+
+      <div class="info-list payment-list">
+        @for (row of detail.paymentRows; track row.label) {
+          <div>
+            <span>{{ row.label }}</span>
+            <strong [class.highlight-text]="row.highlight">{{ row.value }}</strong>
+          </div>
+        }
+      </div>
+
+      @if (detail.paymentLines.length) {
+        <div class="payment-detail">
+          <button
+            type="button"
+            class="toggle-label"
+            (click)="isPaymentDetailOpen = !isPaymentDetailOpen"
+          >
+            <i
+              class="bi"
+              [class.bi-chevron-down]="!isPaymentDetailOpen"
+              [class.bi-chevron-up]="isPaymentDetailOpen"
+            ></i>
+
+            付款明細
+          </button>
+
+          @if (isPaymentDetailOpen) {
+            <div class="payment-content">
+              @for (line of detail.paymentLines; track line.label) {
+                <div>
+                  <span>{{ line.label }}</span>
+                  <strong>{{ formatCurrency(line.amount) }}</strong>
+                </div>
+              }
+
+              <div class="total-line">
+                <span>總計</span>
+                <strong>{{ formatCurrency(paymentTotal) }}</strong>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="detail-card side-card" [class.refund-card]="detail.sideCard.type === 'refund'">
+      <h2>
+        <i class="bi" [ngClass]="detail.sideCard.icon"></i>
+        {{ detail.sideCard.title }}
+      </h2>
+
+      @if (detail.sideCard.rows.length) {
+        <div class="info-list side-list">
+          @for (row of detail.sideCard.rows; track row.label) {
+            <div>
+              <span>{{ row.label }}</span>
+              <strong [class.highlight-text]="row.highlight">{{ row.value }}</strong>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-booth">
+          <div class="empty-icon">
+            <i class="bi bi-shop"></i>
+          </div>
+          <h3>{{ detail.booth.emptyTitle }}</h3>
+          <p>{{ detail.booth.emptyText }}</p>
+        </div>
+      }
+
+      @if (detail.sideCard.notice) {
+        <p class="notice-box">
+          <i class="bi bi-info-circle"></i>
+          {{ detail.sideCard.notice }}
+        </p>
+      }
+
+      @if (detail.sideCard.type === 'booth' && detail.booth.actionLabel) {
+        <button type="button" class="map-btn">{{ detail.booth.actionLabel }}</button>
+      }
+    </section>
+  </div>
+
+  @if (showDialog && detail.dialog) {
+    <div class="dialog-backdrop">
+      <section
+        class="success-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="refundDialogTitle"
+      >
+        <div class="dialog-icon">
+          <i class="bi bi-check-lg"></i>
+        </div>
+
+        <h2 id="refundDialogTitle">{{ detail.dialog.title }}</h2>
+        <p>{{ detail.dialog.message }}</p>
+
+        <button type="button" (click)="closeDialog()">{{ detail.dialog.confirmLabel }}</button>
+      </section>
+    </div>
+  }
+</main>

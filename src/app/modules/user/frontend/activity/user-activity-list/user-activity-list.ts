@@ -9,7 +9,7 @@ import { MarketStatus } from '../../../../../models/status/MarketStatus';
 import { UserMarketSearchPanel } from '../../shared/user-market-search-panel/user-market-search-panel';
 import { Pagination } from '../../../../shared/pagination/pagination';
 import { UserMarketCard } from '../../shared/user-market-card/user-market-card';
-import { UserHistoryMarketCard } from '../../brand/user-history-market-card/user-history-market-card';
+import { UserHistoryMarketCard } from '../../shared/user-history-market-card/user-history-market-card';
 
 type MarketSample = Omit<MarketCardItem, 'status' | 'statusClass'>;
 type HistoryMarketSample = Omit<HistoryMarketCardItem, 'status' | 'statusClass'>;

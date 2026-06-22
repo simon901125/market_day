@@ -20,14 +20,14 @@ export class VendorDashboardHome {
       count: 1,
       unit: '筆',
       icon: 'bi-clipboard-check',
-      link: '/vendor/dash-board/register-record',
+      link: '/vendor/dash-board/application-record',
     },
     {
       title: '待付款報名',
       count: 1,
       unit: '筆',
       icon: 'bi-wallet2',
-      link: '/vendor/dash-board/register-record',
+      link: '/vendor/dash-board/application-record',
     },
     {
       title: '已選攤位',
@@ -35,7 +35,7 @@ export class VendorDashboardHome {
       unit: '個',
       icon: 'bi-shop',
       iconClass: 'blue',
-      link: '/vendor/dash-board/stall',
+      link: '/vendor/dash-board/myStall',
     },
   ];
 

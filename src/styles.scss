@@ -1,4 +1,6 @@
-@use "assets/scss/swal";
+﻿@use "./assets/scss/sweet-alert";
+@use "./assets/scss/shared-controls";
+@use "./assets/scss/status-colors";
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
@@ -40,14 +42,6 @@ body {
   /* Shadow 陰影 */
   --shadow-soft: 0 8px 24px rgba(47, 41, 36, 0.08);
   --shadow-card: 0 12px 32px rgba(47, 41, 36, 0.1);
-
-  /* 狀態顏色 */
-  /** 市集狀態-MarketStatus*/
-  --market-status-active-bg: rgba(98, 162, 29, 0.85);
-  ;
-  --market-status-upcoming-bg: rgba(245, 158, 11, 0.85);
-  --market-status-preparing-bg: rgba(79, 143, 217, 0.85);
-  --market-status-ended-bg: rgba(139, 139, 139, 0.85);
 }
 
 // 驗證紅框
@@ -84,73 +78,3 @@ body {
   }
 }
 
-//活動管理狀態顏色class設定
-.tag-red {
-  background-color: #FDECEC ;
-  color: #EF4444;
-}
-.tag-orange {
-  background-color: #FFF4E8 ;
-  color: #FB9837;
-}
-.tag-green {
-  background-color: #EAF8E8 ;
-  color: #22C55E;
-}
-.tag-teal {
-  background-color: #E6FFFB ;
-  color: #14B8A6;
-}
-.tag-blue {
-  background-color: #EAF2FF ;
-  color: #3B82F6;
-}
-.tag-purple {
-  background-color: #F3E8FF ;
-  color: #9333EA;
-}
-.tag-grey {
-  background-color: #F3F4F6 ;
-  color: #6B7280;
-}
-
-//dashboard 可用狀態配色
-.green {
-  background: #ecfdf3;
-  color: #16a34a;
-}
-
-.blue {
-  background: #eaf5ff;
-  color: #1680e5;
-}
-
-.orange {
-  background: var(--bg-primary);
-  color: var(--primary-color);
-}
-
-.purple {
-  background: #f5f3ff;
-  color: #7c3aed;
-}
-
-.teal {
-  background: #ecfdf5;
-  color: #0f766e;
-}
-
-.yellow {
-  background: #fffbeb;
-  color: #d97706;
-}
-
-.red {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.grey {
-  background: #eee;
-  color: #888;
-}

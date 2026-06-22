@@ -1,0 +1,30 @@
+<div class="select-wrapper">
+  @if (title) {
+    <span class="select-title">{{ title }}</span>
+  }
+
+  <button class="select-btn" type="button" (click)="toggle()">
+    <span class="select-label">
+      @if (iconClass) {
+        <i [class]="'select-leading-icon ' + iconClass"></i>
+      }
+      <span>{{ displayLabel }}</span>
+    </span>
+    <i class="bi bi-chevron-down"></i>
+  </button>
+
+  @if (isOpen) {
+    <ul class="dropdown-list" role="listbox">
+      @for (option of options; track option; let i = $index) {
+        <li
+          class="dropdown-item"
+          [class.active]="activeIndex === i"
+          (click)="selectOption(i)"
+          role="option"
+          [attr.aria-selected]="activeIndex === i">
+          {{ option }}
+        </li>
+      }
+    </ul>
+  }
+</div>

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { DashboardNotification } from '../../../dashboard/dashboard-notification/dashboard-notification';
 import { NotificationItem, NotificationType } from '../../../../models/interface/NotificationItem';
+import { DashboardNotification } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
 
 @Component({
   selector: 'app-vendor-dashboard-notification',

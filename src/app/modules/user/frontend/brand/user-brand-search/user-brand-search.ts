@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { BrandItem } from '../../../../../models/interface/BrandItem';
 import { BrandType } from '../../../../../models/type/BrandType ';
 import { Pagination } from '../../../../shared/pagination/pagination';
-import { UserDropdown } from '../../shared/user-dropdown/user-dropdown';
+import { Dropdown } from '../../../../shared/dropdown/dropdown';
 import { UserBrandSearchCard } from '../user-brand-search-card/user-brand-search-card';
 
 const brandImage = (brandId: string, fileName: string): string =>
@@ -192,7 +192,7 @@ export const findBrandById = (brandId: string | null | undefined): BrandItem | u
 
 @Component({
   selector: 'app-user-brandserch',
-  imports: [UserBrandSearchCard, UserDropdown, Pagination],
+  imports: [UserBrandSearchCard, Dropdown, Pagination],
   templateUrl: './user-brand-search.html',
   styleUrl: './user-brand-search.scss',
 })

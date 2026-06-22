@@ -15,24 +15,32 @@ import { AdminDashboardUserDetailVender } from './modules/admin/admin-dashboard-
 import { AdminDashboardLogs } from './modules/admin/admin-dashboard-logs/admin-dashboard-logs';
 import { Auth } from './modules/auth/auth/auth';
 import { UserAboutUs } from './modules/user/frontend/user-about-us/user-about-us';
-import { AUTH_ROUTE_DATA } from './config/auth-route-data';
-import { DashboardLayout } from './modules/dashboard/dashboard-layout/dashboard-layout';
-import { VendorDashboardHome } from './modules/vendor/dashboard/vendor-dashboard-home/vendor-dashboard-home';
-import { VendorDashboardNotification } from './modules/vendor/dashboard/vendor-dashboard-notification/vendor-dashboard-notification';
 import { OrganizerDashboardHome } from './modules/organizer/dashboard/organizer-dashboard-home/organizer-dashboard-home';
 import { OrganizerDashboardNotification } from './modules/organizer/dashboard/organizer-dashboard-notification/organizer-dashboard-notification';
+import { OrganizerEventManagement } from './modules/organizer/dashboard/organizer-event-management/organizer-event-management';
 import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organizer-home';
-import { VendorHome } from './modules/vendor/frontend/vendor-home/vendor-home';
 import { OrganizerAbout } from './modules/organizer/frontend/organizer-about/organizer-about';
+import { UserBrandSearch } from './modules/user/frontend/brand/user-brand-search/user-brand-search';
+
+//--- vendor ----
+import { VendorHome } from './modules/vendor/frontend/vendor-home/vendor-home';
+import { VendorDashboardHome } from './modules/vendor/dashboard/vendor-dashboard-home/vendor-dashboard-home';
+import { VendorDashboardNotification } from './modules/vendor/dashboard/vendor-dashboard-notification/vendor-dashboard-notification';
 import { VendorAbout } from './modules/vendor/frontend/vendor-about/vendor-about';
 import { VendorMarketSignupList } from './modules/vendor/frontend/vendor-market-signup-list/vendor-market-signup-list';
 import { VendorMarketSignupDetail } from './modules/vendor/frontend/vendor-market-signup-detail/vendor-market-signup-detail';
-import { UserBrandSearch } from './modules/user/frontend/brand/user-brand-search/user-brand-search';
 import { VendorSignupForm } from './modules/vendor/frontend/vendor-signup-form/vendor-signup-form';
 import { VendorSignupConfirmPage } from './modules/vendor/frontend/vendor-signup-confirm-page/vendor-signup-confirm-page';
 import { VendorSignupCompletePage } from './modules/vendor/frontend/vendor-signup-complete-page/vendor-signup-complete-page';
 import { VendorAccountSettings } from './modules/vendor/dashboard/vendor-account-settings/vendor-account-settings';
 import { VendorPasswordSettings } from './modules/vendor/dashboard/vendor-password-settings/vendor-password-settings';
+import { VendorDashboardStall } from './modules/vendor/dashboard/vendor-dashboard-stall/vendor-dashboard-stall';
+import { VendorApplicationRecord } from './modules/vendor/dashboard/vendor-application-record/vendor-application-record';
+import { VendorApplicationDetail } from './modules/vendor/dashboard/vendor-application-detail/vendor-application-detail';
+
+/** 頁面設定檔 */
+import { AUTH_ROUTE_DATA } from './config/auth-route-data';
+import { DashboardLayout } from './modules/shared/dashboard/dashboard-layout/dashboard-layout';
 
 export const routes: Routes = [
   /** 預設導向 */
@@ -141,6 +149,22 @@ export const routes: Routes = [
         component: VendorDashboardNotification,
       },
       {
+        path: 'myStall',
+        component: VendorDashboardStall,
+      },
+      {
+        path: 'application-record',
+        component: VendorApplicationRecord,
+      },
+      {
+        path: 'appliction-record/detail/:applicationNo',
+        component: VendorApplicationDetail,
+      },
+      {
+        path: 'appliction-record/detail',
+        component: VendorApplicationDetail,
+      },
+      {
         path: 'account-settings',
         component: VendorAccountSettings,
       },
@@ -169,6 +193,10 @@ export const routes: Routes = [
       {
         path: 'notification',
         component: OrganizerDashboardNotification,
+      },
+      {
+        path: 'activity',
+        component: OrganizerEventManagement,
       },
     ],
   },

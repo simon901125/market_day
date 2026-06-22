@@ -1,0 +1,178 @@
+// 全站共用頁面標題列：前台、後台列表頁都可以使用。
+.app-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+// 全站共用頁面標題文字。
+.app-page-title {
+  margin: 0;
+  color: var(--text-dark);
+  font-size: 25px;
+  font-weight: 900;
+}
+
+// 搜尋 / 篩選欄位外層，負責包住標題與輸入框。
+.app-search-field {
+  display: block;
+  width: 100%;
+  font-weight: 600;
+}
+
+// 搜尋 / 篩選列容器，頁面可自行覆寫 grid-template-columns。
+.app-filter-bar {
+  display: grid;
+  align-items: end;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--bg-white);
+  box-sizing: border-box;
+
+  > * {
+    min-width: 0;
+  }
+
+  .app-btn {
+    width: 100%;
+  }
+}
+
+// 欄位標題，搭配 app-search-field、dropdown、date-range-selector 使用。
+.app-control-title {
+  display: block;
+  margin: 0 auto 4px 8px;
+  color: var(--text-normal);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+// 共用搜尋輸入框樣式，讓前台與後台的高度、框線、圓角一致。
+.app-search-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-tag);
+  background: var(--bg-white);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover,
+  &:focus-within {
+    border-color: var(--primary-hover);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
+  }
+
+  i {
+    color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1;
+    transition: color 0.2s ease;
+  }
+
+  &:hover i,
+  &:focus-within i {
+    color: var(--primary-hover);
+  }
+
+  input {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text-dark);
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    &::placeholder {
+      color: var(--text-normal);
+    }
+  }
+}
+
+// 共用按鈕樣式，依情境加上 search、primary、secondary、clear。
+.app-btn {
+  width: 100%;
+  height: 40px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-tag);
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
+
+  &.search,
+  &.primary {
+    background-color: var(--primary-color);
+    color: #fff;
+
+    &:hover {
+      background-color: var(--primary-hover);
+      color: #fff;
+    }
+  }
+
+  &.clear {
+    background-color: var(--bg-white);
+    color: var(--text-light);
+    border-color: var(--border-soft);
+
+    &:hover {
+      color: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+  }
+
+  &.secondary {
+    background-color: var(--bg-white);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+
+    &:hover {
+      background-color: var(--primary-color);
+      color: #fff;
+      border-color: var(--primary-color);
+    }
+  }
+}
+
+// 頁面主要新增按鈕，桌機不滿版、手機滿版。
+.app-create-btn {
+  width: auto;
+  flex: 0 0 auto;
+  padding: 0 18px;
+}
+
+@media (max-width: 768px) {
+  .app-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .app-create-btn {
+    width: 100%;
+  }
+}

@@ -29,7 +29,7 @@
     </div>
 
     @if (activeTab === 'current') {
-      <app-user-market-search-panel></app-user-market-search-panel>
+      <app-user-market-search-panel dateRangeTitle="活動日期"></app-user-market-search-panel>
 
       <div class="market-grid">
         @for (market of pagedMarkets; track market.title) {

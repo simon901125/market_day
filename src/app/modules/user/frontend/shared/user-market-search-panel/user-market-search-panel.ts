@@ -1,16 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CategoryItem } from '../../../../../models/interface/CategoryItem';
 import { RouterLink } from '@angular/router';
-import { UserDropdown } from '../user-dropdown/user-dropdown';
+import { Dropdown } from '../../../../shared/dropdown/dropdown';
+import { DateRangeSelector } from '../../../../shared/date-range-selector/date-range-selector';
 
 @Component({
   selector: 'app-user-market-search-panel',
-  imports: [RouterLink, UserDropdown],
+  imports: [RouterLink, Dropdown, DateRangeSelector],
   templateUrl: './user-market-search-panel.html',
   styleUrl: './user-market-search-panel.scss',
 })
 
 export class UserMarketSearchPanel {
+  /** 日期區間標題由使用頁面決定，預設不顯示。 */
+  @Input() dateRangeTitle = '';
+
   /** 全台縣市 */
   readonly cityOptions = [
     '臺北市',

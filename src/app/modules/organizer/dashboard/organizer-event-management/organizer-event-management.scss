@@ -1,0 +1,45 @@
+﻿:host {
+  display: block;
+}
+
+.organizer-event-management {
+  width: 100%;
+  max-width: 1200px;
+  height: calc(100vh - 48px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+
+  app-dashboard-data-table {
+    flex: 0 0 auto;
+    min-height: 0;
+    display: block;
+  }
+
+  app-dashboard-pagination {
+    flex: 0 0 40px;
+    display: block;
+  }
+}
+
+.organizer-event-filter {
+  grid-template-columns: minmax(220px, 1.2fr) minmax(170px, 0.8fr) minmax(300px, 1.4fr) 92px;
+}
+
+@media (max-width: 1200px) {
+  .organizer-event-filter {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .organizer-event-management {
+    gap: 16px;
+  }
+
+  .organizer-event-filter {
+    grid-template-columns: 1fr;
+  }
+}

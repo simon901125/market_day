@@ -427,8 +427,7 @@
   }
 }
 
-.signup-btn,
-.outline-btn {
+.signup-btn{
   width: 100%;
   height: 54px;
   border-radius: 7px;
@@ -446,16 +445,16 @@
   }
 }
 
-.outline-btn {
-  margin-top: 14px;
-  border: 1px solid var(--primary-hover);
-  background: var(--bg-white);
-  color: var(--primary-color);
+// .outline-btn {
+//   margin-top: 14px;
+//   border: 1px solid var(--primary-hover);
+//   background: var(--bg-white);
+//   color: var(--primary-color);
 
-  &:hover {
-    background: var(--bg-soft);
-  }
-}
+//   &:hover {
+//     background: var(--bg-soft);
+//   }
+// }
 
 .tips {
   display: grid;

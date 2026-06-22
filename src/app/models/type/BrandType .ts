@@ -19,7 +19,7 @@ export class BrandType {
   ];
 
   static readonly filterList: string[] = [
-    '全部市集',
+    '全部品牌',
     ...BrandType.list,
   ];
 }

@@ -1,0 +1,98 @@
+﻿<section class="admin-market-managemant page-transition">
+  <h1 class="page-title">活動管理</h1>
+
+  <div class="app-filter-bar market-management-filter">
+    <label class="app-search-field">
+      <span class="app-control-title">活動名稱</span>
+      <span class="app-search-input">
+        <i class="bi bi-search"></i>
+        <input
+          type="search"
+          placeholder="請輸入活動名稱"
+          [value]="searchKeyword"
+          (input)="onSearchKeywordInput($event)"
+          (keydown.enter)="onSearch()"
+        />
+      </span>
+    </label>
+
+    <app-dropdown
+      #organizerDropdown
+      title="主辦方"
+      placeholder="全部"
+      [options]="organizerOptions"
+      (optionSelected)="onOrganizerSelected($event)"
+    ></app-dropdown>
+
+    <app-dropdown
+      #statusDropdown
+      title="狀態"
+      placeholder="全部"
+      [options]="statusOptions"
+      (optionSelected)="onStatusSelected($event)"
+    ></app-dropdown>
+
+    <app-date-range-selector
+      selectorTitle="活動日期"
+    ></app-date-range-selector>
+
+    <button type="button" class="app-btn search" (click)="onSearch()">
+      <i class="bi bi-search"></i>
+      <span>搜尋</span>
+    </button>
+  </div>
+
+  <div class="table-wrapper" #tableWrapper>
+    <table class="activity-table">
+      <thead>
+        <tr>
+          <th class="activity-name">活動名稱</th>
+          <th class="activity-organizer">主辦方</th>
+          <th class="activity-date">活動日期</th>
+          <th class="activity-status">狀態</th>
+          <th class="activity-cdate">建立時間</th>
+          <th class="activity-btn">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (activity of activities; track activity.id) {
+          <tr>
+            <td class="activity-name">
+              <div class="activity-name-cell">
+                <img [src]="activity.image" [alt]="activity.name" />
+                <span>{{ activity.name }}</span>
+              </div>
+            </td>
+            <td class="activity-organizer">{{ activity.organizer }}</td>
+            <td class="activity-date">{{ activity.startDate }} ~ {{ activity.endDate }}</td>
+            <td class="activity-status">
+              <span class="status-tag" [class]="getStatusClass(activity.status)">{{ activity.status }}</span>
+            </td >
+            <td class="activity-cdate">{{ activity.createdAt }}</td>
+            <td class="activity-btn">
+              @if (isReviewNeeded(activity.status)) {
+                <button type="button" class="app-btn primary" (click)="getDetailHandler(activity)()">審核</button>
+              } @else {
+                <button type="button" class="app-btn secondary" (click)="getDetailHandler(activity)()">查看</button>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="empty-row">查無符合條件的活動</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <app-dashboard-pagination
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems"
+    (pageChange)="onPageChange($event)"
+  ></app-dashboard-pagination>
+</section>
+
+
+

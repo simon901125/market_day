@@ -1,0 +1,88 @@
+﻿// 市集狀態變數與共用狀態配色
+:root {
+  /** 市集狀態：進行中 */
+  --market-status-active-bg: rgba(98, 162, 29, 0.85);
+  /** 市集狀態：即將開始 */
+  --market-status-upcoming-bg: rgba(245, 158, 11, 0.85);
+  /** 市集狀態：籌備中 */
+  --market-status-preparing-bg: rgba(79, 143, 217, 0.85);
+  /** 市集狀態：已結束 */
+  --market-status-ended-bg: rgba(139, 139, 139, 0.85);
+}
+
+// 活動管理狀態標籤配色
+.tag-red {
+  background-color: #FDECEC;
+  color: #EF4444;
+}
+
+.tag-orange {
+  background-color: #FFF4E8;
+  color: #FB9837;
+}
+
+.tag-green {
+  background-color: #EAF8E8;
+  color: #22C55E;
+}
+
+.tag-teal {
+  background-color: #E6FFFB;
+  color: #14B8A6;
+}
+
+.tag-blue {
+  background-color: #EAF2FF;
+  color: #3B82F6;
+}
+
+.tag-purple {
+  background-color: #F3E8FF;
+  color: #9333EA;
+}
+
+.tag-grey {
+  background-color: #F3F4F6;
+  color: #6B7280;
+}
+
+// Dashboard 共用狀態標籤配色
+.green {
+  background: #ecfdf3;
+  color: #16a34a;
+}
+
+.blue {
+  background: #eaf5ff;
+  color: #1680e5;
+}
+
+.orange {
+  background: var(--bg-primary);
+  color: var(--primary-color);
+}
+
+.purple {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.teal {
+  background: #ecfdf5;
+  color: #0f766e;
+}
+
+.yellow {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.red {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.grey {
+  background: #eee;
+  color: #888;
+}
