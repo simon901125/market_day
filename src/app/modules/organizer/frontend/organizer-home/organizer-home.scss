@@ -295,7 +295,7 @@
 .step-number {
   position: absolute;
   top: -6px;
-  right: -6px;
+  left: -6px;
   width: 24px;
   height: 24px;
   display: grid;
@@ -491,8 +491,7 @@ details {
 
   .step-number {
     top: -6px;
-    right: -6px;
-    left: auto;
+    left: -6px;
     z-index: 1;
     width: 22px;
     height: 22px;

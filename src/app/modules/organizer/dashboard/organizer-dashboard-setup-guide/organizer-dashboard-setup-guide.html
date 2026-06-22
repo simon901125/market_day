@@ -1,0 +1,63 @@
+<section class="organizer-dashboard-setup-guide">
+  <section class="setup-hero">
+    <div class="setup-hero-copy">
+      <h1>歡迎使用小集日主辦方後台 <span aria-hidden="true">👋</span></h1>
+      <p>完成主辦方資料設定後，就可以開始建立第一場市集。</p>
+
+      <button type="button" class="app-btn primary app-create-btn">
+        <i class="bi bi-stars"></i>
+        前往設定
+      </button>
+    </div>
+
+    <div class="setup-hero-visual" aria-hidden="true">
+      <span class="dot-grid"></span>
+      <div class="tent-mark">
+        <img src="assets/images/dashboard/dashboard-tent.png" alt="" />
+      </div>
+    </div>
+  </section>
+
+  <section class="setup-section">
+    <h2 class="setup-section-title">
+      <i class="bi bi-stars"></i>
+      開始前，你可以先了解 4 件事
+    </h2>
+
+    <div class="setup-steps">
+      @for (item of setupSteps; track item.step) {
+        <article class="setup-step">
+          <div class="step-icon">
+            <span class="step-number">{{ item.step }}</span>
+            <i class="bi {{ item.icon }}"></i>
+          </div>
+          <div class="step-copy">
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="manage-section">
+    <h2 class="setup-section-title">
+      <i class="bi bi-megaphone-fill"></i>
+      審核通過後，你可以在後台管理
+    </h2>
+
+    <div class="manage-grid">
+      @for (item of manageFeatures; track item.title) {
+        <article class="manage-card">
+          <div class="manage-icon">
+            <i class="bi {{ item.icon }}"></i>
+          </div>
+          <div>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+</section>

@@ -15,6 +15,7 @@ import { Auth } from './modules/auth/auth/auth';
 import { UserAboutUs } from './modules/user/frontend/user-about-us/user-about-us';
 import { OrganizerDashboardHome } from './modules/organizer/dashboard/organizer-dashboard-home/organizer-dashboard-home';
 import { OrganizerDashboardNotification } from './modules/organizer/dashboard/organizer-dashboard-notification/organizer-dashboard-notification';
+import { OrganizerDashboardSetupGuide } from './modules/organizer/dashboard/organizer-dashboard-setup-guide/organizer-dashboard-setup-guide';
 import { OrganizerEventManagement } from './modules/organizer/dashboard/organizer-event-management/organizer-event-management';
 import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organizer-home';
 import { OrganizerAbout } from './modules/organizer/frontend/organizer-about/organizer-about';
@@ -187,6 +188,10 @@ export const routes: Routes = [
       {
         path: 'home',
         component: OrganizerDashboardHome,
+      },
+      {
+        path: 'setup-guide',
+        component: OrganizerDashboardSetupGuide,
       },
       {
         path: 'notification',
