@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
@@ -8,7 +9,7 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
 
 @Component({
   selector: 'app-organizer-event-management',
-  imports: [DashboardDataTable, DashboardPagination, Dropdown, DateRangeSelector],
+  imports: [DashboardDataTable, DashboardPagination, Dropdown, DateRangeSelector, RouterLink],
   templateUrl: './organizer-event-management.html',
   styleUrl: './organizer-event-management.scss',
 })

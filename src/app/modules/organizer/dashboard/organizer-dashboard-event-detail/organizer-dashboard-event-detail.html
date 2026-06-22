@@ -1,0 +1,109 @@
+<section class="organizer-dashboard-event-detail page-transition">
+  <header class="event-detail-header">
+    <div>
+      <nav class="breadcrumb" aria-label="頁面位置">
+        <a routerLink="/organizer/dash-board/activity">活動管理</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>建立活動</span>
+      </nav>
+
+      <div class="title-row">
+        <a routerLink="/organizer/dash-board/activity" class="back-link" aria-label="返回活動管理">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1 class="app-page-title">建立活動</h1>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="app-btn clear app-create-btn">取消</button>
+      <button type="button" class="app-btn secondary app-create-btn">儲存草稿</button>
+      <button type="button" class="app-btn primary app-create-btn">下一步</button>
+    </div>
+  </header>
+
+  <section class="event-editor-card">
+    <aside class="event-stepper" aria-label="建立活動步驟">
+      @for (step of steps; track step.title; let i = $index) {
+        <article class="stepper-item" [class.active]="i === 0">
+          <span class="stepper-number">{{ i + 1 }}</span>
+          <div>
+            <h2>{{ step.title }}</h2>
+            <p>{{ step.description }}</p>
+          </div>
+        </article>
+      }
+    </aside>
+
+    <form class="event-form">
+      <h2 class="form-section-title">
+        <i class="bi bi-calendar-event"></i>
+        活動基本資料
+      </h2>
+
+      <div class="form-grid top-grid">
+        <label class="field">
+          <span>活動名稱 <b>*</b></span>
+          <span class="text-control with-count">
+            <input type="text" maxlength="50" placeholder="請輸入活動名稱" [(ngModel)]="form.name" name="eventName" />
+            <small>{{ form.name.length }} / 50</small>
+          </span>
+        </label>
+
+        <label class="field cover-field">
+          <span>活動封面照 <b>*</b></span>
+          <input type="file" accept="image/*" hidden #coverInput (change)="onCoverSelected($event)" />
+          <button type="button" class="upload-btn" (click)="coverInput.click()">
+            <i class="bi bi-upload"></i>
+            選擇圖片
+          </button>
+          @if (form.coverFileName) {
+            <small class="file-name">{{ form.coverFileName }}</small>
+          }
+        </label>
+      </div>
+
+      <fieldset class="field category-field">
+        <legend>活動類型（可複選） <b>*</b></legend>
+        <div class="category-grid">
+          @for (category of categoryOptions; track category) {
+            <label class="category-option" [class.selected]="isCategorySelected(category)">
+              <input
+                type="checkbox"
+                [checked]="isCategorySelected(category)"
+                (change)="toggleCategory(category)"
+              />
+              <span>{{ category }}</span>
+            </label>
+          }
+        </div>
+      </fieldset>
+
+      <label class="field full">
+        <span>活動簡介 <b>*</b></span>
+        <span class="textarea-control with-count">
+          <textarea
+            maxlength="300"
+            placeholder="請輸入活動簡介，讓攤主快速了解活動內容與特色..."
+            [(ngModel)]="form.description"
+            name="description"
+          ></textarea>
+          <small>{{ form.description.length }} / 300</small>
+        </span>
+      </label>
+
+      <label class="field full">
+        <span>活動介紹 <b>*</b></span>
+        <span class="textarea-control introduction-control with-count">
+          <textarea
+            maxlength="800"
+            placeholder="請輸入完整活動介紹，例如活動理念、主題亮點、適合參與的品牌類型與現場規劃..."
+            [(ngModel)]="form.introduction"
+            name="introduction"
+          ></textarea>
+          <small>{{ form.introduction.length }} / 800</small>
+        </span>
+      </label>
+    </form>
+  </section>
+</section>
