@@ -7,7 +7,7 @@
 /* Hero */
 .hero-section {
   position: relative;
-  width: min(100% - 64px, 1440px);
+  width: var(--user-content-wide-width);
   height: 360px;
   margin: 0 auto;
   border-radius: 12px;
@@ -190,7 +190,7 @@
 
 /* Market Section */
 .market-section {
-  width: min(100% - 160px, 1200px);
+  width: var(--user-content-width);
   margin: 34px auto 0;
 }
 
@@ -253,7 +253,7 @@
 .vendor-section,
 .organizer-section {
   --cta-bg: #fbecd8;
-  width: min(100% - 80px, 1200px);
+  width: var(--user-content-width);
   height: 270px;
   border-radius: 14px;
   overflow: hidden;
@@ -338,7 +338,7 @@
 /* RWD */
 @media (max-width: 1200px) {
   .market-section {
-    width: calc(100% - 64px);
+    width: var(--user-content-width);
   }
 
   .market-grid {
@@ -348,7 +348,7 @@
 
   .vendor-section,
   .organizer-section {
-    width: calc(100% - 64px);
+    width: var(--user-content-width);
     height: 240px;
     grid-template-columns: 1fr 1fr;
   }
@@ -376,7 +376,7 @@
 
 @media (max-width: 992px) {
   .market-section {
-    width: calc(100% - 48px);
+    width: var(--user-content-width);
   }
 
   .market-grid {
@@ -386,7 +386,7 @@
 
   .vendor-section,
   .organizer-section {
-    width: calc(100% - 48px);
+    width: var(--user-content-width);
     height: auto;
     grid-template-columns: 1fr;
   }
@@ -420,7 +420,7 @@
 
 @media (max-width: 768px) {
   .hero-section {
-    width: calc(100% - 32px);
+    width: var(--user-content-wide-width);
     height: 320px;
   }
 
@@ -483,7 +483,7 @@
   .market-section,
   .vendor-section,
   .organizer-section {
-    width: calc(100% - 32px);
+    width: var(--user-content-width);
   }
 
   .section-header {
@@ -559,7 +559,7 @@
   .market-section,
   .vendor-section,
   .organizer-section {
-    width: calc(100% - 48px);
+    width: var(--user-content-width);
   }
 
   .vendor-section {

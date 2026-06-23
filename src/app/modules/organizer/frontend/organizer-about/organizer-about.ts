@@ -9,4 +9,6 @@ import { OrganizerHeader } from '../organizer-header/organizer-header';
   templateUrl: './organizer-about.html',
 })
 /** 主辦方前台的關於我們頁面，沿用一般使用者的關於我們內容區塊。 */
-export class OrganizerAbout {}
+export class OrganizerAbout {
+
+}
