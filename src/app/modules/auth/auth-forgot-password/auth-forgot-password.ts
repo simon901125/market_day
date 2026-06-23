@@ -1,23 +1,44 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from "@angular/router";
+import { Router } from '@angular/router';
+
+import { Alert } from '../../shared/alert';
+
 @Component({
   selector: 'app-auth-forgot-password',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './auth-forgot-password.html',
   styleUrl: './auth-forgot-password.scss',
 })
 export class AuthForgotPassword {
-  /** 身分驗證：表單標題 */
+  /** 表單標題，依登入角色由路由資料帶入。 */
   @Input() formTitle = '';
-  /** 身分驗證：忘記密碼導至email驗證 */
+
+  /** Email 驗證頁連結。 */
   @Input() vertifyLink = '';
-  /** 電子郵件 */
+
+  /** 使用者輸入的 Email。 */
   email = '';
 
-  /** 寄驗證碼 */
-  sendVerifyCode(): void {
-    console.log('寄送重設密碼驗證碼：', this.email);
+  constructor(
+    private readonly alert: Alert,
+    private readonly router: Router
+  ) {}
+
+  /** 寄送重設密碼驗證碼；目前先保留假流程，之後改為呼叫 API。 */
+  async sendVerifyCode(): Promise<void> {
+    if (!this.email) {
+      await this.alert.error('寄送失敗', '請先輸入 Email。', '重新輸入');
+      return;
+    }
+
+    // TODO: 串接寄送驗證碼 API 後，成功再導向驗證頁。
+    await this.alert.success(
+      '驗證碼已寄出',
+      `我們已將 6 位數驗證碼寄送至<br>${this.email}。`,
+      '前往驗證'
+    );
+    this.router.navigateByUrl(this.vertifyLink || '/vendor/verify-email');
   }
 }

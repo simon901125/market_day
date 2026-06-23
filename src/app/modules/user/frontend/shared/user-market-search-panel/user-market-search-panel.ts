@@ -1,54 +1,136 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { CategoryItem } from '../../../../../models/interface/user/CategoryItem';
-import { RouterLink } from '@angular/router';
 import { Dropdown } from '../../../../shared/dropdown/dropdown';
 import { DateRangeSelector } from '../../../../shared/date-range-selector/date-range-selector';
 import { TAIWAN_CITY_OPTIONS } from '../../../../../models/config/TaiwanAdministrativeDivisions';
+import { BrandType } from '../../../../../models/type/BrandType ';
+import { MarketStatus } from '../../../../../models/status/MarketStatus';
+
+export interface UserMarketSearchParams {
+  /** 活動名稱或關鍵字。 */
+  keyword: string;
+  /** 選取的縣市。 */
+  city: string;
+  /** 選取的活動狀態。 */
+  status: string;
+  /** 活動日期區間開始日。 */
+  startDate: string;
+  /** 活動日期區間結束日。 */
+  endDate: string;
+  /** 選取的活動類型。 */
+  category: string;
+}
 
 @Component({
   selector: 'app-user-market-search-panel',
-  imports: [RouterLink, Dropdown, DateRangeSelector],
+  imports: [Dropdown, DateRangeSelector],
   templateUrl: './user-market-search-panel.html',
   styleUrl: './user-market-search-panel.scss',
 })
-
+/** 一般使用者市集活動搜尋區塊，負責蒐集篩選條件並同步到 query params。 */
 export class UserMarketSearchPanel {
-  /** 日期區間標題由使用頁面決定，預設不顯示。 */
+  /** 日期區間元件的標題。 */
   @Input() dateRangeTitle = '';
 
-  /** 全台縣市 */
+  /** 目前輸入的活動名稱關鍵字。 */
+  @Input() keyword = '';
+
+  /** 目前選擇的縣市。 */
+  @Input() selectedCity = '';
+
+  /** 目前選擇的活動狀態。 */
+  @Input() selectedStatus = '';
+
+  /** 目前選擇的活動類型。 */
+  @Input() selectedCategory = BrandType.food;
+
+  /** 目前選擇的開始日期。 */
+  @Input() startDate = '';
+
+  /** 目前選擇的結束日期。 */
+  @Input() endDate = '';
+
+  /** 使用者按下搜尋後，將篩選條件回傳父層。 */
+  @Output() searchSubmit = new EventEmitter<UserMarketSearchParams>();
+
+  /** 台灣縣市選項。 */
   readonly cityOptions = TAIWAN_CITY_OPTIONS;
 
-  /** 市集活動狀態 */
-  readonly statusOptions = ['活動預告', '即將開始', '進行中'];
+  /** 前台活動狀態篩選選項。 */
+  readonly statusOptions = MarketStatus.filterList;
 
-  selectedCity = '';
-  selectedStatus = '';
-
-  /** 攤位類別 */
-  categories: CategoryItem[] = [
-    { name: '全部市集', icon: 'bi bi-shop-window', active: true },
-    { name: '餐飲美食', icon: 'bi bi-fork-knife' },
-    { name: '文創手作', icon: 'bi bi-bag' },
-    { name: '親子家庭', icon: 'bi bi-people' },
-    { name: '寵物生活', icon: 'bi bi-house-heart' },
-    { name: '植物選物', icon: 'bi bi-flower1' },
-    { name: '服飾配件', icon: 'bi bi-person-standing-dress' },
-    { name: '玩具選物', icon: 'bi bi-gift' },
+  /** 活動類型快速篩選選項。 */
+  readonly categories: CategoryItem[] = [
+    { name: BrandType.food, icon: 'bi bi-shop-window' },
+    { name: BrandType.handmade, icon: 'bi bi-fork-knife' },
+    { name: BrandType.family, icon: 'bi bi-people' },
+    { name: BrandType.pet, icon: 'bi bi-house-heart' },
+    { name: BrandType.plant, icon: 'bi bi-flower1' },
+    { name: BrandType.fashion, icon: 'bi bi-person-standing-dress' },
+    { name: BrandType.toy, icon: 'bi bi-gift' },
   ];
 
+  constructor(private router: Router) {}
+
+  /** 選取活動類型。 */
   selectCategory(index: number): void {
-    this.categories = this.categories.map((category, i) => ({
-      ...category,
-      active: i === index,
-    }));
+    this.selectedCategory = this.categories[index]?.name ?? '';
   }
 
+  /** 選取縣市。 */
   selectCity(city: string): void {
     this.selectedCity = city;
   }
 
+  /** 選取狀態；全部狀態以空字串表示，方便 query params 清除條件。 */
   selectStatus(status: string): void {
-    this.selectedStatus = status;
+    this.selectedStatus = status === '全部狀態' ? '' : status;
+  }
+
+  /** 同步關鍵字輸入值。 */
+  onKeywordInput(event: Event): void {
+    this.keyword = (event.target as HTMLInputElement).value;
+  }
+
+  /** 同步日期區間選擇值。 */
+  onDateRangeChange(range: { startDate: string | null; endDate: string | null }): void {
+    this.startDate = range.startDate ?? '';
+    this.endDate = range.endDate ?? '';
+  }
+
+  /** 送出搜尋條件並更新網址，之後串 API 時可在父層或 service 使用這份條件查詢。 */
+  search(): void {
+    const params = this.getSearchParams();
+    this.searchSubmit.emit(params);
+
+    void this.router.navigate(['/user/activity-list'], {
+      queryParams: this.toQueryParams(params),
+    });
+  }
+
+  /** 組合目前 UI 上的搜尋條件。 */
+  private getSearchParams(): UserMarketSearchParams {
+    return {
+      keyword: this.keyword.trim(),
+      city: this.selectedCity,
+      status: this.selectedStatus,
+      startDate: this.startDate,
+      endDate: this.endDate,
+      category: this.selectedCategory,
+    };
+  }
+
+  /** 將空值轉成 null，避免網址保留無意義的 query params。 */
+  private toQueryParams(params: UserMarketSearchParams): Record<string, string | null> {
+    return {
+      keyword: params.keyword || null,
+      city: params.city || null,
+      status: params.status || null,
+      startDate: params.startDate || null,
+      endDate: params.endDate || null,
+      category: params.category || null,
+      page: '1',
+    };
   }
 }

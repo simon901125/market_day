@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import Swal, { SweetAlertResult } from 'sweetalert2';
 
 export enum EnumSwalButton {
-  Confirm = '確認',
+  Confirm = '確定',
   Cancel = '取消',
 }
 
@@ -12,7 +12,7 @@ export type AlertStatus = 'success' | 'error' | 'warning' | 'info' | 'question';
   providedIn: 'root',
 })
 export class Alert {
-  /** 成功提示 */
+  /** 顯示成功提示。 */
   success(
     title: string,
     text = '',
@@ -21,7 +21,7 @@ export class Alert {
     return this.alert('success', title, text, confirmButtonText);
   }
 
-  /** 錯誤提示 */
+  /** 顯示錯誤提示。 */
   error(
     title: string,
     text = '',
@@ -30,7 +30,7 @@ export class Alert {
     return this.alert('error', title, text, confirmButtonText);
   }
 
-  /** 警告提示 */
+  /** 顯示警告提示。 */
   warning(
     title: string,
     text = '',
@@ -39,7 +39,7 @@ export class Alert {
     return this.alert('warning', title, text, confirmButtonText);
   }
 
-  /** 一般提示 */
+  /** 顯示一般資訊提示。 */
   info(
     title: string,
     text = '',
@@ -48,7 +48,7 @@ export class Alert {
     return this.alert('info', title, text, confirmButtonText);
   }
 
-  /** 確認視窗 */
+  /** 顯示確認提示，回傳使用者是否按下確認。 */
   confirm(
     title: string,
     text = '',
@@ -68,7 +68,7 @@ export class Alert {
     }).then((result) => result.isConfirmed);
   }
 
-  /** 共用 Alert */
+  /** 共用 SweetAlert2 設定。 */
   private alert(
     status: AlertStatus,
     title: string,
@@ -85,7 +85,7 @@ export class Alert {
     });
   }
 
-  /** 組合 HTML */
+  /** 組合 SweetAlert 內容 HTML。 */
   private getHtml(status: AlertStatus, title: string, text = ''): string {
     return `
       <div class="custom-swal-icon ${status}">
@@ -98,7 +98,7 @@ export class Alert {
     `;
   }
 
-  /** Bootstrap Icon 對應 */
+  /** 依狀態取得 Bootstrap Icon。 */
   private getIconClass(status: AlertStatus): string {
     const iconMap: Record<AlertStatus, string> = {
       success: 'bi-check-circle',
@@ -111,7 +111,7 @@ export class Alert {
     return iconMap[status];
   }
 
-  /** SweetAlert2 class 對應 */
+  /** SweetAlert2 自訂 class。 */
   private getCustomClass() {
     return {
       popup: 'custom-swal-popup',

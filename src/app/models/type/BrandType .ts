@@ -1,4 +1,3 @@
-/** 品牌 / 市集類型 */
 export class BrandType {
   static readonly food = '餐飲美食';
   static readonly handmade = '文創手作';
@@ -19,7 +18,7 @@ export class BrandType {
   ];
 
   static readonly filterList: string[] = [
-    '全部品牌',
+    '全部類型',
     ...BrandType.list,
   ];
 }

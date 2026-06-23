@@ -2,6 +2,7 @@ import { MarketSlot } from "./MarketSlot";
 
 /** 市集卡片項目 */
 export interface MarketCardItem {
+  id?: string;
   /** 市集標題 */
   title: string;
   /** 市集時間 */

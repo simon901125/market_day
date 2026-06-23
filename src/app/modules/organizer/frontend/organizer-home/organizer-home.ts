@@ -12,6 +12,7 @@ import { OrganizerAction, OrganizerFaq, OrganizerFeature, OrganizerStep } from '
   styleUrl: './organizer-home.scss',
 })
 export class OrganizerHome {
+  /** 主辦方首頁的核心功能介紹卡片。 */
   readonly features: OrganizerFeature[] = [
     {
       icon: 'bi bi-megaphone',
@@ -30,29 +31,31 @@ export class OrganizerHome {
     },
   ];
 
+  /** 主辦方可在平台完成的主要操作說明。 */
   readonly actions: OrganizerAction[] = [
     {
-      image: '/assets/images/organizer/organizer-create-market.png',
+      image: '/assets/images/organizer/home/organizer-create-market.png',
       title: '建立市集活動',
       description: '快速建立活動頁面，設定活動資訊、報名時間與攤位類型。',
     },
     {
-      image: '/assets/images/organizer/organizer-registration.png',
+      image: '/assets/images/organizer/home/organizer-registration.png',
       title: '管理攤主報名',
       description: '查看報名列表、審核資料與聯繫攤主，溝通更有效率。',
     },
     {
-      image: '/assets/images/organizer/organizer-payment.png',
+      image: '/assets/images/organizer/home/organizer-payment.png',
       title: '確認付款狀態',
       description: '掌握攤主付款進度，支援多種付款方式與狀態管理。',
     },
     {
-      image: '/assets/images/organizer/organizer-booth.png',
+      image: '/assets/images/organizer/home/organizer-booth.png',
       title: '管理攤位資訊',
       description: '分配攤位、管理攤位編號，讓活動現場更有秩序。',
     },
   ];
 
+  /** 主辦方從註冊到活動管理的流程步驟。 */
   readonly steps: OrganizerStep[] = [
     {
       icon: 'bi bi-person-plus',
@@ -81,6 +84,7 @@ export class OrganizerHome {
     },
   ];
 
+  /** 主辦方常見問題內容。 */
   readonly faqs: OrganizerFaq[] = [
     {
       question: '主辦方如何申請加入？',

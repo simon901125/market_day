@@ -6,4 +6,5 @@ import { Component } from '@angular/core';
   templateUrl: './user-about-us.html',
   styleUrl: './user-about-us.scss',
 })
+/** 一般使用者前台的關於我們頁面。 */
 export class UserAboutUs {}

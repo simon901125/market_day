@@ -1,11 +1,9 @@
 <div class="brand-detail-page">
-
-  <!-- Hero Banner -->
   <section class="detail-hero">
     <img class="hero-bg" [src]="brand.image" alt="品牌封面" />
     <div class="hero-overlay"></div>
 
-    <nav class="detail-breadcrumb" aria-label="麵包屑">
+    <nav class="detail-breadcrumb" aria-label="breadcrumb">
       <a routerLink="/user/brands">品牌探索</a>
       <i class="bi bi-chevron-right" aria-hidden="true"></i>
       <span aria-current="page">{{ brand.name }}</span>
@@ -26,14 +24,9 @@
     </div>
   </section>
 
-  <!-- Main Content -->
   <section class="detail-main">
     <div class="main-container">
-
-      <!-- Left Column -->
       <div class="main-left">
-
-        <!-- 品牌介紹 -->
         <div class="content-card">
           <div class="card-heading">
             <i class="bi bi-person-lines-fill"></i>
@@ -42,36 +35,31 @@
           <p class="brand-intro">{{ brand.introduction }}</p>
         </div>
 
-        <!-- 品牌代表作品 -->
         <div class="content-card">
           <div class="card-heading">
             <i class="bi bi-box2-heart"></i>
-            <h2>品牌代表作品</h2>
+            <h2>代表作品</h2>
           </div>
           <div class="products-grid">
             @for (product of brand.products; track product.name) {
-            <div class="product-card">
-              <div class="product-img">
-                <img [src]="product.image" [alt]="product.name" />
-              </div>
-              <div class="product-info">
-                <div class="product-title">
-                  <div class="product-name">{{ product.name}}</div>
-                  <div class="product-price">NT$ {{ product.price}}</div>
+              <div class="product-card">
+                <div class="product-img">
+                  <img [src]="product.image" [alt]="product.name" />
                 </div>
-                <p class="product-description">{{ product.description}}</p>
+                <div class="product-info">
+                  <div class="product-title">
+                    <div class="product-name">{{ product.name }}</div>
+                    <div class="product-price">NT$ {{ product.price }}</div>
+                  </div>
+                  <p class="product-description">{{ product.description }}</p>
+                </div>
               </div>
-            </div>
             }
           </div>
         </div>
-
       </div>
 
-      <!-- Right Column (Sidebar) -->
       <div class="main-right">
-
-        <!-- 品牌類型 -->
         <div class="content-card">
           <div class="card-heading">
             <i class="bi bi-tags"></i>
@@ -79,16 +67,15 @@
           </div>
           <div class="tag-list">
             @for (tag of brand.tags; track $index) {
-            <span class="tag-chip">{{ tag }}</span>
+              <span class="tag-chip">{{ tag }}</span>
             }
           </div>
         </div>
 
-        <!-- 參與市集記錄 -->
         <div class="content-card">
           <div class="card-heading">
             <i class="bi bi-calendar"></i>
-            <h2>參與市集記錄</h2>
+            <h2>參與市集紀錄</h2>
           </div>
           <div class="market-records">
             <table>
@@ -100,21 +87,20 @@
               </thead>
               <tbody>
                 @for (record of marketRecords; track record.name) {
-                <tr>
-                  <td>{{ record.name }}</td>
-                  <td>{{ record.year }}/{{ record.startDate }} - {{ record.endDate }}</td>
-                </tr>
+                  <tr>
+                    <td>{{ record.name }}</td>
+                    <td>{{ record.year }}/{{ record.startDate }} - {{ record.endDate }}</td>
+                  </tr>
                 }
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- 聯絡品牌 -->
         <div class="content-card">
           <div class="card-heading">
             <i class="bi bi-heart"></i>
-            <h2>關注品牌</h2>
+            <h2>追蹤品牌</h2>
           </div>
           <ul class="contact-list">
             <li>
@@ -140,9 +126,7 @@
             </li>
           </ul>
         </div>
-
       </div>
     </div>
   </section>
-
 </div>
