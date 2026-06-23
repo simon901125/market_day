@@ -9,7 +9,7 @@
 }
 
 .header-inner {
-  width: min(100% - 64px, 1280px);
+  width: var(--user-content-wide-width);
   height: 100%;
   margin: 0 auto;
   display: grid;
@@ -138,7 +138,7 @@
 
   .header-inner {
     position: relative;
-    width: calc(100% - 32px);
+    width: var(--user-content-wide-width);
     display: flex;
     align-items: center;
     justify-content: flex-start;

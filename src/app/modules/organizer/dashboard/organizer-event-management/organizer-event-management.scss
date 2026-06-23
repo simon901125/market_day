@@ -3,14 +3,13 @@
 }
 
 .organizer-event-management {
-  width: 100%;
-  max-width: 1200px;
-  height: calc(100vh - 48px);
+  width: min(100%, var(--dashboard-content-width));
+  min-height: calc(100dvh - 48px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  overflow: hidden;
+  overflow: visible;
 
   app-dashboard-data-table {
     flex: 0 0 auto;

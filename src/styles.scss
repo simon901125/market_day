@@ -52,6 +52,10 @@ body.market-loading-lock {
   /* User frontend layout */
   --user-content-width: min(100% - 96px, 1208px);
   --user-content-wide-width: min(100% - 96px, 1280px);
+
+  /* Dashboard layout */
+  --dashboard-content-width: 1280px;
+  --dashboard-wide-content-width: 1360px;
 }
 
 @media (max-width: 1200px) {
@@ -94,10 +98,10 @@ body.market-loading-lock {
 // Dashboard 列表頁共用版型：內容區可伸縮，分頁固定在頁面底部
 .dashboard-list-page {
   width: 100%;
-  height: calc(100vh - 48px);
+  min-height: calc(100dvh - 48px);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .dashboard-list-content {
