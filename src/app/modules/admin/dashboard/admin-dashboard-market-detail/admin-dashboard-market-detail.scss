@@ -334,6 +334,12 @@
 }
 
 // 狀態紀錄表格
+.table-wrapper {
+  flex: 1;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  overflow: hidden;
+}
+
 .status-log-table {
   width: 100%;
   border-collapse: collapse;

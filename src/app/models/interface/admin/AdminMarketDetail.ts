@@ -1,3 +1,4 @@
+/**管理員-活動詳細的歷史紀錄 */
 export interface StatusLog {
   dateTime: string;
   status: string;
@@ -8,6 +9,7 @@ export interface StatusLog {
   };
 }
 
+/**管理員-活動詳細資料傳入 */
 export interface AdminMarketDetail {
   activityId: number;
   activityStatus: string;
