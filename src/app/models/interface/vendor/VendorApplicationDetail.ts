@@ -2,6 +2,8 @@ import { MarketCardItem } from '../shared/MarketCardItem';
 
 /** 報名詳細頁支援的報名狀態。 */
 export type ApplicationStatus =
+  | 'reviewing'
+  | 'payment'
   | 'completed'
   | 'cancelled'
   | 'refunded'
@@ -136,6 +138,12 @@ export interface ApplicationDetail {
 
   /** 付款明細資料列。 */
   paymentLines: PaymentLine[];
+
+  /** 尚未產生付款資訊時的提示標題。 */
+  paymentEmptyTitle?: string;
+
+  /** 尚未產生付款資訊時的提示說明。 */
+  paymentEmptyText?: string;
 
   /** 攤位資訊。 */
   booth: BoothInfo;

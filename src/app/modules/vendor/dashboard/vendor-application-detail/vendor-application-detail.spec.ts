@@ -43,7 +43,7 @@ describe('VendorApplicationDetail', () => {
     expect(textContent).toContain('2026/06/10 10:55');
   });
 
-  it('should render refund success dialog and booth action by binding', () => {
+  it('should render refund success detail and booth action by binding', () => {
     component.setStatus('refundSuccess');
     fixture.detectChanges();
 
@@ -52,6 +52,5 @@ describe('VendorApplicationDetail', () => {
     expect(textContent).toContain('申請退款');
     expect(textContent).toContain('待選位');
     expect(textContent).toContain('尚未選擇攤位');
-    expect(textContent).toContain('退款申請已送出！');
   });
 });

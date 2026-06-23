@@ -109,3 +109,261 @@
     background: transparent !important;
   }
 }
+
+.refund-confirm-swal {
+  width: min(600px, calc(100vw - 32px)) !important;
+  padding: 2rem 2.4rem 1.6rem !important;
+  border-radius: var(--radius-section) !important;
+  background: var(--bg-white) !important;
+  box-shadow: var(--shadow-card) !important;
+
+  .custom-swal-html {
+    text-align: left !important;
+  }
+
+  .custom-swal-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 1rem !important;
+    margin-top: 1.5rem !important;
+  }
+
+  .custom-swal-confirm,
+  .custom-swal-cancel {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 3.2rem !important;
+    border-radius: var(--radius-tag) !important;
+    font-size: 1.05rem !important;
+    font-weight: 900 !important;
+  }
+
+  .custom-swal-cancel {
+    border: 1px solid var(--text-light) !important;
+    background: var(--bg-white) !important;
+    color: var(--text-dark) !important;
+  }
+}
+
+.refund-confirm-content {
+  color: var(--text-dark);
+
+  h3 {
+    margin: 0 0 1.1rem;
+    font-size: 1.55rem;
+    font-weight: 900;
+  }
+}
+
+.refund-confirm-lead {
+  margin: 0 0 1.4rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.7;
+}
+
+.refund-confirm-section {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 1rem;
+  padding: 1.2rem 0;
+  border-bottom: 1px solid var(--border-light);
+
+  i {
+    color: var(--primary-color);
+    font-size: 1.45rem;
+  }
+
+  h4 {
+    margin: 0 0 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 900;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-normal);
+    font-weight: 800;
+    line-height: 1.6;
+  }
+}
+
+.refund-confirm-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+
+  strong {
+    color: var(--primary-color);
+    font-size: 1.55rem;
+    font-weight: 900;
+  }
+
+  span {
+    color: var(--text-normal);
+    font-weight: 800;
+  }
+}
+
+.refund-confirm-notice {
+  margin-top: 1.2rem;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  background: var(--primary-soft);
+  position: relative;
+
+  > i {
+    position: absolute;
+    top: 1.05rem;
+    left: 1rem;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+  }
+
+  h4 {
+    margin: 0 0 0.55rem;
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: 900;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+
+  li {
+    color: var(--text-normal);
+    font-size: 0.92rem;
+    font-weight: 800;
+    line-height: 1.8;
+  }
+}
+
+.refund-confirm-footnote {
+  margin: 1rem 0 0;
+  color: var(--text-light);
+  text-align: center;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.refund-success-swal {
+  width: min(560px, calc(100vw - 32px)) !important;
+  padding: 2.8rem 4rem 2.3rem !important;
+  border-radius: var(--radius-section) !important;
+  background: var(--bg-white) !important;
+  box-shadow: var(--shadow-card) !important;
+
+  .custom-swal-html {
+    text-align: center !important;
+  }
+
+  .custom-swal-actions {
+    margin-top: 1.8rem !important;
+  }
+
+  .custom-swal-confirm {
+    width: min(270px, 100%) !important;
+    height: 3.25rem !important;
+    border-radius: var(--radius-tag) !important;
+    font-size: 1.1rem !important;
+    font-weight: 900 !important;
+  }
+}
+
+.refund-success-content {
+  color: var(--text-dark);
+  text-align: center;
+
+  h3 {
+    margin: 1.35rem 0 1rem;
+    font-size: 1.55rem;
+    font-weight: 900;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-normal);
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.8;
+  }
+}
+
+.refund-success-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8f7e8;
+  color: #248a24;
+  font-size: 2.25rem;
+}
+
+.payment-result-swal {
+  width: min(520px, calc(100vw - 32px)) !important;
+  padding: 2.6rem 3.2rem 2rem !important;
+  border-radius: var(--radius-section) !important;
+  background: var(--bg-white) !important;
+  box-shadow: var(--shadow-card) !important;
+
+  .custom-swal-html {
+    text-align: center !important;
+  }
+
+  .custom-swal-actions {
+    margin-top: 1.8rem !important;
+  }
+
+  .custom-swal-confirm {
+    width: 100% !important;
+    height: 3.25rem !important;
+    border-radius: var(--radius-tag) !important;
+    font-size: 1.08rem !important;
+    font-weight: 900 !important;
+  }
+}
+
+.payment-result-content {
+  color: var(--text-dark);
+  text-align: center;
+
+  h3 {
+    margin: 1.35rem 0 0.9rem;
+    font-size: 1.55rem;
+    font-weight: 900;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-normal);
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.8;
+  }
+}
+
+.payment-result-icon {
+  width: 78px;
+  height: 78px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border: 3px solid currentColor;
+  border-radius: 50%;
+  font-size: 2.4rem;
+
+  &.success {
+    color: #16a34a;
+  }
+
+  &.failed {
+    color: #dc2626;
+  }
+}

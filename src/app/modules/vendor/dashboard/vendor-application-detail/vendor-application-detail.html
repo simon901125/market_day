@@ -5,7 +5,7 @@
     <strong>報名詳細</strong>
   </nav>
 
-  <header class="page-title">
+  <header class="page-title app-page-header">
     <a
       routerLink="/vendor/dash-board/application-record"
       class="back-btn"
@@ -13,12 +13,12 @@
     >
       <i class="bi bi-arrow-left"></i>
     </a>
-    <h1>報名詳細</h1>
+    <h1 class="app-page-title">報名詳細</h1>
 
     @if (detail.actionButton) {
       <button
         type="button"
-        class="header-action"
+        class="header-action app-btn primary"
         (click)="handleAction(detail.actionButton.action)"
       >
         {{ detail.actionButton.label }}
@@ -85,20 +85,30 @@
       </div>
     </section>
 
-    <section class="detail-card">
+    <section class="detail-card payment-card" [class.pending-payment-card]="currentStatus === 'payment'">
       <h2>
         <i class="bi bi-wallet2"></i>
         付款資訊
       </h2>
 
-      <div class="info-list payment-list">
-        @for (row of detail.paymentRows; track row.label) {
-          <div>
-            <span>{{ row.label }}</span>
-            <strong [class.highlight-text]="row.highlight">{{ row.value }}</strong>
+      @if (detail.paymentRows.length) {
+        <div class="info-list payment-list">
+          @for (row of detail.paymentRows; track row.label) {
+            <div>
+              <span>{{ row.label }}</span>
+              <strong [class.highlight-text]="row.highlight">{{ row.value }}</strong>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-state payment-empty-state">
+          <div class="empty-icon">
+            <i class="bi bi-wallet2"></i>
           </div>
-        }
-      </div>
+          <h3>{{ detail.paymentEmptyTitle }}</h3>
+          <p>{{ detail.paymentEmptyText }}</p>
+        </div>
+      }
 
       @if (detail.paymentLines.length) {
         <div class="payment-detail">
@@ -133,6 +143,10 @@
           }
         </div>
       }
+
+      @if (currentStatus === 'payment') {
+        <button type="button" class="pay-now-btn" (click)="payNow()">立即付款</button>
+      }
     </section>
 
     <section class="detail-card side-card" [class.refund-card]="detail.sideCard.type === 'refund'">
@@ -151,7 +165,7 @@
           }
         </div>
       } @else {
-        <div class="empty-booth">
+        <div class="empty-state empty-booth">
           <div class="empty-icon">
             <i class="bi bi-shop"></i>
           </div>
@@ -172,24 +186,4 @@
       }
     </section>
   </div>
-
-  @if (showDialog && detail.dialog) {
-    <div class="dialog-backdrop">
-      <section
-        class="success-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="refundDialogTitle"
-      >
-        <div class="dialog-icon">
-          <i class="bi bi-check-lg"></i>
-        </div>
-
-        <h2 id="refundDialogTitle">{{ detail.dialog.title }}</h2>
-        <p>{{ detail.dialog.message }}</p>
-
-        <button type="button" (click)="closeDialog()">{{ detail.dialog.confirmLabel }}</button>
-      </section>
-    </div>
-  }
 </main>

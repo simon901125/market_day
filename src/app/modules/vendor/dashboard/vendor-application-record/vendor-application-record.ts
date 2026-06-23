@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
+import { Alert } from '../../../shared/alert';
 import type {
   ApplicationDetail,
   ApplicationRecord,
@@ -11,6 +12,7 @@ import type {
   DetailRow,
   PaymentLine,
   ProgressStep,
+  RecordAction,
   RecordTab,
 } from '../../../../models/interface/vendor/VendorApplicationDetail';
 import type { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
@@ -231,7 +233,7 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
       { label: '付款', style: 'primary' },
       { label: '查看', style: 'outline', link: DETAIL_LINK },
     ],
-    detail: createCancelledDetail(),
+    detail: createPaymentDetail(),
   }),
   createRecord({
     id: 7,
@@ -247,7 +249,7 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
       { label: '審核', style: 'primary' },
       { label: '查看', style: 'outline', link: DETAIL_LINK },
     ],
-    detail: createCancelledDetail(),
+    detail: createReviewingDetail(),
   }),
   createRecord({
     id: 8,
@@ -352,6 +354,8 @@ export class VendorApplicationRecord {
   /** 報名紀錄假資料；每筆資料內的 detail 可供詳細頁直接使用。 */
   records: ApplicationRecord[] = VENDOR_APPLICATION_RECORDS;
 
+  constructor(private alert: Alert) {}
+
   /** 目前下拉選單顯示文字。 */
   get selectedStatusLabel(): string {
     return this.statusOptions.find((option) => this.statusValueMap[option] === this.activeTab) ?? '';
@@ -387,6 +391,91 @@ export class VendorApplicationRecord {
   /** 接收共用分頁元件送出的頁碼。 */
   setPage(page: number): void {
     this.currentPage = page;
+  }
+
+  /** 處理列表操作按鈕；退款需先經過確認視窗。 */
+  async handleRecordAction(action: RecordAction, record: ApplicationRecord): Promise<void> {
+    if (action.label !== '退款') {
+      return;
+    }
+
+    const confirmed = await this.alert.confirmHtml({
+      html: this.getRefundConfirmHtml(record),
+      confirmButtonText: '確認申請退款',
+      cancelButtonText: '取消',
+      popupClass: 'refund-confirm-swal',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    await this.alert.successHtml({
+      html: this.getRefundSuccessHtml(),
+      confirmButtonText: '確認',
+      popupClass: 'refund-success-swal',
+    });
+  }
+
+  /** 組合列表退款確認內容，金額與付款方式未來可由 API 回傳資料取代。 */
+  private getRefundConfirmHtml(record: ApplicationRecord): string {
+    return `
+      <div class="refund-confirm-content">
+        <h3>確認申請退款？</h3>
+        <p class="refund-confirm-lead">
+          申請退款後，主辦單位將進行審核與處理，確認後款項將退回至原付款方式。
+        </p>
+
+        <section class="refund-confirm-section">
+          <i class="bi bi-currency-dollar"></i>
+          <div>
+            <h4>退款金額</h4>
+            <p class="refund-confirm-amount">
+              <strong>$1,700</strong>
+              <span>（含攤位費用）</span>
+            </p>
+          </div>
+        </section>
+
+        <section class="refund-confirm-section">
+          <i class="bi bi-wallet2"></i>
+          <div>
+            <h4>退款方式</h4>
+            <p><strong>原付款方式退回（信用卡）</strong></p>
+            <p>${record.marketName} 的款項將退回至原信用卡帳戶。</p>
+          </div>
+        </section>
+
+        <section class="refund-confirm-notice">
+          <i class="bi bi-info-circle"></i>
+          <h4>注意事項</h4>
+          <ul>
+            <li>保證金不退還。</li>
+            <li>退款完成時間依您的發卡銀行或付款平台作業時間為準。</li>
+            <li>退款審核結果與退款完成後，將於「通知中心」中通知您。</li>
+          </ul>
+        </section>
+
+        <p class="refund-confirm-footnote">送出申請後將無法撤回，請確認後再送出。</p>
+      </div>
+    `;
+  }
+
+  /** 組合退款申請送出成功提示，與詳細頁使用相同 SweetAlert 樣式。 */
+  private getRefundSuccessHtml(): string {
+    return `
+      <div class="refund-success-content">
+        <div class="refund-success-icon">
+          <i class="bi bi-check-lg"></i>
+        </div>
+
+        <h3>退款申請已送出！</h3>
+        <p>
+          您的退款申請已送出，主辦方將進行審核與處理。<br>
+          退款處理進度將於「我的報名紀錄」中查看。
+        </p>
+      </div>
+    `;
   }
 }
 
@@ -481,6 +570,59 @@ function createRefundSuccessDetail(): ApplicationDetail {
       message: '您的退款申請已送出，主辦方將進行審核與處理。退款處理進度將於「我的報名紀錄」中查看。',
       confirmLabel: '確認',
     },
+  };
+}
+
+function createPaymentDetail(): ApplicationDetail {
+  return {
+    ...baseDetail('payment', '待付款', 'payment'),
+    progress: [
+      { label: '報名時間', value: '2026/06/01 14:30' },
+      { label: '審核時間', value: '2026/06/02 15:30' },
+      { label: '付款時間', value: '尚未完成' },
+      { label: '攤位完成時間', value: '尚未完成' },
+      { label: '最終確認時間', value: '尚未完成' },
+      { label: '保證金退還', value: '尚未完成' },
+    ],
+    paymentRows: [
+      { label: '付款狀態', value: '待付款', highlight: true },
+      { label: '付款期限', value: '2026/06/05 23:59', highlight: true },
+      { label: '付款金額', value: '$1,200' },
+    ],
+    paymentLines: [],
+    sideCard: {
+      type: 'booth',
+      title: '攤位資訊',
+      icon: 'bi-shop',
+      rows: [],
+    },
+    booth: emptyBooth('付款完成後才可選擇攤位'),
+  };
+}
+
+/** 待審核狀態：審核尚未完成，因此付款與攤位資訊都以空狀態提示呈現。 */
+function createReviewingDetail(): ApplicationDetail {
+  return {
+    ...baseDetail('reviewing', '待審核', 'reviewing'),
+    progress: [
+      { label: '報名時間', value: '2026/06/01 14:30' },
+      { label: '審核時間', value: '尚未完成' },
+      { label: '付款時間', value: '尚未完成' },
+      { label: '攤位完成時間', value: '尚未完成' },
+      { label: '最終確認時間', value: '尚未完成' },
+      { label: '保證金退還', value: '尚未完成' },
+    ],
+    paymentRows: [],
+    paymentLines: [],
+    paymentEmptyTitle: '尚未產生付款資訊',
+    paymentEmptyText: '審核通過後才會開放付款',
+    sideCard: {
+      type: 'booth',
+      title: '攤位資訊',
+      icon: 'bi-shop',
+      rows: [],
+    },
+    booth: emptyBooth('付款完成後才可選擇攤位'),
   };
 }
 

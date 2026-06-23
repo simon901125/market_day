@@ -73,6 +73,7 @@
                         type="button"
                         [class.primary-btn]="action.style === 'primary'"
                         [class.outline-btn]="action.style === 'outline'"
+                        (click)="handleRecordAction(action, item)"
                       >
                         {{ action.label }}
                       </button>

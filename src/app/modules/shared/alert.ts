@@ -8,6 +8,36 @@ export enum EnumSwalButton {
 
 export type AlertStatus = 'success' | 'error' | 'warning' | 'info' | 'question';
 
+/** 客製確認視窗設定，供需要較複雜內容版型的情境使用。 */
+export interface AlertHtmlConfirmOptions {
+  /** 視窗內容 HTML。 */
+  html: string;
+
+  /** 確認按鈕文字。 */
+  confirmButtonText?: string;
+
+  /** 取消按鈕文字。 */
+  cancelButtonText?: string;
+
+  /** 額外套用在 SweetAlert popup 的 class。 */
+  popupClass?: string;
+}
+
+/** 客製提示視窗設定，供成功送出等需要自訂內容版型的情境使用。 */
+export interface AlertHtmlOptions {
+  /** 視窗內容 HTML。 */
+  html: string;
+
+  /** 確認按鈕文字。 */
+  confirmButtonText?: string;
+
+  /** 額外套用在 SweetAlert popup 的 class。 */
+  popupClass?: string;
+
+  /** 是否顯示右上角關閉按鈕。 */
+  showCloseButton?: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -68,6 +98,33 @@ export class Alert {
     }).then((result) => result.isConfirmed);
   }
 
+  /** 顯示客製 HTML 確認視窗，元件仍透過 Alert service 使用 SweetAlert。 */
+  confirmHtml(options: AlertHtmlConfirmOptions): Promise<boolean> {
+    return Swal.fire({
+      html: options.html,
+      showCancelButton: true,
+      showCloseButton: true,
+      allowOutsideClick: false,
+      confirmButtonText: options.confirmButtonText ?? EnumSwalButton.Confirm,
+      cancelButtonText: options.cancelButtonText ?? EnumSwalButton.Cancel,
+      reverseButtons: true,
+      buttonsStyling: false,
+      customClass: this.getCustomClass(options.popupClass),
+    }).then((result) => result.isConfirmed);
+  }
+
+  /** 顯示客製 HTML 提示視窗，仍沿用共用 SweetAlert 設定與按鈕樣式。 */
+  successHtml(options: AlertHtmlOptions): Promise<SweetAlertResult> {
+    return Swal.fire({
+      html: options.html,
+      showCloseButton: options.showCloseButton ?? false,
+      allowOutsideClick: false,
+      confirmButtonText: options.confirmButtonText ?? EnumSwalButton.Confirm,
+      buttonsStyling: false,
+      customClass: this.getCustomClass(options.popupClass),
+    });
+  }
+
   /** 共用 SweetAlert2 設定。 */
   private alert(
     status: AlertStatus,
@@ -112,9 +169,9 @@ export class Alert {
   }
 
   /** SweetAlert2 自訂 class。 */
-  private getCustomClass() {
+  private getCustomClass(popupClass = '') {
     return {
-      popup: 'custom-swal-popup',
+      popup: ['custom-swal-popup', popupClass].filter(Boolean).join(' '),
       htmlContainer: 'custom-swal-html',
       actions: 'custom-swal-actions',
       closeButton: 'custom-swal-close',
