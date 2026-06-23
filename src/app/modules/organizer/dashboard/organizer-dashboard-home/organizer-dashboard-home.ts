@@ -11,6 +11,7 @@ import { TodoItem } from '../../../../models/interface/organizer/OrganizerDashbo
   styleUrl: './organizer-dashboard-home.scss',
 })
 export class OrganizerDashboardHome extends OrganizerDashboardNotification {
+  /** 主辦方後台首頁待辦統計卡片資料。 */
   todoItems: TodoItem[] = [
     {
       icon: 'bi-clipboard-heart',
@@ -24,7 +25,7 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification {
       icon: 'bi-wallet2',
       count: 3,
       unit: '筆',
-      label: '退款申請中',
+      label: '退款待處理',
       path: '/organizer/dash-board/collection',
       iconColor: 'red',
     },

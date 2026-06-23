@@ -50,8 +50,8 @@
   <section class="market-section">
     <div class="section-header">
       <div>
-        <h2>近期市集活動</h2>
-        <p>精選小集日推薦的生活市集，快來尋找你的週末計畫！</p>
+        <h2>精選市集活動</h2>
+        <p>從近期活動中挑一場喜歡的，替週末留一點散步和探索的時間。</p>
       </div>
 
       <a routerLink="/user/activity-list" class="more-link">
@@ -61,7 +61,7 @@
     </div>
 
     <div class="market-grid">
-      @for (market of markets; track $index; let i = $index;) {
+      @for (market of markets; track market.id) {
         <app-user-market-card [market]="market" (click)="goToActivityDetail(market)"></app-user-market-card>
       }
     </div>
@@ -75,42 +75,42 @@
   <section class="vendor-section">
     <div class="vendor-info">
       <h2>
-        成為小集日攤主<br />
-        讓更多人看見你的品牌
+        想讓作品被更多人看見？<br />
+        從一場市集開始
       </h2>
 
       <p>
-        在城市的每個角落，讓你的品牌被更多人看見。小集日提供市集活動宣傳、品牌曝光與報名管理服務，陪你打造屬於自己的市集故事。
+        小集日協助攤主管理報名、審核與活動資訊，讓出攤流程更清楚，也讓品牌有更多被看見的機會。
       </p>
 
       <a routerLink="/vendor/login" class="vendor-btn">
-        前往攤主專區
+        成為攤主
         <i class="bi bi-arrow-right"></i>
       </a>
     </div>
 
     <div class="vendor-photo">
-      <img src="assets/images/user/home/vendor-cta-photo.png" alt="成為小集日攤主" />
+      <img src="assets/images/user/home/vendor-cta-photo.png" alt="攤主出攤情境" />
     </div>
   </section>
 
   <section class="organizer-section">
     <div class="organizer-photo">
-      <img src="assets/images/user/home/organizer-cta-photo.png" alt="前往主辦方專區" />
+      <img src="assets/images/user/home/organizer-cta-photo.png" alt="主辦方活動管理" />
     </div>
 
     <div class="organizer-info">
       <h2>
-        想舉辦自己的市集活動？<br />
-        讓活動管理更輕鬆
+        想舉辦一場有質感的市集？<br />
+        讓活動管理更有秩序
       </h2>
 
       <p>
-        小集日提供活動建立、攤商審核、報名管理與通知公告，協助主辦方更有效率地完成市集籌備流程。
+        主辦方可以建立活動資料、管理報名名單、規劃攤位配置，讓活動從籌備到發布都更清楚。
       </p>
 
       <a routerLink="/organizer/login" class="organizer-btn">
-        前往主辦方專區
+        主辦方專區
         <i class="bi bi-arrow-right"></i>
       </a>
     </div>

@@ -19,44 +19,93 @@ import { TAIWAN_ADMINISTRATIVE_DIVISIONS, TAIWAN_CITY_OPTIONS } from '../../../.
   styleUrl: './organizer-dashboard-event-detail.scss',
 })
 export class OrganizerDashboardEventDetail implements OnDestroy {
+  /** 是否為查看活動詳情模式。 */
   readonly isViewMode: boolean;
+
+  /** 是否為編輯既有活動模式。 */
   readonly isEditMode: boolean;
+
+  /** 路由上的活動 ID，用於查看詳情。 */
   readonly activityId: number;
+
+  /** query string 上的編輯活動 ID，用於草稿或補件編輯。 */
   readonly editActivityId: number;
+
+  /** 返回活動管理列表時要保留的頁碼。 */
   readonly returnPage: number;
+
+  /** 返回活動管理列表時要保留的狀態篩選。 */
   readonly returnStatus: string;
+
+  /** 目前顯示或編輯的活動資料。 */
   activity: OrganizerEventRow;
+
+  /** 顯示在頁面上的操作回饋訊息。 */
   feedbackMessage = '';
+
+  /** 建立／編輯活動目前所在步驟。 */
   currentStep = 0;
+
+  /** 是否已嘗試送出審核，用來控制驗證樣式顯示。 */
   submitAttempted = false;
+
+  /** 表單送審失敗時的整體提示文字。 */
   validationMessage = '';
+
+  /** 是否顯示攤位配置圖範例 Modal。 */
   showLayoutExample = false;
+
+  /** 是否顯示新增／編輯攤位分區 Modal。 */
   showZoneDialog = false;
+
+  /** 目前正在編輯的攤位分區索引，null 代表新增。 */
   editingZoneIndex: number | null = null;
+
+  /** 初始表單快照，用來判斷是否有未儲存變更。 */
   private initialEditorSnapshot = '';
+
+  /** 程式主動導頁時略過未儲存防護。 */
   private navigationAllowed = false;
+
+  /** 活動封面上傳錯誤訊息。 */
   coverUploadError = '';
+
+  /** 攤位配置圖上傳錯誤訊息。 */
   layoutUploadError = '';
+
+  /** 活動封面拖曳上傳區是否處於拖曳狀態。 */
   isCoverDragging = false;
+
+  /** 攤位配置圖拖曳上傳區是否處於拖曳狀態。 */
   isLayoutDragging = false;
+
+  /** 攤位分區 Modal 使用的暫存資料。 */
   zoneDraft: BoothZoneDraft = {
     name: '',
     color: '#f97316',
     count: null,
   };
 
-  /** 撱箇??楊頛舀暑??憿舐內?典椰?渡?瘚?甇仿???*/
+  /** 左側步驟導覽顯示內容。 */
   readonly steps: FormStep[] = [
     { title: '活動基本資料', description: '活動名稱、類型、介紹' },
     { title: '活動時間', description: '活動與報名時間設定' },
     { title: '活動場地與攤位規劃', description: '地點、地圖、攤位配置' },
   ];
 
-  /** 瘣餃?憿??賊?嚗?蝥?寧?梁憿???API ????*/
+  /** 活動類型選項，之後可改由 API 取得。 */
   readonly categoryOptions = ['餐飲美食', '文創手作', '親子家庭', '寵物生活', '植物選物', '服飾配件', '玩具選物'];
+
+  /** 台灣縣市選項。 */
   readonly cityOptions = TAIWAN_CITY_OPTIONS;
+
+  /** 縣市與行政區對照表。 */
   readonly cityDistrictMap = TAIWAN_ADMINISTRATIVE_DIVISIONS;
+
+  /** 攤位分區預設色票。 */
   readonly zoneColors = ['#f97316', '#65a30d', '#0ea5e9', '#8b5cf6', '#ec4899'];
+
+  /** 查看／編輯詳情時預設帶入的活動類型。 */
   readonly detailCategories = ['餐飲美食', '文創手作', '親子家庭', '植物選物'];
 
   constructor(
@@ -185,6 +234,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
   }
 
+  /** 依據狀態按鈕執行送審、發布、下架、刪除等操作。 */
   async handleStatusAction(action: StatusAction): Promise<void> {
     this.feedbackMessage = '';
     switch (action.key) {
@@ -296,23 +346,26 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
   }
 
+  /** Modal 驗證用：排除目前編輯中的分區後，取得既有分區名稱。 */
   get zoneNamesForValidation(): string[] {
     return this.boothZones
       .filter((_, index) => index !== this.editingZoneIndex)
       .map((zone) => zone.name);
   }
 
+  /** Modal 驗證用：排除目前編輯中的分區後，取得既有分區顏色。 */
   get zoneColorsForValidation(): string[] {
     return this.boothZones
       .filter((_, index) => index !== this.editingZoneIndex)
       .map((zone) => zone.color);
   }
 
+  /** 全部步驟的錯誤總數，用於送審失敗提示。 */
   get totalErrorCount(): number {
     return this.steps.reduce((total, _, index) => total + this.getStepErrorCount(index), 0);
   }
 
-  /** 瘣餃??箸鞈?銵典?怠?鞈???*/
+  /** 第一步：活動基本資料表單。 */
   form: EventForm = {
     name: '',
     coverFileName: '',
@@ -322,7 +375,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     introduction: '',
   };
 
-  /** 瘣餃?????漱?撘?銵典?怠?鞈???*/
+  /** 第二步：活動與報名時間、交通方式表單。 */
   timeForm: EventTimeForm = {
     eventStartDate: '',
     eventEndDate: '',
@@ -339,6 +392,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     driving: '',
   };
 
+  /** 第三步：活動場地與攤位規劃表單。 */
   venueForm: VenueBoothForm = {
     city: '',
     district: '',
@@ -353,13 +407,14 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     layoutPreviewUrl: '',
   };
 
+  /** 攤位分區清單，新增與編輯 Modal 都會更新這份資料。 */
   boothZones: BoothZone[] = [
     { name: 'A 區', color: '#f97316', count: 50 },
     { name: 'B 區', color: '#65a30d', count: 50 },
     { name: 'C 區', color: '#0ea5e9', count: 50 },
   ];
 
-  /** 蝚砌??挾???憛急?雿?摰寞?嚗?閬摰???*/
+  /** 第一步必填欄位是否都已完成。 */
   get isBasicInfoComplete(): boolean {
     return Boolean(
       this.form.name.trim() &&
@@ -370,7 +425,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     );
   }
 
-  /** 蝚砌??挾?????隞亙?銝車鈭日撘??‵撖急????箏???*/
+  /** 第二步必填欄位是否都已完成，並檢查日期時間邏輯。 */
   get isTimeInfoComplete(): boolean {
     const requiredTimes = [
       this.timeForm.eventStartDate,
@@ -395,6 +450,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       !this.confirmationAfterEventStart;
   }
 
+  /** 第三步必填欄位是否都已完成，並檢查分區總數是否吻合攤位總數。 */
   get isVenueInfoComplete(): boolean {
     return Boolean(
       this.venueForm.city &&
@@ -412,6 +468,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     );
   }
 
+  /** 判斷指定步驟是否完成，供左側步驟狀態使用。 */
   isStepComplete(step: number): boolean {
     return (
       (step === 0 && this.isBasicInfoComplete) ||
@@ -420,6 +477,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     );
   }
 
+  /** 計算指定步驟還有幾個驗證錯誤。 */
   getStepErrorCount(step: number): number {
     if (step === 0) {
       return [
@@ -473,18 +531,21 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     ].filter(Boolean).length;
   }
 
+  /** 切換目前編輯步驟。 */
   goToStep(step: number): void {
     if (step >= 0 && step <= 2) {
       this.currentStep = step;
     }
   }
 
+  /** 前往下一步。 */
   goNext(): void {
     if (this.currentStep < 2) {
       this.currentStep += 1;
     }
   }
 
+  /** 開啟新增攤位分區 Modal，並清空暫存資料。 */
   openAddZoneDialog(): void {
     this.editingZoneIndex = null;
     this.zoneDraft = {
@@ -495,6 +556,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.showZoneDialog = true;
   }
 
+  /** 開啟編輯攤位分區 Modal，並把既有資料帶入暫存資料。 */
   openEditZoneDialog(index: number): void {
     const zone = this.boothZones[index];
     this.editingZoneIndex = index;
@@ -506,15 +568,18 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.showZoneDialog = true;
   }
 
+  /** 關閉攤位分區 Modal 並重置編輯索引。 */
   closeZoneDialog(): void {
     this.showZoneDialog = false;
     this.editingZoneIndex = null;
   }
 
+  /** 從色票或 HEX 輸入更新分區顏色。 */
   selectZoneColor(color: string): void {
     this.zoneDraft.color = color;
   }
 
+  /** 選擇縣市後清空行政區，避免保留不屬於該縣市的行政區。 */
   selectCity(city: string): void {
     if (this.venueForm.city !== city) {
       this.venueForm.city = city;
@@ -522,6 +587,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
   }
 
+  /** 儲存草稿並回到詳情查看狀態。 */
   async saveDraft(): Promise<void> {
     this.activity = {
       ...this.activity,
@@ -545,6 +611,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     });
   }
 
+  /** 取消建立／編輯，若有未儲存變更會先提示確認。 */
   async cancelEditor(): Promise<void> {
     if (this.hasUnsavedChanges && !await this.alert.confirm(
       '尚有未儲存的變更',
@@ -558,6 +625,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.navigateFromEditor();
   }
 
+  /** 路由離開守衛使用，防止未儲存資料被直接離開。 */
   canDeactivate(): boolean | Promise<boolean> {
     if (this.isViewMode || this.navigationAllowed || !this.hasUnsavedChanges) {
       return true;
@@ -570,6 +638,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     );
   }
 
+  /** 瀏覽器重新整理或關閉分頁時，提醒尚有未儲存變更。 */
   @HostListener('window:beforeunload', ['$event'])
   preventUnsavedRefresh(event: BeforeUnloadEvent): void {
     if (!this.isViewMode && this.hasUnsavedChanges && !this.navigationAllowed) {
@@ -578,6 +647,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
   }
 
+  /** 依建立或編輯模式決定取消後返回哪個頁面。 */
   private navigateFromEditor(): void {
     if (this.isEditMode) {
       this.router.navigate(['/organizer/dash-board/activity/detail', this.editActivityId], {
@@ -592,6 +662,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     });
   }
 
+  /** 送出審核前執行全部步驟驗證，通過後顯示確認與成功提示。 */
   async submitForReview(): Promise<void> {
     this.submitAttempted = true;
     const firstInvalidStep = this.steps.findIndex((_, index) => this.getStepErrorCount(index) > 0);
@@ -649,6 +720,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     });
   }
 
+  /** 儲存新增或編輯後的攤位分區。 */
   saveZoneDialog(): void {
     const normalizedName = this.zoneDraft.name.trim();
     const normalizedColor = this.zoneDraft.color.trim();
@@ -689,6 +761,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.closeZoneDialog();
   }
 
+  /** 刪除攤位分區前先顯示確認提示。 */
   async removeBoothZone(index: number): Promise<void> {
     const zone = this.boothZones[index];
     const confirmed = await this.alert.confirm(
@@ -715,16 +788,19 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.processLayoutFile(file, input);
   }
 
+  /** 攤位配置圖拖曳進入上傳框時，顯示拖曳狀態。 */
   onLayoutDragOver(event: DragEvent): void {
     event.preventDefault();
     this.isLayoutDragging = true;
   }
 
+  /** 攤位配置圖拖曳離開上傳框時，取消拖曳狀態。 */
   onLayoutDragLeave(event: DragEvent): void {
     event.preventDefault();
     this.isLayoutDragging = false;
   }
 
+  /** 攤位配置圖拖放上傳。 */
   onLayoutDrop(event: DragEvent, input: HTMLInputElement): void {
     event.preventDefault();
     this.isLayoutDragging = false;
@@ -734,6 +810,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
   }
 
+  /** 移除已選擇的攤位配置圖。 */
   removeLayout(input: HTMLInputElement): void {
     this.releaseLayoutPreview();
     this.venueForm.layoutFileName = '';
@@ -741,19 +818,19 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     input.value = '';
   }
 
-  /** ??瘣餃?憿???貊???*/
+  /** 切換活動類型勾選狀態。 */
   toggleCategory(category: string): void {
     this.form.categories = this.isCategorySelected(category)
       ? this.form.categories.filter((item) => item !== category)
       : [...this.form.categories, category];
   }
 
-  /** ?斗瘣餃?憿??臬撌脰◤?詨???*/
+  /** 判斷活動類型是否已被選取。 */
   isCategorySelected(category: string): boolean {
     return this.form.categories.includes(category);
   }
 
-  /** 憿舐內雿輻???撠蝮桀?嚗?敺?冽迨?乩?甇??銝瘚???*/
+  /** 活動封面點擊選檔上傳。 */
   onCoverSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -764,16 +841,19 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.processCoverFile(file, input);
   }
 
+  /** 活動封面拖曳進入上傳框時，顯示拖曳狀態。 */
   onCoverDragOver(event: DragEvent): void {
     event.preventDefault();
     this.isCoverDragging = true;
   }
 
+  /** 活動封面拖曳離開上傳框時，取消拖曳狀態。 */
   onCoverDragLeave(event: DragEvent): void {
     event.preventDefault();
     this.isCoverDragging = false;
   }
 
+  /** 活動封面拖放上傳。 */
   onCoverDrop(event: DragEvent, input: HTMLInputElement): void {
     event.preventDefault();
     this.isCoverDragging = false;
@@ -783,7 +863,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
   }
 
-  /** 蝘駁?桀????ｇ?銝行?蝛箸?獢撓?伐?霈?銝撘萄????賢?甈⊿??*/
+  /** 移除已選擇的活動封面。 */
   removeCover(input: HTMLInputElement): void {
     this.releaseCoverPreview();
     this.form.coverFileName = '';
@@ -791,13 +871,13 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     input.value = '';
   }
 
-  /** ?辣?ａ??恍???暹璈?閬賜雯?嚗??蝥??函汗?刻??園???*/
+  /** 元件銷毀時釋放本機預覽圖 URL。 */
   ngOnDestroy(): void {
     this.releaseCoverPreview();
     this.releaseLayoutPreview();
   }
 
-  /** ??桀????ａ?閬賜雯???*/
+  /** 釋放活動封面預覽 URL，避免記憶體殘留。 */
   private releaseCoverPreview(): void {
     if (this.form.coverPreviewUrl) {
       if (this.form.coverPreviewUrl.startsWith('blob:')) {
@@ -807,6 +887,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
   }
 
+  /** 釋放攤位配置圖預覽 URL，避免記憶體殘留。 */
   private releaseLayoutPreview(): void {
     if (this.venueForm.layoutPreviewUrl) {
       if (this.venueForm.layoutPreviewUrl.startsWith('blob:')) {
@@ -816,6 +897,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
   }
 
+  /** 檢查活動封面檔案格式與大小，通過後建立預覽 URL。 */
   private processCoverFile(file: File, input: HTMLInputElement): void {
     const allowedTypes = ['image/jpeg', 'image/png'];
     if (!allowedTypes.includes(file.type)) {
@@ -835,6 +917,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.form.coverPreviewUrl = URL.createObjectURL(file);
   }
 
+  /** 檢查攤位配置圖檔案格式與大小，通過後建立預覽 URL。 */
   private processLayoutFile(file: File, input: HTMLInputElement): void {
     const allowedTypes = ['image/jpeg', 'image/png'];
     if (!allowedTypes.includes(file.type)) {
@@ -854,6 +937,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.venueForm.layoutPreviewUrl = file.type.startsWith('image/') ? URL.createObjectURL(file) : '';
   }
 
+  /** 編輯模式下，將既有活動資料帶入三步驟表單。 */
   private loadActivityIntoEditor(): void {
     this.form = {
       name: this.activity.name,
@@ -891,14 +975,16 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       totalBooths: 150,
       boothPrice: 2500,
       layoutFileName: 'booth-layout-example.svg',
-      layoutPreviewUrl: 'assets/images/organizer/booth-layout-example.svg',
+      layoutPreviewUrl: 'assets/images/organizer/booth/booth-layout-example.svg',
     };
   }
 
+  /** 目前表單是否和初始快照不同。 */
   private get hasUnsavedChanges(): boolean {
     return this.getEditorSnapshot() !== this.initialEditorSnapshot;
   }
 
+  /** 建立表單快照，用於未儲存變更比對。 */
   private getEditorSnapshot(): string {
     return JSON.stringify({
       form: this.form,
@@ -908,18 +994,22 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     });
   }
 
+  /** 驗證數字是否為大於 0 的有限數值。 */
   private isPositiveNumber(value: number | null): boolean {
     return value !== null && Number.isFinite(Number(value)) && Number(value) > 0;
   }
 
+  /** 驗證數字是否為大於 0 的整數。 */
   private isPositiveInteger(value: number | null): boolean {
     return value !== null && Number.isInteger(Number(value)) && Number(value) > 0;
   }
 
+  /** 驗證數字是否為大於等於 0 的有限數值。 */
   private isNonNegativeNumber(value: number | null): boolean {
     return value !== null && Number.isFinite(Number(value)) && Number(value) >= 0;
   }
 
+  /** 檢查結束日期時間是否晚於開始日期時間。 */
   private isDateTimeRangeInvalid(startDate: string, startTime: string, endDate: string, endTime: string): boolean {
     if (!startDate || !startTime || !endDate || !endTime) {
       return false;
@@ -927,6 +1017,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     return this.toDateTime(endDate, endTime) <= this.toDateTime(startDate, startTime);
   }
 
+  /** 檢查指定日期時間是否晚於比較日期時間。 */
   private isDateTimeAfter(
     date: string,
     time: string,
@@ -942,6 +1033,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     return allowEqual ? value >= comparison : value > comparison;
   }
 
+  /** 檢查指定日期時間是否早於比較日期時間。 */
   private isDateTimeBefore(date: string, time: string, comparisonDate: string, comparisonTime: string): boolean {
     if (!date || !time || !comparisonDate || !comparisonTime) {
       return false;
@@ -949,6 +1041,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     return this.toDateTime(date, time) < this.toDateTime(comparisonDate, comparisonTime);
   }
 
+  /** 將日期與時間字串轉成 timestamp，方便做前後順序比較。 */
   private toDateTime(date: string, time: string): number {
     return new Date(`${date}T${time}:00`).getTime();
   }

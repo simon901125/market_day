@@ -8,14 +8,16 @@ import { DashboardNotification, NotificationItem } from '../../../shared/dashboa
   styleUrl: './organizer-dashboard-notification.scss',
 })
 export class OrganizerDashboardNotification {
-  tabs = ['全部', '未讀', '報名', '付款', '退款', '活動', '系統'];
+  /** 通知中心分類頁籤。 */
+  tabs = ['全部', '未讀', '報名', '付款', '退款', '活動', '公告'];
 
+  /** 通知中心列表資料，之後串接 API 時改由後端回傳。 */
   notifications: NotificationItem[] = [
     {
       icon: 'bi bi-clipboard-heart',
       iconClass: 'orange',
       status: '新報名',
-      title: '品牌「森日甜點」送出報名申請：夏日綠意市集',
+      title: '「夏日綠意市集」收到新的攤主報名申請，請前往報名管理查看。',
       date: '2026/06/02 14:30',
       unread: true,
       type: '報名',
@@ -24,7 +26,7 @@ export class OrganizerDashboardNotification {
       icon: 'bi bi-wallet2',
       iconClass: 'blue',
       status: '付款完成',
-      title: '品牌「木木手作」已完成付款：貓貓森林市集',
+      title: '攤主已完成付款，請確認付款狀態與攤位資料。',
       date: '2026/06/02 13:10',
       unread: true,
       type: '付款',
@@ -33,7 +35,7 @@ export class OrganizerDashboardNotification {
       icon: 'bi bi-arrow-repeat',
       iconClass: 'green',
       status: '退款申請',
-      title: '品牌「草語選物」申請退款：夏日綠意市集',
+      title: '有攤主送出退款申請，請至退款管理進行處理。',
       date: '2026/06/02 11:45',
       unread: true,
       type: '退款',
@@ -41,17 +43,17 @@ export class OrganizerDashboardNotification {
     {
       icon: 'bi bi-pencil',
       iconClass: 'purple',
-      status: '補件完成',
-      title: '品牌「日常手作所」已完成補件並重新送審：秋日手作市集',
+      status: '補件提醒',
+      title: '活動資料需要補件，請修改後重新送出審核。',
       date: '2026/06/02 10:15',
       unread: false,
-      type: '報名',
+      type: '活動',
     },
     {
       icon: 'bi bi-map',
       iconClass: 'teal',
-      status: '完成選位',
-      title: '品牌「木木手作」已完成攤位選擇：貓貓森林市集',
+      status: '地圖完成',
+      title: '活動攤位地圖已建置完成，可前往活動詳情確認。',
       date: '2026/06/01 16:20',
       unread: false,
       type: '活動',
@@ -59,11 +61,11 @@ export class OrganizerDashboardNotification {
     {
       icon: 'bi bi-megaphone',
       iconClass: 'yellow',
-      status: '活動異動',
-      title: '夏日綠意市集活動時間調整，請參考最新公告',
+      status: '活動公告',
+      title: '系統公告：請於活動開始前確認攤位配置與品牌公開資料。',
       date: '2026/05/29 09:30',
       unread: false,
-      type: '系統',
+      type: '公告',
     },
   ];
 }

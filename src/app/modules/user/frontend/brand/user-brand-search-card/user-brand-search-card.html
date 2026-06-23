@@ -15,7 +15,7 @@
       <h3 class="brand-name">{{ brand.name }}</h3>
       <div class="tag-list">
         @for (tag of brand.tags; track $index) {
-        <span>{{ tag }}</span>
+          <span>{{ tag }}</span>
         }
       </div>
     </div>
@@ -23,7 +23,7 @@
     <p class="brand-desc">{{ brand.description }}</p>
 
     <div class="brand-work-row">
-      <span class="work-label">代表作品：</span>
+      <span class="work-label">擅長作品：</span>
       <span class="work-value">{{ representativeProducts }}</span>
     </div>
 

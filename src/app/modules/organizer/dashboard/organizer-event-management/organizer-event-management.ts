@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ActivityStatus } from '../../../../models/status/ActivityStatus';
+
 import { OrganizerEventRow } from '../../../../models/interface/organizer/OrganizerEventRow';
-import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
+import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { DashboardDataTable, DashboardTableAction, DashboardTableColumn } from '../../../shared/dashboard/dashboard-data-table/dashboard-data-table';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
+import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 
 @Component({
@@ -15,35 +16,54 @@ import { Dropdown } from '../../../shared/dropdown/dropdown';
   styleUrl: './organizer-event-management.scss',
 })
 export class OrganizerEventManagement implements OnInit {
+  /** 日期區間元件，用來取得列表搜尋的起訖日期。 */
   @ViewChild(DateRangeSelector) private dateRangeSelector?: DateRangeSelector;
 
-  constructor(
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
-  ) {}
-
+  /** 目前分頁。 */
   currentPage = 1;
+
+  /** 每頁顯示筆數。 */
   pageSize = 6;
+
+  /** 目前選取的活動狀態。空字串代表全部狀態。 */
   selectedStatus = '';
+
+  /** 活動名稱搜尋輸入值。 */
   searchKeyword = '';
+
+  /** 日期篩選起日。 */
   filterStartDate: string | null = null;
+
+  /** 日期篩選迄日。 */
   filterEndDate: string | null = null;
+
+  /** 已套用的活動名稱搜尋條件。 */
   private appliedKeyword = '';
+
+  /** 已套用的日期篩選起日。 */
   private appliedStartDate: string | null = null;
+
+  /** 已套用的日期篩選迄日。 */
   private appliedEndDate: string | null = null;
 
+  /** 活動狀態下拉選單選項。 */
   readonly statusOptions = ActivityStatus.filterList;
 
+  /** 活動管理列表欄位設定。 */
   columns: DashboardTableColumn[] = [
     { key: 'name', label: '活動名稱', type: 'imageText' },
     { key: 'date', label: '活動日期' },
     { key: 'location', label: '活動地點' },
     { key: 'status', label: '狀態', type: 'status', align: 'center' },
-    { key: 'signupProgress', label: '報名進度', align: 'center' },
-    { key: 'paidCount', label: '已付款', align: 'center' },
+    { key: 'signupProgress', label: '報名人數', align: 'center' },
+    { key: 'paidCount', label: '付款人數', align: 'center' },
     { key: 'action', label: '操作', type: 'action', align: 'center' },
   ];
 
+  /**
+   * 活動管理列表目前使用前端假資料。
+   * 後續串接 API 時可保留欄位結構，改由服務層取得資料。
+   */
   rows: OrganizerEventRow[] = [
     {
       id: 1,
@@ -51,86 +71,86 @@ export class OrganizerEventManagement implements OnInit {
       nameImage: 'assets/images/market/cards/market-card-01.png',
       date: '2026/06/15 - 2026/06/21',
       location: '台北市 信義區',
-      status: ActivityStatus.active,
+      status: ActivityStatus.published,
       signupProgress: '128 / 150',
       paidCount: '118',
       actionLabel: '查看詳情',
     },
     {
       id: 2,
-      name: '週末文創手作市集',
+      name: '海風手作市集',
       nameImage: 'assets/images/market/cards/market-card-02.png',
       date: '2026/06/27 - 2026/06/28',
-      location: '台北市 中正區',
-      status: ActivityStatus.registrationOpen,
-      signupProgress: '96 / 120',
-      paidCount: '82',
+      location: '新北市 淡水區',
+      status: ActivityStatus.full,
+      signupProgress: '120 / 120',
+      paidCount: '102',
       actionLabel: '查看詳情',
     },
     {
       id: 3,
-      name: '親子野餐選物日',
+      name: '午後甜點派對',
       nameImage: 'assets/images/market/cards/market-card-03.png',
       date: '2026/07/04 - 2026/07/05',
-      location: '新北市 板橋區',
-      status: ActivityStatus.full,
+      location: '台中市 西區',
+      status: ActivityStatus.registrationOpen,
       signupProgress: '100 / 100',
       paidCount: '96',
       actionLabel: '查看詳情',
     },
     {
       id: 4,
-      name: '河岸品牌公開展',
+      name: '森林餐桌市集',
       nameImage: 'assets/images/market/cards/market-card-04.png',
       date: '2026/07/18 - 2026/07/19',
-      location: '桃園市 中壢區',
-      status: ActivityStatus.published,
+      location: '台南市 中西區',
+      status: ActivityStatus.registrationOpen,
       signupProgress: '64 / 90',
       paidCount: '58',
       actionLabel: '查看詳情',
     },
     {
       id: 5,
-      name: '秋季地圖建置活動',
+      name: '親子野餐市集',
       nameImage: 'assets/images/market/cards/market-card-05.png',
       date: '2026/08/01 - 2026/08/02',
-      location: '台中市 西區',
-      status: ActivityStatus.mapBuilding,
-      signupProgress: '-',
-      paidCount: '-',
+      location: '桃園市 中壢區',
+      status: ActivityStatus.registrationOpen,
+      signupProgress: '72 / 110',
+      paidCount: '63',
       actionLabel: '查看詳情',
     },
     {
       id: 6,
-      name: '城市待審核市集',
+      name: '老屋生活市集',
       nameImage: 'assets/images/market/cards/market-card-06.png',
       date: '2026/08/15 - 2026/08/16',
-      location: '台南市 中西區',
-      status: ActivityStatus.pendingReview,
-      signupProgress: '-',
-      paidCount: '-',
+      location: '高雄市 鹽埕區',
+      status: ActivityStatus.registrationOpen,
+      signupProgress: '54 / 100',
+      paidCount: '46',
       actionLabel: '查看詳情',
     },
     {
       id: 7,
-      name: '草稿活動範例',
+      name: '花草療癒市集',
       nameImage: 'assets/images/market/cards/market-card-07.png',
       date: '2026/09/05 - 2026/09/06',
-      location: '高雄市 鹽埕區',
-      status: ActivityStatus.draft,
-      signupProgress: '-',
-      paidCount: '-',
+      location: '台中市 北區',
+      status: ActivityStatus.registrationOpen,
+      signupProgress: '48 / 80',
+      paidCount: '41',
       actionLabel: '查看詳情',
     },
     {
       id: 8,
-      name: '補件中活動範例',
+      name: '週末選物派對',
       nameImage: 'assets/images/market/cards/market-card-08.png',
       date: '2026/09/19 - 2026/09/20',
-      location: '台北市 松山區',
-      status: ActivityStatus.revisionRequired,
-      signupProgress: '-',
-      paidCount: '-',
+      location: '新竹市 東區',
+      status: ActivityStatus.registrationOpen,
+      signupProgress: '36 / 90',
+      paidCount: '29',
       actionLabel: '查看詳情',
     },
     {
@@ -157,8 +177,8 @@ export class OrganizerEventManagement implements OnInit {
     },
     {
       id: 11,
-      name: '春日手作回顧',
-      nameImage: 'assets/images/user/activity/history/history-market-01.png',
+      name: '春日花園市集',
+      nameImage: 'assets/images/market/history/history-market-01.png',
       date: '2025/04/12 - 2025/04/13',
       location: '台北市 大安區',
       status: ActivityStatus.ended,
@@ -166,10 +186,105 @@ export class OrganizerEventManagement implements OnInit {
       paidCount: '80',
       actionLabel: '查看詳情',
     },
+    {
+      id: 12,
+      name: '港邊手作生活節',
+      nameImage: 'assets/images/market/history/history-market-02.png',
+      date: '2025/05/18 - 2025/05/19',
+      location: '高雄市 鼓山區',
+      status: ActivityStatus.ended,
+      signupProgress: '68 / 70',
+      paidCount: '68',
+      actionLabel: '查看詳情',
+    },
+    {
+      id: 13,
+      name: '島嶼風味市集',
+      nameImage: 'assets/images/market/history/history-market-03.png',
+      date: '2025/06/07 - 2025/06/08',
+      location: '台南市 安平區',
+      status: ActivityStatus.ended,
+      signupProgress: '74 / 80',
+      paidCount: '72',
+      actionLabel: '查看詳情',
+    },
+    {
+      id: 14,
+      name: '秋日選品聚落',
+      nameImage: 'assets/images/market/history/history-market-04.png',
+      date: '2025/07/12 - 2025/07/13',
+      location: '桃園市 中壢區',
+      status: ActivityStatus.ended,
+      signupProgress: '88 / 90',
+      paidCount: '86',
+      actionLabel: '查看詳情',
+    },
+    {
+      id: 15,
+      name: '河岸草地市集',
+      nameImage: 'assets/images/market/cards/market-card-11.png',
+      date: '2026/12/05 - 2026/12/06',
+      location: '台北市 中正區',
+      status: ActivityStatus.draft,
+      signupProgress: '-',
+      paidCount: '-',
+      actionLabel: '查看詳情',
+    },
+    {
+      id: 16,
+      name: '晴光插畫手作市集',
+      nameImage: 'assets/images/market/cards/market-card-12.png',
+      date: '2026/12/12 - 2026/12/13',
+      location: '台北市 中山區',
+      status: ActivityStatus.pendingReview,
+      signupProgress: '-',
+      paidCount: '-',
+      actionLabel: '查看詳情',
+    },
+    {
+      id: 17,
+      name: '森系露營生活市集',
+      nameImage: 'assets/images/market/cards/market-card-13.png',
+      date: '2026/12/19 - 2026/12/20',
+      location: '新北市 新店區',
+      status: ActivityStatus.revisionRequired,
+      signupProgress: '-',
+      paidCount: '-',
+      actionLabel: '查看詳情',
+    },
+    {
+      id: 18,
+      name: '冬季甜點交換市集',
+      nameImage: 'assets/images/market/cards/market-card-14.png',
+      date: '2027/01/09 - 2027/01/10',
+      location: '台南市 中西區',
+      status: ActivityStatus.mapBuilding,
+      signupProgress: '-',
+      paidCount: '-',
+      actionLabel: '查看詳情',
+    },
+    {
+      id: 19,
+      name: '新年街角花藝市集',
+      nameImage: 'assets/images/market/cards/market-card-15.png',
+      date: '2027/01/23 - 2027/01/24',
+      location: '台中市 北區',
+      status: ActivityStatus.readyToPublish,
+      signupProgress: '-',
+      paidCount: '-',
+      actionLabel: '查看詳情',
+    },
   ];
 
+  /** 目前頁面實際顯示的資料。 */
   displayRows: OrganizerEventRow[] = [];
 
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+  ) {}
+
+  /** 初始化列表，並從網址 query params 還原搜尋、篩選與分頁狀態。 */
   ngOnInit(): void {
     const pageFromUrl = Number(this.route.snapshot.queryParamMap.get('page'));
     const statusFromUrl = this.route.snapshot.queryParamMap.get('status') ?? '';
@@ -191,6 +306,7 @@ export class OrganizerEventManagement implements OnInit {
     this.updateDisplayRows();
   }
 
+  /** 依照狀態、名稱與日期區間回傳篩選後的活動。 */
   get filteredRows(): OrganizerEventRow[] {
     return this.rows.filter((row) => {
       const matchesStatus = !this.selectedStatus || row.status === this.selectedStatus;
@@ -202,16 +318,19 @@ export class OrganizerEventManagement implements OnInit {
     });
   }
 
+  /** 篩選後的總筆數。 */
   get totalItems(): number {
     return this.filteredRows.length;
   }
 
+  /** 切換分頁。 */
   onPageChange(page: number): void {
     this.currentPage = page;
     this.syncListQueryParams();
     this.updateDisplayRows();
   }
 
+  /** 切換活動狀態篩選。 */
   selectStatus(status: string): void {
     this.selectedStatus = status === ActivityStatus.all ? '' : status;
     this.currentPage = 1;
@@ -219,7 +338,7 @@ export class OrganizerEventManagement implements OnInit {
     this.updateDisplayRows();
   }
 
-  /** 目前先以前端資料篩選；串接 API 後可在此改為傳送查詢條件。 */
+  /** 執行搜尋；之後串接 API 時可在這裡改為呼叫服務層。 */
   searchActivities(): void {
     const range = this.dateRangeSelector?.getTimeRange() ?? {
       startDate: this.filterStartDate,
@@ -242,6 +361,7 @@ export class OrganizerEventManagement implements OnInit {
     this.updateDisplayRows();
   }
 
+  /** 點擊列表操作按鈕，帶著返回列表所需狀態前往活動詳情。 */
   onTableAction(action: DashboardTableAction): void {
     const activity = action.row as unknown as OrganizerEventRow;
     this.router.navigate(['/organizer/dash-board/activity/detail', activity.id], {
@@ -257,6 +377,7 @@ export class OrganizerEventManagement implements OnInit {
     });
   }
 
+  /** 同步列表狀態到 query params，讓返回頁面時可以還原目前篩選條件。 */
   private syncListQueryParams(): void {
     this.router.navigate([], {
       relativeTo: this.route,
@@ -272,6 +393,7 @@ export class OrganizerEventManagement implements OnInit {
     });
   }
 
+  /** 更新目前分頁顯示的資料。 */
   private updateDisplayRows(): void {
     const rows = this.filteredRows;
     const maxPage = Math.max(1, Math.ceil(rows.length / this.pageSize));

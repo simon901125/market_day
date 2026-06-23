@@ -15,7 +15,7 @@
       <strong>{{ email }}</strong>
     </p>
 
-    <p class="verify-note">驗證碼有效時間為 10 分鐘，請儘快輸入。</p>
+    <p class="verify-note">有效時間為 10 分鐘，請儘快輸入。</p>
 
     <div class="code-inputs">
       @for (item of code; track $index; let i = $index) {
@@ -56,41 +56,3 @@
     </p>
   </div>
 </section>
-
-@if (showSuccessModal || showErrorModal) {
-  <div class="modal-backdrop">
-    <div class="result-modal">
-      @if (showSuccessModal) {
-        <div class="result-icon success">
-          <i class="bi bi-check-lg"></i>
-        </div>
-      }
-
-      @if (showErrorModal) {
-        <div class="result-icon error">
-          <i class="bi bi-x-lg"></i>
-        </div>
-      }
-
-      <h3>{{ showSuccessModal ? '驗證成功' : '驗證失敗' }}</h3>
-
-      <p>
-        {{
-          showSuccessModal
-            ? '你的 Email 已完成驗證，現在可以登入攤主平台。'
-            : '你輸入的驗證碼不正確或已失效，請重新確認後再試一次。'
-        }}
-      </p>
-
-      @if (showSuccessModal) {
-        <a [routerLink]="loginLink" class="modal-btn">前往登入</a>
-      }
-
-      @if (showErrorModal) {
-        <button type="button" class="modal-btn" (click)="closeModal()">
-          重新輸入
-        </button>
-      }
-    </div>
-  </div>
-}

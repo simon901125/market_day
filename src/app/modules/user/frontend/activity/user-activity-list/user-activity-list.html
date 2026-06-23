@@ -3,8 +3,7 @@
     <div class="hero-text">
       <h1>市集活動</h1>
       <p>
-        精選小集日推薦的生活市集，從週末散步、親子同遊到風格選物，
-        找到最適合你的下一場小日子。
+        找到適合週末散步、親子同遊或風格選物的市集，讓生活多一點剛好的熱鬧。
       </p>
     </div>
   </section>
@@ -16,7 +15,7 @@
         [class.active]="activeTab === 'current'"
         (click)="changeTab('current')"
       >
-        目前活動
+        近期活動
       </button>
 
       <button
@@ -29,10 +28,18 @@
     </div>
 
     @if (activeTab === 'current') {
-      <app-user-market-search-panel dateRangeTitle="活動日期"></app-user-market-search-panel>
+      <app-user-market-search-panel
+        dateRangeTitle="活動日期"
+        [keyword]="keyword"
+        [selectedCity]="selectedCity"
+        [selectedStatus]="selectedStatus"
+        [selectedCategory]="selectedCategory"
+        [startDate]="startDate"
+        [endDate]="endDate"
+      ></app-user-market-search-panel>
 
       <div class="market-grid">
-        @for (market of pagedMarkets; track market.title) {
+        @for (market of pagedMarkets; track market.id) {
           <app-user-market-card
             [market]="market"
             (click)="goToActivityDetail(market)"
@@ -48,7 +55,7 @@
       </app-pagination>
     } @else {
       <div class="history-list">
-        @for (market of pagedHistoryMarkets; track market.title) {
+        @for (market of pagedHistoryMarkets; track market.id) {
           <app-user-history-market-card
             [market]="market"
             (click)="goToActivityDetail(market)"

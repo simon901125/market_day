@@ -1,4 +1,4 @@
-<form class="auth-register-form">
+<form class="auth-register-form" (ngSubmit)="register()">
   <h2>{{ formTitle }}</h2>
   <div class="title-line"></div>
 
@@ -40,7 +40,7 @@
           [(ngModel)]="password"
           (ngModelChange)="checkPwRole(); checkPasswordMatch()"
           [type]="showPassword ? 'text' : 'password'"
-          placeholder="請設定密碼（至少 8 個字元）"
+          placeholder="請設定密碼，至少 8 個字元"
         />
 
         <button type="button" class="eye-btn" (click)="togglePassword()">
@@ -53,7 +53,7 @@
       </div>
 
       <div class="password-rule">
-        <span>密碼須符合以下條件：</span>
+        <span>密碼需符合以下條件：</span>
 
         <span [class.valid]="hasPwLenght">
           <i class="bi bi-check-circle"></i>
@@ -62,7 +62,7 @@
 
         <span [class.valid]="hasPwNumLetter">
           <i class="bi bi-check-circle"></i>
-          包含英文字母和數字
+          包含英文字母與數字
         </span>
       </div>
     </div>
@@ -107,6 +107,6 @@
 
   <button type="button" class="google-btn">
     <img src="assets/images/shared/google-icon.png" alt="Google" />
-    使用 Google 快速註冊
+    使用 Google 帳號註冊
   </button>
 </form>
