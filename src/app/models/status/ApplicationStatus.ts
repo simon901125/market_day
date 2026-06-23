@@ -24,7 +24,7 @@ export class ApplicationStatus {
     [ApplicationStatus.pendingReview]: 'tag-orange',
     [ApplicationStatus.reviewRejected]: 'tag-red',
     [ApplicationStatus.pendingPayment]: 'tag-orange',
-    [ApplicationStatus.pendingSelection]: 'blue',
+    [ApplicationStatus.pendingSelection]: 'tag-blue',
     [ApplicationStatus.completed]: 'tag-green',
     [ApplicationStatus.refundPending]: 'tag-orange',
     [ApplicationStatus.refunding]: 'tag-purple',
