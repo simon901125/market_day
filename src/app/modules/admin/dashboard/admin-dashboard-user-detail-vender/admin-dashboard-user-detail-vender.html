@@ -1,1 +1,214 @@
-<p>admin-dashboard-user-detail-vender works!</p>
+<section class="admin-vendor-detail page-transition">
+  <div class="page-header">
+    <div class="header-left">
+      <p class="breadcrumb">
+        <span class="breadcrumb-link" (click)="goBack()">使用者管理</span>
+        <span class="breadcrumb-sep">＞</span>
+        <span class="breadcrumb-mark">攤主詳情</span>
+      </p>
+      <div class="title-row">
+        <button class="back-btn" type="button" (click)="goBack()">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        <h1 class="page-title">攤主詳情</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      @if (detail) {
+        @if (isAccountActive) {
+          <button type="button" class="app-btn secondary" (click)="toggleAccountStatus()">停用帳號</button>
+        } @else {
+          <button type="button" class="app-btn secondary" (click)="toggleAccountStatus()">恢復帳號</button>
+        }
+      }
+    </div>
+  </div>
+
+  @if (detail) {
+  <div class="cards-container">
+
+    <!-- 中間兩欄：左（userInfo + vendorInfo）| 右（loginRecords） -->
+    <div class="cards-grid-mid">
+
+      <!-- 左欄 -->
+      <div class="left-col">
+
+        <!-- 帳號資訊 -->
+        <div class="info-card">
+          <h3 class="card-title">帳號資訊</h3>
+          <div class="detail-list">
+            <div class="detail-item">
+              <i class="bi bi-person-circle"></i>
+              <span class="detail-label">使用者名稱</span>
+              <span class="detail-value">{{ detail.data.userInfo.username }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="bi bi-person-badge"></i>
+              <span class="detail-label">角色</span>
+              <span class="role-tag purple">攤主</span>
+            </div>
+            <div class="detail-item">
+              <i class="bi bi-envelope"></i>
+              <span class="detail-label">電子信箱</span>
+              <span class="detail-value">{{ detail.data.userInfo.email }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="bi bi-toggle-on"></i>
+              <span class="detail-label">帳號狀態</span>
+              <span class="status-tag" [class]="getStatusClass(detail.data.userInfo.accountStatus)">
+                {{ detail.data.userInfo.accountStatus }}
+              </span>
+            </div>
+            <div class="detail-item">
+              <i class="bi bi-calendar-plus"></i>
+              <span class="detail-label">註冊時間</span>
+              <span class="detail-value">{{ detail.data.userInfo.registeredAt }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="bi bi-clock-history"></i>
+              <span class="detail-label">最後登入</span>
+              <span class="detail-value">{{ detail.data.userInfo.lastLoginAt }}</span>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-value ongoing">{{ detail.data.userInfo.registrationCount }}</span>
+              <span class="stat-label">進行中</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value ended">{{ detail.data.userInfo.completedEventCount }}</span>
+              <span class="stat-label">已結束</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 攤主資料 -->
+        <div class="info-card">
+          <h3 class="card-title">攤主資料</h3>
+          <div class="detail-list vendorInfo">
+            <div class="detail-item">
+              <i class="bi bi-shop"></i>
+              <span class="detail-label">品牌名稱</span>
+              <span class="detail-value">{{ detail.data.vendorInfo.brandName }}</span>
+            </div>
+                        <div class="detail-item">
+              <i class="bi bi-telephone"></i>
+              <span class="detail-label">聯絡電話</span>
+              <span class="detail-value">{{ detail.data.vendorInfo.contactPhone }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="bi bi-tag"></i>
+              <span class="detail-label">品牌類型</span>
+              <span class="detail-value">{{ detail.data.vendorInfo.brandType }}</span>
+            </div>
+                        <div class="detail-item">
+              <i class="bi bi-envelope"></i>
+              <span class="detail-label">聯絡信箱</span>
+              <span class="detail-value">{{ detail.data.vendorInfo.contactEmail }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="bi bi-person"></i>
+              <span class="detail-label">負責人</span>
+              <span class="detail-value">{{ detail.data.vendorInfo.owner }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="bi bi-geo-alt"></i>
+              <span class="detail-label">聯絡地址</span>
+              <span class="detail-value">{{ detail.data.vendorInfo.contactAddress }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 右欄：登入紀錄 -->
+      <div class="info-card login-records-card">
+        <h3 class="card-title">登入紀錄</h3>
+        <div class="table-wrapper">
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>登入時間</th>
+                <th>登入方式</th>
+                <th class="col-center">狀態</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (record of paginatedLoginRecords; track record.loginTime) {
+              <tr>
+                <td class="col-muted">{{ record.loginTime }}</td>
+                <td>{{ record.loginMethod }}</td>
+                <td class="col-center">
+                  <span class="status-tag" [class]="getLoginStatusClass(record.loginStatus)">
+                    {{ record.loginStatus }}
+                  </span>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-dashboard-pagination
+          [currentPage]="loginCurrentPage"
+          [pageSize]="loginPageSize"
+          [totalItems]="loginRecordTotal"
+          (pageChange)="onLoginPageChange($event)">
+        </app-dashboard-pagination>
+      </div>
+
+    </div>
+
+    <!-- 活動報名紀錄 -->
+    <div class="info-card">
+      <h3 class="card-title">活動報名紀錄</h3>
+      <div class="table-wrapper">
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th>活動名稱</th>
+              <th>報名日期</th>
+              <th class="col-center">報名狀態</th>
+              <th class="col-center">付款狀態</th>
+              <th class="col-center">攤位</th>
+              <th class="col-center">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (record of paginatedRegistrationRecords; track record.activityName) {
+            <tr>
+              <td>{{ record.activityName }}</td>
+              <td class="col-muted">{{ record.registrationDate }}</td>
+              <td class="col-center">
+                <span class="status-tag" [class]="getRegistrationStatusClass(record.registrationStatus)">
+                  {{ record.registrationStatus }}
+                </span>
+              </td>
+              <td class="col-center">
+                <span class="status-tag" [class]="getPaymentStatusClass(record.paymentStatus)">
+                  {{ record.paymentStatus }}
+                </span>
+              </td>
+              <td class="col-muted col-center">{{ record.booth ?? '-' }}</td>
+              <td class="col-center">
+                <button type="button" class="app-btn secondary btn-view" (click)="onViewRecord(record)">查看</button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <app-dashboard-pagination
+        [currentPage]="registrationCurrentPage"
+        [pageSize]="registrationPageSize"
+        [totalItems]="registrationRecordTotal"
+        (pageChange)="onRegistrationPageChange($event)">
+      </app-dashboard-pagination>
+    </div>
+
+  </div>
+  } @else {
+  <div class="empty-detail">
+    <p>找不到使用者詳細資料</p>
+  </div>
+  }
+</section>
