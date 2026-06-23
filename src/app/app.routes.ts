@@ -249,8 +249,16 @@ export const routes: Routes = [
         component: AdminDashboardUserManagement,
       },
       {
+        path: 'user/detail/organizer/:id',
+        component: AdminDashboardUserDetailOrganizer,
+      },
+      {
         path: 'user/detail/organizer',
         component: AdminDashboardUserDetailOrganizer,
+      },
+      {
+        path: 'user/detail/vender/:id',
+        component: AdminDashboardUserDetailVender,
       },
       {
         path: 'user/detail/vender',

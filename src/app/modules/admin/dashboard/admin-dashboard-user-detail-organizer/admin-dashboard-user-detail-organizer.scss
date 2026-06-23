@@ -1,0 +1,301 @@
+:host {
+  display: block;
+}
+
+.admin-organizer-detail {
+  padding: 0 32px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.breadcrumb-link {
+  cursor: pointer;
+
+  &:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+  }
+}
+
+.breadcrumb-sep {
+  font-size: 0.7rem;
+}
+
+.breadcrumb-mark {
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1.2rem;
+  color: var(--text-dark);
+  border-radius: var(--radius-tag);
+
+  &:hover {
+    background: var(--bg-soft);
+  }
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .app-btn {
+    width: auto;
+  }
+}
+
+// 卡片捲動容器
+.cards-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+
+// 共用卡片
+.info-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  padding: 20px 24px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 16px 0;
+}
+
+// 中間兩欄：左3右2
+.cards-grid-mid {
+  display: grid;
+  grid-template-columns: 4fr 3fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+// 右欄登入紀錄卡片：撐滿高度並將分頁推至底部
+.login-records-card {
+  display: flex;
+  flex-direction: column;
+
+  app-dashboard-pagination {
+    margin-top: auto;
+    padding-top: 12px;
+  }
+}
+
+.table-wrapper {
+  flex: 1;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  overflow: hidden;
+}
+
+// 左欄：userInfo + organizerInfo 垂直排列
+.left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// 通用明細列表（兩欄 grid）
+.detail-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 24px;
+  margin-bottom: 0;
+}
+
+.detail-list.organizerInfo {
+  grid-template-columns: 2fr 3fr;
+}
+
+.detail-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  i {
+    color: var(--text-normal);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .detail-label {
+    color: var(--text-normal);
+    white-space: nowrap;
+    min-width: 72px;
+  }
+
+  .detail-value {
+    color: var(--text-dark);
+  }
+}
+
+// 活動統計數字區
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-light);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text-dark);
+
+  &.ongoing {
+    color: var(--primary-color);
+  }
+
+  &.ended {
+    color: var(--text-light);
+  }
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+// 狀態標籤
+.status-tag,
+.role-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-tag);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+// 共用表格（登入紀錄、活動管理紀錄）
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  thead tr {
+    height: 44px;
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  th {
+    text-align: left;
+    padding: 0 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-normal);
+  }
+
+  tbody tr {
+    height: 52px;
+    border-bottom: 1px solid var(--border-light);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: var(--bg-primary);
+    }
+  }
+
+  td {
+    padding: 0 16px;
+    color: var(--text-dark);
+    vertical-align: middle;
+  }
+}
+
+.col-muted {
+  color: var(--text-normal) !important;
+  white-space: nowrap;
+}
+
+.col-center {
+  text-align: center !important;
+}
+
+// 查看按鈕
+.btn-view {
+  width: auto;
+  height: 32px;
+  padding: 0 14px;
+  font-size: 0.8rem;
+}
+
+// 空資料
+.empty-detail {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-normal);
+  font-size: 1.2rem;
+}
