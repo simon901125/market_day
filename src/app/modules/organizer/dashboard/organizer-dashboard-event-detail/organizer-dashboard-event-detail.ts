@@ -365,6 +365,20 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     return this.steps.reduce((total, _, index) => total + this.getStepErrorCount(index), 0);
   }
 
+  /** 目前步驟的錯誤總數，用於決定送審失敗提示文案。 */
+  get currentStepErrorCount(): number {
+    return this.getStepErrorCount(this.currentStep);
+  }
+
+  /** 送審失敗時顯示的提示文案，會依目前步驟是否仍有錯誤調整。 */
+  get validationSummaryText(): string {
+    if (this.currentStepErrorCount > 0) {
+      return `${this.validationMessage}，本步驟尚有 ${this.currentStepErrorCount} 項需要確認。請確認下方紅框欄位。`;
+    }
+
+    return `${this.validationMessage}，其他步驟尚有 ${this.totalErrorCount} 項需要確認。請點選左側紅色提示步驟補齊資料。`;
+  }
+
   /** 第一步：活動基本資料表單。 */
   form: EventForm = {
     name: '',

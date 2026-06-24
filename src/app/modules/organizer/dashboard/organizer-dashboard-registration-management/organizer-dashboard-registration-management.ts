@@ -28,12 +28,14 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
   currentPage = 1;
   pageSize = 6;
 
+  // 狀態篩選預設直接顯示全部狀態，避免下拉出現空白或 placeholder 狀態。
   selectedStatus = ApplicationStatus.all;
   searchActivityKeyword = '';
   searchBrandKeyword = '';
   filterStartDate: string | null = null;
   filterEndDate: string | null = null;
 
+  // 搜尋列輸入時不即時篩選，按下搜尋後才同步到 applied 條件。
   private appliedActivityKeyword = '';
   private appliedBrandKeyword = '';
   private appliedStartDate: string | null = null;
@@ -52,6 +54,7 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     { key: 'action', label: '操作', type: 'action', align: 'center' },
   ];
 
+  // 報名管理目前使用靜態資料展示，內容需對齊活動管理與使用者市集活動資料。
   rows: OrganizerRegistrationRow[] = [
     {
       id: 1,
@@ -227,6 +230,7 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     this.updateDisplayRows();
   }
 
+  // 依已套用的搜尋條件產生列表資料，避免使用者還在輸入時畫面一直變動。
   get filteredRows(): OrganizerRegistrationRow[] {
     return this.rows.filter((row) => {
       const matchesStatus = this.selectedStatus === ApplicationStatus.all || row.status === this.selectedStatus;
@@ -245,6 +249,7 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     return this.filteredRows.length;
   }
 
+  // 保證金退回只有活動進行中可以操作，其餘時間顯示停用狀態。
   private createDepositReturnAction(activityTime: string): OrganizerRegistrationAction {
     const isEnabled = this.isActivityInProgress(activityTime);
 
@@ -288,6 +293,7 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     this.updateDisplayRows();
   }
 
+  // 按下搜尋後才正式套用活動、品牌、報名日期篩選。
   searchRegistrations(): void {
     const range = this.dateRangeSelector?.getTimeRange() ?? {
       startDate: this.filterStartDate,
@@ -311,11 +317,19 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     this.updateDisplayRows();
   }
 
+  // 列表操作統一導到報名詳情，並保留目前頁碼與狀態方便返回。
   onTableAction(action: DashboardTableAction): void {
     const registration = action.row as unknown as OrganizerRegistrationRow;
-    console.log('registration action', action.label, registration.id);
+    this.router.navigate(['/organizer/dash-board/register/detail', registration.id], {
+      queryParams: {
+        returnPage: this.currentPage,
+        returnStatus: this.selectedStatus === ApplicationStatus.all ? null : this.selectedStatus,
+        action: action.key,
+      },
+    });
   }
 
+  // 將目前列表條件同步到網址，重整或從詳情返回時可以保留操作位置。
   private syncListQueryParams(): void {
     this.router.navigate([], {
       relativeTo: this.route,
@@ -332,6 +346,7 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     });
   }
 
+  // 依篩選結果重新切分目前頁面要顯示的 6 筆資料。
   private updateDisplayRows(): void {
     const rows = this.filteredRows;
     const maxPage = Math.max(1, Math.ceil(rows.length / this.pageSize));

@@ -34,7 +34,7 @@
   min-width: 0;
   padding: 22px 24px 26px;
   color: var(--text-dark);
-  font-size: 13px;
+  font-size: 14px;
   overflow-y: auto;
 }
 
@@ -94,7 +94,7 @@
   font-weight: 900;
 }
 
-.detail-readonly-content > label { margin: 0 0 7px; color: var(--text-dark); font-size: 13px; font-weight: 900; }
+.detail-readonly-content > label { margin: 0 0 7px; color: var(--text-dark); font-size: 14px; font-weight: 900; }
 
 .detail-readonly-content > label.full {
   margin: 24px 0 0;
@@ -106,7 +106,7 @@
   border-radius: var(--radius-tag);
   background: #f5f6f7;
   color: #7b818b;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   cursor: not-allowed;
   user-select: none;
@@ -126,7 +126,7 @@
   display: flex !important;
   align-items: center;
   gap: 8px;
-  font-size: 13px !important;
+  font-size: 14px !important;
   font-weight: 700 !important;
   cursor: not-allowed;
 }
@@ -187,7 +187,6 @@
   padding-bottom: 20px;
 }
 
-.detail-zone-panel > p { margin: -6px 0 12px; color: var(--text-normal); font-size: 12px; }
 .readonly-zone-card { background: #f5f6f7; color: #7b818b; cursor: not-allowed; }
 .readonly-zone-card:hover { border-color: var(--border-soft); background: #f5f6f7; }
 .detail-layout-panel .detail-layout-preview { margin-top: 0; padding: 12px; border: 1px solid #e5e7eb; border-radius: var(--radius-tag); background: #f5f6f7; }
@@ -197,10 +196,10 @@
 .detail-info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; }
 .detail-subtitle { margin: 26px 0 14px; display: flex; align-items: center; gap: 9px; font-size: 16px; }
 .detail-transport-list { display: grid; gap: 10px; }
-.detail-transport-list div { min-height: 42px; padding: 10px 14px; border: 1px solid #e5e7eb; border-radius: var(--radius-tag); background: #f5f6f7; color: #7b818b; display: grid; grid-template-columns: 70px 1fr; font-size: 13px; cursor: not-allowed; }
+.detail-transport-list div { min-height: 42px; padding: 10px 14px; border: 1px solid #e5e7eb; border-radius: var(--radius-tag); background: #f5f6f7; color: #7b818b; display: grid; grid-template-columns: 70px 1fr; font-size: 14px; cursor: not-allowed; }
 .detail-transport-list span { color: var(--text-normal); }
 .detail-zone-list { display: flex; flex-wrap: wrap; gap: 10px; }
-.detail-zone-list span { min-width: 150px; padding: 12px 14px; border: 1px solid #e5e7eb; border-radius: var(--radius-tag); background: #f5f6f7; color: #7b818b; font-size: 13px; font-weight: 800; cursor: not-allowed; }
+.detail-zone-list span { min-width: 150px; padding: 12px 14px; border: 1px solid #e5e7eb; border-radius: var(--radius-tag); background: #f5f6f7; color: #7b818b; font-size: 14px; font-weight: 800; cursor: not-allowed; }
 .detail-zone-list i { width: 10px; height: 10px; margin-right: 8px; border-radius: 50%; display: inline-block; }
 .detail-layout-preview { margin-top: 22px; }
 .detail-layout-preview img { width: min(100%, 620px); max-height: 300px; padding: 12px; border: 1px solid var(--border-soft); border-radius: var(--radius-tag); object-fit: contain; }
@@ -232,6 +231,25 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 20px;
+}
+
+.app-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--text-light);
+  font-size: 14px;
+  font-weight: 800;
+
+  a {
+    color: var(--text-normal);
+    text-decoration: none;
+  }
+
+  span {
+    color: var(--text-dark);
+  }
 }
 
 .title-row {
@@ -410,27 +428,42 @@
 }
 
 .event-form {
+  --form-section-gap: 14px;
   min-width: 0;
   min-height: 0;
   padding: 22px 24px 26px;
   overflow-y: auto;
   overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 // 建立／編輯模式第一步固定收在內容卡片內，不產生區塊內滾輪。
 .event-form.basic-info-form {
-  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--form-section-gap);
+  overflow-y: auto;
+
+  .validation-summary {
+    margin-bottom: 0;
+  }
 
   .form-section-title {
-    margin-bottom: 16px;
+    margin-bottom: 0;
   }
 
   .basic-info-layout {
-    gap: 20px;
+    column-gap: 20px;
+  }
+
+  .basic-info-left {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
   }
 
   .basic-info-left .category-field {
-    margin-top: 16px;
+    margin-top: 0;
   }
 
   .cover-preview-frame {
@@ -438,7 +471,7 @@
   }
 
   .full {
-    margin: 14px 0;
+    margin: 0;
   }
 
   .textarea-control {
@@ -451,7 +484,7 @@
 }
 
 .validation-summary {
-  margin-bottom: 18px;
+  margin-bottom: var(--form-section-gap);
   padding: 10px 14px;
   border: 1px solid rgba(255, 77, 79, 0.3);
   border-radius: var(--radius-tag);
@@ -486,6 +519,12 @@
 
   i {
     color: var(--primary-color);
+  }
+
+  small {
+    color: var(--text-normal);
+    font-size: 12px;
+    font-weight: 700;
   }
 }
 
@@ -594,7 +633,7 @@
   flex-direction: column;
   gap: 7px;
   color: var(--text-dark);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 900;
 
   b {
@@ -647,7 +686,7 @@ textarea {
   outline: 0;
   background: transparent;
   color: var(--text-dark);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .with-count {
@@ -670,7 +709,7 @@ textarea {
 
   legend {
     margin-bottom: 7px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 900;
 
     b {
@@ -693,7 +732,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
   transition:
     background-color 0.2s ease,
@@ -765,7 +804,7 @@ textarea {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
@@ -902,7 +941,7 @@ textarea {
     align-items: center;
     gap: 4px;
     color: var(--text-dark);
-    font-size: 13px;
+    font-size: 14px;
   }
 
   strong {
@@ -929,10 +968,14 @@ textarea {
   padding: 22px 24px 26px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--form-section-gap);
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
+
+  .validation-summary {
+    margin-bottom: 0;
+  }
 
   .form-section-title {
     margin-bottom: 12px;
@@ -974,7 +1017,7 @@ textarea {
   app-dropdown {
     --dropdown-control-height: 40px;
     --dropdown-control-padding: 0 12px;
-    --dropdown-control-font-size: 13px;
+    --dropdown-control-font-size: 14px;
     --dropdown-control-font-weight: 500;
   }
 }
@@ -1016,7 +1059,7 @@ textarea {
     appearance: none;
     background: transparent;
     color: var(--text-dark);
-    font-size: 13px;
+    font-size: 14px;
     cursor: pointer;
   }
 
@@ -1037,7 +1080,7 @@ textarea {
   margin-bottom: 7px;
   display: block;
   color: var(--text-dark);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 900;
 
   b {
@@ -1072,7 +1115,7 @@ textarea {
 }
 
 .dimension-label {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 900;
   white-space: nowrap;
 }
@@ -1117,11 +1160,6 @@ textarea {
     margin-bottom: 3px;
   }
 
-  p {
-    margin: 0;
-    color: var(--text-normal);
-    font-size: 12px;
-  }
 }
 
 .booth-zone-grid {
@@ -1147,10 +1185,10 @@ textarea {
 
   > small {
     margin: 6px 0 2px;
-    color: var(--text-light);
+    color: var(--text-normal);
     display: block;
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 800;
   }
 }
 
@@ -1167,7 +1205,7 @@ textarea {
     min-width: 0;
     flex: 1;
     overflow: hidden;
-    font-size: 13px;
+    font-size: 14px;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -1250,7 +1288,7 @@ textarea {
 .zone-count-value {
   min-width: 0;
   flex: 1;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
 }
 
@@ -1265,7 +1303,7 @@ textarea {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 900;
   cursor: pointer;
 
@@ -1327,12 +1365,12 @@ textarea {
   }
 
   strong {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   span {
     color: var(--text-light);
-    font-size: 11px;
+    font-size: 13px;
   }
 
   &.has-preview {
@@ -1379,6 +1417,7 @@ textarea {
 }
 
 .layout-upload-note {
+  position: relative;
   height: var(--layout-upload-height);
   min-height: 0;
   padding: 14px 18px 16px;
@@ -1388,7 +1427,7 @@ textarea {
   color: var(--text-normal);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   font-size: 12px;
   line-height: 1.55;
   --note-content-indent: 34px;
@@ -1414,7 +1453,7 @@ textarea {
 
   strong {
     color: var(--primary-color);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 900;
   }
 }
@@ -1422,7 +1461,7 @@ textarea {
 .layout-note-content {
   padding-left: 25px;
   color: var(--text-dark);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.55;
 
   p {
@@ -1433,7 +1472,7 @@ textarea {
   strong {
     margin-top: 4px;
     display: block;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 900;
   }
 
@@ -1443,7 +1482,7 @@ textarea {
 
     li {
       margin: 0;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 500;
       line-height: 1.55;
     }
@@ -1455,6 +1494,9 @@ textarea {
 }
 
 .layout-example-btn {
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
   height: 34px;
   padding: 0 14px;
   border: 1px solid var(--primary-color);
@@ -1465,7 +1507,7 @@ textarea {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   cursor: pointer;
   transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
@@ -1479,16 +1521,14 @@ textarea {
 }
 
 .layout-note-footer {
-  margin-top: auto;
+  margin-top: 2px;
   padding-left: 25px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
+  padding-right: 132px;
+  display: block;
 
   small {
     color: var(--text-dark);
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 800;
     line-height: 1.55;
   }
@@ -1571,7 +1611,7 @@ textarea {
 
 .detail-readonly-content .field {
   gap: 7px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 900;
 }
 
@@ -1616,8 +1656,8 @@ textarea {
 .detail-readonly-content .view-disabled-control input,
 .detail-readonly-content .view-disabled-control textarea,
 .detail-readonly-content .readonly-transport-fields input {
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 14px;
+  font-weight: 800;
 }
 
 .detail-readonly-content .readonly-transport-fields input,

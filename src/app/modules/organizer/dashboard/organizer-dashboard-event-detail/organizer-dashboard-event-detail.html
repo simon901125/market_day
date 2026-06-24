@@ -143,8 +143,12 @@
             </section>
           </div>
           <section class="venue-panel booth-zone-panel detail-zone-panel">
-            <h2 class="form-section-title"><i class="bi bi-grid-3x3-gap"></i>攤位分區 <b>*</b></h2>
-            <p>可依需求設定不同分區，方便攤主選擇攤位報名。</p>
+            <h2 class="form-section-title">
+              <i class="bi bi-grid-3x3-gap"></i>
+              攤位分區
+              <b>*</b>
+              <small>（可依需求設定不同分區，方便攤主選擇攤位報名。）</small>
+            </h2>
             <div class="booth-zone-grid">
               @for (zone of boothZones; track zone.name) {
                 <article class="booth-zone-card readonly-zone-card"><div class="zone-title-row"><span class="zone-dot" [style.background]="zone.color"></span><strong>{{ zone.name }}</strong></div><small>攤位數量</small><div class="zone-count-row"><strong>{{ zone.count }}</strong><span>攤</span></div></article>
@@ -217,9 +221,6 @@
           <div>
             <h2>{{ step.title }}</h2>
             <p>{{ step.description }}</p>
-            @if (submitAttempted && getStepErrorCount(i) > 0) {
-              <small class="step-error-count">尚有 {{ getStepErrorCount(i) }} 項未完成</small>
-            }
           </div>
         </button>
       }
@@ -233,7 +234,7 @@
       @if (validationMessage && totalErrorCount > 0) {
         <div class="validation-summary" role="alert">
           <i class="bi bi-exclamation-circle"></i>
-          <span>{{ validationMessage }}，共有 {{ totalErrorCount }} 項需要確認。請確認下方紅框欄位。</span>
+          <span>{{ validationSummaryText }}</span>
         </div>
       }
       @if (currentStep === 0) {
@@ -640,8 +641,12 @@
         <section class="venue-panel booth-zone-panel">
           <div class="panel-heading-row">
             <div>
-              <h2 class="form-section-title"><i class="bi bi-grid-3x3-gap"></i>攤位分區 <b>*</b></h2>
-              <p>可依需求設定不同分區，方便攤主選擇攤位報名。</p>
+              <h2 class="form-section-title">
+                <i class="bi bi-grid-3x3-gap"></i>
+                攤位分區
+                <b>*</b>
+                <small>（可依需求設定不同分區，方便攤主選擇攤位報名。）</small>
+              </h2>
             </div>
           </div>
 

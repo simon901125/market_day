@@ -11,18 +11,15 @@
   gap: 14px;
   overflow: visible;
 
-  app-dashboard-data-table,
-  app-dashboard-pagination {
+  app-dashboard-data-table {
+    flex: 0 0 auto;
+    min-height: 0;
     display: block;
   }
 
-  .dashboard-list-content {
-    flex: 0 0 auto;
-    overflow: visible;
-  }
-
-  .dashboard-list-pagination {
-    margin-top: 0;
+  app-dashboard-pagination {
+    flex: 0 0 40px;
+    display: block;
   }
 }
 
