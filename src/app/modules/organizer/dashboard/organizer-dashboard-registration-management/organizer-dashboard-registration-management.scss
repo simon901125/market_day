@@ -1,0 +1,52 @@
+:host {
+  display: block;
+}
+
+.organizer-registration-management {
+  width: min(100%, var(--dashboard-content-width));
+  min-height: calc(100dvh - 48px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: visible;
+
+  app-dashboard-data-table,
+  app-dashboard-pagination {
+    display: block;
+  }
+
+  .dashboard-list-content {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  .dashboard-list-pagination {
+    margin-top: 0;
+  }
+}
+
+.organizer-registration-filter {
+  grid-template-columns:
+    minmax(220px, 1.1fr)
+    minmax(170px, 0.8fr)
+    minmax(220px, 1.1fr)
+    minmax(300px, 1.4fr)
+    92px;
+}
+
+@media (max-width: 1200px) {
+  .organizer-registration-filter {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .organizer-registration-management {
+    gap: 16px;
+  }
+
+  .organizer-registration-filter {
+    grid-template-columns: 1fr;
+  }
+}

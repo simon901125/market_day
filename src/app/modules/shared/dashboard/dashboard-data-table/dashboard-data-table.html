@@ -1,13 +1,15 @@
 <div class="dashboard-table-wrap">
-  <table class="dashboard-table">
+  <table class="dashboard-table" [style.min-width]="tableMinWidth">
     <thead>
       <tr>
         @for (column of columns; track column.key) {
           <th
             [style.width]="column.width"
+            [style.min-width]="column.minWidth"
             [attr.data-column]="column.key"
             [class.center]="column.align === 'center'"
             [class.end]="column.align === 'end'"
+            [class.nowrap]="column.nowrap"
           >
             {{ column.label }}
           </th>
@@ -21,8 +23,11 @@
           @for (column of columns; track column.key) {
             <td
               [attr.data-column]="column.key"
+              [style.width]="column.width"
+              [style.min-width]="column.minWidth"
               [class.center]="column.align === 'center'"
               [class.end]="column.align === 'end'"
+              [class.nowrap]="column.nowrap"
             >
               @switch (column.type) {
                 @case ('imageText') {
@@ -32,19 +37,29 @@
                   </div>
                 }
                 @case ('status') {
-                  <span class="status-badge" [class]="getStatusClass(row[column.key])">
+                  <span class="status-badge" [class]="row[column.key + 'Class'] ?? getStatusClass(row[column.key])">
                     {{ row[column.key] }}
                   </span>
                 }
                 @case ('action') {
-                  <button
-                    type="button"
-                    class="table-action"
-                    [class.primary]="row[column.key + 'Variant'] === 'primary'"
-                    (click)="emitAction(column, row)"
-                  >
-                    {{ row[column.key + 'Label'] ?? '查看詳情' }}
-                  </button>
+                  <div class="table-actions">
+                    @for (action of getRowActions(column, row); track action.key ?? action.label) {
+                      <button
+                        type="button"
+                        class="table-action"
+                        [class.primary]="action.variant === 'primary'"
+                        [class.danger]="action.variant === 'danger'"
+                        [class.success]="action.variant === 'success'"
+                        [class.muted]="action.variant === 'muted'"
+                        [disabled]="action.disabled"
+                        [title]="action.hint ?? ''"
+                        [style.min-width]="column.actionMinWidth"
+                        (click)="emitRowAction(row, action)"
+                      >
+                        {{ action.label }}
+                      </button>
+                    }
+                  </div>
                 }
                 @default {
                   {{ row[column.key] ?? '-' }}

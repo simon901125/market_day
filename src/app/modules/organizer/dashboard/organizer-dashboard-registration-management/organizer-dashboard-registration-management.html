@@ -1,0 +1,65 @@
+<section class="organizer-registration-management dashboard-list-page page-transition">
+  <header class="app-page-header">
+    <h1 class="app-page-title">報名管理</h1>
+  </header>
+
+  <section class="app-filter-bar organizer-registration-filter" aria-label="報名篩選">
+    <label class="app-search-field">
+      <span class="app-control-title">活動名稱</span>
+      <span class="app-search-input">
+        <i class="bi bi-search"></i>
+        <input
+          type="search"
+          placeholder="請輸入活動名稱"
+          [(ngModel)]="searchActivityKeyword"
+          (keyup.enter)="searchRegistrations()"
+        />
+      </span>
+    </label>
+
+    <app-dropdown
+      title="報名狀態"
+      [options]="statusOptions"
+      [selectedValue]="selectedStatus"
+      (optionSelected)="selectStatus($event)"
+    ></app-dropdown>
+
+    <label class="app-search-field">
+      <span class="app-control-title">品牌名稱</span>
+      <span class="app-search-input">
+        <i class="bi bi-search"></i>
+        <input
+          type="search"
+          placeholder="請輸入品牌名稱"
+          [(ngModel)]="searchBrandKeyword"
+          (keyup.enter)="searchRegistrations()"
+        />
+      </span>
+    </label>
+
+    <app-date-range-selector
+      selectorTitle="報名日期"
+      [startDate]="filterStartDate"
+      [endDate]="filterEndDate"
+    ></app-date-range-selector>
+
+    <button type="button" class="app-btn search" (click)="searchRegistrations()">搜尋</button>
+  </section>
+
+  <div class="dashboard-list-content">
+    <app-dashboard-data-table
+      [columns]="columns"
+      [rows]="displayRows"
+      emptyText="目前沒有報名資料"
+      (actionClick)="onTableAction($event)"
+    ></app-dashboard-data-table>
+  </div>
+
+  <app-dashboard-pagination
+    class="dashboard-list-pagination"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems"
+    (pageChange)="onPageChange($event)"
+  ></app-dashboard-pagination>
+</section>

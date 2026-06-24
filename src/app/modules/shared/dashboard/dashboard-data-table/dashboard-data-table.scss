@@ -37,28 +37,10 @@
     &.end {
       text-align: right;
     }
-  }
 
-  [data-column='name'] {
-    width: 220px;
-  }
-
-  [data-column='date'] {
-    width: 210px;
-  }
-
-  [data-column='location'] {
-    width: 250px;
-  }
-
-  [data-column='status'],
-  [data-column='signupProgress'],
-  [data-column='action'] {
-    width: 130px;
-  }
-
-  [data-column='paidCount'] {
-    width: 110px;
+    &.nowrap {
+      white-space: nowrap;
+    }
   }
 
   tbody tr {
@@ -73,6 +55,14 @@
       background: var(--bg-primary);
     }
   }
+}
+
+.table-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  white-space: nowrap;
 }
 
 .image-text-cell {
@@ -118,10 +108,36 @@
     color 0.2s ease;
 
   &:hover,
-  &.primary {
+  &.primary,
+  &.danger,
+  &.success {
+    border-color: var(--primary-color);
     background: var(--primary-color);
     color: #fff;
     box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
+  }
+
+  &.primary:hover,
+  &.danger:hover,
+  &.success:hover {
+    border-color: var(--primary-hover);
+    background: var(--primary-hover);
+  }
+
+  &.muted,
+  &:disabled {
+    border-color: var(--primary-disable-border);
+    background: var(--primary-disable-bg);
+    color: var(--primary-disable);
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 1;
+  }
+
+  &:disabled:hover {
+    border-color: var(--primary-disable-border);
+    background: var(--primary-disable-bg);
+    color: var(--primary-disable);
   }
 }
 

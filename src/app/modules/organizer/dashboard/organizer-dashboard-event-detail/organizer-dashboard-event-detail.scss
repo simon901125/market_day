@@ -4,10 +4,11 @@
 
 .event-view {
   width: min(100%, var(--dashboard-content-width));
-  min-height: calc(100dvh - 48px);
+  height: calc(100dvh - 48px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .detail-status-action { min-width: 112px; }

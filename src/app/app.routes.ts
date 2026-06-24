@@ -10,6 +10,7 @@ import { OrganizerDashboardHome } from './modules/organizer/dashboard/organizer-
 import { OrganizerDashboardNotification } from './modules/organizer/dashboard/organizer-dashboard-notification/organizer-dashboard-notification';
 import { OrganizerDashboardSetupGuide } from './modules/organizer/dashboard/organizer-dashboard-setup-guide/organizer-dashboard-setup-guide';
 import { OrganizerDashboardEventDetail } from './modules/organizer/dashboard/organizer-dashboard-event-detail/organizer-dashboard-event-detail';
+import { OrganizerDashboardRegistrationManagement } from './modules/organizer/dashboard/organizer-dashboard-registration-management/organizer-dashboard-registration-management';
 import { OrganizerEventManagement } from './modules/organizer/dashboard/organizer-event-management/organizer-event-management';
 import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organizer-home';
 import { OrganizerAbout } from './modules/organizer/frontend/organizer-about/organizer-about';
@@ -203,6 +204,10 @@ export const routes: Routes = [
       {
         path: 'activity',
         component: OrganizerEventManagement,
+      },
+      {
+        path: 'register',
+        component: OrganizerDashboardRegistrationManagement,
       },
       {
         path: 'activity/detail',
