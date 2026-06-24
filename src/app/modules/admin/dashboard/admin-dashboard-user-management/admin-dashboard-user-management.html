@@ -1,5 +1,7 @@
-﻿<section class="admin-user-managemant page-transition">
-  <h1 class="page-title">使用者管理</h1>
+﻿<section class="admin-user-managemant dashboard-list-page page-transition">
+  <header class="app-page-header">
+    <h1 class="app-page-title">使用者管理</h1>
+  </header>
 
   <div class="app-filter-bar user-management-filter">
     <label class="app-search-field">
@@ -38,7 +40,7 @@
     </button>
   </div>
 
-  <div class="table-wrapper" #tableWrapper>
+  <div class="table-wrapper dashboard-list-content" #tableWrapper>
     <table class="user-table">
       <thead>
         <tr>
@@ -81,6 +83,7 @@
   </div>
 
   <app-dashboard-pagination
+    class="dashboard-list-pagination"
     [currentPage]="currentPage"
     [pageSize]="pageSize"
     [totalItems]="totalItems"
