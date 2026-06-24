@@ -6,6 +6,7 @@
   </nav>
 
   <header class="page-title app-page-header">
+  <div class="app-page-title-wrap">
     <a
       routerLink="/vendor/dash-board/application-record"
       class="back-btn"
@@ -13,18 +14,20 @@
     >
       <i class="bi bi-arrow-left"></i>
     </a>
-    <h1 class="app-page-title">報名詳細</h1>
 
-    @if (detail.actionButton) {
-      <button
-        type="button"
-        class="header-action app-btn primary"
-        (click)="handleAction(detail.actionButton.action)"
-      >
-        {{ detail.actionButton.label }}
-      </button>
-    }
-  </header>
+    <h1 class="app-page-title">報名詳細</h1>
+  </div>
+
+  @if (detail.actionButton) {
+    <button
+      type="button"
+      class="header-action app-btn primary"
+      (click)="handleAction(detail.actionButton.action)"
+    >
+      {{ detail.actionButton.label }}
+    </button>
+  }
+</header>
 
   <section class="summary-card">
     <img [src]="detail.image" [alt]="detail.title" />
