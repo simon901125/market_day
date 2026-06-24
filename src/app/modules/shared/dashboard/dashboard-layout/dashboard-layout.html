@@ -7,6 +7,8 @@
     [userName]="userName"
     [userEmail]="userEmail"
     [userInitial]="userInitial"
+    [isCollapsed]="isSidebarCollapsed"
+    (collapseToggle)="toggleSidebar()"
   ></app-dashboard-sidebar>
 
   <main class="dashboard-main">

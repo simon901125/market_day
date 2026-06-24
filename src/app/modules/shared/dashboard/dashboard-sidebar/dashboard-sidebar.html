@@ -1,11 +1,23 @@
-<aside class="dashboard-sidebar">
-  <div class="brand" [routerLink]="homePath">
-    <img [src]="logoPath" alt="Market Day" />
+<aside class="dashboard-sidebar" [class.collapsed]="isCollapsed">
+  <div class="brand-row">
+    <div class="brand" [routerLink]="homePath">
+      <img [src]="isCollapsed ? collapsedLogoPath : logoPath" alt="Market Day" />
+    </div>
   </div>
+
+  <button
+    type="button"
+    class="sidebar-toggle"
+    [attr.aria-label]="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+    [attr.title]="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+    (click)="toggleCollapse($event)"
+  >
+    <i class="bi" [class.bi-chevron-right]="isCollapsed" [class.bi-chevron-left]="!isCollapsed"></i>
+  </button>
 
   <nav class="menu">
     @for (item of menuItems; track item.path) {
-      <a class="menu-item" [routerLink]="item.path" routerLinkActive="active">
+      <a class="menu-item" [routerLink]="item.path" routerLinkActive="active" [attr.title]="isCollapsed ? item.label : null">
         <i class="bi" [ngClass]="item.icon"></i>
         <span>{{ item.label }}</span>
       </a>
@@ -31,7 +43,13 @@
       </div>
     }
 
-    <button type="button" class="user-box" [class.open]="isUserMenuOpen" (click)="toggleUserMenu()">
+    <button
+      type="button"
+      class="user-box"
+      [class.open]="isUserMenuOpen"
+      [attr.title]="isCollapsed ? userName : null"
+      (click)="toggleUserMenu()"
+    >
       <div class="user-avatar">
         {{ userInitial }}
       </div>

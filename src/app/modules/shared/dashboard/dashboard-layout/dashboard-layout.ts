@@ -13,6 +13,7 @@ import { MenuItem } from '../../../../models/interface/shared/MenuItem';
 export class DashboardLayout {
   logoPath = '';
   homePath = '/';
+  isSidebarCollapsed = false;
 
   menuItems: MenuItem[] = [];
   userMenuItems: UserMenuItem[] = [];
@@ -20,6 +21,10 @@ export class DashboardLayout {
   userName = '董映彤';
   userEmail = 'yingtung0808@gmail.com';
   userInitial = '董';
+
+  toggleSidebar(): void {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
 
   constructor(private route: ActivatedRoute) {
     const role = this.route.snapshot.data['role'];

@@ -1,4 +1,4 @@
-import { Component, HostListener, Input } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
@@ -11,6 +11,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class DashboardSidebar {
   /** Logo 圖片路徑 */
   @Input() logoPath = '';
+  @Input() collapsedLogoPath = '/assets/images/logo/logo-market-day-little.png';
 
   /** Logo 點擊後導向的首頁路徑 */
   @Input() homePath = '/';
@@ -29,13 +30,26 @@ export class DashboardSidebar {
 
   /** 使用者 Email */
   @Input() userEmail = '';
+  @Input() isCollapsed = false;
+
+  @Output() collapseToggle = new EventEmitter<void>();
 
   /** 使用者選單是否展開 */
   isUserMenuOpen = false;
 
   /** 切換使用者選單 */
   toggleUserMenu(): void {
+    if (this.isCollapsed) {
+      return;
+    }
+
     this.isUserMenuOpen = !this.isUserMenuOpen;
+  }
+
+  toggleCollapse(event: MouseEvent): void {
+    event.stopPropagation();
+    this.isUserMenuOpen = false;
+    this.collapseToggle.emit();
   }
 
   /** 登出 */

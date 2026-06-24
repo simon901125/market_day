@@ -54,8 +54,8 @@ body.market-loading-lock {
   --user-content-wide-width: min(100% - 96px, 1280px);
 
   /* Dashboard layout */
-  --dashboard-content-width: 1280px;
-  --dashboard-wide-content-width: 1360px;
+  --dashboard-content-width: 100%;
+  --dashboard-wide-content-width: 100%;
 }
 
 @media (max-width: 1200px) {

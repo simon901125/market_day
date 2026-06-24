@@ -1,23 +1,71 @@
+:host {
+  display: block;
+  flex: 0 0 auto;
+}
+
 .dashboard-sidebar {
+  position: relative;
+  box-sizing: border-box;
   width: 250px;
+  flex: 0 0 250px;
   height: 100dvh;
   background: var(--bg-white);
   padding: 22px 20px 24px;
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--border-light);
+  transition: 0.24s ease;
+}
+
+.brand-row {
+  min-height: 54px;
+  margin: -12px 0 14px -4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .brand {
+  min-width: 0;
   display: flex;
   align-items: center;
-  margin: -12px 0 4px -4px;
   cursor: pointer;
 
   img {
     width: 205px;
     height: auto;
     object-fit: contain;
+    transition: width 0.24s ease;
+  }
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 46px;
+  right: -13px;
+  z-index: 5;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border-light);
+  border-radius: 50%;
+  background: var(--bg-white);
+  color: var(--primary-color);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(47, 41, 36, 0.08);
+  transition: 0.2s ease;
+
+  i {
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  &:hover {
+    border-color: var(--primary-color);
+    background: var(--bg-primary);
+    color: var(--primary-color);
   }
 }
 
@@ -45,6 +93,11 @@
     font-size: 18px;
     color: var(--text-dark);
     text-align: center;
+  }
+
+  span {
+    white-space: nowrap;
+    transition: opacity 0.16s ease;
   }
 
   &:hover,
@@ -145,6 +198,63 @@
   &.open {
     border-color: var(--border-primary);
     background: var(--bg-primary);
+  }
+}
+
+.dashboard-sidebar.collapsed {
+  width: 84px;
+  flex-basis: 84px;
+  padding: 22px 12px 24px;
+
+  .brand-row {
+    min-height: auto;
+    margin: -6px 0 20px;
+    justify-content: center;
+  }
+
+  .brand {
+    justify-content: center;
+
+    img {
+      width: 42px;
+    }
+  }
+
+  .menu-item {
+    justify-content: center;
+    padding: 0;
+    gap: 0;
+
+    i {
+      width: auto;
+      font-size: 20px;
+    }
+
+    span {
+      width: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+  }
+
+  .user-area {
+    padding-top: 16px;
+  }
+
+  .user-menu {
+    display: none;
+  }
+
+  .user-box {
+    justify-content: center;
+    min-height: 50px;
+    padding: 6px;
+    cursor: default;
+
+    > i,
+    .user-info {
+      display: none;
+    }
   }
 }
 
