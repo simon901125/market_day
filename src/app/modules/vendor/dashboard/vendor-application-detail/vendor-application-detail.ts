@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import type { ApplicationDetail, ApplicationStatus } from '../../../../models/interface/vendor/VendorApplicationDetail';
 import type { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
+import { Alert } from '../../../shared/alert';
 import { VENDOR_APPLICATION_RECORDS } from '../vendor-application-record/vendor-application-record';
 
 @Component({
@@ -14,12 +15,17 @@ import { VENDOR_APPLICATION_RECORDS } from '../vendor-application-record/vendor-
 export class VendorApplicationDetail {
   /** 目前報名編號，由 application-record 點擊查看時透過 route param 帶入。 */
   currentApplicationNo = VENDOR_APPLICATION_RECORDS[0].applicationNo;
-  /** 是否顯示退款申請成功彈窗。 */
+  /** 是否顯示頁內彈窗；退款成功提示改由共用 SweetAlert 顯示。 */
   showDialog = false;
   /** 付款明細是否收合 */
   isPaymentDetailOpen = false;
+  /** 付款結果假資料；之後串接金流 API 時可由後端回傳決定 success 或 failed。 */
+  mockPaymentResult: 'success' | 'failed' = 'success';
 
-  constructor(private route: ActivatedRoute) {
+  constructor(
+    private route: ActivatedRoute,
+    private alert: Alert,
+  ) {
     const applicationNo = this.route.snapshot.paramMap.get('applicationNo');
     const matchedRecord = VENDOR_APPLICATION_RECORDS.find((record) => record.applicationNo === applicationNo);
 
@@ -27,7 +33,7 @@ export class VendorApplicationDetail {
       this.currentApplicationNo = matchedRecord.applicationNo;
     }
 
-    this.showDialog = this.detail.status === 'refundSuccess';
+    this.showDialog = false;
   }
 
   /** 目前展示的報名狀態，直接由 records 裡的 detail 決定。 */
@@ -66,14 +72,159 @@ export class VendorApplicationDetail {
       this.currentApplicationNo = matchedRecord.applicationNo;
     }
 
-    this.showDialog = status === 'refundSuccess';
+    this.showDialog = false;
   }
 
   /** 執行頁面主要操作。 */
-  handleAction(action: string): void {
+  async handleAction(action: string): Promise<void> {
     if (action === 'requestRefund') {
+      const confirmed = await this.openRefundConfirm();
+
+      if (!confirmed) {
+        return;
+      }
+
       this.setStatus('refundSuccess');
+      await this.openRefundSuccess();
     }
+  }
+
+  /** 進入付款流程；目前用假資料模擬金流結果，未來可改接信用卡付款 API。 */
+  async payNow(): Promise<void> {
+    if (this.mockPaymentResult === 'failed') {
+      await this.openPaymentFailed();
+      return;
+    }
+
+    await this.openPaymentSuccess();
+  }
+
+  /** 顯示付款成功確認畫面。 */
+  private openPaymentSuccess(): Promise<unknown> {
+    return this.alert.successHtml({
+      html: this.getPaymentSuccessHtml(),
+      confirmButtonText: '我知道了',
+      popupClass: 'payment-result-swal',
+      showCloseButton: true,
+    });
+  }
+
+  /** 顯示付款失敗確認畫面。 */
+  private openPaymentFailed(): Promise<unknown> {
+    return this.alert.successHtml({
+      html: this.getPaymentFailedHtml(),
+      confirmButtonText: '重新付款',
+      popupClass: 'payment-result-swal',
+      showCloseButton: true,
+    });
+  }
+
+  /** 顯示退款確認視窗，確認後才送出退款申請。 */
+  private openRefundConfirm(): Promise<boolean> {
+    return this.alert.confirmHtml({
+      html: this.getRefundConfirmHtml(),
+      confirmButtonText: '確認申請退款',
+      cancelButtonText: '取消',
+      popupClass: 'refund-confirm-swal',
+    });
+  }
+
+  /** 顯示退款申請送出成功視窗。 */
+  private openRefundSuccess(): Promise<unknown> {
+    return this.alert.successHtml({
+      html: this.getRefundSuccessHtml(),
+      confirmButtonText: '確認',
+      popupClass: 'refund-success-swal',
+    });
+  }
+
+  /** 組合退款確認視窗內容，金額與方式未來可改由 API 帶入。 */
+  private getRefundConfirmHtml(): string {
+    return `
+      <div class="refund-confirm-content">
+        <h3>確認申請退款？</h3>
+        <p class="refund-confirm-lead">
+          申請退款後，主辦單位將進行審核與處理，確認後款項將退回至原付款方式。
+        </p>
+
+        <section class="refund-confirm-section">
+          <i class="bi bi-currency-dollar"></i>
+          <div>
+            <h4>退款金額</h4>
+            <p class="refund-confirm-amount">
+              <strong>$1,700</strong>
+              <span>（含攤位費用）</span>
+            </p>
+          </div>
+        </section>
+
+        <section class="refund-confirm-section">
+          <i class="bi bi-wallet2"></i>
+          <div>
+            <h4>退款方式</h4>
+            <p><strong>原付款方式退回（信用卡）</strong></p>
+            <p>款項將退回至原信用卡帳戶。</p>
+          </div>
+        </section>
+
+        <section class="refund-confirm-notice">
+          <i class="bi bi-info-circle"></i>
+          <h4>注意事項</h4>
+          <ul>
+            <li>保證金不退還。</li>
+            <li>退款完成時間依您的發卡銀行或付款平台作業時間為準。</li>
+            <li>退款審核結果與退款完成後，將於「通知中心」中通知您。</li>
+          </ul>
+        </section>
+
+        <p class="refund-confirm-footnote">送出申請後將無法撤回，請確認後再送出。</p>
+      </div>
+    `;
+  }
+
+  /** 組合退款申請成功視窗內容，符合 swal.md 的共用 SweetAlert 使用規範。 */
+  private getRefundSuccessHtml(): string {
+    return `
+      <div class="refund-success-content">
+        <div class="refund-success-icon">
+          <i class="bi bi-check-lg"></i>
+        </div>
+
+        <h3>退款申請已送出！</h3>
+        <p>
+          您的退款申請已送出，主辦方將進行審核與處理。<br>
+          退款處理進度將於「我的報名紀錄」中查看。
+        </p>
+      </div>
+    `;
+  }
+
+  /** 組合付款成功視窗內容，符合 swal.md 的共用 SweetAlert 使用規範。 */
+  private getPaymentSuccessHtml(): string {
+    return `
+      <div class="payment-result-content">
+        <div class="payment-result-icon success">
+          <i class="bi bi-check-lg"></i>
+        </div>
+
+        <h3>付款成功！</h3>
+        <p>您的報名費用已成功付款，感謝您的報名。</p>
+      </div>
+    `;
+  }
+
+  /** 組合付款失敗視窗內容，金流失敗時可直接重試付款。 */
+  private getPaymentFailedHtml(): string {
+    return `
+      <div class="payment-result-content">
+        <div class="payment-result-icon failed">
+          <i class="bi bi-x-lg"></i>
+        </div>
+
+        <h3>付款失敗！</h3>
+        <p>您的付款無法完成，請重新嘗試付款。</p>
+      </div>
+    `;
   }
 
   /** 關閉成功彈窗。 */

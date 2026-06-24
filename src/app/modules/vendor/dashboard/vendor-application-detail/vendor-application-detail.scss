@@ -23,37 +23,46 @@
   }
 }
 
-.page-title {
+.page-title.app-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.app-page-title-wrap {
   display: flex;
   align-items: center;
   gap: 24px;
-  margin-bottom: 22px;
+  min-width: 0;
+}
 
-  h1 {
-    margin: 0;
-    font-size: 27px;
-    font-weight: 900;
-    line-height: 1;
-  }
+.app-page-title {
+  margin: 0;
+  font-size: 27px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--text-dark);
 }
 
 .back-btn {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   color: var(--text-dark);
-  font-size: 22px;
+  font-size: 32px;
   line-height: 1;
   text-decoration: none;
 }
 
 .header-action {
-  min-width: 156px;
+  flex: 0 0 auto;
+  width: 100px;
   height: 50px;
   margin-left: auto;
-  border: 0;
   border-radius: 10px;
-  background: var(--primary-color);
-  color: var(--bg-white);
   font-weight: 900;
 }
 
@@ -127,6 +136,12 @@
     color: #16a34a;
   }
 
+  // 待審核狀態使用平台主色系的柔和底色，對齊後台狀態標籤規範。
+  &.reviewing {
+    background: var(--bg-primary);
+    color: var(--primary-color);
+  }
+
   &.cancelled {
     background: #eee;
     color: #888;
@@ -140,6 +155,11 @@
   &.refund-applying {
     background: var(--bg-primary);
     color: var(--primary-color);
+  }
+
+  &.payment {
+    background: #fff7d6;
+    color: #b45309;
   }
 
   &.refund-processing {
@@ -273,6 +293,42 @@
   margin-bottom: 12px;
 }
 
+.payment-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.pending-payment-card {
+  .payment-list {
+    div {
+      grid-template-columns: 150px 1fr;
+      border-bottom: 0;
+      padding: 13px 0;
+    }
+  }
+
+  .highlight-text {
+    color: var(--primary-color);
+  }
+}
+
+.pay-now-btn {
+  width: 100%;
+  height: 56px;
+  margin-top: auto;
+  border: 0;
+  border-radius: 8px;
+  background: var(--primary-color);
+  color: var(--bg-white);
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+}
+
 .payment-detail {
   margin-top: 12px;
   padding-top: 12px;
@@ -352,7 +408,7 @@
   font-weight: 900;
 }
 
-.empty-booth {
+.empty-state {
   min-height: 210px;
   display: grid;
   place-items: center;
@@ -370,6 +426,10 @@
     color: var(--text-normal);
     font-weight: 800;
   }
+}
+
+.payment-empty-state {
+  min-height: 250px;
 }
 
 .empty-icon {
