@@ -16,6 +16,24 @@ export class ApplicationStatus {
   static readonly refunding = '退款處理中';
   /** 已退款 */
   static readonly refunded = '已退款';
-  /** 報名完成 */
+  /** 報名取消 */
   static readonly cancelled = '已取消';
+
+  /** 報名狀態對應的標籤樣式 */
+  static readonly classMap: Record<string, string> = {
+    [ApplicationStatus.pendingReview]: 'tag-orange',
+    [ApplicationStatus.reviewRejected]: 'tag-red',
+    [ApplicationStatus.pendingPayment]: 'tag-orange',
+    [ApplicationStatus.pendingSelection]: 'tag-blue',
+    [ApplicationStatus.completed]: 'tag-green',
+    [ApplicationStatus.refundPending]: 'tag-orange',
+    [ApplicationStatus.refunding]: 'tag-purple',
+    [ApplicationStatus.refunded]: 'tag-pink',
+    [ApplicationStatus.cancelled]: 'tag-grey',
+  };
+
+  /** 取得報名狀態標籤樣式 */
+  static getClass(status: string): string {
+    return ApplicationStatus.classMap[status] ?? 'tag-grey';
+  }
 }

@@ -17,7 +17,7 @@
 }
 
 .hero-text {
-  width: min(100% - 160px, 1200px);
+  width: var(--user-content-width);
   margin: 0 auto;
 
   h1 {
@@ -39,7 +39,7 @@
 }
 
 .activity-content {
-  width: min(100% - 160px, 1200px);
+  width: var(--user-content-width);
   margin: 0 auto;
   padding: 28px 0 64px;
 }
@@ -104,7 +104,7 @@
 @media (max-width: 1200px) {
   .hero-text,
   .activity-content {
-    width: calc(100% - 64px);
+    width: var(--user-content-width);
   }
 
   .activity-hero {
@@ -146,7 +146,7 @@
 
   .hero-text,
   .activity-content {
-    width: calc(100% - 48px);
+    width: var(--user-content-width);
   }
 
   .hero-text {
@@ -193,7 +193,7 @@
 
   .hero-text,
   .activity-content {
-    width: calc(100% - 48px);
+    width: var(--user-content-width);
   }
 
   .hero-text {

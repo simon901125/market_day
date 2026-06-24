@@ -13,6 +13,12 @@ body {
   overflow-y: auto;
 }
 
+html.market-loading-lock,
+body.market-loading-lock {
+  overflow: hidden;
+  touch-action: none;
+}
+
 :root {
   /* Brand 主色 */
   --primary-color: #f59e0b;
@@ -42,6 +48,35 @@ body {
   /* Shadow 陰影 */
   --shadow-soft: 0 8px 24px rgba(47, 41, 36, 0.08);
   --shadow-card: 0 12px 32px rgba(47, 41, 36, 0.1);
+
+  /* User frontend layout */
+  --user-content-width: min(100% - 96px, 1208px);
+  --user-content-wide-width: min(100% - 96px, 1280px);
+
+  /* Dashboard layout */
+  --dashboard-content-width: 1280px;
+  --dashboard-wide-content-width: 1360px;
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --user-content-width: min(100% - 48px, 900px);
+    --user-content-wide-width: min(100% - 48px, 1100px);
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --user-content-width: min(100% - 32px, 640px);
+    --user-content-wide-width: min(100% - 32px, 640px);
+  }
+}
+
+@media (max-width: 576px) {
+  :root {
+    --user-content-width: min(100% - 48px, 640px);
+    --user-content-wide-width: min(100% - 48px, 640px);
+  }
 }
 
 //滾輪
@@ -63,10 +98,10 @@ body {
 // Dashboard 列表頁共用版型：內容區可伸縮，分頁固定在頁面底部
 .dashboard-list-page {
   width: 100%;
-  height: calc(100vh - 48px);
+  min-height: calc(100dvh - 48px);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .dashboard-list-content {

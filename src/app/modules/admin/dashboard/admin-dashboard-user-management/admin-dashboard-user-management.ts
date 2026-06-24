@@ -145,14 +145,14 @@ export class AdminDashboardUserManagement implements AfterViewInit{
     }
   
     private goToDetail(user: UserListItem, role: String): void {
-      if (role == UserType.organizer) {        
-        this.router.navigate(['/admin/dash-board/user/detail/organizer'], {
+      if (role == UserType.organizer) {
+        this.router.navigate(['/admin/dash-board/user/detail/organizer', user.id], {
           state: { user },
         });
       } else {
-        this.router.navigate(['/admin/dash-board/user/detail/vender'], {
+        this.router.navigate(['/admin/dash-board/user/detail/vender', user.id], {
           state: { user },
-        });        
+        });
       }
     }
 

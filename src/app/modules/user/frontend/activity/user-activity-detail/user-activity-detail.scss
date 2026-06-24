@@ -1,7 +1,8 @@
 .activity-detail {
-  max-width: 1180px;
+  width: var(--user-content-width);
+  max-width: none;
   margin: 0 auto;
-  padding: 18px 32px 24px;
+  padding: 18px 0 24px;
 }
 
 /* Breadcrumb */
@@ -545,7 +546,7 @@
 /* RWD */
 @media (max-width: 1200px) {
   .activity-detail {
-    max-width: 1040px;
+    width: var(--user-content-width);
   }
 
   .market-section {
@@ -564,7 +565,7 @@
 
 @media (max-width: 992px) {
   .activity-detail {
-    padding: 22px 24px 34px;
+    padding: 22px 0 34px;
   }
 
   .market-section {
@@ -601,7 +602,7 @@
 
 @media (max-width: 768px) {
   .activity-detail {
-    padding: 18px 24px 36px;
+    padding: 18px 0 36px;
   }
 
   .breadcrumb {
@@ -694,7 +695,7 @@
 
 @media (max-width: 576px) {
   .activity-detail {
-    padding: 16px 24px 34px;
+    padding: 16px 0 34px;
   }
 
   .market-image-wrap {

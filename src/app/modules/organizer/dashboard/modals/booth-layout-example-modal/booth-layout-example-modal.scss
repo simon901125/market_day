@@ -17,7 +17,7 @@
   --layout-example-content-width: 560px;
 
   width: min(620px, calc(100vw - 48px));
-  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
   padding: 22px 24px 18px;
   border-radius: 10px;
   background: var(--bg-white);

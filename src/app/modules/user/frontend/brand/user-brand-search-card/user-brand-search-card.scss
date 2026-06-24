@@ -19,8 +19,7 @@
 
 .brand-imgs {
   position: relative;
-  flex: 2;
-  flex-shrink: 0;
+  flex: 0 0 220px;
   overflow: hidden;
   border-radius: 10px;
   background: var(--bg-primary);
@@ -71,6 +70,7 @@
 
 .brand-body {
   flex: 3;
+  min-width: 0;
   padding: 12px 22px;
   display: flex;
   flex-direction: column;
@@ -80,6 +80,7 @@
 .brand-name-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 1em;
 }
 
@@ -99,34 +100,46 @@
 }
 
 .brand-name {
+  flex: 0 1 auto;
+  min-width: 0;
   margin: 0;
   color: var(--text-dark);
   font-size: 1.08rem;
   font-weight: 800;
+  line-height: 1.35;
 }
 
 .brand-desc {
+  display: -webkit-box;
+  overflow: hidden;
   margin: 0;
   color: var(--text-normal);
   font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.6;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .brand-work-row {
   display: flex;
   gap: 8px;
+  min-width: 0;
 
   .work-label {
+    flex: 0 0 auto;
     color: var(--text-dark);
     font-size: 0.88rem;
     font-weight: 600;
+    white-space: nowrap;
   }
 
   .work-value {
+    min-width: 0;
     color: var(--text-normal);
     font-size: 0.88rem;
     font-weight: 600;
+    line-height: 1.55;
   }
 }
 

@@ -1,0 +1,18 @@
+@if (displayStatus) {
+  <div class="market-loading" role="status" aria-live="polite" aria-label="載入中">
+    <div class="market-loading__content" [attr.data-testid]="'loading'">
+      <img
+        class="market-loading__tent"
+        src="assets/images/logo/logo-market-day-little.png"
+        alt=""
+        aria-hidden="true"
+      />
+      <div class="market-loading__dots" aria-hidden="true">
+        <span class="market-loading__dot market-loading__dot--one"></span>
+        <span class="market-loading__dot market-loading__dot--two"></span>
+        <span class="market-loading__dot market-loading__dot--three"></span>
+        <span class="market-loading__dot market-loading__dot--four"></span>
+      </div>
+    </div>
+  </div>
+}

@@ -224,28 +224,30 @@
     <!-- 狀態紀錄 -->
     <div class="info-card">
       <h3 class="card-title">狀態紀錄</h3>
-      <table class="status-log-table">
-        <thead>
-          <tr>
-            <th>日期時間</th>
-            <th>狀態</th>
-            <th>說明</th>
-            <th>操作人</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (log of detail.statusLogs; track log.dateTime) {
-          <tr>
-            <td class="log-datetime">{{ log.dateTime }}</td>
-            <td class="log-status">
-              <span class="status-tag" [class]="getStatusClass(log.status)">{{ log.status }}</span>
-            </td>
-            <td class="log-description">{{ log.description }}</td>
-            <td class="log-operator">{{ log.operator.role }} : {{ log.operator.operatorName }}</td>
-          </tr>
-          }
-        </tbody>
-      </table>
+      <div class="table-wrapper">
+        <table class="status-log-table">
+          <thead>
+            <tr>
+              <th>日期時間</th>
+              <th>狀態</th>
+              <th>說明</th>
+              <th>操作人</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (log of detail.statusLogs; track log.dateTime) {
+            <tr>
+              <td class="log-datetime">{{ log.dateTime }}</td>
+              <td class="log-status">
+                <span class="status-tag" [class]="getStatusClass(log.status)">{{ log.status }}</span>
+              </td>
+              <td class="log-description">{{ log.description }}</td>
+              <td class="log-operator">{{ log.operator.role }} : {{ log.operator.operatorName }}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
 
   </div>

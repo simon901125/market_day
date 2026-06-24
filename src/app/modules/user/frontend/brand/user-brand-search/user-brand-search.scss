@@ -19,7 +19,7 @@
 }
 
 .hero-content {
-  width: min(100% - 160px, 1200px);
+  width: var(--user-content-width);
   margin: 0 auto;
 
   h1 {
@@ -48,7 +48,7 @@
 }
 
 .filter-inner {
-  width: min(100% - 160px, 1200px);
+  width: var(--user-content-width);
   margin: 0 auto;
 }
 
@@ -67,7 +67,7 @@
 }
 
 .brand-inner {
-  width: min(100% - 160px, 1200px);
+  width: var(--user-content-width);
   margin: 0 auto;
 }
 
@@ -107,7 +107,7 @@
   .hero-content,
   .filter-inner,
   .brand-inner {
-    width: calc(100% - 64px);
+    width: var(--user-content-width);
   }
 
   .brandserch-hero {
@@ -156,7 +156,7 @@
   .hero-content,
   .filter-inner,
   .brand-inner {
-    width: calc(100% - 48px);
+    width: var(--user-content-width);
   }
 
   .hero-content {
@@ -200,7 +200,7 @@
   .hero-content,
   .filter-inner,
   .brand-inner {
-    width: calc(100% - 48px);
+    width: var(--user-content-width);
   }
 
   .hero-content {

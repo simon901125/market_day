@@ -14,4 +14,20 @@ export class PaymentStatus {
   static readonly refunding = '退款處理中';
   /** 已退款 */
   static readonly refunded = '已退款';
+
+  /** 付款狀態對應的標籤樣式 */
+  static readonly classMap: Record<string, string> = {
+    [PaymentStatus.pending]: 'tag-yellow',
+    [PaymentStatus.paid]: 'tag-green',
+    [PaymentStatus.failed]: 'tag-red',
+    [PaymentStatus.expired]: 'tag-grey',
+    [PaymentStatus.refundRequested]: 'tag-orange',
+    [PaymentStatus.refunding]: 'tag-purple',
+    [PaymentStatus.refunded]: 'tag-pink',
+  };
+
+  /** 取得付款狀態標籤樣式 */
+  static getClass(status: string): string {
+    return PaymentStatus.classMap[status] ?? 'tag-grey';
+  }
 }

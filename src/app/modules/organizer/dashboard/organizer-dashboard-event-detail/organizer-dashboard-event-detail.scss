@@ -3,9 +3,8 @@
 }
 
 .event-view {
-  width: 100%;
-  max-width: 1200px;
-  height: calc(100vh - 48px);
+  width: min(100%, var(--dashboard-content-width));
+  min-height: calc(100dvh - 48px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -217,8 +216,8 @@
   --validation-text: #ff4d4f;
   --validation-bg: #fff5f5;
   --validation-ring: rgba(255, 77, 79, 0.12);
-  height: calc(100vh - 48px);
-  max-width: 1200px;
+  width: min(100%, var(--dashboard-content-width));
+  min-height: calc(100dvh - 48px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
