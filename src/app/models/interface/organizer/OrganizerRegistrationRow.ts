@@ -1,3 +1,4 @@
+// 報名管理列表單筆操作按鈕設定。
 export interface OrganizerRegistrationAction {
   key?: string;
   label: string;
@@ -6,6 +7,7 @@ export interface OrganizerRegistrationAction {
   hint?: string;
 }
 
+// 報名管理列表每一列需要顯示的資料。
 export interface OrganizerRegistrationRow {
   id: number;
   activity: string;
