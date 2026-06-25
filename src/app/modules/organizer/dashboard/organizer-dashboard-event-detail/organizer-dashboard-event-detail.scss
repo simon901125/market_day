@@ -31,6 +31,7 @@
 
 .detail-view-card { grid-template-columns: 250px minmax(0, 1fr); }
 .detail-readonly-content {
+  --form-section-gap: 14px;
   min-width: 0;
   padding: 22px 24px 26px;
   color: var(--text-dark);
@@ -183,10 +184,6 @@
 .detail-cover-field { min-width: 0; }
 .detail-cover { height: 100%; min-height: 120px; border: 1px solid #e5e7eb; border-radius: var(--radius-tag); background: #f5f6f7; overflow: hidden; }
 .detail-cover img { width: 100%; height: 100%; min-height: 120px; max-height: 180px; object-fit: cover; opacity: .88; }
-.detail-zone-panel {
-  padding-bottom: 20px;
-}
-
 .readonly-zone-card { background: #f5f6f7; color: #7b818b; cursor: not-allowed; }
 .readonly-zone-card:hover { border-color: var(--border-soft); background: #f5f6f7; }
 .detail-layout-panel .detail-layout-preview { margin-top: 0; padding: 12px; border: 1px solid #e5e7eb; border-radius: var(--radius-tag); background: #f5f6f7; }
@@ -787,6 +784,32 @@ textarea {
     border-color: var(--primary-color);
     background: var(--bg-primary);
   }
+
+  &.disabled {
+    border-color: #e5e7eb;
+    background: #f5f6f7;
+    color: #7b818b;
+    cursor: not-allowed;
+    box-shadow: none;
+
+    &:hover,
+    &:focus-within {
+      border-color: #e5e7eb;
+      background: #f5f6f7;
+      box-shadow: none;
+    }
+
+    input {
+      border-color: #e5e7eb;
+      background: var(--bg-white);
+      cursor: not-allowed;
+    }
+
+    input:checked {
+      border-color: rgba(245, 158, 11, 0.72);
+      background: rgba(245, 158, 11, 0.72);
+    }
+  }
 }
 
 .cover-field .app-image-upload {
@@ -964,11 +987,13 @@ textarea {
 }
 
 .venue-booth-form {
+  --form-section-gap: 20px;
+  --form-divider-gap: 22px;
   min-height: 0;
   padding: 22px 24px 26px;
   display: flex;
   flex-direction: column;
-  gap: var(--form-section-gap);
+  gap: var(--form-section-gap, 14px);
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
@@ -984,6 +1009,12 @@ textarea {
     b {
       color: #ef4444;
     }
+  }
+
+  > .venue-booth-top-grid,
+  > .booth-zone-panel,
+  > .layout-upload-panel {
+    flex: 0 0 auto;
   }
 }
 
@@ -1003,7 +1034,8 @@ textarea {
 
 .booth-zone-panel,
 .layout-upload-panel {
-  padding-top: 20px;
+  margin-top: 0;
+  padding-top: var(--form-divider-gap);
   border-top: 1px solid var(--border-soft);
 }
 

@@ -1,8 +1,20 @@
 // 報名詳情頁首可操作按鈕設定。
+export type OrganizerRegistrationDetailActionKey =
+  | 'approve'
+  | 'reject'
+  | 'returnDeposit'
+  | 'goPaymentManagement';
+
 export interface OrganizerRegistrationDetailAction {
+  key: OrganizerRegistrationDetailActionKey;
   label: string;
   icon?: string;
   variant?: 'primary' | 'outline';
+}
+
+export interface OrganizerRegistrationRejectReasonForm {
+  reason: string;
+  description: string;
 }
 
 // 報名詳情狀態紀錄時間軸項目。

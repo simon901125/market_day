@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
-import { Alert } from '../../shared/alert';
+import { AlertService } from '../../../core/services/alert.service';
 
 @Component({
   selector: 'app-auth-login',
@@ -30,7 +30,7 @@ export class AuthLogin {
   /** 防止重複送出登入。 */
   isSubmitting = false;
 
-  constructor(private readonly alert: Alert) {}
+  constructor(private readonly alert: AlertService) {}
 
   /** 切換密碼顯示狀態。 */
   togglePassword(): void {

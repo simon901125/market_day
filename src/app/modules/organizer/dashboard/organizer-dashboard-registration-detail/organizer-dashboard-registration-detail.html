@@ -24,6 +24,7 @@
             class="app-btn detail-status-action"
             [class.primary]="action.variant === 'primary'"
             [class.secondary]="action.variant === 'outline'"
+            (click)="handlePageAction(action)"
           >
             @if (action.icon) {
               <i class="bi" [class]="action.icon"></i>
@@ -67,120 +68,120 @@
       </article>
     </section>
 
-  <section class="detail-card status-card">
-    <h2><i class="bi bi-clock-history"></i>狀態紀錄</h2>
-    <div class="status-flow" [class.compact]="statusRecords.length <= 3">
-      @for (record of statusRecords; track record.label; let last = $last) {
-        <div class="status-step">
-          <span>{{ record.label }}</span>
-          <strong>{{ record.value }}</strong>
-        </div>
-        @if (!last) {
-          <i class="bi bi-chevron-right status-arrow"></i>
+    <section class="detail-card status-card">
+      <h2><i class="bi bi-clock-history"></i>狀態紀錄</h2>
+      <div class="status-flow" [class.compact]="statusRecords.length <= 3">
+        @for (record of statusRecords; track record.label; let last = $last) {
+          <div class="status-step">
+            <span>{{ record.label }}</span>
+            <strong>{{ record.value }}</strong>
+          </div>
+          @if (!last) {
+            <i class="bi bi-chevron-right status-arrow"></i>
+          }
         }
-      }
-      @if (detail.reason) {
-        <div class="status-reason">
-          <div class="reason-summary">
-            <span>{{ detail.reason.title }}</span>
-            <strong>{{ detail.reason.subtitle }}</strong>
+        @if (detail.reason) {
+          <div class="status-reason">
+            <div class="reason-summary">
+              <span>{{ detail.reason.title }}</span>
+              <strong>{{ detail.reason.subtitle }}</strong>
+            </div>
+            <p>{{ detail.reason.description }}</p>
           </div>
-          <p>{{ detail.reason.description }}</p>
-        </div>
-      }
-    </div>
-  </section>
-
-  <section class="detail-info-grid">
-    <article class="detail-card vendor-card">
-      <h2><i class="bi bi-person"></i>攤主資料</h2>
-      <dl class="vendor-info">
-        <div>
-          <dt>攤主姓名</dt>
-          <dd>{{ detail.vendor.name }}</dd>
-        </div>
-        <div>
-          <dt>聯絡電話</dt>
-          <dd>{{ detail.vendor.phone }}</dd>
-        </div>
-        <div>
-          <dt>電子郵件</dt>
-          <dd>{{ detail.vendor.email }}</dd>
-        </div>
-        <div class="wide">
-          <dt>聯絡地址</dt>
-          <dd>{{ detail.vendor.address }}</dd>
-        </div>
-      </dl>
-    </article>
-
-    <article class="detail-card brand-card">
-      <div class="card-heading">
-        <h2><i class="bi bi-shop"></i>品牌資訊</h2>
-        <button type="button" class="brand-button">查看品牌</button>
+        }
       </div>
-      <div class="brand-content">
-        <img [src]="detail.brand.image" [alt]="detail.brand.name" />
-        <dl>
+    </section>
+
+    <section class="detail-info-grid">
+      <article class="detail-card vendor-card">
+        <h2><i class="bi bi-person"></i>攤主資料</h2>
+        <dl class="vendor-info">
           <div>
-            <dt>品牌名稱</dt>
-            <dd>{{ detail.brand.name }}</dd>
+            <dt>攤主姓名</dt>
+            <dd>{{ detail.vendor.name }}</dd>
           </div>
           <div>
-            <dt>品牌類型</dt>
-            <dd>{{ detail.brand.type }}</dd>
+            <dt>聯絡電話</dt>
+            <dd>{{ detail.vendor.phone }}</dd>
           </div>
-          <div class="brand-description-row">
-            <dt>品牌簡介</dt>
-            <dd>{{ detail.brand.description }}</dd>
+          <div>
+            <dt>電子郵件</dt>
+            <dd>{{ detail.vendor.email }}</dd>
+          </div>
+          <div class="wide">
+            <dt>聯絡地址</dt>
+            <dd>{{ detail.vendor.address }}</dd>
           </div>
         </dl>
-      </div>
-    </article>
+      </article>
 
-    <article class="detail-card content-card">
-      <h2><i class="bi bi-file-earmark-text"></i>報名內容</h2>
-      <dl class="table-list">
-        <div>
-          <dt>報名時段</dt>
-          <dd>{{ detail.registration.period }}</dd>
+      <article class="detail-card brand-card">
+        <div class="card-heading">
+          <h2><i class="bi bi-shop"></i>品牌資訊</h2>
+          <button type="button" class="brand-button">查看品牌</button>
         </div>
-        <div>
-          <dt>攤位規格</dt>
-          <dd>{{ detail.registration.boothSpec }}</dd>
+        <div class="brand-content">
+          <img [src]="detail.brand.image" [alt]="detail.brand.name" />
+          <dl>
+            <div>
+              <dt>品牌名稱</dt>
+              <dd>{{ detail.brand.name }}</dd>
+            </div>
+            <div>
+              <dt>品牌類型</dt>
+              <dd>{{ detail.brand.type }}</dd>
+            </div>
+            <div class="brand-description-row">
+              <dt>品牌簡介</dt>
+              <dd>{{ detail.brand.description }}</dd>
+            </div>
+          </dl>
         </div>
-        <div>
-          <dt>攤位類別</dt>
-          <dd>{{ detail.registration.boothCategories }}</dd>
-        </div>
-        <div>
-          <dt>租借設備</dt>
-          <dd>{{ detail.registration.rentalEquipment }}</dd>
-        </div>
-      </dl>
-    </article>
+      </article>
 
-    <article class="detail-card fee-card">
-      <h2><i class="bi bi-receipt"></i>報名費用明細</h2>
-      <dl class="fee-list">
-        <div>
-          <dt>攤位費用</dt>
-          <dd>{{ detail.fee.boothFee }}</dd>
-        </div>
-        <div>
-          <dt>電力租借費</dt>
-          <dd>{{ detail.fee.electricityFee }}</dd>
-        </div>
-        <div>
-          <dt>保證金</dt>
-          <dd>{{ detail.fee.deposit }}</dd>
-        </div>
-        <div class="total">
-          <dt>總計</dt>
-          <dd>{{ detail.fee.total }}</dd>
-        </div>
-      </dl>
-    </article>
-  </section>
-</div>
+      <article class="detail-card content-card">
+        <h2><i class="bi bi-file-earmark-text"></i>報名內容</h2>
+        <dl class="table-list">
+          <div>
+            <dt>報名時段</dt>
+            <dd>{{ detail.registration.period }}</dd>
+          </div>
+          <div>
+            <dt>攤位規格</dt>
+            <dd>{{ detail.registration.boothSpec }}</dd>
+          </div>
+          <div>
+            <dt>攤位類別</dt>
+            <dd>{{ detail.registration.boothCategories }}</dd>
+          </div>
+          <div>
+            <dt>租借設備</dt>
+            <dd>{{ detail.registration.rentalEquipment }}</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="detail-card fee-card">
+        <h2><i class="bi bi-receipt"></i>報名費用明細</h2>
+        <dl class="fee-list">
+          <div>
+            <dt>攤位費用</dt>
+            <dd>{{ detail.fee.boothFee }}</dd>
+          </div>
+          <div>
+            <dt>電力租借費</dt>
+            <dd>{{ detail.fee.electricityFee }}</dd>
+          </div>
+          <div>
+            <dt>保證金</dt>
+            <dd>{{ detail.fee.deposit }}</dd>
+          </div>
+          <div class="total">
+            <dt>總計</dt>
+            <dd>{{ detail.fee.total }}</dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+  </div>
 </main>
