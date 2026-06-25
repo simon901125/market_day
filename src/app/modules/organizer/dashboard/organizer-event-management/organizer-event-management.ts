@@ -219,6 +219,17 @@ export class OrganizerEventManagement implements OnInit {
       paidCount: '86',
       actionLabel: '查看詳情',
     },
+    {
+      id: 15,
+      name: '草稿測試市集',
+      nameImage: 'assets/images/shared/no-image-placeholder.svg',
+      date: '-',
+      location: '尚未填寫',
+      status: ActivityStatus.draft,
+      signupProgress: '-',
+      paidCount: '-',
+      actionLabel: '查看詳情',
+    },
   ];
 
   /** 目前頁面實際顯示的資料。 */

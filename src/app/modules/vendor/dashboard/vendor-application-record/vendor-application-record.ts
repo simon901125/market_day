@@ -3,10 +3,11 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
-import { Alert } from '../../../shared/alert';
+import { AlertService } from '../../../../core/services/alert.service';
 import type {
   ApplicationDetail,
   ApplicationRecord,
+  ApplicationRecordStatus,
   ApplicationStatus,
   BoothInfo,
   DetailRow,
@@ -20,6 +21,43 @@ import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 
 const DETAIL_LINK = '/vendor/dash-board/appliction-record/detail';
+
+type MarketKey = string;
+type RecordActionType = 'view' | 'payment' | 'booth' | 'refund' | 'review';
+
+interface ApplicationRecordJson {
+  id: number;
+  marketKey: MarketKey;
+  marketName: string;
+  eventDate: string;
+  location: string;
+  applicationNo: string;
+  status: ApplicationRecordStatus;
+  statusText: string;
+  statusClass: string;
+  actionTypes: RecordActionType[];
+  detailType: ApplicationStatus;
+}
+
+const RECORD_ACTION_MAP: Record<RecordActionType, RecordAction> = {
+  view: { label: '查看', style: 'outline', link: DETAIL_LINK },
+  payment: { label: '付款', style: 'primary', link: DETAIL_LINK },
+  booth: { label: '選擇攤位', style: 'primary', link: DETAIL_LINK },
+  refund: { label: '退款', style: 'primary',link: DETAIL_LINK },
+  review: { label: '審核', style: 'primary',link: DETAIL_LINK },
+};
+
+const DETAIL_FACTORY_MAP: Record<ApplicationStatus, () => ApplicationDetail> = {
+  reviewing: createReviewingDetail,
+  payment: createPaymentDetail,
+  completed: createCompletedDetail,
+  depositRefunded: createDepositRefundedDetail,
+  cancelled: createCancelledDetail,
+  refunded: createRefundedDetail,
+  refundApplying: createRefundApplyingDetail,
+  refundProcessing: createRefundProcessingDetail,
+  refundSuccess: createRefundSuccessDetail,
+};
 
 /** 報名紀錄關聯的市集卡片資料，activity-detail 可直接讀取這份 MarketCardItem。 */
 export const VENDOR_APPLICATION_MARKETS: Record<string, MarketCardItem> = {
@@ -145,9 +183,9 @@ export const VENDOR_APPLICATION_MARKETS: Record<string, MarketCardItem> = {
   }),
 };
 
-/** 報名紀錄資料，detail 直接放在同一筆 record 裡，詳細頁可用 applicationNo 取得。 */
-export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
-  createRecord({
+/** 報名紀錄 JSON 假資料；只保留 API 會回傳的純資料與 action key。 */
+export const VENDOR_APPLICATION_RECORD_JSON: ApplicationRecordJson[] = [
+  {
     id: 1,
     marketKey: 'forestCat',
     marketName: '新動市集・貓貓森林市',
@@ -157,13 +195,10 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
     status: 'refundApplying',
     statusText: '退款申請中',
     statusClass: 'refund-applying',
-    actions: [
-      { label: '前往收款管理', style: 'primary' },
-      { label: '查看', style: 'outline', link: DETAIL_LINK },
-    ],
-    detail: createRefundApplyingDetail(),
-  }),
-  createRecord({
+    actionTypes: ['view'],
+    detailType: 'refundApplying',
+  },
+  {
     id: 2,
     marketKey: 'springHandmade',
     marketName: '春日手作生活節',
@@ -173,10 +208,10 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
     status: 'refundProcessing',
     statusText: '退款處理中',
     statusClass: 'refund-processing',
-    actions: [{ label: '查看', style: 'outline', link: DETAIL_LINK }],
-    detail: createRefundProcessingDetail(),
-  }),
-  createRecord({
+    actionTypes: ['view'],
+    detailType: 'refundProcessing',
+  },
+  {
     id: 3,
     marketKey: 'seaHandmade',
     marketName: '海風手作市集',
@@ -186,10 +221,10 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
     status: 'refunded',
     statusText: '已退款',
     statusClass: 'refunded',
-    actions: [{ label: '查看', style: 'outline', link: DETAIL_LINK }],
-    detail: createRefundedDetail(),
-  }),
-  createRecord({
+    actionTypes: ['view'],
+    detailType: 'refunded',
+  },
+  {
     id: 4,
     marketKey: 'plantLife',
     marketName: '植感生活市集',
@@ -199,10 +234,10 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
     status: 'completed',
     statusText: '報名完成',
     statusClass: 'completed',
-    actions: [{ label: '查看', style: 'outline', link: DETAIL_LINK }],
-    detail: createCompletedDetail(),
-  }),
-  createRecord({
+    actionTypes: ['view'],
+    detailType: 'completed',
+  },
+  {
     id: 5,
     marketKey: 'forestWalk',
     marketName: '小森散步市集',
@@ -212,14 +247,10 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
     status: 'booth',
     statusText: '待選位',
     statusClass: 'booth',
-    actions: [
-      { label: '選擇攤位', style: 'primary' },
-      { label: '退款', style: 'primary' },
-      { label: '查看', style: 'outline', link: DETAIL_LINK },
-    ],
-    detail: createRefundSuccessDetail(),
-  }),
-  createRecord({
+    actionTypes: ['booth', 'refund'],
+    detailType: 'refundSuccess',
+  },
+  {
     id: 6,
     marketKey: 'dessertLight',
     marketName: '甜點微光市集',
@@ -229,13 +260,10 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
     status: 'payment',
     statusText: '待付款',
     statusClass: 'payment',
-    actions: [
-      { label: '付款', style: 'primary' },
-      { label: '查看', style: 'outline', link: DETAIL_LINK },
-    ],
-    detail: createPaymentDetail(),
-  }),
-  createRecord({
+    actionTypes: ['payment'],
+    detailType: 'payment',
+  },
+  {
     id: 7,
     marketKey: 'citySelect',
     marketName: '城市選物市集',
@@ -245,13 +273,10 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
     status: 'reviewing',
     statusText: '待審核',
     statusClass: 'reviewing',
-    actions: [
-      { label: '審核', style: 'primary' },
-      { label: '查看', style: 'outline', link: DETAIL_LINK },
-    ],
-    detail: createReviewingDetail(),
-  }),
-  createRecord({
+    actionTypes: ['review'],
+    detailType: 'reviewing',
+  },
+  {
     id: 8,
     marketKey: 'slowWeekend',
     marketName: '慢生活週末市集',
@@ -261,23 +286,23 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
     status: 'history',
     statusText: '已取消',
     statusClass: 'history',
-    actions: [{ label: '查看', style: 'outline', link: DETAIL_LINK }],
-    detail: createCancelledDetail(),
-  }),
-  createRecord({
+    actionTypes: ['view'],
+    detailType: 'cancelled',
+  },
+  {
     id: 9,
     marketKey: 'gardenTea',
     marketName: '花園午茶市集',
     eventDate: '2024/07/20 - 2024/07/21',
     location: '台北市信義區 香堤大道廣場',
     applicationNo: 'MD202407200016',
-    status: 'completed',
-    statusText: '報名完成',
-    statusClass: 'completed',
-    actions: [{ label: '查看', style: 'outline', link: DETAIL_LINK }],
-    detail: createCompletedDetail(),
-  }),
-  createRecord({
+    status: 'depositRefunded',
+    statusText: '保證金已退還',
+    statusClass: 'deposit-refunded',
+    actionTypes: ['view'],
+    detailType: 'depositRefunded',
+  },
+  {
     id: 10,
     marketKey: 'summerNight',
     marketName: '夏夜文創市集',
@@ -287,14 +312,13 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = [
     status: 'booth',
     statusText: '待選位',
     statusClass: 'booth',
-    actions: [
-      { label: '選擇攤位', style: 'primary' },
-      { label: '退款', style: 'primary' },
-      { label: '查看', style: 'outline', link: DETAIL_LINK },
-    ],
-    detail: createRefundSuccessDetail(),
-  }),
+    actionTypes: ['booth', 'refund'],
+    detailType: 'refundSuccess',
+  },
 ];
+
+/** 將 JSON 假資料轉成畫面與詳細頁可直接使用的完整 record。 */
+export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = VENDOR_APPLICATION_RECORD_JSON.map(createRecord);
 
 @Component({
   selector: 'app-vendor-application-record',
@@ -319,6 +343,7 @@ export class VendorApplicationRecord {
     '待付款',
     '待選位',
     '報名完成',
+    '保證金已退還',
     '退款申請中',
     '退款處理中',
     '已退款',
@@ -332,6 +357,7 @@ export class VendorApplicationRecord {
     待付款: 'payment',
     待選位: 'booth',
     報名完成: 'completed',
+    保證金已退還: 'depositRefunded',
     退款申請中: 'refundApplying',
     退款處理中: 'refundProcessing',
     已退款: 'refunded',
@@ -345,6 +371,7 @@ export class VendorApplicationRecord {
     { label: '待付款', value: 'payment' },
     { label: '待選位', value: 'booth' },
     { label: '報名完成', value: 'completed' },
+    { label: '保證金已退還', value: 'depositRefunded' },
     { label: '退款申請中', value: 'refundApplying' },
     { label: '退款處理中', value: 'refundProcessing' },
     { label: '已退款', value: 'refunded' },
@@ -354,7 +381,7 @@ export class VendorApplicationRecord {
   /** 報名紀錄假資料；每筆資料內的 detail 可供詳細頁直接使用。 */
   records: ApplicationRecord[] = VENDOR_APPLICATION_RECORDS;
 
-  constructor(private alert: Alert) {}
+  constructor(private alert: AlertService) {}
 
   /** 目前下拉選單顯示文字。 */
   get selectedStatusLabel(): string {
@@ -479,14 +506,16 @@ export class VendorApplicationRecord {
   }
 }
 
-function createRecord(record: Omit<ApplicationRecord, 'image' | 'market' | 'detail'> & { marketKey: keyof typeof VENDOR_APPLICATION_MARKETS; detail: ApplicationDetail }): ApplicationRecord {
-  const { marketKey, detail, ...listRecord } = record;
+function createRecord(record: ApplicationRecordJson): ApplicationRecord {
+  const { marketKey, actionTypes, detailType, ...listRecord } = record;
   const market = VENDOR_APPLICATION_MARKETS[marketKey];
+  const detail = DETAIL_FACTORY_MAP[detailType]();
 
   return {
     ...listRecord,
     image: market.image,
     market,
+    actions: actionTypes.map((type) => ({ ...RECORD_ACTION_MAP[type] })),
     detail: {
       ...detail,
       title: listRecord.marketName,
@@ -642,6 +671,32 @@ function createCompletedDetail(): ApplicationDetail {
       title: '攤位資訊',
       icon: 'bi-shop',
       rows: boothRows(),
+    },
+  };
+}
+
+/** 保證金已退還為正常流程結案狀態：活動結束且主辦已完成保證金退還。 */
+function createDepositRefundedDetail(): ApplicationDetail {
+  return {
+    ...baseDetail('depositRefunded', '保證金已退還', 'deposit-refunded'),
+    progress: [
+      { label: '報名時間', value: '2026/06/01 14:30' },
+      { label: '審核時間', value: '2026/06/02 15:30' },
+      { label: '付款時間', value: '2026/06/03 16:45' },
+      { label: '攤位完成時間', value: '2026/06/04 11:20' },
+      { label: '最終確認時間', value: '2026/06/16 20:30' },
+      { label: '保證金退還', value: '2026/06/25 10:30' },
+    ],
+    paymentRows: [
+      ...paidRows(),
+      { label: '保證金退還', value: '2026/06/25 10:30', highlight: true },
+    ],
+    sideCard: {
+      type: 'booth',
+      title: '攤位資訊',
+      icon: 'bi-shop',
+      rows: boothRows(),
+      notice: '活動已完成結案，保證金已依原付款方式退還。',
     },
   };
 }

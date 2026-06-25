@@ -1,5 +1,7 @@
-<main class="application-page">
-  <h1>我的報名紀錄</h1>
+<section class="application-page dashboard-list-page page-transition">
+  <header class="app-page-header">
+    <h1 class="app-page-title">我的報名紀錄</h1>
+  </header>
 
   <section class="app-filter-bar vendor-record-filter" aria-label="報名紀錄篩選">
     <label class="app-search-field">
@@ -23,79 +25,82 @@
     <button type="button" class="app-btn search">搜尋</button>
   </section>
 
-  <section class="record-card" aria-label="報名紀錄列表">
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>活動</th>
-            <th>活動日期</th>
-            <th>活動地點</th>
-            <th>報名編號</th>
-            <th>狀態</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          @for (item of pagedRecords; track item.id) {
+  <div class="dashboard-list-content">
+    <section class="record-card" aria-label="報名紀錄列表">
+      <div class="table-wrap">
+        <table>
+          <thead>
             <tr>
-              <td>
-                <div class="event-info">
-                  <img [src]="item.image" [alt]="item.marketName" />
-                  <strong>{{ item.marketName }}</strong>
-                </div>
-              </td>
+              <th>活動</th>
+              <th>活動日期</th>
+              <th>活動地點</th>
+              <th>報名編號</th>
+              <th>狀態</th>
+              <th>操作</th>
+            </tr>
+          </thead>
 
-              <td>{{ item.eventDate }}</td>
-              <td>{{ item.location }}</td>
-              <td>{{ item.applicationNo }}</td>
+          <tbody>
+            @for (item of pagedRecords; track item.id) {
+              <tr>
+                <td>
+                  <div class="event-info">
+                    <img [src]="item.image" [alt]="item.marketName" />
+                    <strong>{{ item.marketName }}</strong>
+                  </div>
+                </td>
 
-              <td>
-                <span class="status-badge" [ngClass]="item.statusClass">
-                  {{ item.statusText }}
-                </span>
-              </td>
+                <td>{{ item.eventDate }}</td>
+                <td>{{ item.location }}</td>
+                <td>{{ item.applicationNo }}</td>
 
-              <td>
-                <div class="action-group">
-                  @for (action of item.actions; track action.label) {
-                    @if (action.link) {
-                      <a
-                        [routerLink]="[action.link, item.applicationNo]"
-                        [class.primary-btn]="action.style === 'primary'"
-                        [class.outline-btn]="action.style === 'outline'"
-                      >
-                        {{ action.label }}
-                      </a>
-                    } @else {
-                      <button
-                        type="button"
-                        [class.primary-btn]="action.style === 'primary'"
-                        [class.outline-btn]="action.style === 'outline'"
-                        (click)="handleRecordAction(action, item)"
-                      >
-                        {{ action.label }}
-                      </button>
+                <td>
+                  <span class="status-badge" [ngClass]="item.statusClass">
+                    {{ item.statusText }}
+                  </span>
+                </td>
+
+                <td>
+                  <div class="action-group">
+                    @for (action of item.actions; track action.label) {
+                      @if (action.link) {
+                        <a
+                          [routerLink]="[action.link, item.applicationNo]"
+                          [class.primary-btn]="action.style === 'primary'"
+                          [class.outline-btn]="action.style === 'outline'"
+                        >
+                          {{ action.label }}
+                        </a>
+                      } @else {
+                        <button
+                          type="button"
+                          [class.primary-btn]="action.style === 'primary'"
+                          [class.outline-btn]="action.style === 'outline'"
+                          (click)="handleRecordAction(action, item)"
+                        >
+                          {{ action.label }}
+                        </button>
+                      }
                     }
-                  }
-                </div>
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td class="empty-cell" colspan="6">目前沒有符合條件的報名紀錄</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td class="empty-cell" colspan="6">目前沒有符合條件的報名紀錄</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
 
   <app-dashboard-pagination
+    class="dashboard-list-pagination"
     [currentPage]="currentPage"
     [pageSize]="pageSize"
     [totalItems]="filteredRecords.length"
     (pageChange)="setPage($event)"
   ></app-dashboard-pagination>
-</main>
+</section>

@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { Alert } from '../../shared/alert';
+import { AlertService } from '../../../core/services/alert.service';
 
 @Component({
   selector: 'app-auth-reset-password',
@@ -40,7 +40,7 @@ export class AuthResetPassword {
   passwordNotMatch = false;
 
   constructor(
-    private readonly alert: Alert,
+    private readonly alert: AlertService,
     private readonly router: Router
   ) {}
 

@@ -367,3 +367,246 @@
     color: #dc2626;
   }
 }
+
+.registration-action-swal,
+.registration-result-swal {
+  width: min(480px, calc(100vw - 32px)) !important;
+  padding: 1.65rem 2.1rem 1.55rem !important;
+  border-radius: 14px !important;
+  background: var(--bg-white) !important;
+  box-shadow: var(--shadow-card) !important;
+
+  .custom-swal-html {
+    text-align: center !important;
+  }
+
+  .custom-swal-actions {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 14px !important;
+    margin-top: 1.25rem !important;
+  }
+
+  .custom-swal-confirm,
+  .custom-swal-cancel {
+    height: 46px !important;
+    padding: 0 1.4rem !important;
+    border-radius: 7px !important;
+    font-size: 1rem !important;
+    font-weight: 900 !important;
+  }
+
+  .custom-swal-confirm {
+    width: 180px !important;
+    min-width: 180px !important;
+    background: var(--primary-color) !important;
+
+    &:hover {
+      background: var(--primary-hover) !important;
+    }
+  }
+
+  .custom-swal-cancel {
+    width: 112px !important;
+    min-width: 112px !important;
+    border: 0 !important;
+    background: #f3f4f6 !important;
+    color: #4b5563 !important;
+
+    &:hover {
+      background: #e5e7eb !important;
+    }
+  }
+}
+
+.registration-result-swal {
+  width: min(460px, calc(100vw - 32px)) !important;
+
+  .custom-swal-actions {
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .custom-swal-confirm {
+    width: min(260px, 100%) !important;
+  }
+}
+
+.registration-reject-form-swal {
+  width: min(500px, calc(100vw - 32px)) !important;
+  overflow: visible !important;
+
+  .custom-swal-html {
+    position: relative;
+    z-index: 3;
+    overflow: visible !important;
+    text-align: left !important;
+  }
+
+  .custom-swal-actions {
+    position: relative;
+    z-index: 1;
+    margin-top: 1rem !important;
+  }
+}
+
+.registration-swal-content {
+  color: var(--text-dark);
+
+  h3 {
+    margin: 0.85rem 0 0.55rem;
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+}
+
+.registration-swal-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border: 3px solid currentColor;
+  border-radius: 50%;
+  font-size: 1.85rem;
+
+  &.warning {
+    color: var(--primary-color);
+  }
+
+  &.success {
+    color: #22c55e;
+  }
+
+  &.error {
+    color: #ef4444;
+  }
+
+  &.document {
+    font-size: 1.85rem;
+  }
+}
+
+.registration-swal-main,
+.registration-swal-sub {
+  margin: 0;
+  font-weight: 800;
+  line-height: 1.7;
+}
+
+.registration-swal-main {
+  color: var(--text-dark);
+  font-size: 0.95rem;
+}
+
+.registration-swal-sub {
+  color: var(--text-normal);
+  font-size: 0.9rem;
+}
+
+.registration-swal-summary {
+  margin-top: 0.9rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: var(--radius-card);
+  background: #f7f7f7;
+  display: grid;
+  gap: 0.65rem;
+  text-align: left;
+
+  div {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  span {
+    color: var(--text-normal);
+    font-weight: 800;
+  }
+
+  strong {
+    color: var(--text-dark);
+    font-weight: 900;
+    line-height: 1.6;
+  }
+
+  .amount {
+    color: var(--primary-color);
+    font-size: 1.15rem;
+  }
+}
+
+.registration-reject-form {
+  .registration-swal-icon,
+  h3,
+  .registration-swal-sub {
+    text-align: center;
+  }
+
+  .registration-swal-sub {
+    margin-bottom: 1.1rem;
+  }
+}
+
+.registration-swal-field {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+
+  span {
+    color: var(--text-dark);
+    font-size: 0.92rem;
+    font-weight: 900;
+
+    b {
+      color: #ef4444;
+    }
+
+    em {
+      color: var(--text-light);
+      font-size: 0.88rem;
+      font-style: normal;
+    }
+  }
+
+  input {
+    width: 100%;
+    height: 42px;
+    padding: 0 0.95rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-tag);
+    background: var(--bg-white);
+    color: var(--text-dark);
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 800;
+    outline: none;
+
+    &:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+    }
+  }
+}
+
+.registration-swal-dropdown-host {
+  position: relative;
+  z-index: 20;
+  --dropdown-control-height: 42px;
+  --dropdown-control-font-size: 0.92rem;
+  --dropdown-control-font-weight: 700;
+
+  .dropdown-list {
+    z-index: 30;
+  }
+}
+
+.registration-swal-field-error {
+  min-height: 1.2rem;
+  margin: 0.45rem 0 0;
+  color: #ef4444;
+  font-size: 0.9rem;
+  font-weight: 800;
+}

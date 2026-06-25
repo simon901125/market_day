@@ -131,7 +131,8 @@
   font-weight: 900;
   white-space: nowrap;
 
-  &.completed {
+  &.completed,
+  &.deposit-refunded {
     background: #ecfdf3;
     color: #16a34a;
   }

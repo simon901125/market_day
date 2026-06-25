@@ -9,7 +9,7 @@ import { OrganizerEventRow } from '../../../../models/interface/organizer/Organi
 import { BoothZoneDraft } from '../../../../models/interface/organizer/BoothZoneDraft';
 import { BoothZone, EventForm, EventTimeForm, FormStep, StatusAction, VenueBoothForm } from '../../../../models/interface/organizer/OrganizerEventEditor';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
-import { Alert } from '../../../shared/alert';
+import { AlertService } from '../../../../core/services/alert.service';
 import { TAIWAN_ADMINISTRATIVE_DIVISIONS, TAIWAN_CITY_OPTIONS } from '../../../../models/config/TaiwanAdministrativeDivisions';
 
 @Component({
@@ -105,13 +105,13 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   /** 攤位分區預設色票。 */
   readonly zoneColors = ['#f97316', '#65a30d', '#0ea5e9', '#8b5cf6', '#ec4899'];
 
-  /** 查看／編輯詳情時預設帶入的活動類型。 */
-  readonly detailCategories = ['餐飲美食', '文創手作', '親子家庭', '植物選物'];
+  /** 查看／編輯詳情時帶入的活動類型。 */
+  detailCategories = ['餐飲美食', '文創手作', '親子家庭', '植物選物'];
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly alert: Alert,
+    private readonly alert: AlertService,
   ) {
     this.activityId = Number(this.route.snapshot.paramMap.get('id')) || 0;
     this.editActivityId = Number(this.route.snapshot.queryParamMap.get('edit')) || 0;
@@ -120,8 +120,32 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.isViewMode = this.activityId > 0;
     this.isEditMode = !this.isViewMode && this.editActivityId > 0;
     const stateActivity = history.state?.activity as OrganizerEventRow | undefined;
-    this.activity = stateActivity ?? {
-      id: this.activityId || 1,
+    this.activity = stateActivity ?? this.getFallbackActivity(this.activityId);
+
+    if (this.isViewMode || this.isEditMode) {
+      this.loadActivityIntoEditor();
+    }
+
+    this.initialEditorSnapshot = this.getEditorSnapshot();
+  }
+
+  private getFallbackActivity(activityId: number): OrganizerEventRow {
+    if (activityId === 15) {
+      return {
+        id: 15,
+        name: '草稿測試市集',
+        nameImage: 'assets/images/shared/no-image-placeholder.svg',
+        date: '-',
+        location: '尚未填寫',
+        status: ActivityStatus.draft,
+        signupProgress: '-',
+        paidCount: '-',
+        actionLabel: '查看詳情',
+      };
+    }
+
+    return {
+      id: activityId || 1,
       name: '夏日綠意市集',
       nameImage: 'assets/images/market/cards/market-card-01.png',
       date: '2026/06/15 - 2026/06/21',
@@ -131,12 +155,6 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       paidCount: '-',
       actionLabel: '查看詳情',
     };
-
-    if (this.isEditMode) {
-      this.loadActivityIntoEditor();
-    }
-
-    this.initialEditorSnapshot = this.getEditorSnapshot();
   }
 
   get statusClass(): string {
@@ -953,6 +971,13 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
 
   /** 編輯模式下，將既有活動資料帶入三步驟表單。 */
   private loadActivityIntoEditor(): void {
+    if (this.activity.id === 15) {
+      this.loadDraftTestActivityIntoEditor();
+      return;
+    }
+
+    this.detailCategories = ['餐飲美食', '文創手作', '親子家庭', '植物選物'];
+
     this.form = {
       name: this.activity.name,
       coverFileName: this.activity.nameImage.split('/').pop() ?? '活動封面',
@@ -991,6 +1016,58 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       layoutFileName: 'booth-layout-example.svg',
       layoutPreviewUrl: 'assets/images/organizer/booth/booth-layout-example.svg',
     };
+
+    this.boothZones = [
+      { name: 'A 區', color: '#f97316', count: 50 },
+      { name: 'B 區', color: '#65a30d', count: 50 },
+      { name: 'C 區', color: '#0ea5e9', count: 50 },
+    ];
+  }
+
+  /** 草稿測試資料沒有實際圖片與內容，詳情頁需和列表保持同一筆草稿狀態。 */
+  private loadDraftTestActivityIntoEditor(): void {
+    this.detailCategories = [];
+
+    this.form = {
+      name: this.activity.name,
+      coverFileName: this.activity.nameImage.split('/').pop() ?? '尚未上傳活動封面',
+      coverPreviewUrl: this.activity.nameImage,
+      categories: [],
+      description: '',
+      introduction: '',
+    };
+
+    this.timeForm = {
+      eventStartDate: '',
+      eventEndDate: '',
+      eventStartTime: '',
+      eventEndTime: '',
+      registrationStartDate: '',
+      registrationStartTime: '',
+      registrationEndDate: '',
+      registrationEndTime: '',
+      confirmationDate: '',
+      confirmationTime: '',
+      metro: '',
+      bus: '',
+      driving: '',
+    };
+
+    this.venueForm = {
+      city: '',
+      district: '',
+      address: '',
+      venueName: '',
+      boothWidth: null,
+      boothLength: null,
+      boothHeight: null,
+      totalBooths: null,
+      boothPrice: null,
+      layoutFileName: '',
+      layoutPreviewUrl: '',
+    };
+
+    this.boothZones = [];
   }
 
   /** 目前表單是否和初始快照不同。 */
