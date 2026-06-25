@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
-import { Alert } from '../../../shared/alert';
+import { AlertService } from '../../../../core/services/alert.service';
 import type {
   ApplicationDetail,
   ApplicationRecord,
@@ -381,7 +381,7 @@ export class VendorApplicationRecord {
   /** 報名紀錄假資料；每筆資料內的 detail 可供詳細頁直接使用。 */
   records: ApplicationRecord[] = VENDOR_APPLICATION_RECORDS;
 
-  constructor(private alert: Alert) {}
+  constructor(private alert: AlertService) {}
 
   /** 目前下拉選單顯示文字。 */
   get selectedStatusLabel(): string {

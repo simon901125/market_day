@@ -1,22 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ApplicationRef,
+  Component,
+  ComponentRef,
+  createComponent,
+  EnvironmentInjector,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import {
   OrganizerRegistrationDetail,
   OrganizerRegistrationDetailAction,
   OrganizerRegistrationDetailSeed,
+  OrganizerRegistrationRejectReasonForm,
   OrganizerRegistrationStatusRecordItem,
 } from '../../../../models/interface/organizer/OrganizerRegistrationDetail';
 import { ApplicationStatus } from '../../../../models/status/ApplicationStatus';
+import { AlertService } from '../../../../core/services/alert.service';
+import { Dropdown } from '../../../shared/dropdown/dropdown';
 
-// 暫時對齊報名管理列表的靜態資料，之後串接 API 時可由詳情 endpoint 取代。
 const registrationRows: OrganizerRegistrationDetailSeed[] = [
   {
     id: 1,
     activity: '夏日綠意市集',
     activityImage: 'assets/images/market/cards/market-card-01.png',
     activityTime: '2026/06/15 - 2026/06/21',
-    brandName: '森森選物',
+    brandName: '森林選物',
     vendorName: '林小森',
     brandType: '文創手作',
     registeredAt: '2026/06/01 14:30',
@@ -79,23 +88,23 @@ const registrationRows: OrganizerRegistrationDetailSeed[] = [
   },
   {
     id: 7,
-    activity: '烘焙陶作午後市集',
+    activity: '秋日風格市集',
     activityImage: 'assets/images/market/cards/market-card-07.png',
     activityTime: '2026/09/05 - 2026/09/06',
-    brandName: '好好生活',
-    vendorName: '李好好',
+    brandName: '秋光選物',
+    vendorName: '林秋光',
     brandType: '生活選物',
     registeredAt: '2026/05/27 15:10',
     status: ApplicationStatus.refunding,
   },
   {
     id: 8,
-    activity: '草地親子手作日',
+    activity: '冬日暖心市集',
     activityImage: 'assets/images/market/cards/market-card-08.png',
     activityTime: '2026/09/19 - 2026/09/20',
-    brandName: '簡單手作',
+    brandName: '拾甜製菓',
     vendorName: '簡小單',
-    brandType: '文創手作',
+    brandType: '餐飲美食',
     registeredAt: '2026/05/25 18:30',
     status: ApplicationStatus.refunded,
   },
@@ -104,30 +113,30 @@ const registrationRows: OrganizerRegistrationDetailSeed[] = [
     activity: '月光手作夜市集',
     activityImage: 'assets/images/market/cards/market-card-09.png',
     activityTime: '2026/10/03 - 2026/10/04',
-    brandName: '拾甜甜點',
-    vendorName: '王小拾',
-    brandType: '餐飲美食',
+    brandName: '月光織所',
+    vendorName: '沈月月',
+    brandType: '文創手作',
     registeredAt: '2026/05/24 12:10',
     status: ApplicationStatus.cancelled,
   },
   {
     id: 10,
-    activity: '海風編織選物市集',
+    activity: '海風手作市集',
     activityImage: 'assets/images/market/cards/market-card-10.png',
     activityTime: '2026/11/14 - 2026/11/15',
-    brandName: '木作小室',
-    vendorName: '許木木',
+    brandName: '海鹽工房',
+    vendorName: '許海鹽',
     brandType: '文創手作',
     registeredAt: '2026/05/22 09:40',
     status: ApplicationStatus.pendingReview,
   },
   {
     id: 11,
-    activity: '春日野餐市集',
+    activity: '春日散策市集',
     activityImage: 'assets/images/market/cards/market-card-11.png',
     activityTime: '2026/04/11 - 2026/04/12',
-    brandName: '花見小物',
-    vendorName: '林花見',
+    brandName: '花間織所',
+    vendorName: '蔡花見',
     brandType: '生活選物',
     registeredAt: '2026/04/01 09:30',
     status: ApplicationStatus.depositReturned,
@@ -142,6 +151,13 @@ const registrationRows: OrganizerRegistrationDetailSeed[] = [
 })
 export class OrganizerDashboardRegistrationDetail implements OnInit {
   readonly ApplicationStatus = ApplicationStatus;
+  readonly rejectReasonOptions = [
+    '品牌資料填寫不完整',
+    '申請資料填寫不完整',
+    '品牌類型不符合該市集',
+    '商品內容不符合規範',
+    '其他原因',
+  ];
 
   returnPage = 1;
   returnStatus = '';
@@ -150,9 +166,11 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly alert: AlertService,
+    private readonly appRef: ApplicationRef,
+    private readonly environmentInjector: EnvironmentInjector,
   ) {}
 
-  // 進入詳情頁時讀取列表帶來的 id、狀態與返回資訊。
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     const status = this.route.snapshot.queryParamMap.get('status');
@@ -170,28 +188,26 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     return ApplicationStatus.getClass(this.detail.status);
   }
 
-  // 依目前報名狀態決定頁首可操作按鈕，避免每個狀態在 template 裡分散判斷。
   get pageActions(): OrganizerRegistrationDetailAction[] {
     switch (this.detail.status) {
       case ApplicationStatus.pendingReview:
         return [
-          { label: '審核不通過', icon: 'bi-x-lg', variant: 'outline' },
-          { label: '審核通過', icon: 'bi-check-lg', variant: 'primary' },
+          { key: 'reject', label: '審核未通過', icon: 'bi-x-lg', variant: 'outline' },
+          { key: 'approve', label: '審核通過', icon: 'bi-check-lg', variant: 'primary' },
         ];
       case ApplicationStatus.completed:
         return [
-          { label: '保證金退還', variant: 'primary' },
+          { key: 'returnDeposit', label: '保證金退還', variant: 'primary' },
         ];
       case ApplicationStatus.refundPending:
         return [
-          { label: '前往收款管理', icon: 'bi-cash-coin', variant: 'primary' },
+          { key: 'goPaymentManagement', label: '前往收款管理', icon: 'bi-cash-coin', variant: 'primary' },
         ];
       default:
         return [];
     }
   }
 
-  // 狀態紀錄會隨報名流程不同而變化，集中在這裡組給畫面使用。
   get statusRecords(): OrganizerRegistrationStatusRecordItem[] {
     const times = this.detail.times;
 
@@ -230,13 +246,23 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     }
   }
 
-  private presentStatusRecords(
-    records: Array<{ label: string; value?: string }>,
-  ): OrganizerRegistrationStatusRecordItem[] {
-    return records.filter((record): record is OrganizerRegistrationStatusRecordItem => Boolean(record.value));
+  async handlePageAction(action: OrganizerRegistrationDetailAction): Promise<void> {
+    switch (action.key) {
+      case 'approve':
+        await this.approveRegistration();
+        return;
+      case 'reject':
+        await this.rejectRegistration();
+        return;
+      case 'returnDeposit':
+        await this.returnDeposit();
+        return;
+      case 'goPaymentManagement':
+        this.router.navigate(['/organizer/dash-board/collection']);
+        return;
+    }
   }
 
-  // 返回報名管理時帶回原本頁碼與篩選狀態。
   goBack(): void {
     this.router.navigate(['/organizer/dash-board/register'], {
       queryParams: {
@@ -246,7 +272,328 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     });
   }
 
-  // 依列表 id 取得詳情資料；query status 只作為目前靜態展示不同狀態的輔助。
+  private presentStatusRecords(
+    records: Array<{ label: string; value?: string }>,
+  ): OrganizerRegistrationStatusRecordItem[] {
+    return records.filter((record): record is OrganizerRegistrationStatusRecordItem => Boolean(record.value));
+  }
+
+  private async approveRegistration(): Promise<void> {
+    const confirmed = await this.alert.confirmHtml({
+      html: this.getApproveConfirmHtml(),
+      confirmButtonText: '確認通過',
+      cancelButtonText: '取消',
+      popupClass: 'registration-action-swal',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.detail = this.applyStatus({
+      ...this.detail,
+      status: ApplicationStatus.pendingPayment,
+    });
+
+    await this.alert.successHtml({
+      html: this.getApproveSuccessHtml(),
+      confirmButtonText: '知道了',
+      popupClass: 'registration-result-swal',
+      showCloseButton: true,
+    });
+  }
+
+  private async rejectRegistration(): Promise<void> {
+    const form = await this.openRejectReasonForm();
+
+    if (!form) {
+      return;
+    }
+
+    const confirmed = await this.alert.confirmHtml({
+      html: this.getRejectConfirmHtml(form),
+      confirmButtonText: '確認送出',
+      cancelButtonText: '取消',
+      popupClass: 'registration-action-swal registration-reject-confirm-swal',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.detail = {
+      ...this.detail,
+      status: ApplicationStatus.reviewRejected,
+      times: {
+        ...this.detail.times,
+        reviewedAt: this.formatNow(),
+      },
+      reason: {
+        title: '審核未通過原因',
+        subtitle: form.reason,
+        description: form.description || this.getRejectDefaultDescription(form.reason),
+      },
+    };
+
+    await this.alert.successHtml({
+      html: this.getRejectSuccessHtml(form),
+      confirmButtonText: '知道了',
+      popupClass: 'registration-result-swal registration-reject-result-swal',
+      showCloseButton: true,
+    });
+  }
+
+  private async returnDeposit(): Promise<void> {
+    const confirmed = await this.alert.confirmHtml({
+      html: this.getDepositReturnConfirmHtml(),
+      confirmButtonText: '確認退還',
+      cancelButtonText: '取消',
+      popupClass: 'registration-action-swal registration-deposit-swal',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.detail = this.applyStatus({
+      ...this.detail,
+      status: ApplicationStatus.depositReturned,
+      times: {
+        ...this.detail.times,
+        depositReturnedAt: this.formatNow(),
+      },
+    });
+
+    await this.alert.successHtml({
+      html: this.getDepositReturnSuccessHtml(),
+      confirmButtonText: '知道了',
+      popupClass: 'registration-result-swal',
+      showCloseButton: true,
+    });
+  }
+
+  private async openRejectReasonForm(): Promise<OrganizerRegistrationRejectReasonForm | null> {
+    let selectedReason = '';
+    let dropdownRef: ComponentRef<Dropdown> | null = null;
+
+    const result = await this.alert.custom<OrganizerRegistrationRejectReasonForm>({
+      html: this.getRejectReasonFormHtml(),
+      showCancelButton: true,
+      confirmButtonText: '送出結果',
+      cancelButtonText: '取消',
+      reverseButtons: true,
+      customClass: {
+        popup: 'registration-action-swal registration-reject-form-swal',
+      },
+      didOpen: () => {
+        const host = document.getElementById('rejectReasonDropdownHost');
+
+        if (!host) {
+          return;
+        }
+
+        dropdownRef = createComponent(Dropdown, {
+          environmentInjector: this.environmentInjector,
+        });
+        dropdownRef.instance.placeholder = '請選擇未通過原因';
+        dropdownRef.instance.options = this.rejectReasonOptions;
+        dropdownRef.instance.optionSelected.subscribe((value) => {
+          selectedReason = value;
+        });
+        this.appRef.attachView(dropdownRef.hostView);
+        host.appendChild(dropdownRef.location.nativeElement);
+      },
+      willClose: () => {
+        if (dropdownRef) {
+          this.appRef.detachView(dropdownRef.hostView);
+          dropdownRef.destroy();
+          dropdownRef = null;
+        }
+      },
+      preConfirm: () => {
+        const description = (document.getElementById('rejectDescription') as HTMLInputElement | null)?.value.trim() ?? '';
+        const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
+
+        if (!selectedReason) {
+          if (error) {
+            error.textContent = '請選擇未通過原因';
+          }
+
+          return false;
+        }
+
+        if (error) {
+          error.textContent = '';
+        }
+
+        return {
+          reason: selectedReason,
+          description,
+        };
+      },
+    });
+
+    return result.isConfirmed && result.value ? result.value : null;
+  }
+
+  private getApproveConfirmHtml(): string {
+    return `
+      <div class="registration-swal-content">
+        <div class="registration-swal-icon warning">
+          <i class="bi bi-exclamation-lg"></i>
+        </div>
+        <h3>確認審核通過</h3>
+        <p class="registration-swal-main">確認通過此筆報名申請嗎？</p>
+        <p class="registration-swal-sub">通過後系統將通知攤主進行付款。</p>
+      </div>
+    `;
+  }
+
+  private getApproveSuccessHtml(): string {
+    return `
+      <div class="registration-swal-content">
+        <div class="registration-swal-icon success">
+          <i class="bi bi-check-lg"></i>
+        </div>
+        <h3>送出審核成功</h3>
+        <p class="registration-swal-main">此筆報名已成功通過審核。</p>
+        <p class="registration-swal-sub">系統已通知攤主，請等待攤主完成付款。</p>
+      </div>
+    `;
+  }
+
+  private getRejectReasonFormHtml(): string {
+    return `
+      <div class="registration-swal-content registration-reject-form">
+        <div class="registration-swal-icon warning document">
+          <i class="bi bi-file-earmark-text"></i>
+        </div>
+        <h3>填寫未通過原因</h3>
+        <p class="registration-swal-sub">請選擇未通過原因，送出後系統將通知攤主審核結果。</p>
+
+        <label class="registration-swal-field">
+          <span>未通過原因 <b>*</b></span>
+          <div id="rejectReasonDropdownHost" class="registration-swal-dropdown-host"></div>
+        </label>
+
+        <label class="registration-swal-field">
+          <span>原因說明 <em>選填</em></span>
+          <input id="rejectDescription" type="text" placeholder="請輸入原因說明" />
+        </label>
+
+        <p class="registration-swal-field-error" aria-live="polite"></p>
+      </div>
+    `;
+  }
+
+  private getRejectConfirmHtml(form: OrganizerRegistrationRejectReasonForm): string {
+    return `
+      <div class="registration-swal-content">
+        <div class="registration-swal-icon warning">
+          <i class="bi bi-exclamation-lg"></i>
+        </div>
+        <h3>確認審核未通過</h3>
+        <p class="registration-swal-main">確定要將此筆報名設為未通過嗎？</p>
+        <p class="registration-swal-sub">送出後系統將通知攤主審核結果。</p>
+
+        <div class="registration-swal-summary">
+          <div>
+            <span>未通過原因</span>
+            <strong>${form.reason}</strong>
+          </div>
+          <div>
+            <span>原因說明</span>
+            <strong>${form.description || this.getRejectDefaultDescription(form.reason)}</strong>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private getRejectSuccessHtml(form: OrganizerRegistrationRejectReasonForm): string {
+    return `
+      <div class="registration-swal-content">
+        <div class="registration-swal-icon error">
+          <i class="bi bi-x-lg"></i>
+        </div>
+        <h3>審核未通過</h3>
+        <p class="registration-swal-main">此筆報名未通過審核。</p>
+        <p class="registration-swal-sub">系統已通知攤主審核結果。</p>
+
+        <div class="registration-swal-summary">
+          <div>
+            <span>未通過原因</span>
+            <strong>${form.reason}</strong>
+          </div>
+          <div>
+            <span>原因說明</span>
+            <strong>${form.description || this.getRejectDefaultDescription(form.reason)}</strong>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private getDepositReturnConfirmHtml(): string {
+    return `
+      <div class="registration-swal-content">
+        <div class="registration-swal-icon warning">
+          <i class="bi bi-exclamation-lg"></i>
+        </div>
+        <h3>保證金退還確認</h3>
+        <p class="registration-swal-main">請確認攤主已完成活動參與，且符合保證金退還條件。</p>
+        <p class="registration-swal-sub">確認後系統將記錄本次保證金退還時間，此操作無法復原。</p>
+
+        <div class="registration-swal-summary deposit">
+          <div>
+            <span>保證金金額</span>
+            <strong class="amount">NT$1,000</strong>
+          </div>
+          <div>
+            <span>退還方式</span>
+            <strong>現場退還</strong>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private getDepositReturnSuccessHtml(): string {
+    return `
+      <div class="registration-swal-content">
+        <div class="registration-swal-icon success">
+          <i class="bi bi-check-lg"></i>
+        </div>
+        <h3>保證金已退還</h3>
+        <p class="registration-swal-main">此筆報名已記錄保證金退還。</p>
+        <p class="registration-swal-sub">狀態已更新為保證金已退還。</p>
+      </div>
+    `;
+  }
+
+  private getRejectDefaultDescription(reason: string): string {
+    const descriptionMap: Record<string, string> = {
+      品牌資料填寫不完整: '請補充品牌介紹與商品照片後重新提交報名。',
+      申請資料填寫不完整: '請補齊聯絡資料、攤位需求或報名內容後重新提交報名。',
+      品牌類型不符合該市集: '您申請的品牌類型與本活動開放類別不符，請重新選擇符合的品牌類型後再提交報名。',
+      商品內容不符合規範: '商品內容與活動規範不符，請調整商品內容後再提交報名。',
+      其他原因: '請依主辦方補充說明調整資料後，再重新提交報名。',
+    };
+
+    return descriptionMap[reason] ?? '請依主辦方補充說明調整資料後，再重新提交報名。';
+  }
+
+  private formatNow(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const date = String(now.getDate()).padStart(2, '0');
+    const hour = String(now.getHours()).padStart(2, '0');
+    const minute = String(now.getMinutes()).padStart(2, '0');
+
+    return `${year}/${month}/${date} ${hour}:${minute}`;
+  }
+
   private getDetail(id: number, statusFromQuery: string | null): OrganizerRegistrationDetail {
     const row = registrationRows.find((item) => item.id === id) ?? registrationRows[0];
     const status = statusFromQuery && ApplicationStatus.list.includes(statusFromQuery)
@@ -256,7 +603,6 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     return this.createDetail(row, status);
   }
 
-  // 將列表資料補齊成詳情頁需要的完整結構，日後可對應後端回傳格式調整。
   private createDetail(row: OrganizerRegistrationDetailSeed, status: string): OrganizerRegistrationDetail {
     const detail: OrganizerRegistrationDetail = {
       id: row.id,
@@ -301,74 +647,116 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     return this.applyStatus(detail);
   }
 
-  // 活動地點目前由靜態 id 對照，後續串 API 後可移除。
-  private getActivityLocation(id: number): string {
-    const locations: Record<number, string> = {
-      1: '台北市 信義區 香堤大道廣場',
-      2: '新北市 淡水區 河岸藝文廣場',
-      3: '台中市 西區 草悟道市集廣場',
-      4: '台南市 中西區 藍晒圖文創園區',
-      5: '桃園市 中壢區 中央公園草地',
-      6: '高雄市 鹽埕區 駁二藝術特區',
-      7: '台北市 松山區 文創園區廣場',
-      8: '新竹市 東區 關新公園草地',
-      9: '台中市 北區 月光廣場',
-      10: '基隆市 中正區 海洋廣場',
-      11: '台北市 大安區 森林公園草地',
-    };
+  private applyStatus(detail: OrganizerRegistrationDetail): OrganizerRegistrationDetail {
+    const times = { ...detail.times };
+    let reason = detail.reason;
 
-    return locations[id] ?? '台北市 信義區 香堤大道廣場';
+    switch (detail.status) {
+      case ApplicationStatus.pendingReview:
+        break;
+      case ApplicationStatus.reviewRejected:
+        times.reviewedAt ??= '2026/06/02 15:30';
+        reason ??= {
+          title: '審核未通過原因',
+          subtitle: '攤位類別不符合',
+          description: '您申請的攤位類別與本活動開放類別不符，請重新選擇符合的攤位類別後再提交報名。',
+        };
+        break;
+      case ApplicationStatus.pendingPayment:
+        times.reviewedAt ??= '2026/06/02 15:30';
+        break;
+      case ApplicationStatus.pendingSelection:
+        times.reviewedAt ??= '2026/06/02 15:30';
+        times.paidAt ??= '2026/06/03 16:50';
+        break;
+      case ApplicationStatus.completed:
+        times.reviewedAt ??= '2026/06/02 15:30';
+        times.paidAt ??= '2026/06/03 16:50';
+        times.selectedAt ??= '2026/06/05 14:33';
+        times.finalConfirmedAt ??= '2026/06/07 10:30';
+        break;
+      case ApplicationStatus.depositReturned:
+        times.reviewedAt ??= '2026/04/02 10:00';
+        times.paidAt ??= '2026/04/03 11:20';
+        times.selectedAt ??= '2026/04/05 13:10';
+        times.finalConfirmedAt ??= '2026/04/08 16:00';
+        times.depositReturnedAt ??= '2026/04/13 10:20';
+        break;
+      case ApplicationStatus.refundPending:
+        times.reviewedAt ??= '2026/06/02 15:30';
+        times.paidAt ??= '2026/06/03 11:20';
+        times.refundRequestedAt ??= '2026/06/10 15:22';
+        break;
+      case ApplicationStatus.refunding:
+        times.reviewedAt ??= '2026/06/02 15:30';
+        times.paidAt ??= '2026/06/03 11:20';
+        times.refundRequestedAt ??= '2026/06/10 15:22';
+        times.refundReviewedAt ??= '2026/06/11 18:22';
+        break;
+      case ApplicationStatus.refunded:
+        times.reviewedAt ??= '2026/06/02 15:30';
+        times.paidAt ??= '2026/06/03 11:20';
+        times.refundRequestedAt ??= '2026/06/10 15:22';
+        times.refundReviewedAt ??= '2026/06/11 18:22';
+        times.refundedAt ??= '2026/06/13 09:56';
+        break;
+      case ApplicationStatus.cancelled:
+        times.reviewedAt ??= '2026/06/02 15:30';
+        times.cancelledAt ??= '2026/06/08 10:00';
+        reason ??= {
+          title: '取消原因',
+          subtitle: '付款逾期失效',
+          description: '因未於付款期限內完成付款，系統已自動取消報名。',
+        };
+        break;
+    }
+
+    return {
+      ...detail,
+      times,
+      reason,
+    };
+  }
+
+  private getActivityLocation(id: number): string {
+    const locations = ['台北市 信義區', '新北市 淡水區', '台中市 西區', '台南市 中西區', '桃園市 中壢區', '高雄市 鹽埕區'];
+    return locations[(id - 1) % locations.length];
   }
 
   private getActivityAddress(id: number): string {
-    const addresses: Record<number, string> = {
-      1: '台北市信義區松壽路與松智路口',
-      2: '新北市淡水區中正路 1 號',
-      3: '台中市西區中興街與公益路口',
-      4: '台南市中西區西門路一段 689 巷',
-      5: '桃園市中壢區中央西路二段 30 號',
-      6: '高雄市鹽埕區大勇路 1 號',
-      7: '台北市信義區光復南路 133 號',
-      8: '新竹市東區關新路 188 號',
-      9: '台中市北區三民路三段 161 號',
-      10: '基隆市中正區港西街 5 號',
-      11: '台北市大安區新生南路二段 1 號',
-    };
-
-    return addresses[id] ?? '台北市信義區松壽路與松智路口';
+    const addresses = [
+      '信義區市集路 81 號',
+      '淡水河岸廣場',
+      '西區草悟道周邊',
+      '中西區海安路廣場',
+      '中壢區中央公園草地',
+      '鹽埕區倉庫群廣場',
+    ];
+    return addresses[(id - 1) % addresses.length];
   }
 
-  // 以下攤主與品牌資料先依列表 id 產生，讓詳情頁資料可與列表一致。
   private getVendorPhone(id: number): string {
-    return `09${String(12000000 + id * 34567).slice(0, 8)}`;
+    return `0912${String(100000 + id * 34567).slice(0, 6)}`;
   }
 
   private getVendorEmail(id: number): string {
-    const row = registrationRows.find((item) => item.id === id) ?? registrationRows[0];
-    return `vendor${String(row.id).padStart(2, '0')}@marketday.tw`;
+    return `vendor${String(id).padStart(2, '0')}@marketday.tw`;
   }
 
   private getVendorAddress(id: number): string {
-    const addresses: Record<number, string> = {
-      1: '台北市信義區市集路 81 號',
-      2: '新北市淡水區河岸路 82 號',
-      3: '台中市西區草悟路 83 號',
-      4: '台南市中西區文創路 84 號',
-      5: '桃園市中壢區中央路 85 號',
-      6: '高雄市鹽埕區駁二路 86 號',
-      7: '台北市松山區文創路 87 號',
-      8: '新竹市東區關新路 88 號',
-      9: '台中市北區月光路 89 號',
-      10: '基隆市中正區海洋路 90 號',
-      11: '台北市大安區森林路 91 號',
-    };
-
-    return addresses[id] ?? '台北市信義區市集路 81 號';
+    const addresses = [
+      '台北市信義區市集路 81 號',
+      '新北市淡水區河岸路 18 號',
+      '台中市西區美村路 35 號',
+      '台南市中西區民生路 62 號',
+      '桃園市中壢區市集路 85 號',
+      '高雄市鹽埕區倉庫路 21 號',
+    ];
+    return addresses[(id - 1) % addresses.length];
   }
 
   private getBrandLogo(id: number): string {
-    const brandId = String(((id - 1) % 8) + 1).padStart(2, '0');
-    return `assets/images/user/brand/brands/brand-${brandId}/logo.png`;
+    return `assets/images/brand/brand-${String(((id - 1) % 8) + 1).padStart(2, '0')}.png`;
   }
 
   private getBrandDescription(brandName: string): string {
@@ -376,120 +764,11 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
   }
 
   private getRegistrationPeriod(activityTime: string): string {
-    const [startDate, endDate] = activityTime.split(' - ');
-    return `${startDate} 13:30 - 20:30、${endDate} 13:30 - 20:30`;
+    const [start, end] = activityTime.split(' - ');
+    return `${start} 13:30 - 20:30、${end} 13:30 - 20:30`;
   }
 
   private getBoothCategories(brandType: string): string {
-    return brandType === '餐飲美食'
-      ? '餐飲美食、烘焙甜點、飲品輕食'
-      : `${brandType}、生活選物、文創手作`;
-  }
-
-  // 依不同報名狀態補上流程時間與原因資料，讓畫面呈現符合實際流程。
-  private applyStatus(detail: OrganizerRegistrationDetail): OrganizerRegistrationDetail {
-    switch (detail.status) {
-      case ApplicationStatus.reviewRejected:
-        return {
-          ...detail,
-          times: {
-            ...detail.times,
-            reviewedAt: '2026/06/02 15:30',
-          },
-          reason: {
-            title: '審核未通過原因',
-            subtitle: '攤位類別不符合',
-            description: '您申請的攤位類別與本活動開放類別不符，請重新選擇符合的攤位類別後再提交報名。',
-          },
-        };
-      case ApplicationStatus.pendingPayment:
-        return {
-          ...detail,
-          times: {
-            ...detail.times,
-            reviewedAt: '2026/06/02 15:30',
-          },
-        };
-      case ApplicationStatus.pendingSelection:
-        return {
-          ...detail,
-          times: {
-            ...detail.times,
-            reviewedAt: '2026/06/02 15:30',
-            paidAt: '2026/06/03 16:50',
-          },
-        };
-      case ApplicationStatus.completed:
-        return {
-          ...detail,
-          times: {
-            ...detail.times,
-            reviewedAt: '2026/06/02 15:30',
-            paidAt: '2026/06/03 16:50',
-            selectedAt: '2026/06/05 14:33',
-          },
-        };
-      case ApplicationStatus.depositReturned:
-        return {
-          ...detail,
-          times: {
-            ...detail.times,
-            reviewedAt: '2026/06/02 15:30',
-            paidAt: '2026/06/03 16:50',
-            selectedAt: '2026/06/05 14:33',
-            finalConfirmedAt: '2026/06/22 10:00',
-            depositReturnedAt: '2026/06/23 15:20',
-          },
-        };
-      case ApplicationStatus.refundPending:
-        return {
-          ...detail,
-          times: {
-            ...detail.times,
-            reviewedAt: '2026/06/02 15:30',
-            paidAt: '2026/06/03 11:20',
-            refundRequestedAt: '2026/06/10 15:22',
-          },
-        };
-      case ApplicationStatus.refunding:
-        return {
-          ...detail,
-          times: {
-            ...detail.times,
-            reviewedAt: '2026/06/02 15:30',
-            paidAt: '2026/06/03 11:20',
-            refundRequestedAt: '2026/06/10 15:22',
-            refundReviewedAt: '2026/06/11 18:22',
-          },
-        };
-      case ApplicationStatus.refunded:
-        return {
-          ...detail,
-          times: {
-            ...detail.times,
-            reviewedAt: '2026/06/02 15:30',
-            paidAt: '2026/06/03 11:20',
-            refundRequestedAt: '2026/06/10 15:22',
-            refundReviewedAt: '2026/06/11 18:22',
-            refundedAt: '2026/06/13 09:56',
-          },
-        };
-      case ApplicationStatus.cancelled:
-        return {
-          ...detail,
-          times: {
-            ...detail.times,
-            reviewedAt: '2026/06/02 15:30',
-            cancelledAt: '2026/06/08 10:00',
-          },
-          reason: {
-            title: '取消原因',
-            subtitle: '付款逾期失效',
-            description: '因未於付款期限內完成付款，系統已自動取消報名。',
-          },
-        };
-      default:
-        return detail;
-    }
+    return `${brandType}、生活選物、文創手作`;
   }
 }

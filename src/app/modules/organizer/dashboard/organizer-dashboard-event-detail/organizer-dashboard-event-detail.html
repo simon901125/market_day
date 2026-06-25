@@ -61,10 +61,10 @@
                 <span class="text-control view-disabled-control"><input type="text" [value]="activity.name" disabled /></span>
               </label>
               <fieldset class="field category-field">
-                <legend>活動類型（可複選） <b>*</b></legend>
+                <legend>活動類型（可複選）<b>*</b></legend>
                 <div class="category-grid readonly-category-grid">
                   @for (category of categoryOptions; track category) {
-                    <label class="category-option" [class.selected]="detailCategories.includes(category)">
+                    <label class="category-option disabled" [class.selected]="detailCategories.includes(category)">
                       <input type="checkbox" [checked]="detailCategories.includes(category)" disabled />
                       <span>{{ category }}</span>
                     </label>
@@ -79,43 +79,43 @@
           </div>
 
           <label class="field full">
-            <span>活動簡介 <small class="app-field-context">（顯示於活動列表）</small> <b>*</b></span>
-            <span class="textarea-control view-disabled-control"><textarea disabled>結合手作選物、風格餐飲與親子互動體驗，打造適合週末散步與逛市集的城市綠意空間。</textarea></span>
+            <span>活動簡介 <small class="app-field-context">顯示於活動列表</small> <b>*</b></span>
+            <span class="textarea-control view-disabled-control"><textarea disabled>{{ form.description }}</textarea></span>
           </label>
           <label class="field full">
-            <span>活動介紹 <small class="app-field-context">（顯示於活動詳情）</small> <b>*</b></span>
-            <span class="textarea-control introduction-control view-disabled-control"><textarea disabled>以城市綠意與生活風格為主題，集結特色品牌、餐飲與親子體驗，提供舒適且完整的市集活動內容。</textarea></span>
+            <span>活動介紹 <small class="app-field-context">顯示於活動詳情</small> <b>*</b></span>
+            <span class="textarea-control introduction-control view-disabled-control"><textarea disabled>{{ form.introduction }}</textarea></span>
           </label>
         } @else if (currentStep === 1) {
           <section class="time-section">
-            <h2 class="form-section-title"><i class="bi bi-calendar2-check"></i>活動舉辦時間</h2>
+            <h2 class="form-section-title"><i class="bi bi-calendar2-check"></i>活動時間</h2>
             <div class="event-time-grid">
               <label class="field event-date-range"><span>活動日期 <b>*</b></span><span class="date-range-controls">
-                <span class="date-time-control view-disabled-control"><i class="bi bi-calendar3"></i><input type="date" value="2026-06-15" disabled /></span>
-                <span class="range-separator">～</span>
-                <span class="date-time-control view-disabled-control"><i class="bi bi-calendar3"></i><input type="date" value="2026-06-21" disabled /></span>
+                <span class="date-time-control view-disabled-control"><i class="bi bi-calendar3"></i><input type="date" [value]="timeForm.eventStartDate" disabled /></span>
+                <span class="range-separator">-</span>
+                <span class="date-time-control view-disabled-control"><i class="bi bi-calendar3"></i><input type="date" [value]="timeForm.eventEndDate" disabled /></span>
               </span></label>
-              <label class="field"><span>開始時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" value="10:00" disabled /></span></label>
-              <label class="field"><span>結束時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" value="18:00" disabled /></span></label>
+              <label class="field"><span>開始時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" [value]="timeForm.eventStartTime" disabled /></span></label>
+              <label class="field"><span>結束時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" [value]="timeForm.eventEndTime" disabled /></span></label>
             </div>
           </section>
           <section class="time-section divided-section">
             <h2 class="form-section-title"><i class="bi bi-person-plus"></i>報名時間</h2>
             <div class="registration-time-grid">
-              <label class="field"><span>報名開始日期 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-calendar3"></i><input type="date" value="2026-04-01" disabled /></span></label>
-              <label class="field"><span>報名開始時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" value="10:00" disabled /></span></label>
-              <label class="field"><span>報名截止日期 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-calendar3"></i><input type="date" value="2026-05-31" disabled /></span></label>
-              <label class="field"><span>報名截止時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" value="23:59" disabled /></span></label>
-              <label class="field confirmation-date-field"><span>最終名單確認日期 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-calendar3"></i><input type="date" value="2026-06-10" disabled /></span></label>
-              <label class="field"><span>最終名單確認時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" value="12:00" disabled /></span></label>
+              <label class="field"><span>報名開始日期 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-calendar3"></i><input type="date" [value]="timeForm.registrationStartDate" disabled /></span></label>
+              <label class="field"><span>報名開始時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" [value]="timeForm.registrationStartTime" disabled /></span></label>
+              <label class="field"><span>報名結束日期 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-calendar3"></i><input type="date" [value]="timeForm.registrationEndDate" disabled /></span></label>
+              <label class="field"><span>報名結束時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" [value]="timeForm.registrationEndTime" disabled /></span></label>
+              <label class="field confirmation-date-field"><span>最終確認日期 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-calendar3"></i><input type="date" [value]="timeForm.confirmationDate" disabled /></span></label>
+              <label class="field"><span>最終確認時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" [value]="timeForm.confirmationTime" disabled /></span></label>
             </div>
           </section>
           <section class="time-section divided-section transport-section">
-            <h2 class="form-section-title"><i class="bi bi-bus-front"></i>交通方式 <b>*</b></h2>
+            <h2 class="form-section-title"><i class="bi bi-bus-front"></i>交通方式<b>*</b></h2>
             <div class="transport-fields readonly-transport-fields">
-              <label><strong>捷運：</strong><input type="text" value="鄰近捷運站步行約 8 分鐘" disabled /></label>
-              <label><strong>公車：</strong><input type="text" value="市民廣場站下車" disabled /></label>
-              <label><strong>開車：</strong><input type="text" value="周邊設有公有停車場" disabled /></label>
+              <label><strong>捷運</strong><input type="text" [value]="timeForm.metro" disabled /></label>
+              <label><strong>公車</strong><input type="text" [value]="timeForm.bus" disabled /></label>
+              <label><strong>開車</strong><input type="text" [value]="timeForm.driving" disabled /></label>
             </div>
           </section>
         } @else {
@@ -123,22 +123,22 @@
             <section class="venue-panel">
               <h2 class="form-section-title"><i class="bi bi-geo-alt"></i>活動場地資訊</h2>
               <div class="venue-location-grid">
-                <label class="field"><span>縣市 <b>*</b></span><span class="text-control view-disabled-control"><input value="台中市" disabled /></span></label>
-                <label class="field"><span>區 <b>*</b></span><span class="text-control view-disabled-control"><input value="西區" disabled /></span></label>
-                <label class="field venue-full-field"><span>地址 <b>*</b></span><span class="text-control view-disabled-control"><input value="台中市西區公益路 163-1 號" disabled /></span></label>
-                <label class="field venue-full-field"><span>活動場地名稱 <b>*</b></span><span class="text-control view-disabled-control"><input value="草悟廣場" disabled /></span></label>
+                <label class="field"><span>縣市 <b>*</b></span><span class="text-control view-disabled-control"><input [value]="venueForm.city" disabled /></span></label>
+                <label class="field"><span>區 <b>*</b></span><span class="text-control view-disabled-control"><input [value]="venueForm.district" disabled /></span></label>
+                <label class="field venue-full-field"><span>地址 <b>*</b></span><span class="text-control view-disabled-control"><input [value]="venueForm.address" disabled /></span></label>
+                <label class="field venue-full-field"><span>活動場地名稱 <b>*</b></span><span class="text-control view-disabled-control"><input [value]="venueForm.venueName" disabled /></span></label>
               </div>
             </section>
             <section class="venue-panel booth-info-panel">
               <h2 class="form-section-title"><i class="bi bi-shop"></i>攤位資訊</h2>
               <div class="booth-size-group"><span class="field-label">攤位大小 <b>*</b></span><div class="booth-size-grid">
-                <label class="field compact-field"><span class="dimension-label">長</span><span class="unit-control view-disabled-control"><input value="3" disabled /><small>公尺</small></span></label>
-                <label class="field compact-field"><span class="dimension-label">寬</span><span class="unit-control view-disabled-control"><input value="3" disabled /><small>公尺</small></span></label>
-                <label class="field compact-field"><span class="dimension-label">高</span><span class="unit-control view-disabled-control"><input value="2.5" disabled /><small>公尺</small></span></label>
+                <label class="field compact-field"><span class="dimension-label">長</span><span class="unit-control view-disabled-control"><input [value]="venueForm.boothLength ?? ''" disabled /><small>公尺</small></span></label>
+                <label class="field compact-field"><span class="dimension-label">寬</span><span class="unit-control view-disabled-control"><input [value]="venueForm.boothWidth ?? ''" disabled /><small>公尺</small></span></label>
+                <label class="field compact-field"><span class="dimension-label">高</span><span class="unit-control view-disabled-control"><input [value]="venueForm.boothHeight ?? ''" disabled /><small>公尺</small></span></label>
               </div></div>
               <div class="booth-summary-grid">
-                <label class="field"><span>攤位總數 <b>*</b></span><span class="unit-control view-disabled-control"><input value="150" disabled /><small>攤</small></span></label>
-                <label class="field"><span>攤位價格 <b>*</b></span><span class="unit-control view-disabled-control"><input value="2500" disabled /><small>元／攤</small></span></label>
+                <label class="field"><span>攤位總數 <b>*</b></span><span class="unit-control view-disabled-control"><input [value]="venueForm.totalBooths ?? ''" disabled /><small>攤</small></span></label>
+                <label class="field"><span>攤位價格 <b>*</b></span><span class="unit-control view-disabled-control"><input [value]="venueForm.boothPrice ?? ''" disabled /><small>元 / 攤</small></span></label>
               </div>
             </section>
           </div>
@@ -156,8 +156,12 @@
             </div>
           </section>
           <section class="venue-panel layout-upload-panel detail-layout-panel">
-            <h2 class="form-section-title"><i class="bi bi-map"></i>攤位配置圖 <b>*</b></h2>
-            <div class="detail-layout-preview"><img src="assets/images/organizer/booth/booth-layout-example.svg" alt="攤位配置圖" /></div>
+            <h2 class="form-section-title"><i class="bi bi-map"></i>攤位配置圖<b>*</b></h2>
+            <div class="detail-layout-preview">
+              @if (venueForm.layoutPreviewUrl) {
+                <img [src]="venueForm.layoutPreviewUrl" alt="攤位配置圖" />
+              }
+            </div>
           </section>
         }
       </main>

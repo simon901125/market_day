@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import type { ApplicationDetail, ApplicationStatus } from '../../../../models/interface/vendor/VendorApplicationDetail';
 import type { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
-import { Alert } from '../../../shared/alert';
+import { AlertService } from '../../../../core/services/alert.service';
 import { VENDOR_APPLICATION_RECORDS } from '../vendor-application-record/vendor-application-record';
 
 @Component({
@@ -24,7 +24,7 @@ export class VendorApplicationDetail {
 
   constructor(
     private route: ActivatedRoute,
-    private alert: Alert,
+    private alert: AlertService,
   ) {
     const applicationNo = this.route.snapshot.paramMap.get('applicationNo');
     const matchedRecord = VENDOR_APPLICATION_RECORDS.find((record) => record.applicationNo === applicationNo);

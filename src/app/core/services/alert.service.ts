@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import Swal, { SweetAlertResult } from 'sweetalert2';
+import Swal, { SweetAlertOptions, SweetAlertResult } from 'sweetalert2';
 
 export enum EnumSwalButton {
   Confirm = '確定',
@@ -8,41 +8,24 @@ export enum EnumSwalButton {
 
 export type AlertStatus = 'success' | 'error' | 'warning' | 'info' | 'question';
 
-/** 客製確認視窗設定，供需要較複雜內容版型的情境使用。 */
 export interface AlertHtmlConfirmOptions {
-  /** 視窗內容 HTML。 */
   html: string;
-
-  /** 確認按鈕文字。 */
   confirmButtonText?: string;
-
-  /** 取消按鈕文字。 */
   cancelButtonText?: string;
-
-  /** 額外套用在 SweetAlert popup 的 class。 */
   popupClass?: string;
 }
 
-/** 客製提示視窗設定，供成功送出等需要自訂內容版型的情境使用。 */
 export interface AlertHtmlOptions {
-  /** 視窗內容 HTML。 */
   html: string;
-
-  /** 確認按鈕文字。 */
   confirmButtonText?: string;
-
-  /** 額外套用在 SweetAlert popup 的 class。 */
   popupClass?: string;
-
-  /** 是否顯示右上角關閉按鈕。 */
   showCloseButton?: boolean;
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class Alert {
-  /** 顯示成功提示。 */
+export class AlertService {
   success(
     title: string,
     text = '',
@@ -51,7 +34,6 @@ export class Alert {
     return this.alert('success', title, text, confirmButtonText);
   }
 
-  /** 顯示錯誤提示。 */
   error(
     title: string,
     text = '',
@@ -60,7 +42,6 @@ export class Alert {
     return this.alert('error', title, text, confirmButtonText);
   }
 
-  /** 顯示警告提示。 */
   warning(
     title: string,
     text = '',
@@ -69,7 +50,6 @@ export class Alert {
     return this.alert('warning', title, text, confirmButtonText);
   }
 
-  /** 顯示一般資訊提示。 */
   info(
     title: string,
     text = '',
@@ -78,7 +58,6 @@ export class Alert {
     return this.alert('info', title, text, confirmButtonText);
   }
 
-  /** 顯示確認提示，回傳使用者是否按下確認。 */
   confirm(
     title: string,
     text = '',
@@ -98,7 +77,6 @@ export class Alert {
     }).then((result) => result.isConfirmed);
   }
 
-  /** 顯示客製 HTML 確認視窗，元件仍透過 Alert service 使用 SweetAlert。 */
   confirmHtml(options: AlertHtmlConfirmOptions): Promise<boolean> {
     return Swal.fire({
       html: options.html,
@@ -113,7 +91,6 @@ export class Alert {
     }).then((result) => result.isConfirmed);
   }
 
-  /** 顯示客製 HTML 提示視窗，仍沿用共用 SweetAlert 設定與按鈕樣式。 */
   successHtml(options: AlertHtmlOptions): Promise<SweetAlertResult> {
     return Swal.fire({
       html: options.html,
@@ -125,7 +102,29 @@ export class Alert {
     });
   }
 
-  /** 共用 SweetAlert2 設定。 */
+  custom<T = unknown>(options: SweetAlertOptions): Promise<SweetAlertResult<T>> {
+    const extraClass =
+      typeof options.customClass === 'object' && !Array.isArray(options.customClass)
+        ? options.customClass
+        : {};
+    const popupClass =
+      typeof extraClass['popup'] === 'string'
+        ? extraClass['popup']
+        : '';
+
+    return Swal.fire({
+      showCloseButton: true,
+      allowOutsideClick: false,
+      buttonsStyling: false,
+      ...options,
+      customClass: {
+        ...this.getCustomClass(popupClass),
+        ...extraClass,
+        popup: ['custom-swal-popup', popupClass].filter(Boolean).join(' '),
+      },
+    }) as Promise<SweetAlertResult<T>>;
+  }
+
   private alert(
     status: AlertStatus,
     title: string,
@@ -142,7 +141,6 @@ export class Alert {
     });
   }
 
-  /** 組合 SweetAlert 內容 HTML。 */
   private getHtml(status: AlertStatus, title: string, text = ''): string {
     return `
       <div class="custom-swal-icon ${status}">
@@ -155,7 +153,6 @@ export class Alert {
     `;
   }
 
-  /** 依狀態取得 Bootstrap Icon。 */
   private getIconClass(status: AlertStatus): string {
     const iconMap: Record<AlertStatus, string> = {
       success: 'bi-check-circle',
@@ -168,7 +165,6 @@ export class Alert {
     return iconMap[status];
   }
 
-  /** SweetAlert2 自訂 class。 */
   private getCustomClass(popupClass = '') {
     return {
       popup: ['custom-swal-popup', popupClass].filter(Boolean).join(' '),

@@ -11,7 +11,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
-import { Alert } from '../../shared/alert';
+import { AlertService } from '../../../core/services/alert.service';
 
 @Component({
   selector: 'app-auth-verify-email',
@@ -45,7 +45,7 @@ export class AuthVerifyEmail implements OnInit, OnDestroy {
   private resendTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
-    private readonly alert: Alert,
+    private readonly alert: AlertService,
     private readonly router: Router
   ) {}
 
