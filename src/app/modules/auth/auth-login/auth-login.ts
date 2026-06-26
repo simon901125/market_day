@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 
 import { AlertService } from '../../../core/services/alert.service';
 
@@ -30,14 +30,21 @@ export class AuthLogin {
   /** 防止重複送出登入。 */
   isSubmitting = false;
 
-  constructor(private readonly alert: AlertService) {}
+  /** 假資料帳號。 */
+  private readonly fakeAccount = 'Market';
+  /** 假資料密碼。 */
+  private readonly fakePassword = 'AB123456789';
+
+  constructor(
+    private readonly alert: AlertService,
+    private readonly router: Router) {}
 
   /** 切換密碼顯示狀態。 */
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  /** 登入；目前先保留假流程，之後改為呼叫 API。 */
+  /** 登入；目前使用假資料驗證，之後改為呼叫 API。 */
   async login(): Promise<void> {
     if (this.isSubmitting) {
       return;
@@ -45,19 +52,28 @@ export class AuthLogin {
 
     this.isSubmitting = true;
 
-    // TODO: 串接登入 API 後，依 API 回傳結果判斷成功或失敗。
-    const isLoginSuccess = false;
+    const isLoginSuccess =
+      this.email === this.fakeAccount &&
+      this.password === this.fakePassword;
 
     if (!isLoginSuccess) {
       this.isSubmitting = false;
+
       await this.alert.error(
         '登入失敗',
         '帳號或密碼錯誤，請重新確認後再登入。',
         '重新輸入'
       );
+
       return;
     }
 
+    //先用假資料
+    sessionStorage.setItem('isLogin', 'true');
+    sessionStorage.setItem('account', this.email);
+
     this.isSubmitting = false;
+
+    this.router.navigate(['/vendor/dash-board/home']);
   }
 }
