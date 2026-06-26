@@ -5,6 +5,13 @@ import { RouterLink, Router } from '@angular/router';
 
 import { AlertService } from '../../../core/services/alert.service';
 
+type LoginRole = 'vendor' | 'organizer';
+
+const DASHBOARD_HOME: Record<LoginRole, string> = {
+  vendor: '/vendor/dash-board/home',
+  organizer: '/organizer/dash-board/home',
+};
+
 @Component({
   selector: 'app-auth-login',
   imports: [CommonModule, FormsModule, RouterLink],
@@ -14,6 +21,9 @@ import { AlertService } from '../../../core/services/alert.service';
 export class AuthLogin {
   /** 表單標題，依登入角色由路由資料帶入。 */
   @Input() formTitle = '';
+
+  /** 登入入口角色，用來決定登入成功後導向的 dashboard。 */
+  @Input() role: LoginRole = 'vendor';
 
   /** 忘記密碼頁連結。 */
   @Input() forgotLink = '';
@@ -70,10 +80,11 @@ export class AuthLogin {
 
     //先用假資料
     sessionStorage.setItem('isLogin', 'true');
+    sessionStorage.setItem('userRole', this.role);
     sessionStorage.setItem('account', this.email);
 
     this.isSubmitting = false;
 
-    this.router.navigate(['/vendor/dash-board/home']);
+    this.router.navigate([DASHBOARD_HOME[this.role]]);
   }
 }

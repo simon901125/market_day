@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-login',
@@ -14,11 +14,17 @@ export class AdminLogin {
   password = '';
   showPassword = false;
 
+  constructor(private readonly router: Router) {}
+
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
   loginAdmin(): void {
-    console.log('admin login', this.email, this.password);
+    sessionStorage.setItem('isLogin', 'true');
+    sessionStorage.setItem('userRole', 'admin');
+    sessionStorage.setItem('account', this.email);
+
+    this.router.navigate(['/admin/dash-board/home']);
   }
 }

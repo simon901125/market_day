@@ -8,7 +8,11 @@
   [logoImg]="logoImg"
 >
   @if (isLogin) {
-    <app-auth-login [formTitle]="formTitle" [forgotLink]="forgotLink"></app-auth-login>
+    <app-auth-login
+      [formTitle]="formTitle"
+      [forgotLink]="forgotLink"
+      [role]="role"
+    ></app-auth-login>
   }
 
   @if (isRegister) {
