@@ -197,11 +197,11 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
         ];
       case ApplicationStatus.completed:
         return [
-          { key: 'returnDeposit', label: '保證金退還', variant: 'primary' },
+          { key: 'returnDeposit', label: '退還保證金', variant: 'primary' },
         ];
       case ApplicationStatus.refundPending:
         return [
-          { key: 'goPaymentManagement', label: '前往收款管理', icon: 'bi-cash-coin', variant: 'primary' },
+          { key: 'goPaymentManagement', label: '前往退款確認', icon: 'bi-cash-coin', variant: 'primary' },
         ];
       default:
         return [];

@@ -16,6 +16,15 @@ export interface OrganizerEventRow {
   signupProgress: string;
   /** 已付款攤主數。 */
   paidCount: string;
+  /** 草稿資料是否已完整，可送出審核。 */
+  canSubmitReview?: boolean;
   /** 主要操作按鈕文字。 */
   actionLabel: string;
+  actions?: {
+    key: string;
+    label: string;
+    variant?: 'primary' | 'outline' | 'danger' | 'success' | 'muted';
+    disabled?: boolean;
+    hint?: string;
+  }[];
 }

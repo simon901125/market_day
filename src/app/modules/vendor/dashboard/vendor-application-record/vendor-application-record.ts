@@ -312,7 +312,7 @@ export class VendorApplicationRecord {
   /** 每頁顯示筆數，依設計稿頁尾顯示 1 - 8 筆設定。 */
   pageSize = 6;
 
-  /** 報名狀態下拉選單選項，對齊 OrganizerEventManagement 的活動篩選使用方式。 */
+  /** 報名狀態下拉選單選項，對齊 OrganizerDashboardEventManagement 的活動篩選使用方式。 */
   readonly statusOptions = [
     '全部狀態',
     '待審核',
@@ -382,7 +382,7 @@ export class VendorApplicationRecord {
     this.currentPage = 1;
   }
 
-  /** 選取報名狀態後重設到第一頁，行為對齊 OrganizerEventManagement 的 selectStatus。 */
+  /** 選取報名狀態後重設到第一頁，行為對齊 OrganizerDashboardEventManagement 的 selectStatus。 */
   selectStatus(status: string): void {
     this.activeTab = this.statusValueMap[status] ?? 'all';
     this.currentPage = 1;

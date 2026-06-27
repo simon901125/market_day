@@ -255,10 +255,10 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
 
     return {
       key: 'deposit-return',
-      label: '保證金退回',
+      label: '退還保證金',
       variant: isEnabled ? 'primary' : 'muted',
       disabled: !isEnabled,
-      hint: isEnabled ? undefined : '活動進行中才可點選',
+      hint: isEnabled ? undefined : '報名場次結束後才可退還',
     };
   }
 
@@ -352,6 +352,29 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     const maxPage = Math.max(1, Math.ceil(rows.length / this.pageSize));
     this.currentPage = Math.min(Math.max(1, this.currentPage), maxPage);
     const startIndex = (this.currentPage - 1) * this.pageSize;
-    this.displayRows = rows.slice(startIndex, startIndex + this.pageSize);
+    this.displayRows = rows
+      .slice(startIndex, startIndex + this.pageSize)
+      .map((row) => this.toDisplayRow(row));
+  }
+
+  /** 依報名狀態產生列表操作按鈕，避免每筆假資料各自維護造成不一致。 */
+  private getRowActions(row: OrganizerRegistrationRow): OrganizerRegistrationAction[] {
+    switch (row.status) {
+      case ApplicationStatus.pendingReview:
+        return [{ key: 'review', label: '審核', variant: 'primary' }];
+      case ApplicationStatus.completed:
+        return [this.createDepositReturnAction(row.activityTime)];
+      case ApplicationStatus.refundPending:
+        return [{ key: 'refund-confirm', label: '前往退款確認', variant: 'primary' }];
+      default:
+        return [{ key: 'view', label: '查看', variant: 'outline' }];
+    }
+  }
+
+  private toDisplayRow(row: OrganizerRegistrationRow): OrganizerRegistrationRow {
+    return {
+      ...row,
+      actions: this.getRowActions(row),
+    };
   }
 }

@@ -65,6 +65,61 @@
   white-space: nowrap;
 }
 
+.table-action-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &.has-hint:hover .table-action-tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: translate(-50%, -6px);
+  }
+}
+
+.table-action-tooltip {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  width: max-content;
+  max-width: 220px;
+  padding: 8px 12px;
+  border: 1px solid rgba(231, 127, 49, 0.25);
+  border-radius: var(--radius-tag);
+  background: rgba(255, 252, 247, 0.88);
+  color: #4a3828;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.5;
+  text-align: center;
+  white-space: normal;
+  box-shadow: 0 4px 12px rgba(74, 56, 40, 0.12);
+  backdrop-filter: blur(6px);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0);
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease,
+    visibility 0.16s ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -5px;
+    width: 8px;
+    height: 8px;
+    border-right: 1px solid rgba(231, 127, 49, 0.25);
+    border-bottom: 1px solid rgba(231, 127, 49, 0.25);
+    background: rgba(255, 252, 247, 0.88);
+    transform: translateX(-50%) rotate(45deg);
+  }
+}
+
 .image-text-cell {
   display: flex;
   align-items: center;

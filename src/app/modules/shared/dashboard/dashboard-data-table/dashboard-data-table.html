@@ -44,20 +44,28 @@
                 @case ('action') {
                   <div class="table-actions">
                     @for (action of getRowActions(column, row); track action.key ?? action.label) {
-                      <button
-                        type="button"
-                        class="table-action"
-                        [class.primary]="action.variant === 'primary'"
-                        [class.danger]="action.variant === 'danger'"
-                        [class.success]="action.variant === 'success'"
-                        [class.muted]="action.variant === 'muted'"
-                        [disabled]="action.disabled"
-                        [title]="action.hint ?? ''"
-                        [style.min-width]="column.actionMinWidth"
-                        (click)="emitRowAction(row, action)"
+                      <span
+                        class="table-action-wrap"
+                        [class.has-hint]="action.hint"
+                        [attr.title]="action.hint ?? null"
                       >
-                        {{ action.label }}
-                      </button>
+                        <button
+                          type="button"
+                          class="table-action"
+                          [class.primary]="action.variant === 'primary'"
+                          [class.danger]="action.variant === 'danger'"
+                          [class.success]="action.variant === 'success'"
+                          [class.muted]="action.variant === 'muted'"
+                          [disabled]="action.disabled"
+                          [style.min-width]="column.actionMinWidth"
+                          (click)="emitRowAction(row, action)"
+                        >
+                          {{ action.label }}
+                        </button>
+                        @if (action.hint) {
+                          <span class="table-action-tooltip">{{ action.hint }}</span>
+                        }
+                      </span>
                     }
                   </div>
                 }

@@ -224,31 +224,28 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     switch (this.activity.status) {
       case ActivityStatus.draft:
         return [
-          { key: 'delete', label: '刪除活動', variant: 'danger' },
-          { key: 'edit', label: '編輯活動', variant: 'outline' },
+          { key: 'edit', label: '編輯', variant: 'outline' },
           { key: 'submit', label: '送出審核', variant: 'primary' },
+          { key: 'delete', label: '刪除', variant: 'danger' },
         ];
       case ActivityStatus.pendingReview:
         return [{ key: 'withdraw', label: '撤回申請', variant: 'outline' }];
       case ActivityStatus.revisionRequired:
         return [
-          { key: 'edit', label: '編輯活動', variant: 'outline' },
+          { key: 'edit', label: '編輯', variant: 'outline' },
           { key: 'resubmit', label: '重新送審', variant: 'primary' },
         ];
       case ActivityStatus.mapBuilding:
-        return [];
+        return [{ key: 'view', label: '查看', variant: 'outline' }];
       case ActivityStatus.readyToPublish:
         return [{ key: 'publish', label: '發布活動', variant: 'primary' }];
-      case ActivityStatus.published:
       case ActivityStatus.registrationOpen:
-      case ActivityStatus.full:
-      case ActivityStatus.active:
         return [
+          { key: 'view', label: '查看', variant: 'outline' },
           { key: 'unpublish', label: '下架活動', variant: 'danger' },
-          { key: 'view', label: '查看活動頁面', variant: 'outline' },
         ];
       default:
-        return [{ key: 'view', label: '查看活動頁面', variant: 'outline' }];
+        return [{ key: 'view', label: '查看', variant: 'outline' }];
     }
   }
 
@@ -1030,8 +1027,8 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
 
     this.form = {
       name: this.activity.name,
-      coverFileName: this.activity.nameImage.split('/').pop() ?? '尚未上傳活動封面',
-      coverPreviewUrl: this.activity.nameImage,
+      coverFileName: '',
+      coverPreviewUrl: '',
       categories: [],
       description: '',
       introduction: '',

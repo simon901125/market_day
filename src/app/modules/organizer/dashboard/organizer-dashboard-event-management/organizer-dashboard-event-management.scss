@@ -1,8 +1,8 @@
-﻿:host {
+:host {
   display: block;
 }
 
-.organizer-event-management {
+.organizer-dashboard-event-management {
   width: min(100%, var(--dashboard-content-width));
   min-height: calc(100dvh - 48px);
   margin: 0 auto;
@@ -34,7 +34,7 @@
 }
 
 @media (max-width: 768px) {
-  .organizer-event-management {
+  .organizer-dashboard-event-management {
     gap: 16px;
   }
 
@@ -42,3 +42,4 @@
     grid-template-columns: 1fr;
   }
 }
+

@@ -10,12 +10,12 @@ import { DateRangeSelector } from '../../../shared/date-range-selector/date-rang
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 
 @Component({
-  selector: 'app-organizer-event-management',
+  selector: 'app-organizer-dashboard-event-management',
   imports: [FormsModule, DashboardDataTable, DashboardPagination, Dropdown, DateRangeSelector, RouterLink],
-  templateUrl: './organizer-event-management.html',
-  styleUrl: './organizer-event-management.scss',
+  templateUrl: './organizer-dashboard-event-management.html',
+  styleUrl: './organizer-dashboard-event-management.scss',
 })
-export class OrganizerEventManagement implements OnInit {
+export class OrganizerDashboardEventManagement implements OnInit {
   /** 日期區間元件，用來取得列表搜尋的起訖日期。 */
   @ViewChild(DateRangeSelector) private dateRangeSelector?: DateRangeSelector;
 
@@ -57,7 +57,7 @@ export class OrganizerEventManagement implements OnInit {
     { key: 'status', label: '狀態', type: 'status', align: 'center' },
     { key: 'signupProgress', label: '報名人數', align: 'center' },
     { key: 'paidCount', label: '付款人數', align: 'center' },
-    { key: 'action', label: '操作', type: 'action', align: 'center' },
+    { key: 'action', label: '操作', type: 'action', align: 'end' },
   ];
 
   /**
@@ -71,7 +71,7 @@ export class OrganizerEventManagement implements OnInit {
       nameImage: 'assets/images/market/cards/market-card-01.png',
       date: '2026/06/15 - 2026/06/21',
       location: '台北市 信義區 草悟廣場',
-      status: ActivityStatus.published,
+      status: ActivityStatus.pendingReview,
       signupProgress: '128 / 150',
       paidCount: '118',
       actionLabel: '查看詳情',
@@ -82,7 +82,7 @@ export class OrganizerEventManagement implements OnInit {
       nameImage: 'assets/images/market/cards/market-card-02.png',
       date: '2026/06/27 - 2026/06/28',
       location: '台北市 中正區 華山文創園區',
-      status: ActivityStatus.full,
+      status: ActivityStatus.revisionRequired,
       signupProgress: '120 / 120',
       paidCount: '102',
       actionLabel: '查看詳情',
@@ -93,7 +93,7 @@ export class OrganizerEventManagement implements OnInit {
       nameImage: 'assets/images/market/cards/market-card-03.png',
       date: '2026/07/04 - 2026/07/05',
       location: '新北市 板橋區 新板萬坪公園',
-      status: ActivityStatus.registrationOpen,
+      status: ActivityStatus.mapBuilding,
       signupProgress: '100 / 100',
       paidCount: '96',
       actionLabel: '查看詳情',
@@ -104,7 +104,7 @@ export class OrganizerEventManagement implements OnInit {
       nameImage: 'assets/images/market/cards/market-card-04.png',
       date: '2026/07/18 - 2026/07/19',
       location: '台中市 西區 勤美草悟道',
-      status: ActivityStatus.registrationOpen,
+      status: ActivityStatus.readyToPublish,
       signupProgress: '64 / 90',
       paidCount: '58',
       actionLabel: '查看詳情',
@@ -126,7 +126,7 @@ export class OrganizerEventManagement implements OnInit {
       nameImage: 'assets/images/market/cards/market-card-06.png',
       date: '2026/08/15 - 2026/08/16',
       location: '桃園市 中壢區 青塘園',
-      status: ActivityStatus.registrationOpen,
+      status: ActivityStatus.full,
       signupProgress: '54 / 100',
       paidCount: '46',
       actionLabel: '查看詳情',
@@ -137,7 +137,7 @@ export class OrganizerEventManagement implements OnInit {
       nameImage: 'assets/images/market/cards/market-card-07.png',
       date: '2026/09/05 - 2026/09/06',
       location: '台南市 中西區 河樂廣場',
-      status: ActivityStatus.registrationOpen,
+      status: ActivityStatus.published,
       signupProgress: '48 / 80',
       paidCount: '41',
       actionLabel: '查看詳情',
@@ -148,7 +148,7 @@ export class OrganizerEventManagement implements OnInit {
       nameImage: 'assets/images/market/cards/market-card-08.png',
       date: '2026/09/19 - 2026/09/20',
       location: '新竹市 東區 關新公園',
-      status: ActivityStatus.registrationOpen,
+      status: ActivityStatus.active,
       signupProgress: '36 / 90',
       paidCount: '29',
       actionLabel: '查看詳情',
@@ -159,7 +159,7 @@ export class OrganizerEventManagement implements OnInit {
       nameImage: 'assets/images/market/cards/market-card-09.png',
       date: '2026/10/03 - 2026/10/04',
       location: '台中市 西屯區 中央公園',
-      status: ActivityStatus.readyToPublish,
+      status: ActivityStatus.registrationOpen,
       signupProgress: '-',
       paidCount: '-',
       actionLabel: '查看詳情',
@@ -221,13 +221,14 @@ export class OrganizerEventManagement implements OnInit {
     },
     {
       id: 15,
-      name: '草稿測試市集',
+      name: '草木試營小集',
       nameImage: 'assets/images/shared/no-image-placeholder.svg',
-      date: '-',
-      location: '尚未填寫',
+      date: '',
+      location: '',
       status: ActivityStatus.draft,
-      signupProgress: '-',
-      paidCount: '-',
+      signupProgress: '',
+      paidCount: '',
+      canSubmitReview: false,
       actionLabel: '查看詳情',
     },
   ];
@@ -320,6 +321,22 @@ export class OrganizerEventManagement implements OnInit {
   /** 點擊列表操作按鈕，帶著返回列表所需狀態前往活動詳情。 */
   onTableAction(action: DashboardTableAction): void {
     const activity = action.row as unknown as OrganizerEventRow;
+    if (action.key === 'edit') {
+      this.router.navigate(['/organizer/dash-board/activity/detail'], {
+        queryParams: {
+          edit: activity.id,
+          returnPage: this.currentPage,
+          returnStatus: this.selectedStatus || null,
+        },
+        state: {
+          activity,
+          returnPage: this.currentPage,
+          returnStatus: this.selectedStatus,
+        },
+      });
+      return;
+    }
+
     this.router.navigate(['/organizer/dash-board/activity/detail', activity.id], {
       queryParams: {
         returnPage: this.currentPage,
@@ -355,6 +372,71 @@ export class OrganizerEventManagement implements OnInit {
     const maxPage = Math.max(1, Math.ceil(rows.length / this.pageSize));
     this.currentPage = Math.min(Math.max(1, this.currentPage), maxPage);
     const startIndex = (this.currentPage - 1) * this.pageSize;
-    this.displayRows = rows.slice(startIndex, startIndex + this.pageSize);
+    this.displayRows = rows
+      .slice(startIndex, startIndex + this.pageSize)
+      .map((row) => this.toDisplayRow(row));
+  }
+
+  /** 依活動狀態產生列表操作按鈕，避免列表按鈕和狀態規則不一致。 */
+  private getRowActions(row: OrganizerEventRow): NonNullable<OrganizerEventRow['actions']> {
+    switch (row.status) {
+      case ActivityStatus.draft:
+        return [
+          { key: 'edit', label: '編輯', variant: 'outline' },
+          {
+            key: 'submit',
+            label: '送出審核',
+            variant: 'primary',
+            disabled: !row.canSubmitReview,
+            hint: row.canSubmitReview ? undefined : '請先完成所有必填資料後再送出審核',
+          },
+          { key: 'delete', label: '刪除', variant: 'danger' },
+        ];
+      case ActivityStatus.pendingReview:
+        return [{ key: 'withdraw', label: '撤回申請', variant: 'outline' }];
+      case ActivityStatus.revisionRequired:
+        return [
+          { key: 'edit', label: '編輯', variant: 'outline' },
+          { key: 'resubmit', label: '重新送審', variant: 'primary' },
+        ];
+      case ActivityStatus.readyToPublish:
+        return [{ key: 'publish', label: '發布活動', variant: 'primary' }];
+      case ActivityStatus.registrationOpen:
+        return [
+          { key: 'unpublish', label: '下架活動', variant: 'danger' },
+        ];
+      default:
+        return [{ key: 'view', label: '查看', variant: 'outline' }];
+    }
+  }
+
+  /** 列表顯示資料依狀態補齊操作按鈕與尚未產生的統計欄位。 */
+  private toDisplayRow(row: OrganizerEventRow): OrganizerEventRow {
+    const actions = this.getRowActions(row);
+    const pendingStatisticStatuses = [
+      ActivityStatus.pendingReview,
+      ActivityStatus.revisionRequired,
+      ActivityStatus.mapBuilding,
+      ActivityStatus.readyToPublish,
+      ActivityStatus.unpublished,
+    ];
+
+    if (row.status === ActivityStatus.draft) {
+      return {
+        ...row,
+        signupProgress: '',
+        paidCount: '',
+        actionLabel: actions[0]?.label ?? '查看',
+        actions,
+      };
+    }
+
+    return {
+      ...row,
+      signupProgress: pendingStatisticStatuses.includes(row.status) ? '-' : row.signupProgress,
+      paidCount: pendingStatisticStatuses.includes(row.status) ? '-' : row.paidCount,
+      actionLabel: actions[0]?.label ?? '查看',
+      actions,
+    };
   }
 }

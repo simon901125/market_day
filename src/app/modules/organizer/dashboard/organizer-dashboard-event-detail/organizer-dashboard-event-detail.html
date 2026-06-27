@@ -44,16 +44,17 @@
       </aside>
 
       <main
-        class="detail-readonly-content"
-        [class.basic-view-content]="currentStep === 0"
+        class="detail-readonly-content event-form"
+        [class.basic-info-form]="currentStep === 0"
         [class.time-view-content]="currentStep === 1"
         [class.venue-booth-form]="currentStep === 2"
       >
         @if (currentStep === 0) {
-          <div class="detail-section-heading">
-            <h2><i class="bi bi-calendar-event"></i>活動基本資料</h2>
+          <h2 class="form-section-title">
+            <i class="bi bi-calendar-event"></i>
+            活動基本資料
             <span class="status-badge" [class]="statusClass">{{ activity.status }}</span>
-          </div>
+          </h2>
           <div class="basic-info-layout">
             <div class="basic-info-left">
               <label class="field">
@@ -72,9 +73,18 @@
                 </div>
               </fieldset>
             </div>
-            <div class="field detail-cover-field">
+            <div class="field cover-field">
               <span>活動封面照 <b>*</b></span>
-              <div class="detail-cover"><img [src]="activity.nameImage" [alt]="activity.name" /></div>
+              @if (activity.nameImage.includes('no-image-placeholder')) {
+                <div class="cover-preview-frame view-disabled-control readonly-cover-frame">
+                  <i class="bi bi-image"></i>
+                  <span>尚未上傳圖片</span>
+                </div>
+              } @else {
+                <div class="cover-preview-frame has-preview view-disabled-control readonly-cover-frame">
+                  <img [src]="activity.nameImage" [alt]="activity.name" />
+                </div>
+              }
             </div>
           </div>
 
@@ -152,6 +162,11 @@
             <div class="booth-zone-grid">
               @for (zone of boothZones; track zone.name) {
                 <article class="booth-zone-card readonly-zone-card"><div class="zone-title-row"><span class="zone-dot" [style.background]="zone.color"></span><strong>{{ zone.name }}</strong></div><small>攤位數量</small><div class="zone-count-row"><strong>{{ zone.count }}</strong><span>攤</span></div></article>
+              } @empty {
+                <div class="detail-empty-media booth-zone-empty">
+                  <i class="bi bi-grid-3x3-gap"></i>
+                  <span>尚未設定攤位分區</span>
+                </div>
               }
             </div>
           </section>
@@ -160,6 +175,11 @@
             <div class="detail-layout-preview">
               @if (venueForm.layoutPreviewUrl) {
                 <img [src]="venueForm.layoutPreviewUrl" alt="攤位配置圖" />
+              } @else {
+                <div class="detail-empty-media">
+                  <i class="bi bi-map"></i>
+                  <span>尚未上傳配置圖</span>
+                </div>
               }
             </div>
           </section>
