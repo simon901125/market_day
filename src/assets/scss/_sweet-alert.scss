@@ -610,3 +610,107 @@
   font-size: 0.9rem;
   font-weight: 800;
 }
+
+.restore-confirm-swal {
+  width: min(480px, calc(100vw - 32px)) !important;
+  padding: 1.65rem 2.1rem 1.55rem !important;
+  border-radius: 14px !important;
+  background: var(--bg-white) !important;
+  box-shadow: var(--shadow-card) !important;
+
+  .custom-swal-html {
+    text-align: center !important;
+  }
+
+  .custom-swal-actions {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 14px !important;
+    margin-top: 1.25rem !important;
+  }
+
+  .custom-swal-confirm,
+  .custom-swal-cancel {
+    height: 46px !important;
+    padding: 0 1.4rem !important;
+    border-radius: 7px !important;
+    font-size: 1rem !important;
+    font-weight: 900 !important;
+  }
+
+  .custom-swal-confirm {
+    width: 180px !important;
+    min-width: 180px !important;
+    background: var(--primary-color) !important;
+
+    &:hover {
+      background: var(--primary-hover) !important;
+    }
+  }
+
+  .custom-swal-cancel {
+    width: 112px !important;
+    min-width: 112px !important;
+    border: 0 !important;
+    background: #f3f4f6 !important;
+    color: #4b5563 !important;
+
+    &:hover {
+      background: #e5e7eb !important;
+    }
+  }
+}
+
+.restore-confirm-content {
+  color: var(--text-dark);
+  text-align: center;
+
+  h3 {
+    margin: 0.85rem 0 0.55rem;
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+
+  p {
+    margin: 0 0 0.9rem;
+    color: var(--text-normal);
+    font-size: 0.92rem;
+    font-weight: 800;
+    line-height: 1.7;
+    letter-spacing: 0.03em;
+  }
+}
+
+.restore-confirm-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--primary-color);
+  font-size: 3.3rem;
+}
+
+.restore-confirm-effects {
+  margin-top: 0.75rem;
+  padding: 0.8rem 1rem 0.8rem 1.3rem;
+  border-radius: var(--radius-card);
+  background: #f7f7f7;
+  text-align: left;
+
+  ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  li {
+    color: var(--text-normal);
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1.6;
+  }
+}
