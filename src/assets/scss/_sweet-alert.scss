@@ -693,6 +693,103 @@
   font-size: 3.3rem;
 }
 
+.require-supplement-swal {
+  width: min(480px, calc(100vw - 32px)) !important;
+  padding: 1.65rem 2.1rem 1.55rem !important;
+  border-radius: 14px !important;
+  background: var(--bg-white) !important;
+  box-shadow: var(--shadow-card) !important;
+  overflow: visible !important;
+
+  .custom-swal-html {
+    text-align: left !important;
+  }
+
+  .custom-swal-actions {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 14px !important;
+    margin-top: 1rem !important;
+  }
+
+  .custom-swal-confirm,
+  .custom-swal-cancel {
+    height: 46px !important;
+    padding: 0 1.4rem !important;
+    border-radius: 7px !important;
+    font-size: 1rem !important;
+    font-weight: 900 !important;
+  }
+
+  .custom-swal-confirm {
+    width: 160px !important;
+    min-width: 160px !important;
+    background: var(--primary-color) !important;
+
+    &:hover {
+      background: var(--primary-hover) !important;
+    }
+  }
+
+  .custom-swal-cancel {
+    width: 112px !important;
+    min-width: 112px !important;
+    border: 0 !important;
+    background: #f3f4f6 !important;
+    color: #4b5563 !important;
+
+    &:hover {
+      background: #e5e7eb !important;
+    }
+  }
+
+  .supplement-swal-header {
+    text-align: center;
+    margin-bottom: 0.25rem;
+  }
+
+  .supplement-swal-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-tag);
+    background: var(--bg-white);
+    color: var(--text-dark);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 800;
+    outline: none;
+    resize: none;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+    }
+  }
+
+  .supplement-swal-counter {
+    display: block;
+    text-align: right;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-weight: 700;
+  }
+
+  .supplement-swal-reason-box {
+    padding: 0.8rem 0.9rem;
+    border-radius: var(--radius-card);
+    background: #f7f7f7;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}
+
 .restore-confirm-effects {
   margin-top: 0.75rem;
   padding: 0.8rem 1rem 0.8rem 1.3rem;

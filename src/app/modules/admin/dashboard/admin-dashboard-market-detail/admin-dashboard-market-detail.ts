@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AlertService } from '../../../../core/services/alert.service';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { ActivityListItem } from '../../../../models/interface/admin/ActivityListItem';
 import { AdminMarketDetail } from '../../../../models/interface/admin/AdminMarketDetail';
@@ -35,8 +36,8 @@ const MOCK_ACTIVITIES: ActivityListItem[] = [
 
 /** 模擬後端詳細資料，串接 API 後可移除 */
 const MOCK_DETAIL: AdminMarketDetail = {
-  activityId: 1,
-  activityStatus: ActivityStatus.pendingReview,
+  activityId: 2,
+  activityStatus: ActivityStatus.pendingUnpublish,
   activityInfo: {
     name: '夏日綠意市集',
     type: '生活文創・生活選物・綠市場',
@@ -109,6 +110,7 @@ export class AdminDashboardMarketDetail implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private alert: AlertService,
   ) {}
 
   activity: ActivityListItem | null = null;
@@ -138,21 +140,161 @@ export class AdminDashboardMarketDetail implements OnInit {
     this.router.navigate(['/admin/dash-board/activity']);
   }
 
-  onRequireSupplementHandler = (): void => {
-    // TODO: 呼叫後端 API，將活動狀態改為「補件中」
+  onRequireSupplementHandler = async (): Promise<void> => {
+    await this.openRequireSupplementForm();
   };
 
-  onApproveHandler = (): void => {
-    // TODO: 呼叫後端 API，將活動狀態改為「地圖建置中」
-  };
+  private async openRequireSupplementForm(initialReason = ''): Promise<void> {
+    const result = await this.alert.custom<string>({
+      html: `
+        <div class="registration-swal-content">
+          <div class="supplement-swal-header">
+            <div class="restore-confirm-icon">
+              <i class="bi bi-exclamation-circle"></i>
+            </div>
+            <h3>要求補件</h3>
+            <p class="registration-swal-main">此活動申請資料需補件，<br>請填寫補件原因後送出通知。</p>
+          </div>
+          <label class="registration-swal-field">
+            <span>補件原因</span>
+            <textarea id="supplementReason" class="supplement-swal-textarea" maxlength="200" placeholder="請輸入需補充或修正的內容"></textarea>
+            <em class="supplement-swal-counter" id="supplementCount">0/200</em>
+          </label>
+          <p class="registration-swal-field-error" aria-live="polite"></p>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: '確認送出',
+      cancelButtonText: '取消',
+      reverseButtons: true,
+      customClass: {
+        popup: 'require-supplement-swal',
+      },
+      didOpen: () => {
+        const textarea = document.getElementById('supplementReason') as HTMLTextAreaElement;
+        const counter = document.getElementById('supplementCount');
+        if (initialReason && textarea) {
+          textarea.value = initialReason;
+          if (counter) counter.textContent = `${initialReason.length}/200`;
+        }
+        textarea?.addEventListener('input', () => {
+          if (counter) counter.textContent = `${textarea.value.length}/200`;
+        });
+      },
+      preConfirm: () => {
+        const textarea = document.getElementById('supplementReason') as HTMLTextAreaElement;
+        const value = textarea?.value?.trim() ?? '';
+        const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
+        if (!value) {
+          if (error) error.textContent = '請填寫補件原因';
+          return false;
+        }
+        if (error) error.textContent = '';
+        return value;
+      },
+    });
 
-  onMapBuildingDoneHandler = (): void => {
-    // TODO: 呼叫後端 API，將活動狀態改為「待發布」
-  };
-
-  onUnpublishHandler = ():void => {
-     // TODO: 呼叫後端 API，將活動狀態改為「已下架」
+    if (!result.isConfirmed || !result.value) return;
+    await this.openRequireSupplementConfirm(result.value);
   }
+
+  private async openRequireSupplementConfirm(reason: string): Promise<void> {
+    const escapedReason = reason
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    const result = await this.alert.custom({
+      html: `
+        <div class="registration-swal-content">
+          <div class="supplement-swal-header">
+            <div class="restore-confirm-icon">
+              <i class="bi bi-exclamation-circle"></i>
+            </div>
+            <h3>要求補件確認</h3>
+            <p class="registration-swal-main">確定要求此活動申請補件嗎？<br>送出後，主辦方將收到補件通知，<br>活動狀態將變更為「補件中」。</p>
+          </div>
+          <div class="registration-swal-field">
+            <span>補件原因</span>
+            <div class="supplement-swal-reason-box">${escapedReason}</div>
+          </div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: '確認送出',
+      cancelButtonText: '返回修改',
+      reverseButtons: true,
+      customClass: {
+        popup: 'require-supplement-swal',
+      },
+    });
+
+    if ((result.dismiss as string) === 'cancel') {
+      await this.openRequireSupplementForm(reason);
+      return;
+    }
+
+    if (!result.isConfirmed) return;
+
+    // TODO: 呼叫後端 API，將活動狀態改為「補件中」
+    this.alert.success(
+      '補件要求已送出',
+      '補件要求成功送出。<br />活動狀態更新為「補件中」，已通知送主辦方補件。',
+      '確認',
+    );
+  }
+
+  onApproveHandler = async (): Promise<void> => {
+    const confirmed = await this.alert.confirm(
+      '審核通過',
+      '確定通過此活動申請?<br />活動將進入「地圖建置中」狀態，待完成攤位地圖建置後開放報名。',
+      '確認送出',
+      '取消',
+    );
+
+    if (!confirmed) return;
+
+    // TODO: 呼叫後端 API，將活動狀態改為「地圖建置中」
+    this.alert.success(
+      '審核通過',
+      '活動資料已審核通過。<br />活動已進入「地圖建置中狀態」，請盡速建立攤位地圖。',
+      '知道了',
+    );
+  };
+
+  onMapBuildingDoneHandler = async (): Promise<void> => {
+    const confirmed = await this.alert.confirm(
+      '確定送出地圖建置',
+      '確定送出地圖建置嗎?<br />送出後活動狀態將更新為 「待發布」，主辦方確認後即可正式發布活動',
+      '確認送出',
+      '取消',
+    );
+
+    if (!confirmed) return;
+
+    // TODO: 呼叫後端 API，將活動狀態改為「待發布」
+    this.alert.success(
+      '地圖建置已送出',
+      '地圖建置成功送出。<br />活動狀態更新為「待發布」， 並通知主辦方確認活動內容。',
+    );
+  };
+
+  onUnpublishHandler = async (): Promise<void> => {
+    const confirmed = await this.alert.confirm(
+      '確定下架活動',
+      '確定要下架此活動嗎?<br />下架後活動狀態將更新為「已下架」，主辦方將收到通知。',
+      '確認下架',
+      '取消',
+    );
+
+    if (!confirmed) return;
+
+    // TODO: 呼叫後端 API，將活動狀態改為「已下架」
+    this.alert.success(
+      '活動已下架',
+      '活動已成功下架。<br />活動狀態更新為「已下架」，已通知主辦方。',
+    );
+  };
 
   downloadImg = (): void => {
     // TODO: 呼叫後端 API，下載圖片
