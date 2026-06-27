@@ -17,7 +17,7 @@ import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organ
 import { OrganizerAbout } from './modules/organizer/frontend/organizer-about/organizer-about';
 import { UserBrandSearch } from './modules/user/frontend/brand/user-brand-search/user-brand-search';
 //--- admin ---
-import { AdminLogin } from './modules/admin/dashboard/admin-login/admin-login';
+import { AdminLogin } from './modules/admin/admin-login/admin-login';
 import { AdminDashboardHome } from './modules/admin/dashboard/admin-dashboard-home/admin-dashboard-home';
 import { AdminDashboardNotification } from './modules/admin/dashboard/admin-dashboard-notification/admin-dashboard-notification';
 import { AdminDashboardMarketManagemant } from './modules/admin/dashboard/admin-dashboard-market-managemant/admin-dashboard-market-managemant';
