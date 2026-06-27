@@ -81,19 +81,27 @@ export class AdminDashboardHome extends AdminDashboardNotification implements On
    */
   todoItems: TodoItem[] = [
     {
-      icon: 'bi-person-badge',
+      icon: 'bi-calendar-event',
       count: 5,
       unit: '筆',
-      label: '待審核主辦方',
-      path: '/admin/dash-board/users',
+      label: '活動審核',
+      path: '/admin/dash-board/activity',
       iconColor: 'orange',
     },
     {
-      icon: 'bi-wallet2',
+      icon: 'bi-map',
       count: 2,
       unit: '筆',
-      label: '待補件確認',
-      path: '/admin/dash-board/users',
+      label: '活動地圖建置',
+      path: '/admin/dash-board/activity',
+      iconColor: 'orange',
+    },
+    {
+      icon: 'bi-arrow-down',
+      count: 2,
+      unit: '筆',
+      label: '活動下架申請',
+      path: '/admin/dash-board/activity',
       iconColor: 'orange',
     },
     {
