@@ -95,6 +95,7 @@
   }
 }
 
+// -----------------------------
 .custom-swal-close {
   top: 0.75rem !important;
   right: 0.75rem !important;
@@ -109,14 +110,8 @@
     background: transparent !important;
   }
 }
-
+//confrim 是否退款 
 .refund-confirm-swal {
-  width: min(600px, calc(100vw - 32px)) !important;
-  padding: 2rem 2.4rem 1.6rem !important;
-  border-radius: var(--radius-section) !important;
-  background: var(--bg-white) !important;
-  box-shadow: var(--shadow-card) !important;
-
   .custom-swal-html {
     text-align: left !important;
   }
@@ -132,16 +127,6 @@
   .custom-swal-cancel {
     width: 100% !important;
     min-width: 0 !important;
-    height: 3.2rem !important;
-    border-radius: var(--radius-tag) !important;
-    font-size: 1.05rem !important;
-    font-weight: 900 !important;
-  }
-
-  .custom-swal-cancel {
-    border: 1px solid var(--text-light) !important;
-    background: var(--bg-white) !important;
-    color: var(--text-dark) !important;
   }
 }
 
@@ -154,30 +139,30 @@
     font-weight: 900;
   }
 }
-
+//確認是否退款 >> <p>
 .refund-confirm-lead {
-  margin: 0 0 1.4rem;
-  padding-bottom: 1.25rem;
+  margin: 0 0 0.5rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid var(--border-light);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 800;
-  line-height: 1.7;
+  line-height: 1;
 }
 
 .refund-confirm-section {
   display: grid;
-  grid-template-columns: 36px 1fr;
+  grid-template-columns: 32px 1fr;
   gap: 1rem;
-  padding: 1.2rem 0;
+  padding: 1rem 0;
   border-bottom: 1px solid var(--border-light);
 
   i {
     color: var(--primary-color);
-    font-size: 1.45rem;
+    font-size: 1.30rem;
   }
 
   h4 {
-    margin: 0 0 0.6rem;
+    margin: 0 0 0.5rem;
     font-size: 1.1rem;
     font-weight: 900;
   }
@@ -185,8 +170,9 @@
   p {
     margin: 0;
     color: var(--text-normal);
+    font-size: 0.80rem;
     font-weight: 800;
-    line-height: 1.6;
+    line-height: 1.1;
   }
 }
 
@@ -208,14 +194,14 @@
 }
 
 .refund-confirm-notice {
-  margin-top: 1.2rem;
+  margin-top: 1.1rem;
   padding: 1rem 1rem 1rem 3rem;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-card);
   background: var(--primary-soft);
   position: relative;
 
-  > i {
+   i {
     position: absolute;
     top: 1.05rem;
     left: 1rem;
@@ -237,9 +223,9 @@
 
   li {
     color: var(--text-normal);
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     font-weight: 800;
-    line-height: 1.8;
+    line-height: 1.5;
   }
 }
 
@@ -252,26 +238,8 @@
 }
 
 .refund-success-swal {
-  width: min(560px, calc(100vw - 32px)) !important;
-  padding: 2.8rem 4rem 2.3rem !important;
-  border-radius: var(--radius-section) !important;
-  background: var(--bg-white) !important;
-  box-shadow: var(--shadow-card) !important;
-
   .custom-swal-html {
     text-align: center !important;
-  }
-
-  .custom-swal-actions {
-    margin-top: 1.8rem !important;
-  }
-
-  .custom-swal-confirm {
-    width: min(270px, 100%) !important;
-    height: 3.25rem !important;
-    border-radius: var(--radius-tag) !important;
-    font-size: 1.1rem !important;
-    font-weight: 900 !important;
   }
 }
 
@@ -307,26 +275,8 @@
 }
 
 .payment-result-swal {
-  width: min(520px, calc(100vw - 32px)) !important;
-  padding: 2.6rem 3.2rem 2rem !important;
-  border-radius: var(--radius-section) !important;
-  background: var(--bg-white) !important;
-  box-shadow: var(--shadow-card) !important;
-
   .custom-swal-html {
     text-align: center !important;
-  }
-
-  .custom-swal-actions {
-    margin-top: 1.8rem !important;
-  }
-
-  .custom-swal-confirm {
-    width: 100% !important;
-    height: 3.25rem !important;
-    border-radius: var(--radius-tag) !important;
-    font-size: 1.08rem !important;
-    font-weight: 900 !important;
   }
 }
 
@@ -370,12 +320,6 @@
 
 .registration-action-swal,
 .registration-result-swal {
-  width: min(480px, calc(100vw - 32px)) !important;
-  padding: 1.65rem 2.1rem 1.55rem !important;
-  border-radius: 14px !important;
-  background: var(--bg-white) !important;
-  box-shadow: var(--shadow-card) !important;
-
   .custom-swal-html {
     text-align: center !important;
   }
@@ -383,57 +327,17 @@
   .custom-swal-actions {
     display: flex !important;
     justify-content: center !important;
-    gap: 14px !important;
-    margin-top: 1.25rem !important;
-  }
-
-  .custom-swal-confirm,
-  .custom-swal-cancel {
-    height: 46px !important;
-    padding: 0 1.4rem !important;
-    border-radius: 7px !important;
-    font-size: 1rem !important;
-    font-weight: 900 !important;
-  }
-
-  .custom-swal-confirm {
-    width: 180px !important;
-    min-width: 180px !important;
-    background: var(--primary-color) !important;
-
-    &:hover {
-      background: var(--primary-hover) !important;
-    }
-  }
-
-  .custom-swal-cancel {
-    width: 112px !important;
-    min-width: 112px !important;
-    border: 0 !important;
-    background: #f3f4f6 !important;
-    color: #4b5563 !important;
-
-    &:hover {
-      background: #e5e7eb !important;
-    }
   }
 }
 
 .registration-result-swal {
-  width: min(460px, calc(100vw - 32px)) !important;
-
   .custom-swal-actions {
     display: flex !important;
     justify-content: center !important;
   }
-
-  .custom-swal-confirm {
-    width: min(260px, 100%) !important;
-  }
 }
 
 .registration-reject-form-swal {
-  width: min(500px, calc(100vw - 32px)) !important;
   overflow: visible !important;
 
   .custom-swal-html {
