@@ -150,6 +150,10 @@ export class AdminDashboardMarketDetail implements OnInit {
     // TODO: 呼叫後端 API，將活動狀態改為「待發布」
   };
 
+  onUnpublishHandler = ():void => {
+     // TODO: 呼叫後端 API，將活動狀態改為「已下架」
+  }
+
   downloadImg = (): void => {
     // TODO: 呼叫後端 API，下載圖片
   };
