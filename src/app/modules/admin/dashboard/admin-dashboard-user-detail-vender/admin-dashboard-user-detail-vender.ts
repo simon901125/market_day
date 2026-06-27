@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AlertService } from '../../../../core/services/alert.service';
 import { UserStatus } from '../../../../models/status/UserStatus';
 import { ApplicationStatus } from '../../../../models/status/ApplicationStatus';
 import { PaymentStatus } from '../../../../models/status/PaymentStatus';
@@ -78,6 +79,7 @@ export class AdminDashboardUserDetailVender implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private alert: AlertService,
   ) {}
 
   readonly UserStatus = UserStatus;
@@ -166,8 +168,65 @@ export class AdminDashboardUserDetailVender implements OnInit {
     this.router.navigate(['/admin/dash-board/users']);
   }
 
-  toggleAccountStatus(): void {
-    // TODO: 呼叫後端 API 切換帳號狀態
+  async toggleAccountStatus(): Promise<void> {
+    const username = this.detail?.data.userInfo.username ?? '';
+    const email = this.detail?.data.userInfo.email ?? '';
+
+    if (this.isAccountActive) {
+      const confirmed = await this.alert.confirmHtml({
+        html: `
+          <div class="restore-confirm-content">
+            <div class="restore-confirm-icon"><i class="bi bi-exclamation-circle"></i></div>
+            <h3>停用帳號確認</h3>
+            <p>確定要停用使用者「${username}」(${email})的帳號嗎？</p>
+            <div class="restore-confirm-effects">
+              <ul>
+                <li>該帳號將無法登入管理後台與使用相關功能</li>
+                <li>進行中的活動或報名資料不會被刪除</li>
+                <li>可隨時在使用者管理頁面中恢復該帳號</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        confirmButtonText: '確認停用',
+        cancelButtonText: '取消',
+        popupClass: 'restore-confirm-swal',
+      });
+      if (!confirmed) return;
+      // TODO: 呼叫後端 API 將帳號狀態改為「已停用」
+      this.detail!.data.userInfo.accountStatus = UserStatus.disabled;
+      this.alert.success(
+        '帳號已停用',
+        `使用者「${username}」 的帳號已成功停用。 <br />停用期間將無法登入系統，且無法進行報名、付款及其他操作。`,
+      );
+    } else {
+      const confirmed = await this.alert.confirmHtml({
+        html: `
+          <div class="restore-confirm-content">
+            <div class="restore-confirm-icon"><i class="bi bi-exclamation-circle"></i></div>
+            <h3>恢復帳號確認</h3>
+            <p>確定要恢復使用者「${username}」(${email})的帳號嗎？</p>
+            <div class="restore-confirm-effects">
+              <ul>
+                <li>該帳號可重新登入系統</li>
+                <li>可繼續使用原本角色的相關功能</li>
+                <li>原有資料與紀錄將保留</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        confirmButtonText: '確認恢復',
+        cancelButtonText: '取消',
+        popupClass: 'restore-confirm-swal',
+      });
+      if (!confirmed) return;
+      // TODO: 呼叫後端 API 將帳號狀態改為「正常」
+      this.detail!.data.userInfo.accountStatus = UserStatus.active;
+      this.alert.success(
+        '帳號已恢復',
+        `使用者「${username}」 的帳號已成功恢復。<br />該帳號可重新登入系統並使用原本角色的相關功能。`,
+      );
+    }
   }
 
   onViewRecord(_record: AdminVendorDetail['data']['activityRegistrationRecords']['items'][number]): void {

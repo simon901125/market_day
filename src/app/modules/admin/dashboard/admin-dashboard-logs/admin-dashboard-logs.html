@@ -1,5 +1,7 @@
-﻿<section class="admin-logs page-transition">
-  <h1 class="page-title">操作紀錄</h1>
+﻿<section class="admin-logs dashboard-list-page page-transition">
+  <header class="app-page-header">
+    <h1 class="app-page-title">操作紀錄</h1>
+  </header>
 
   <div class="app-filter-bar logs-filter">
     <label class="app-search-field">
@@ -34,7 +36,7 @@
     </button>
   </div>
 
-  <div class="table-wrapper" #tableWrapper>
+  <div class="table-wrapper dashboard-list-content" #tableWrapper>
     <table class="logs-table">
       <thead>
         <tr>
@@ -66,6 +68,7 @@
   </div>
 
   <app-dashboard-pagination
+    class="dashboard-list-pagination"
     [currentPage]="currentPage"
     [pageSize]="pageSize"
     [totalItems]="totalItems"

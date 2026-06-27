@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 
 import { OrganizerDashboardRegistrationDetail } from './organizer-dashboard-registration-detail';
 
@@ -8,9 +9,20 @@ describe('OrganizerDashboardRegistrationDetail', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OrganizerDashboardRegistrationDetail]
-    })
-    .compileComponents();
+      imports: [OrganizerDashboardRegistrationDetail],
+      providers: [
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: convertToParamMap({ id: '1' }),
+              queryParamMap: convertToParamMap({}),
+            },
+          },
+        },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(OrganizerDashboardRegistrationDetail);
     component = fixture.componentInstance;

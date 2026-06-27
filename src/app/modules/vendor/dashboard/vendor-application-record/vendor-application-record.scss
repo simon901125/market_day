@@ -3,31 +3,30 @@
 }
 
 .application-page {
-  width: 100%;
-  max-width: 1200px;
-  height: calc(100vh - 48px);
+  width: min(100%, var(--dashboard-content-width));
+  min-height: calc(100vh - 48px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  overflow: hidden;
+  gap: 12px;
+  overflow: visible;
   color: var(--text-dark);
-}
 
-h1 {
-  margin: 0;
-  color: var(--text-dark);
-  font-size: 25px;
-  font-weight: 900;
-  line-height: 1.2;
+  app-dashboard-pagination {
+    flex: 0 0 40px;
+    display: block;
+  }
 }
 
 .vendor-record-filter {
   grid-template-columns: minmax(220px, 1.2fr) minmax(170px, 0.8fr) minmax(300px, 1.4fr) 92px;
 }
 
+.dashboard-list-content {
+  overflow: visible;
+}
+
 .record-card {
-  flex: 0 0 auto;
   min-height: 0;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-card);
@@ -84,17 +83,17 @@ table {
 
   th:nth-child(2),
   td:nth-child(2) {
-    width: 270px;
+    width: 210px;
   }
 
   th:nth-child(3),
   td:nth-child(3) {
-    width: 300px;
+    width: 250px;
   }
 
   th:nth-child(4),
   td:nth-child(4) {
-    width: 140px;
+    width: 130px;
   }
 
   th:nth-child(5),
@@ -105,8 +104,10 @@ table {
 
   th:nth-child(6),
   td:nth-child(6) {
-    width: 150px;
-    text-align: right;
+    width: 210px;
+    display: flex;
+    justify-content: center; /* 水平置中 */
+    align-items: center;
   }
 }
 
@@ -156,7 +157,8 @@ table {
     color: #1680e5;
   }
 
-  &.completed {
+  &.completed,
+  &.deposit-refunded {
     background: #ecfdf3;
     color: #16a34a;
   }
@@ -234,11 +236,6 @@ table {
   height: 72px;
   color: var(--text-light);
   text-align: center;
-}
-
-app-dashboard-pagination {
-  flex: 0 0 40px;
-  display: block;
 }
 
 @media (max-width: 1200px) {

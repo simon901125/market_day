@@ -427,8 +427,7 @@
   }
 }
 
-.main-btn,
-.outline-btn {
+.main-btn {
   width: 100%;
   height: 54px;
   border-radius: 8px;
@@ -446,21 +445,21 @@
   }
 }
 
-.outline-btn {
-  margin-top: 14px;
-  border: 1px solid var(--primary-hover);
-  background: var(--bg-white);
-  color: var(--primary-color);
+// .outline-btn {
+//   margin-top: 14px;
+//   border: 1px solid var(--primary-hover);
+//   background: var(--bg-white);
+//   color: var(--primary-color);
 
-  &:hover {
-    background: var(--bg-soft);
-  }
-}
+//   &:hover {
+//     background: var(--bg-soft);
+//   }
+// }
 
 .side-note {
   margin-top: 24px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border-light);
+  padding-top: 8px;
+  // border-top: 1px solid var(--border-light);
 
   p {
     display: flex;

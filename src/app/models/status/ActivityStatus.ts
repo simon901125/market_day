@@ -16,6 +16,7 @@ export class ActivityStatus {
   static readonly published = '品牌已公開';
   static readonly active = '進行中';
   static readonly ended = '已結束';
+  static readonly pendingUnpublish = '下架申請中';
   static readonly unpublished = '已下架';
 
   /** 所有可顯示的活動狀態。 */
@@ -30,6 +31,7 @@ export class ActivityStatus {
     ActivityStatus.published,
     ActivityStatus.active,
     ActivityStatus.ended,
+    ActivityStatus.pendingUnpublish,
     ActivityStatus.unpublished,
   ];
 
@@ -51,6 +53,7 @@ export class ActivityStatus {
     [ActivityStatus.published]: 'tag-teal',
     [ActivityStatus.active]: 'tag-blue',
     [ActivityStatus.ended]: 'tag-grey',
+    [ActivityStatus.pendingUnpublish]: 'tag-orange',
     [ActivityStatus.unpublished]: 'tag-red',
   };
 

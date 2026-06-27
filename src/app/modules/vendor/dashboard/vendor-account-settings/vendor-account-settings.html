@@ -1,95 +1,11 @@
-<section class="account-settings-page">
-  <div class="page-preview" aria-hidden="true">
-    <div>
-      <h1>歡迎回來，{{ account.name }}！</h1>
-      <p>這裡幫你整理近期需要處理的報名與通知。</p>
-    </div>
-
-    <div class="preview-summary">
-      <article>
-        <i class="bi bi-clipboard-check"></i>
-        <span>待審核報名</span>
-        <strong>12</strong>
-      </article>
-      <article>
-        <i class="bi bi-calendar2-week"></i>
-        <span>待選位報名</span>
-        <strong>2</strong>
-      </article>
-    </div>
-  </div>
-
-  <div class="account-overlay">
-    <article class="account-modal" role="dialog" aria-modal="true" aria-labelledby="accountSettingsTitle">
-      <header class="modal-header">
-        <h2 id="accountSettingsTitle">帳號設定</h2>
-        <button type="button" class="icon-btn" aria-label="關閉帳號設定" (click)="close()">
-          <i class="bi bi-x-lg"></i>
-        </button>
-      </header>
-
-      <div class="settings-list">
-        <section class="setting-card account-card">
-          <div class="setting-icon">
-            <i class="bi bi-wallet2"></i>
-          </div>
-
-          <div class="setting-content">
-            <h3>基本帳號資料</h3>
-
-            <!-- 帳號基本資料目前以假資料綁定，之後可替換成會員 API 回傳結果。 -->
-            <dl class="account-data">
-              <div>
-                <dt>負責人姓名：</dt>
-                <dd>{{ account.name }}</dd>
-              </div>
-              <div>
-                <dt>Email：</dt>
-                <dd>{{ account.email }}</dd>
-              </div>
-            </dl>
-
-            <div class="google-row">
-              <img src="assets/images/logo/google-icon.png" alt="Google" />
-              <strong>Google 帳號綁定：</strong>
-              <span class="bind-status">{{ account.googleBound ? '已綁定' : '未綁定' }}</span>
-              <a routerLink="/vendor/dash-board/home" class="outline-action">前往綁定</a>
-            </div>
-
-            <p class="muted">可綁定 Google 帳號以方便快速登入。</p>
-          </div>
-        </section>
-
-        <section class="setting-card compact">
-          <div class="setting-icon">
-            <i class="bi bi-lock"></i>
-          </div>
-
-          <div class="setting-content">
-            <h3>修改密碼</h3>
-            <p>{{ passwordRule }}</p>
-          </div>
-
-          <a routerLink="/vendor/dash-board/password-settings" class="outline-action">修改密碼</a>
-        </section>
-
-        <section class="setting-card compact danger">
-          <div class="setting-icon">
-            <i class="bi bi-exclamation-triangle"></i>
-          </div>
-
-          <div class="setting-content">
-            <h3>申請註銷帳號</h3>
-            <p>{{ cancellationWarning }}</p>
-          </div>
-
-          <button type="button" class="danger-action">申請註銷帳號</button>
-        </section>
-      </div>
-
-      <footer class="modal-footer">
-        <button type="button" class="close-btn" (click)="close()">關閉</button>
-      </footer>
-    </article>
-  </div>
-</section>
+<app-dashborad-account-setting
+  accountRoleLabel="攤主"
+  googleBindPath="/vendor/dash-board/home"
+  loginPath="/vendor/login"
+  [account]="account"
+  [accountDeletion]="accountDeletion"
+  [passwordRule]="passwordRule"
+  [cancellationWarning]="cancellationWarning"
+  [preview]="preview"
+  (closed)="close()"
+></app-dashborad-account-setting>

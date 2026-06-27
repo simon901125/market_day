@@ -17,7 +17,7 @@ import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organ
 import { OrganizerAbout } from './modules/organizer/frontend/organizer-about/organizer-about';
 import { UserBrandSearch } from './modules/user/frontend/brand/user-brand-search/user-brand-search';
 //--- admin ---
-import { AdminLogin } from './modules/admin/dashboard/admin-login/admin-login';
+import { AdminLogin } from './modules/admin/admin-login/admin-login';
 import { AdminDashboardHome } from './modules/admin/dashboard/admin-dashboard-home/admin-dashboard-home';
 import { AdminDashboardNotification } from './modules/admin/dashboard/admin-dashboard-notification/admin-dashboard-notification';
 import { AdminDashboardMarketManagemant } from './modules/admin/dashboard/admin-dashboard-market-managemant/admin-dashboard-market-managemant';
@@ -37,10 +37,12 @@ import { VendorSignupForm } from './modules/vendor/frontend/vendor-signup-form/v
 import { VendorSignupConfirmPage } from './modules/vendor/frontend/vendor-signup-confirm-page/vendor-signup-confirm-page';
 import { VendorSignupCompletePage } from './modules/vendor/frontend/vendor-signup-complete-page/vendor-signup-complete-page';
 import { VendorAccountSettings } from './modules/vendor/dashboard/vendor-account-settings/vendor-account-settings';
-import { VendorPasswordSettings } from './modules/vendor/dashboard/vendor-password-settings/vendor-password-settings';
 import { VendorDashboardStall } from './modules/vendor/dashboard/vendor-dashboard-stall/vendor-dashboard-stall';
 import { VendorApplicationRecord } from './modules/vendor/dashboard/vendor-application-record/vendor-application-record';
 import { VendorApplicationDetail } from './modules/vendor/dashboard/vendor-application-detail/vendor-application-detail';
+
+//登入驗證，先寫假的session
+import { authGuard } from './guards/auth-guard';
 
 /** 頁面設定檔 */
 import { AUTH_ROUTE_DATA } from './models/config/auth-route-data';
@@ -101,10 +103,10 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: VendorHome },
       { path: 'about', component: VendorAbout },
-      { path: 'sign-up', component:VendorMarketSignupList },
-      { path: 'sign-up-detail', component:VendorMarketSignupDetail },
-      { path: 'sign-up-form',component:VendorSignupForm }, 
-      { path: 'sign-up-confirm', component:VendorSignupConfirmPage },
+      { path: 'sign-up', component: VendorMarketSignupList },
+      { path: 'sign-up-detail', component: VendorMarketSignupDetail },
+      { path: 'sign-up-form', component: VendorSignupForm },
+      { path: 'sign-up-confirm', component: VendorSignupConfirmPage },
       { path: 'sign-up-complete', component: VendorSignupCompletePage },
       { path: 'login', component: Auth, data: AUTH_ROUTE_DATA.vendorLogin },
       { path: 'register', component: Auth, data: AUTH_ROUTE_DATA.vendorRegister },
@@ -136,6 +138,7 @@ export const routes: Routes = [
   /** 攤主後台 */
   {
     path: 'vendor/dash-board',
+    canActivate: [authGuard],
     component: DashboardLayout,
     data: { role: 'vendor' },
     children: [
@@ -172,16 +175,17 @@ export const routes: Routes = [
         path: 'account-settings',
         component: VendorAccountSettings,
       },
-      {
-        path: 'password-settings',
-        component: VendorPasswordSettings,
-      },
+      // {
+      //   path: 'password-settings',
+      //   component: VendorPasswordSettings,
+      // },
     ],
   },
 
   /** 主辦方後台 */
   {
     path: 'organizer/dash-board',
+    canActivate: [authGuard],
     component: DashboardLayout,
     data: { role: 'organizer' },
     children: [
@@ -234,6 +238,7 @@ export const routes: Routes = [
   /** 系統管理員後台 */
   {
     path: 'admin/dash-board',
+    canActivate: [authGuard],
     component: DashboardLayout,
     data: { role: 'admin' },
     children: [
