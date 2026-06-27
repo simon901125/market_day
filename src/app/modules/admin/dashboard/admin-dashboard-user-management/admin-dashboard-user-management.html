@@ -67,10 +67,7 @@
               <span class="status-tag" [class]="getStatusClass(user.status)">{{ user.status }}</span>
             </td>
             <td class="action-btn">
-              <div class="btn-group">
                 <button type="button" class="app-btn primary" (click)="getDetailHandler(user)()">查看</button>
-                <button type="button" class="app-btn secondary">停用</button>
-              </div>
             </td>
           </tr>
         } @empty {
