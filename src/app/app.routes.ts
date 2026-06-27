@@ -42,6 +42,9 @@ import { VendorDashboardStall } from './modules/vendor/dashboard/vendor-dashboar
 import { VendorApplicationRecord } from './modules/vendor/dashboard/vendor-application-record/vendor-application-record';
 import { VendorApplicationDetail } from './modules/vendor/dashboard/vendor-application-detail/vendor-application-detail';
 
+//登入驗證，先寫假的session
+import { authGuard } from './guards/auth-guard';
+
 /** 頁面設定檔 */
 import { AUTH_ROUTE_DATA } from './models/config/auth-route-data';
 import { DashboardLayout } from './modules/shared/dashboard/dashboard-layout/dashboard-layout';
@@ -101,10 +104,10 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: VendorHome },
       { path: 'about', component: VendorAbout },
-      { path: 'sign-up', component:VendorMarketSignupList },
-      { path: 'sign-up-detail', component:VendorMarketSignupDetail },
-      { path: 'sign-up-form',component:VendorSignupForm }, 
-      { path: 'sign-up-confirm', component:VendorSignupConfirmPage },
+      { path: 'sign-up', component: VendorMarketSignupList },
+      { path: 'sign-up-detail', component: VendorMarketSignupDetail },
+      { path: 'sign-up-form', component: VendorSignupForm },
+      { path: 'sign-up-confirm', component: VendorSignupConfirmPage },
       { path: 'sign-up-complete', component: VendorSignupCompletePage },
       { path: 'login', component: Auth, data: AUTH_ROUTE_DATA.vendorLogin },
       { path: 'register', component: Auth, data: AUTH_ROUTE_DATA.vendorRegister },
@@ -136,6 +139,7 @@ export const routes: Routes = [
   /** 攤主後台 */
   {
     path: 'vendor/dash-board',
+    canActivate: [authGuard],
     component: DashboardLayout,
     data: { role: 'vendor' },
     children: [
@@ -182,6 +186,7 @@ export const routes: Routes = [
   /** 主辦方後台 */
   {
     path: 'organizer/dash-board',
+    canActivate: [authGuard],
     component: DashboardLayout,
     data: { role: 'organizer' },
     children: [
@@ -234,6 +239,7 @@ export const routes: Routes = [
   /** 系統管理員後台 */
   {
     path: 'admin/dash-board',
+    canActivate: [authGuard],
     component: DashboardLayout,
     data: { role: 'admin' },
     children: [
