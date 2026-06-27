@@ -83,17 +83,17 @@ table {
 
   th:nth-child(2),
   td:nth-child(2) {
-    width: 270px;
+    width: 210px;
   }
 
   th:nth-child(3),
   td:nth-child(3) {
-    width: 300px;
+    width: 250px;
   }
 
   th:nth-child(4),
   td:nth-child(4) {
-    width: 140px;
+    width: 130px;
   }
 
   th:nth-child(5),
@@ -104,8 +104,10 @@ table {
 
   th:nth-child(6),
   td:nth-child(6) {
-    width: 150px;
-    text-align: right;
+    width: 210px;
+    display: flex;
+    justify-content: center; /* 水平置中 */
+    align-items: center;
   }
 }
 
