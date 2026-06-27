@@ -12,9 +12,7 @@
   overflow: hidden;
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
+.app-page-header {
   align-items: flex-end;
 }
 
@@ -57,29 +55,6 @@
   gap: 4px;
 }
 
-.back-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  font-size: 1.2rem;
-  color: var(--text-dark);
-  border-radius: var(--radius-tag);
-
-  &:hover {
-    background: var(--bg-soft);
-  }
-}
-
-.page-title {
-  font-size: 26px;
-  font-weight: 900;
-  color: var(--text-dark);
-  margin: 0;
-}
 
 .header-actions {
   display: flex;

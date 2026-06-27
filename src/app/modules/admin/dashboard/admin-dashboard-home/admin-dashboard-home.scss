@@ -51,7 +51,7 @@
 }
 
 .todo-cards {
-  grid-template-columns: repeat(3, minmax(260px, 320px));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   justify-content: start;
 }
 
