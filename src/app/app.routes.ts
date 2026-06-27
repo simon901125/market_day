@@ -37,7 +37,6 @@ import { VendorSignupForm } from './modules/vendor/frontend/vendor-signup-form/v
 import { VendorSignupConfirmPage } from './modules/vendor/frontend/vendor-signup-confirm-page/vendor-signup-confirm-page';
 import { VendorSignupCompletePage } from './modules/vendor/frontend/vendor-signup-complete-page/vendor-signup-complete-page';
 import { VendorAccountSettings } from './modules/vendor/dashboard/vendor-account-settings/vendor-account-settings';
-import { VendorPasswordSettings } from './modules/vendor/dashboard/vendor-password-settings/vendor-password-settings';
 import { VendorDashboardStall } from './modules/vendor/dashboard/vendor-dashboard-stall/vendor-dashboard-stall';
 import { VendorApplicationRecord } from './modules/vendor/dashboard/vendor-application-record/vendor-application-record';
 import { VendorApplicationDetail } from './modules/vendor/dashboard/vendor-application-detail/vendor-application-detail';
@@ -176,10 +175,10 @@ export const routes: Routes = [
         path: 'account-settings',
         component: VendorAccountSettings,
       },
-      {
-        path: 'password-settings',
-        component: VendorPasswordSettings,
-      },
+      // {
+      //   path: 'password-settings',
+      //   component: VendorPasswordSettings,
+      // },
     ],
   },
 
