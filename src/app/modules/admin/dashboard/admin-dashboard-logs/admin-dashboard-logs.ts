@@ -22,6 +22,8 @@ export class AdminDashboardLogs implements AfterViewInit {
   @ViewChild(DateRangeSelector) timeSelectorRef!: DateRangeSelector;
   @ViewChild('oprationDropdown') oprationDropdownRef!: Dropdown;
   @ViewChild('tableWrapper') tableWrapperRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('resultSection') resultSectionRef!: ElementRef<HTMLDivElement>;
+
 
   /** 每列高度，需與 SCSS `.activity-table tbody tr` 的高度一致 */
   private readonly rowHeight = 56;
@@ -162,7 +164,7 @@ export class AdminDashboardLogs implements AfterViewInit {
 
   /** 依表格容器目前的高度，重新計算一頁可顯示的列數 */
   private recalculatePageSize(): void {
-    const wrapperHeight = this.tableWrapperRef.nativeElement.clientHeight;
+    const wrapperHeight = this.resultSectionRef.nativeElement.clientHeight;
     const availableHeight = wrapperHeight - this.headerHeight;
     this.pageSize = Math.max(Math.floor(availableHeight / this.rowHeight), 1);
   }

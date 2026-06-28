@@ -8,10 +8,18 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  height: calc(100dvh - 48px);
+  overflow: hidden;
 }
 
 .market-management-filter {
   grid-template-columns: minmax(180px, 1.4fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) minmax(300px, 1.8fr) 112px;
+}
+
+.result-section {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
 }
 
 .table-wrapper {
@@ -26,7 +34,7 @@
   font-weight: 600;
 
   thead tr {
-    height: 48px; 
+    height: 48px;
   }
 
   th {
@@ -45,7 +53,7 @@
   }
 
   tbody tr {
-    height: 56px; // ???TS ??rowHeight 銝??
+    height: 56px; //和ts相同設定
 
     &:hover {
       background: var(--bg-primary);
@@ -65,7 +73,7 @@
     &.activity-btn {
       text-align: center;
     }
-  
+
     &.activity-date,
     &.activity-cdate {
       color: var(--text-light);
@@ -110,11 +118,20 @@
   }
 }
 
+@media (max-width: 992px) {
+  .admin-market-managemant {
+    height: calc(100dvh - 40px); // dashboard-main padding: 20px top + 20px bottom
+  }
+}
+
 @media (max-width: 768px) {
   .market-management-filter {
     grid-template-columns: 1fr;
   }
 }
 
-
-
+@media (max-width: 576px) {
+  .admin-market-managemant {
+    height: calc(100dvh - 32px); // dashboard-main padding: 16px top + 16px bottom
+  }
+}
