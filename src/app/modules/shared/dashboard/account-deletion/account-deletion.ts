@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
 
 export interface AccountDeletionBlocker {
@@ -36,6 +37,7 @@ export class AccountDeletion {
 
   constructor(
     private readonly alert: AlertService,
+    private readonly authService: AuthService,
     private readonly router: Router
   ) {}
 
@@ -52,9 +54,8 @@ export class AccountDeletion {
       return;
     }
 
-    sessionStorage.removeItem('isLogin');
-    sessionStorage.removeItem('userRole');
-    sessionStorage.removeItem('account');
+    const role = this.authService.getRoleFromUrl(this.loginPath) ?? 'vendor';
+    this.authService.clearSession(role);
     this.deleted.emit();
 
     await this.router.navigate([this.loginPath]);

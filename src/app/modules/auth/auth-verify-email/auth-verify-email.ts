@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   Component,
   ElementRef,
@@ -9,9 +10,18 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
+import { AuthService } from '../../../core/auth/auth.service';
+import {
+  getPasswordResetEmailKey,
+  getPasswordResetTokenKey,
+  getPendingRegistrationEmailKey,
+} from '../../../core/auth/auth-storage.constants';
 import { AlertService } from '../../../core/services/alert.service';
+
+type VerifyRole = 'vendor' | 'organizer';
 
 @Component({
   selector: 'app-auth-verify-email',
@@ -20,46 +30,55 @@ import { AlertService } from '../../../core/services/alert.service';
   styleUrl: './auth-verify-email.scss',
 })
 export class AuthVerifyEmail implements OnInit, OnDestroy {
-  /** 驗證碼輸入框清單，用來自動移動焦點。 */
   @ViewChildren('codeInput') codeInputs!: QueryList<ElementRef<HTMLInputElement>>;
 
-  /** 表單標題，依登入角色由路由資料帶入。 */
   @Input() formTitle = '';
-
-  /** 返回註冊頁連結。 */
   @Input() backLink = '';
-
-  /** 登入頁連結。 */
   @Input() loginLink = '';
+  @Input() role: VerifyRole = 'vendor';
 
-  /** 顯示用 Email；之後串 API 時由後端或註冊流程帶入。 */
-  email = 'vendor@example.com';
-
-  /** 六位數驗證碼。 */
+  email = '';
   code = ['', '', '', '', '', ''];
-
-  /** 重新寄送倒數秒數。 */
   resendSeconds = 56;
+  isSubmitting = false;
+  purpose: 'registration' | 'reset' = 'registration';
 
-  /** 倒數計時器。 */
   private resendTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private readonly alert: AlertService,
+    private readonly authService: AuthService,
+    private readonly route: ActivatedRoute,
     private readonly router: Router
   ) {}
 
-  /** 啟動重新寄送倒數。 */
   ngOnInit(): void {
+    this.purpose =
+      this.route.snapshot.queryParamMap.get('purpose') === 'reset'
+        ? 'reset'
+        : 'registration';
+
+    this.email =
+      this.route.snapshot.queryParamMap.get('email')?.trim() ||
+      sessionStorage.getItem(
+        this.purpose === 'reset'
+          ? getPasswordResetEmailKey(this.role)
+          : getPendingRegistrationEmailKey(this.role)
+      ) ||
+      '';
     this.startResendCountdown();
   }
 
-  /** 離開元件時清除計時器。 */
+  get effectiveBackLink(): string {
+    return this.purpose === 'reset'
+      ? `/${this.role}/forgot-password`
+      : this.backLink;
+  }
+
   ngOnDestroy(): void {
     this.clearResendTimer();
   }
 
-  /** 限制驗證碼只能輸入數字，並在輸入後跳到下一格。 */
   onCodeInput(value: string, index: number): void {
     const onlyNumber = value.replace(/\D/g, '').slice(-1);
     this.code[index] = onlyNumber;
@@ -69,79 +88,201 @@ export class AuthVerifyEmail implements OnInit, OnDestroy {
     }
   }
 
-  /** 按退格時，若目前欄位為空，回到上一格。 */
   onCodeBackspace(index: number): void {
     if (!this.code[index] && index > 0) {
       this.focusCodeInput(index - 1);
     }
   }
 
-  /** 驗證 Email 驗證碼；目前先用 123456 模擬成功。 */
   async verifyCode(): Promise<void> {
-    const fullCode = this.code.join('');
-
-    // TODO: 串接 Email 驗證 API 後，改用 API 回傳結果判斷。
-    if (fullCode === '123456') {
-      await this.alert.success(
-        '驗證成功',
-        '你的 Email 已完成驗證，<br>現在可以登入攤主平台。',
-        '前往登入'
-      );
-      this.router.navigateByUrl(this.loginLink || '/vendor/login');
+    if (this.isSubmitting) {
       return;
     }
 
-    await this.alert.error(
-      '驗證失敗',
-      '你輸入的驗證碼不正確或已失效，<br>請重新確認後再試一次。',
-      '重新輸入'
-    );
-    this.code = ['', '', '', '', '', ''];
-    setTimeout(() => this.focusCodeInput(0));
+    const fullCode = this.code.join('');
+    if (!this.email || !/^\d{6}$/.test(fullCode)) {
+      await this.alert.error(
+        '驗證資料不完整',
+        this.email
+          ? '請輸入完整的 6 位數驗證碼。'
+          : '找不到待驗證的 Email，請重新註冊。',
+        '重新檢查'
+      );
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    try {
+      if (this.purpose === 'reset') {
+        await this.verifyResetCode(fullCode);
+        return;
+      }
+
+      await this.verifyRegistrationCode(fullCode);
+    } catch (error: unknown) {
+      await this.alert.error(
+        '驗證失敗',
+        this.getErrorMessage(error),
+        '重新輸入'
+      );
+      this.resetCode();
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 
-  /** 重新寄送驗證碼。 */
+  private async verifyRegistrationCode(code: string): Promise<void> {
+    const response = await firstValueFrom(
+      this.authService.verifyRegistrationEmail({
+        email: this.email,
+        code,
+      })
+    );
+
+    if (
+      response.statusCode !== 200 ||
+      response.message !== 'Email verified successfully'
+    ) {
+      await this.showVerificationError(response.message);
+      return;
+    }
+
+    sessionStorage.removeItem(getPendingRegistrationEmailKey(this.role));
+    await this.alert.success(
+      'Email 驗證成功',
+      '帳號已啟用，現在可以登入主辦方後台。',
+      '前往登入'
+    );
+    await this.router.navigate(
+      [this.loginLink || `/${this.role}/login`],
+      { queryParams: { email: this.email } }
+    );
+  }
+
+  private async verifyResetCode(code: string): Promise<void> {
+    const response = await firstValueFrom(
+      this.authService.verifyPasswordResetEmail({
+        email: this.email,
+        code,
+      })
+    );
+
+    if (response.statusCode !== 200) {
+      await this.showVerificationError(response.message);
+      return;
+    }
+
+    const resetToken = response.data?.resetToken;
+    if (!resetToken) {
+      await this.showVerificationError('Reset token is missing');
+      return;
+    }
+
+    sessionStorage.setItem(
+      getPasswordResetTokenKey(this.role),
+      resetToken
+    );
+    await this.alert.success(
+      'Email 驗證成功',
+      '驗證完成，請在 10 分鐘內設定新密碼。',
+      '設定新密碼'
+    );
+    await this.router.navigateByUrl(`/${this.role}/reset-password`);
+  }
+
   async resendCode(): Promise<void> {
     if (this.resendSeconds > 0) {
       return;
     }
 
-    // TODO: 串接重新寄送驗證碼 API。
-    this.resendSeconds = 56;
-    this.startResendCountdown();
+    if (this.purpose !== 'reset' || !this.email) {
+      await this.alert.info(
+        '暫時無法重寄',
+        '註冊流程尚未提供重寄驗證碼 API，請先使用原信件中的驗證碼。',
+        '知道了'
+      );
+      return;
+    }
 
-    await this.alert.success(
-      '驗證碼已重新寄出',
-      `我們已將新的 6 位數驗證碼寄送至<br>${this.email}。`,
-      '知道了'
-    );
+    this.isSubmitting = true;
+    try {
+      const response = await firstValueFrom(
+        this.authService.requestPasswordReset({ email: this.email })
+      );
+      if (response.statusCode !== 200) {
+        await this.alert.error(
+          '寄送失敗',
+          response.message || '驗證碼寄送失敗，請稍後再試。',
+          '知道了'
+        );
+        return;
+      }
+
+      this.resendSeconds = 56;
+      this.startResendCountdown();
+      await this.alert.success(
+        '驗證碼已重新寄出',
+        `新的 6 位數驗證碼已寄送至<br>${this.email}。`,
+        '知道了'
+      );
+    } catch (error: unknown) {
+      await this.alert.error(
+        '寄送失敗',
+        this.getErrorMessage(error),
+        '知道了'
+      );
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 
-  /** 聚焦指定的驗證碼輸入框。 */
+  private async showVerificationError(message: string): Promise<void> {
+    const text =
+      message === 'Invalid or expired verification code'
+        ? '驗證碼錯誤或已逾期，請確認後重新輸入。'
+        : message === 'Reset token is missing'
+          ? '未取得密碼重設憑證，請重新執行忘記密碼流程。'
+        : message === 'Email already verified'
+          ? '此 Email 已完成驗證，請直接登入。'
+          : message || 'Email 驗證失敗，請稍後再試。';
+
+    await this.alert.error('驗證失敗', text, '重新輸入');
+    this.resetCode();
+  }
+
+  private resetCode(): void {
+    this.code = ['', '', '', '', '', ''];
+    setTimeout(() => this.focusCodeInput(0));
+  }
+
+  private getErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      return error.error?.message || '無法連線至伺服器，請確認後端已啟動。';
+    }
+
+    return '驗證時發生錯誤，請稍後再試。';
+  }
+
   private focusCodeInput(index: number): void {
     const input = this.codeInputs.get(index)?.nativeElement;
-
     if (input) {
       input.focus();
       input.select();
     }
   }
 
-  /** 開始重新寄送倒數。 */
   private startResendCountdown(): void {
     this.clearResendTimer();
-
     this.resendTimer = setInterval(() => {
       if (this.resendSeconds <= 0) {
         this.clearResendTimer();
         return;
       }
-
       this.resendSeconds--;
     }, 1000);
   }
 
-  /** 清除重新寄送倒數。 */
   private clearResendTimer(): void {
     if (this.resendTimer) {
       clearInterval(this.resendTimer);

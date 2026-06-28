@@ -1,5 +1,5 @@
 <section class="verify-card">
-  <a [routerLink]="backLink" class="back-link">
+  <a [routerLink]="effectiveBackLink" class="back-link">
     <i class="bi bi-arrow-left"></i>
     返回註冊
   </a>
@@ -31,8 +31,13 @@
       }
     </div>
 
-    <button type="button" class="main-btn" (click)="verifyCode()">
-      確認驗證
+    <button
+      type="button"
+      class="main-btn"
+      [disabled]="isSubmitting"
+      (click)="verifyCode()"
+    >
+      {{ isSubmitting ? '驗證中...' : '確認驗證' }}
     </button>
 
     <button

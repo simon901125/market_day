@@ -33,9 +33,16 @@
         市集報名
       </a>
 
-      <a routerLink="/vendor/dash-board" routerLinkActive="active" (click)="closeMenu()">
+      @if (isLoggedIn) {
+      <a
+        [href]="vendorDashboardUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        (click)="closeMenu()"
+      >
         攤主後台
       </a>
+      }
 
       <a routerLink="/vendor/about" routerLinkActive="active" (click)="closeMenu()">
         關於我們
@@ -43,8 +50,19 @@
     </nav>
 
     <div class="vendor-header-actions">
-      <a href="/vendor/login" target="_blank" rel="noopener noreferrer" class="vendor-login-btn" (click)="closeMenu()">登入</a>
-      <a href="/vendor/register" target="_blank" rel="noopener noreferrer" class="vendor-register-btn" (click)="closeMenu()">註冊</a>
+      @if (isLoggedIn && user) {
+        <span class="vendor-account-name">
+          <i class="bi bi-person-circle"></i>
+          {{ user.name }}
+        </span>
+        <button type="button" class="vendor-logout-btn" [disabled]="isLoggingOut" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i>
+          登出
+        </button>
+      } @else {
+        <a href="/vendor/login" target="_blank" rel="noopener noreferrer" class="vendor-login-btn" (click)="closeMenu()">登入</a>
+        <a href="/vendor/register" target="_blank" rel="noopener noreferrer" class="vendor-register-btn" (click)="closeMenu()">註冊</a>
+      }
     </div>
   </div>
 </header>
@@ -76,12 +94,32 @@
     <a routerLink="/user/home" routerLinkActive="active">回小集日首頁</a>
     <a routerLink="/vendor/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">首頁</a>
     <a routerLink="/vendor/sign-up" routerLinkActive="active">市集報名</a>
-    <a routerLink="/vendor/dash-board" routerLinkActive="active">攤主後台</a>
+    @if (isLoggedIn) {
+    <a
+      [href]="vendorDashboardUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      (click)="closeMenu()"
+    >
+      攤主後台
+    </a>
+    }
     <a routerLink="/vendor/about" routerLinkActive="active">關於我們</a>
   </nav>
 
   <div class="vendor-drawer-actions">
-    <a href="/vendor/login" target="_blank" rel="noopener noreferrer" class="vendor-login-btn">登入</a>
-    <a href="/vendor/register" target="_blank" rel="noopener noreferrer" class="vendor-register-btn">註冊</a>
+    @if (isLoggedIn && user) {
+      <span class="vendor-account-name">
+        <i class="bi bi-person-circle"></i>
+        {{ user.name }}
+      </span>
+      <button type="button" class="vendor-logout-btn" [disabled]="isLoggingOut" (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+        登出
+      </button>
+    } @else {
+      <a href="/vendor/login" target="_blank" rel="noopener noreferrer" class="vendor-login-btn">登入</a>
+      <a href="/vendor/register" target="_blank" rel="noopener noreferrer" class="vendor-register-btn">註冊</a>
+    }
   </div>
 </aside>

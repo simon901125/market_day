@@ -33,6 +33,7 @@ export class DashboardSidebar {
   @Input() isCollapsed = false;
 
   @Output() collapseToggle = new EventEmitter<void>();
+  @Output() logoutRequested = new EventEmitter<void>();
 
   /** 使用者選單是否展開 */
   isUserMenuOpen = false;
@@ -54,7 +55,8 @@ export class DashboardSidebar {
 
   /** 登出 */
   logout(): void {
-    console.log('logout');
+    this.isUserMenuOpen = false;
+    this.logoutRequested.emit();
   }
 
   /** 點擊頁面其他區域時關閉使用者選單 */

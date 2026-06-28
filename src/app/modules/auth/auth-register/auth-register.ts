@@ -1,9 +1,16 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
+import { AuthService } from '../../../core/auth/auth.service';
+import { getPendingRegistrationEmailKey } from '../../../core/auth/auth-storage.constants';
 import { AlertService } from '../../../core/services/alert.service';
+import { GoogleAuthService } from '../../../core/services/google-auth.service';
+
+type RegisterRole = 'vendor' | 'organizer';
 
 @Component({
   selector: 'app-auth-register',
@@ -12,77 +19,63 @@ import { AlertService } from '../../../core/services/alert.service';
   styleUrl: './auth-register.scss',
 })
 export class AuthRegister {
-  /** 表單標題，依登入角色由路由資料帶入。 */
   @Input() formTitle = '';
-
-  /** Email 驗證頁連結。 */
   @Input() vertifyLink = '';
+  @Input() role: RegisterRole = 'vendor';
 
-  /** 負責人姓名。 */
   directorName = '';
-
-  /** 使用者 Email。 */
   email = '';
-
-  /** 密碼。 */
   password = '';
-
-  /** 確認密碼。 */
   checkPw = '';
-
-  /** 是否顯示密碼明文。 */
   showPassword = false;
-
-  /** 是否顯示確認密碼明文。 */
   showConfirmPassword = false;
-
-  /** 密碼長度是否符合規則。 */
   hasPwLenght = false;
-
-  /** 密碼是否包含英文字母與數字。 */
   hasPwNumLetter = false;
-
-  /** 兩次密碼是否不一致。 */
   passwordNotMatch = false;
+  isSubmitting = false;
+  isGoogleSubmitting = false;
+
+  private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   constructor(
     private readonly alert: AlertService,
+    private readonly authService: AuthService,
+    private readonly googleAuthService: GoogleAuthService,
     private readonly router: Router
   ) {}
 
-  /** 切換密碼顯示狀態。 */
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  /** 切換確認密碼顯示狀態。 */
   toggleConfirmPassword(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  /** 檢查密碼規則。 */
   checkPwRole(): void {
     this.hasPwLenght = this.password.length >= 8;
     this.hasPwNumLetter =
       /[A-Za-z]/.test(this.password) && /\d/.test(this.password);
-
     this.checkPasswordMatch();
   }
 
-  /** 檢查兩次輸入的密碼是否一致。 */
   checkPasswordMatch(): void {
     this.passwordNotMatch =
       this.checkPw.length > 0 && this.password !== this.checkPw;
   }
 
-  /** 註冊送出；目前先保留假流程，之後改為呼叫 API。 */
   async register(): Promise<void> {
+    if (this.isSubmitting || this.isGoogleSubmitting) {
+      return;
+    }
+
     this.checkPwRole();
     this.checkPasswordMatch();
 
+    const email = this.email.trim();
     const isInvalid =
-      !this.directorName ||
-      !this.email ||
+      !this.directorName.trim() ||
+      !email ||
       !this.password ||
       !this.checkPw ||
       !this.hasPwLenght ||
@@ -91,19 +84,171 @@ export class AuthRegister {
 
     if (isInvalid) {
       await this.alert.error(
-        '註冊資料未完成',
-        '請確認姓名、Email 與密碼皆已正確填寫。',
-        '重新確認'
+        '註冊資料不完整',
+        '請確認姓名、Email、密碼及確認密碼皆已正確填寫。',
+        '重新檢查'
       );
       return;
     }
 
-    // TODO: 串接註冊 API 後，成功再寄送 Email 驗證碼。
+    if (!this.isValidEmail(email)) {
+      await this.alert.error(
+        'Email 格式錯誤',
+        '請輸入正確的 Email 格式。',
+        '重新輸入'
+      );
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    try {
+      const response = await firstValueFrom(
+        this.authService.register(this.role, {
+          name: this.directorName.trim(),
+          email,
+          password: this.password,
+        })
+      );
+
+      if (
+        response.statusCode !== 200 ||
+        !response.message.includes('registered successfully')
+      ) {
+        await this.alert.error(
+          '註冊失敗',
+          this.getRegisterApiMessage(response.message),
+          '重新檢查'
+        );
+        return;
+      }
+
+      await this.goVerifyEmail(email);
+    } catch (error: unknown) {
+      await this.alert.error(
+        '註冊失敗',
+        this.getRegisterErrorMessage(error),
+        '重新檢查'
+      );
+    } finally {
+      this.isSubmitting = false;
+    }
+  }
+
+  async registerWithGoogle(): Promise<void> {
+    if (this.isSubmitting || this.isGoogleSubmitting) {
+      return;
+    }
+
+    this.isGoogleSubmitting = true;
+
+    try {
+      const credential = await this.googleAuthService.getCredential();
+      const email = this.googleAuthService.getEmailFromCredential(credential);
+      const response = await firstValueFrom(
+        this.authService.googleRegister(this.role, { credential })
+      );
+
+      if (
+        response.statusCode !== 200 ||
+        !response.message.includes('registered successfully')
+      ) {
+        await this.alert.error(
+          'Google 註冊失敗',
+          this.getGoogleRegisterApiMessage(response.message),
+          '重新操作'
+        );
+        return;
+      }
+
+      await this.goVerifyEmail(email);
+    } catch (error: unknown) {
+      await this.alert.error(
+        'Google 註冊失敗',
+        this.getGoogleRegisterErrorMessage(error),
+        '重新操作'
+      );
+    } finally {
+      this.isGoogleSubmitting = false;
+    }
+  }
+
+  private async goVerifyEmail(email: string | null): Promise<void> {
+    if (email) {
+      sessionStorage.setItem(getPendingRegistrationEmailKey(this.role), email);
+    }
+
     await this.alert.success(
       '驗證碼已寄出',
-      `我們已將 6 位數驗證碼寄送至<br>${this.email}。`,
+      email
+        ? `6 位數驗證碼已寄送至<br>${email}`
+        : '6 位數驗證碼已寄送至你的 Google Email。',
       '前往驗證'
     );
-    this.router.navigateByUrl(this.vertifyLink || '/vendor/verify-email');
+
+    if (email) {
+      await this.router.navigate(
+        [this.vertifyLink || `/${this.role}/verify-email`],
+        { queryParams: { email } }
+      );
+      return;
+    }
+
+    await this.router.navigate([
+      this.vertifyLink || `/${this.role}/verify-email`,
+    ]);
+  }
+
+  private isValidEmail(email: string): boolean {
+    return this.emailPattern.test(email);
+  }
+
+  private getRegisterErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      return this.getRegisterApiMessage(error.error?.message);
+    }
+
+    return '註冊時發生錯誤，請稍後再試。';
+  }
+
+  private getGoogleRegisterErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      return this.getGoogleRegisterApiMessage(error.error?.message);
+    }
+
+    if (error instanceof Error) {
+      return error.message;
+    }
+
+    return 'Google 註冊時發生錯誤，請稍後再試。';
+  }
+
+  private getRegisterApiMessage(message?: string): string {
+    switch (message) {
+      case 'Email already registered':
+        return '此 Email 已經註冊，請改用登入或使用其他 Email。';
+      case 'Validation failed: password: Password must be at least 8 characters and contain letters and numbers':
+        return '密碼需至少 8 碼，並同時包含英文字母與數字。';
+      default:
+        return message || '註冊失敗，請確認資料後再試。';
+    }
+  }
+
+  private getGoogleRegisterApiMessage(message?: string): string {
+    switch (message) {
+      case 'Google account has already register':
+      case 'Email already registered':
+        return '此 Google 帳號已經註冊，請改用登入。';
+      case 'Invalid Google credential':
+        return 'Google 註冊憑證無效，請重新操作。';
+      case 'Google credential is required':
+        return '缺少 Google 註冊憑證，請重新操作。';
+      case 'Email is not verified':
+        return '此 Google 帳號尚未完成 Email 驗證，請先完成驗證。';
+      case 'Account is not active':
+        return '此帳號目前無法使用，請聯絡系統管理員。';
+      default:
+        return message || 'Google 註冊失敗，請稍後再試。';
+    }
   }
 }

@@ -40,7 +40,7 @@
           [(ngModel)]="password"
           (ngModelChange)="checkPwRole(); checkPasswordMatch()"
           [type]="showPassword ? 'text' : 'password'"
-          placeholder="請設定密碼，至少 8 個字元"
+          placeholder="請設定至少 8 碼密碼"
         />
 
         <button type="button" class="eye-btn" (click)="togglePassword()">
@@ -53,11 +53,11 @@
       </div>
 
       <div class="password-rule">
-        <span>密碼需符合以下條件：</span>
+        <span>密碼需符合以下規則：</span>
 
         <span [class.valid]="hasPwLenght">
           <i class="bi bi-check-circle"></i>
-          至少 8 個字元
+          至少 8 碼
         </span>
 
         <span [class.valid]="hasPwNumLetter">
@@ -97,16 +97,27 @@
     </p>
   </div>
 
-  <button type="submit" class="main-btn">建立攤主帳號</button>
+  <button
+    type="submit"
+    class="main-btn"
+    [disabled]="isSubmitting || isGoogleSubmitting"
+  >
+    {{ isSubmitting ? '註冊中...' : '建立帳號' }}
+  </button>
 
   <div class="divider">
     <span></span>
-    <p>或使用以下方式快速註冊</p>
+    <p>也可以使用其他方式註冊</p>
     <span></span>
   </div>
 
-  <button type="button" class="google-btn">
+  <button
+    type="button"
+    class="google-btn"
+    [disabled]="isSubmitting || isGoogleSubmitting"
+    (click)="registerWithGoogle()"
+  >
     <img src="assets/images/shared/google-icon.png" alt="Google" />
-    使用 Google 帳號註冊
+    {{ isGoogleSubmitting ? 'Google 註冊中...' : '使用 Google 帳號註冊' }}
   </button>
 </form>

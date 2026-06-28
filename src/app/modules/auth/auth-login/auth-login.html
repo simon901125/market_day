@@ -40,18 +40,27 @@
     </div>
   </div>
 
-  <button type="submit" class="main-btn" [disabled]="isSubmitting">
-    登入
+  <button
+    type="submit"
+    class="main-btn"
+    [disabled]="isSubmitting || isGoogleSubmitting"
+  >
+    {{ isSubmitting ? '登入中...' : '登入' }}
   </button>
 
   <div class="divider">
     <span></span>
-    <p>或使用以下方式快速登入</p>
+    <p>也可以使用其他方式登入</p>
     <span></span>
   </div>
 
-  <button type="button" class="google-btn">
+  <button
+    type="button"
+    class="google-btn"
+    [disabled]="isSubmitting || isGoogleSubmitting"
+    (click)="googleLogin()"
+  >
     <img src="assets/images/shared/google-icon.png" alt="Google" />
-    使用 Google 帳號登入
+    {{ isGoogleSubmitting ? 'Google 登入中...' : '使用 Google 帳號登入' }}
   </button>
 </form>

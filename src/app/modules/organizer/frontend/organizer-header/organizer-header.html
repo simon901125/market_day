@@ -25,13 +25,33 @@
       >
         首頁
       </a>
-      <a routerLink="/organizer/dash-board" routerLinkActive="active" (click)="closeMenu()">管理後台</a>
+      @if (isLoggedIn) {
+      <a
+        [href]="managementUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        (click)="closeMenu()"
+      >
+        管理後台
+      </a>
+      }
       <a routerLink="/organizer/about" routerLinkActive="active" (click)="closeMenu()">關於我們</a>
     </nav>
 
     <div class="header-actions">
-      <a routerLink="/organizer/login" target="_blank" rel="noopener noreferrer" class="login-btn" (click)="closeMenu()">登入</a>
-      <a routerLink="/organizer/register" target="_blank" rel="noopener noreferrer" class="register-btn" (click)="closeMenu()">註冊</a>
+      @if (isLoggedIn && user) {
+        <span class="account-name">
+          <i class="bi bi-person-circle"></i>
+          {{ user.name }}
+        </span>
+        <button type="button" class="logout-btn" [disabled]="isLoggingOut" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i>
+          登出
+        </button>
+      } @else {
+        <a routerLink="/organizer/login" target="_blank" rel="noopener noreferrer" class="login-btn" (click)="closeMenu()">登入</a>
+        <a routerLink="/organizer/register" target="_blank" rel="noopener noreferrer" class="register-btn" (click)="closeMenu()">註冊</a>
+      }
     </div>
   </div>
 </header>
@@ -62,12 +82,32 @@
   <nav aria-label="手機主辦方導覽">
     <a routerLink="/user/home">回小集日首頁</a>
     <a routerLink="/organizer/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">首頁</a>
-    <a routerLink="/organizer/dash-board" routerLinkActive="active">管理後台</a>
+    @if (isLoggedIn) {
+    <a
+      [href]="managementUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      (click)="closeMenu()"
+    >
+      管理後台
+    </a>
+    }
     <a routerLink="/organizer/about" routerLinkActive="active">關於我們</a>
   </nav>
 
   <div class="drawer-actions">
-    <a href="/organizer/login" target="_blank" rel="noopener noreferrer" class="login-btn">登入</a>
-    <a href="/organizer/register" target="_blank" rel="noopener noreferrer" class="register-btn">註冊</a>
+    @if (isLoggedIn && user) {
+      <span class="account-name">
+        <i class="bi bi-person-circle"></i>
+        {{ user.name }}
+      </span>
+      <button type="button" class="logout-btn" [disabled]="isLoggingOut" (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+        登出
+      </button>
+    } @else {
+      <a href="/organizer/login" target="_blank" rel="noopener noreferrer" class="login-btn">登入</a>
+      <a href="/organizer/register" target="_blank" rel="noopener noreferrer" class="register-btn">註冊</a>
+    }
   </div>
 </aside>

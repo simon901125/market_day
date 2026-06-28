@@ -139,6 +139,11 @@
   &:hover {
     background: var(--primary-hover);
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
 }
 
 .divider {
@@ -176,6 +181,11 @@
   &:hover {
     border-color: var(--primary-color);
     background: var(--primary-soft);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
   }
 
   img {

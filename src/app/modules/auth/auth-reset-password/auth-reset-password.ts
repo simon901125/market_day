@@ -1,9 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
+import { AuthService } from '../../../core/auth/auth.service';
+import {
+  getPasswordResetEmailKey,
+  getPasswordResetTokenKey,
+} from '../../../core/auth/auth-storage.constants';
 import { AlertService } from '../../../core/services/alert.service';
+
+type ResetPasswordRole = 'vendor' | 'organizer';
 
 @Component({
   selector: 'app-auth-reset-password',
@@ -11,68 +20,60 @@ import { AlertService } from '../../../core/services/alert.service';
   templateUrl: './auth-reset-password.html',
   styleUrl: './auth-reset-password.scss',
 })
-export class AuthResetPassword {
-  /** 表單標題，依登入角色由路由資料帶入。 */
+export class AuthResetPassword implements OnInit {
   @Input() formTitle = '';
-
-  /** 登入頁連結。 */
   @Input() loginLink = '';
+  @Input() role: ResetPasswordRole = 'vendor';
 
-  /** 新密碼。 */
   newPassword = '';
-
-  /** 確認新密碼。 */
   confirmPassword = '';
-
-  /** 是否顯示新密碼明文。 */
   showNewPassword = false;
-
-  /** 是否顯示確認密碼明文。 */
   showConfirmPassword = false;
-
-  /** 密碼長度是否符合規則。 */
   hasPwLenght = false;
-
-  /** 密碼是否包含英文字母與數字。 */
   hasPwNumLetter = false;
-
-  /** 兩次密碼是否不一致。 */
   passwordNotMatch = false;
+  isSubmitting = false;
+
+  private resetToken = '';
 
   constructor(
     private readonly alert: AlertService,
+    private readonly authService: AuthService,
     private readonly router: Router
   ) {}
 
-  /** 密碼長度是否有效。 */
+  ngOnInit(): void {
+    this.resetToken =
+      sessionStorage.getItem(getPasswordResetTokenKey(this.role)) || '';
+  }
+
   get isPasswordLengthValid(): boolean {
     return this.newPassword.length >= 8;
   }
 
-  /** 密碼格式是否有效。 */
   get isPasswordFormatValid(): boolean {
     return /[A-Za-z]/.test(this.newPassword) && /\d/.test(this.newPassword);
   }
 
-  /** 檢查密碼規則。 */
   checkPwRole(): void {
     this.hasPwLenght = this.isPasswordLengthValid;
     this.hasPwNumLetter = this.isPasswordFormatValid;
     this.checkPasswordMatch();
   }
 
-  /** 切換新密碼顯示狀態。 */
   toggleNewPassword(): void {
     this.showNewPassword = !this.showNewPassword;
   }
 
-  /** 切換確認密碼顯示狀態。 */
   toggleConfirmPassword(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  /** 送出重設密碼；目前先保留假流程，之後改為呼叫 API。 */
   async resetPassword(): Promise<void> {
+    if (this.isSubmitting) {
+      return;
+    }
+
     this.checkPwRole();
     this.checkPasswordMatch();
 
@@ -86,24 +87,93 @@ export class AuthResetPassword {
     if (isInvalid) {
       await this.alert.error(
         '密碼重設失敗',
-        '請確認密碼符合規則，且兩次輸入的密碼一致。',
+        '密碼至少需要 8 個字元，並同時包含英文字母與數字，且兩次輸入必須一致。',
         '重新確認'
       );
       return;
     }
 
-    // TODO: 串接重設密碼 API 後，成功再顯示提示。
-    await this.alert.success(
-      '密碼重設成功',
-      '你的密碼已更新完成，<br>現在可以返回登入並使用新密碼登入。',
-      '前往登入'
-    );
-    this.router.navigateByUrl(this.loginLink || '/vendor/login');
+    if (!this.resetToken) {
+      await this.alert.error(
+        '重設連結已失效',
+        '找不到密碼重設憑證，請重新執行忘記密碼流程。',
+        '重新驗證'
+      );
+      await this.router.navigateByUrl(`/${this.role}/forgot-password`);
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    try {
+      const response = await firstValueFrom(
+        this.authService.resetPassword({
+          resetToken: this.resetToken,
+          password: this.newPassword,
+        })
+      );
+
+      if (
+        response.statusCode !== 200 ||
+        response.message !== 'Password reset successfully'
+      ) {
+        await this.alert.error(
+          '密碼重設失敗',
+          this.getApiMessage(response.message),
+          '重新確認'
+        );
+        return;
+      }
+
+      this.clearResetSession();
+      await this.alert.success(
+        '密碼重設成功',
+        '密碼已更新完成，現在可以使用新密碼登入。',
+        '前往登入'
+      );
+      await this.router.navigateByUrl(
+        this.loginLink || `/${this.role}/login`
+      );
+    } catch (error: unknown) {
+      await this.alert.error(
+        '密碼重設失敗',
+        this.getErrorMessage(error),
+        '重新確認'
+      );
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 
-  /** 檢查兩次輸入的密碼是否一致。 */
   checkPasswordMatch(): void {
     this.passwordNotMatch =
-      this.confirmPassword.length > 0 && this.newPassword !== this.confirmPassword;
+      this.confirmPassword.length > 0 &&
+      this.newPassword !== this.confirmPassword;
+  }
+
+  private clearResetSession(): void {
+    sessionStorage.removeItem(getPasswordResetEmailKey(this.role));
+    sessionStorage.removeItem(getPasswordResetTokenKey(this.role));
+  }
+
+  private getApiMessage(message: string): string {
+    if (message === 'Invalid or expired reset token') {
+      return '密碼重設憑證錯誤或已逾期，請重新執行忘記密碼流程。';
+    }
+    if (message.includes('Password must be at least 8 characters')) {
+      return '密碼至少需要 8 個字元，並同時包含英文字母與數字。';
+    }
+
+    return message || '密碼重設失敗，請稍後再試。';
+  }
+
+  private getErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      return this.getApiMessage(
+        error.error?.message || '無法連線至伺服器，請確認後端已啟動。'
+      );
+    }
+
+    return '密碼重設失敗，請稍後再試。';
   }
 }
