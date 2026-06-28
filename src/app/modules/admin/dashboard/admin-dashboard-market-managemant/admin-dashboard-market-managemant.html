@@ -43,49 +43,50 @@
       <span>搜尋</span>
     </button>
   </div>
-
-  <div class="table-wrapper dashboard-list-content" #tableWrapper>
-    <table class="activity-table">
-      <thead>
-        <tr>
-          <th class="activity-name">活動名稱</th>
-          <th class="activity-organizer">主辦方</th>
-          <th class="activity-date">活動日期</th>
-          <th class="activity-status">狀態</th>
-          <th class="activity-cdate">建立時間</th>
-          <th class="activity-btn">操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (activity of activities; track activity.id) {
+  <div class="result-section" #resultSection>
+    <div class="table-wrapper dashboard-list-content" #tableWrapper>
+      <table class="activity-table">
+        <thead>
           <tr>
-            <td class="activity-name">
-              <div class="activity-name-cell">
-                <img [src]="activity.image" [alt]="activity.name" />
-                <span>{{ activity.name }}</span>
-              </div>
-            </td>
-            <td class="activity-organizer">{{ activity.organizer }}</td>
-            <td class="activity-date">{{ activity.startDate }} ~ {{ activity.endDate }}</td>
-            <td class="activity-status">
-              <span class="status-tag" [class]="getStatusClass(activity.status)">{{ activity.status }}</span>
-            </td >
-            <td class="activity-cdate">{{ activity.createdAt }}</td>
-            <td class="activity-btn">
-              @if (isReviewNeeded(activity.status)) {
-                <button type="button" class="app-btn primary" (click)="getDetailHandler(activity)()">審核</button>
-              } @else {
-                <button type="button" class="app-btn secondary" (click)="getDetailHandler(activity)()">查看</button>
-              }
-            </td>
+            <th class="activity-name">活動名稱</th>
+            <th class="activity-organizer">主辦方</th>
+            <th class="activity-date">活動日期</th>
+            <th class="activity-status">狀態</th>
+            <th class="activity-cdate">建立時間</th>
+            <th class="activity-btn">操作</th>
           </tr>
-        } @empty {
-          <tr>
-            <td colspan="6" class="empty-row">查無符合條件的活動</td>
-          </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (activity of activities; track activity.id) {
+            <tr>
+              <td class="activity-name">
+                <div class="activity-name-cell">
+                  <img [src]="activity.image" [alt]="activity.name" />
+                  <span>{{ activity.name }}</span>
+                </div>
+              </td>
+              <td class="activity-organizer">{{ activity.organizer }}</td>
+              <td class="activity-date">{{ activity.startDate }} ~ {{ activity.endDate }}</td>
+              <td class="activity-status">
+                <span class="status-tag" [class]="getStatusClass(activity.status)">{{ activity.status }}</span>
+              </td >
+              <td class="activity-cdate">{{ activity.createdAt }}</td>
+              <td class="activity-btn">
+                @if (isReviewNeeded(activity.status)) {
+                  <button type="button" class="app-btn primary" (click)="getDetailHandler(activity)()">審核</button>
+                } @else {
+                  <button type="button" class="app-btn secondary" (click)="getDetailHandler(activity)()">查看</button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-row">查無符合條件的活動</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <app-dashboard-pagination
