@@ -134,6 +134,11 @@ export class AuthService {
     return localStorage.getItem(getAuthTokenKey(role));
   }
 
+  /**
+   * 取得使用者
+   * @param role 使用者角色
+   * @returns user json
+   */
   getUser(role: AuthPortalRole): MarketDayUser | null {
     const userKey = getAuthUserKey(role);
     const value = localStorage.getItem(userKey);

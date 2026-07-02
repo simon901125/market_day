@@ -87,6 +87,7 @@ export class DashboardLayout {
     }
   }
 
+  /** 取得使用者資訊 */
   private loadUserInfo(): void {
     const user = this.authService.getUser(this.role);
     if (!user) {

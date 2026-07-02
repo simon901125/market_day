@@ -1,3 +1,8 @@
+.swal2-container {
+  // 帳號註銷等確認訊息需顯示在 Dashboard 帳號設定彈窗之上。
+  z-index: 1400 !important;
+}
+
 .custom-swal-popup {
   width: 26rem !important;
   padding: 1.8rem 2.8rem 2rem !important;
@@ -110,7 +115,7 @@
     background: transparent !important;
   }
 }
-//confrim 是否退款 
+//confrim 是否退款
 .refund-confirm-swal {
   .custom-swal-html {
     text-align: left !important;
@@ -158,7 +163,7 @@
 
   i {
     color: var(--primary-color);
-    font-size: 1.30rem;
+    font-size: 1.3rem;
   }
 
   h4 {
@@ -170,7 +175,7 @@
   p {
     margin: 0;
     color: var(--text-normal);
-    font-size: 0.80rem;
+    font-size: 0.8rem;
     font-weight: 800;
     line-height: 1.1;
   }
@@ -201,7 +206,7 @@
   background: var(--primary-soft);
   position: relative;
 
-   i {
+  i {
     position: absolute;
     top: 1.05rem;
     left: 1rem;

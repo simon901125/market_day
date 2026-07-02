@@ -1,7 +1,7 @@
- <!-- 後台側邊欄 帳號設定 -->
- <section class="account-settings-page">
+<!-- 後台側邊欄 帳號設定 -->
+<section class="account-settings-page">
   <div class="page-preview" aria-hidden="true">
-    <div>
+    <div class="preview-heading">
       <h1>歡迎回來，{{ account.name }}！</h1>
       <p>這裡幫你整理近期需要處理的報名與通知。</p>
     </div>
@@ -18,10 +18,45 @@
         <strong>{{ preview.pendingSelectionCount }}</strong>
       </article>
     </div>
+
+    <section class="preview-notifications">
+      <header>
+        <h2>最新通知</h2>
+        <span>查看全部通知</span>
+      </header>
+
+      <div class="preview-notice-list">
+        <div>
+          <i class="bi bi-clipboard-check"></i><strong>【待審核】</strong
+          ><span>市集報名資料已送出，等待主辦方審核</span><time>2026/06/02 14:30</time>
+        </div>
+        <div>
+          <i class="bi bi-wallet2"></i><strong>【待付款】</strong
+          ><span>報名審核已通過，請於期限內完成付款</span><time>2026/06/02 13:10</time>
+        </div>
+        <div>
+          <i class="bi bi-map"></i><strong>【待選位】</strong
+          ><span>付款完成，請前往選擇您的活動攤位</span><time>2026/06/02 10:15</time>
+        </div>
+        <div>
+          <i class="bi bi-megaphone"></i><strong>【活動通知】</strong
+          ><span>活動行前通知與進場資訊已更新</span><time>2026/06/01 16:20</time>
+        </div>
+        <div>
+          <i class="bi bi-x-circle"></i><strong>【已取消】</strong
+          ><span>冬季暖心市集付款逾期，報名已取消</span><time>2026/05/31 11:45</time>
+        </div>
+      </div>
+    </section>
   </div>
 
   <div class="account-overlay">
-    <article class="account-modal" role="dialog" aria-modal="true" aria-labelledby="dashboardAccountSettingsTitle">
+    <article
+      class="account-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="dashboardAccountSettingsTitle"
+    >
       <header class="modal-header">
         <h2 id="dashboardAccountSettingsTitle">帳號設定</h2>
         <button type="button" class="icon-btn" aria-label="關閉帳號設定" (click)="close()">
@@ -71,7 +106,9 @@
             <p>{{ passwordRule }}</p>
           </div>
 
-          <button type="button" class="outline-action" (click)="openPasswordSetting()">修改密碼</button>
+          <button type="button" class="outline-action" (click)="openPasswordSetting()">
+            修改密碼
+          </button>
         </section>
 
         <section class="setting-card compact danger">
@@ -84,7 +121,11 @@
             <p>{{ cancellationWarning }}</p>
           </div>
 
-          <button type="button" class="danger-action" (click)="accountDeletionDialog.requestDeletion()">
+          <button
+            type="button"
+            class="danger-action"
+            (click)="accountDeletionDialog.requestDeletion()"
+          >
             申請註銷帳號
           </button>
         </section>

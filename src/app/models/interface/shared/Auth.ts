@@ -1,3 +1,4 @@
+/** 系統角色 */
 export type MarketDayRole = 'VENDOR' | 'ORGANIZER' | 'ADMIN';
 
 export type AuthPortalRole = 'vendor' | 'organizer' | 'admin';
@@ -35,6 +36,7 @@ export interface ResetPasswordRequest {
   password: string;
 }
 
+/** 系統使用者角色 */
 export interface MarketDayUser {
   email: string;
   name: string;

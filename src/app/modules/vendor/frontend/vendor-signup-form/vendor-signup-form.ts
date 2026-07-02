@@ -1,11 +1,32 @@
+import { DecimalPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+
+import { AlertService } from '../../../../core/services/alert.service';
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
+import { MarketSlot } from '../../../../models/interface/shared/MarketSlot';
+
+interface RentalEquipment {
+  id: string;
+  name: string;
+  detail: string;
+  price: number;
+  selected: boolean;
+  quantity: number;
+  maxQuantity: number;
+}
+
+interface PowerOption {
+  id: string;
+  label: string;
+  price: number;
+  selected: boolean;
+}
 
 @Component({
   selector: 'app-vendor-signup-form',
-  imports: [FormsModule, RouterLink],
+  imports: [DecimalPipe, FormsModule, RouterLink],
   templateUrl: './vendor-signup-form.html',
   styleUrl: './vendor-signup-form.scss',
 })
@@ -13,141 +34,323 @@ export class VendorSignupForm {
   /** 從市集詳細頁透過 Router state 帶入的市集資料。 */
   market: MarketCardItem | null = null;
 
-  /** 目前選擇的報名場次，預設使用第一個場次。 */
-  selectedSlotIndex = 0;
+  /** 詳細頁已整理好的場次，避免 market 本身沒有 slots 時跨頁遺失。 */
+  private routedSlots: MarketSlot[] = [];
 
-  /** 使用者勾選的攤位類別；key 是類別名稱，value 是是否勾選。 */
-  selectedCategories: Record<string, boolean> = {};
+  /** 報名日期採複選，key 為場次日期。 */
+  selectedDates: Record<string, boolean> = {};
 
-  /** 表單補充欄位，使用 ngModel 做雙向資料綁定。 */
+  /** 設備租借資料集中管理，數量與勾選狀態會同步更新右側摘要。 */
+  equipment: RentalEquipment[] = [
+    {
+      id: 'table',
+      name: '桌子',
+      detail: '180 × 60 公分',
+      price: 100,
+      selected: true,
+      quantity: 1,
+      maxQuantity: 3,
+    },
+    {
+      id: 'chair',
+      name: '椅子',
+      detail: '一般塑膠椅',
+      price: 50,
+      selected: true,
+      quantity: 2,
+      maxQuantity: 6,
+    },
+    {
+      id: 'extension',
+      name: '延長線',
+      detail: '5 公尺',
+      price: 50,
+      selected: false,
+      quantity: 0,
+      maxQuantity: 2,
+    },
+    {
+      id: 'fan',
+      name: '電風扇',
+      detail: '',
+      price: 100,
+      selected: false,
+      quantity: 0,
+      maxQuantity: 2,
+    },
+    {
+      id: 'light',
+      name: '照明燈',
+      detail: 'LED 投光燈 100W',
+      price: 200,
+      selected: false,
+      quantity: 0,
+      maxQuantity: 2,
+    },
+  ];
+
+  /** 額外用電選項與費用由資料綁定產生。 */
+  powerOptions: PowerOption[] = [
+    { id: 'power110', label: '110V / 1000W', price: 200, selected: true },
+    { id: 'power220', label: '220V / 2000W', price: 400, selected: true },
+  ];
+
+  requiresExtraPower = true;
+
+  /** 車輛與備註欄位使用雙向綁定，之後可直接轉為 API payload。 */
   formData = {
-    powerUsage: '',
+    hasVehicle: true,
     vehicleNumber: '',
     note: '',
-    rentPower: true,
   };
 
-  /** 攤位固定資訊，畫面與確認頁都會使用同一份資料。 */
-  readonly boothSpec = '2*3米 / 2.7*3米 / 1.5米';
+  readonly boothSpec = '3 × 3 公尺';
   readonly boothDeposit = 1000;
-  readonly powerRentalFee = 50;
+  readonly capacityPerDate = 200;
+  readonly noteMaxLength = 200;
 
-  /** 當市集資料沒有 tags 時，表單使用這組預設攤位類別。 */
-  readonly defaultCategories = ['餐飲美食', '文創手作', '親子家庭', '寵物生活', '服飾配件', '玩具禮物', '植物選物'];
-
-  constructor(private router: Router) {
+  constructor(
+    private readonly router: Router,
+    private readonly alert: AlertService,
+  ) {
     const navigation = this.router.currentNavigation();
     this.market = navigation?.extras.state?.['market'] || history.state?.['market'] || null;
+    const stateSlots = navigation?.extras.state?.['slots'] ?? history.state?.['slots'];
+    this.routedSlots = Array.isArray(stateSlots) ? stateSlots : [];
 
-    // 從 detail 頁帶入使用者已選擇的場次，讓表單頁維持同一個選取狀態。
-    const stateIndex = navigation?.extras.state?.['selectedSlotIndex'] ?? history.state?.['selectedSlotIndex'];
-    if (typeof stateIndex === 'number' && stateIndex >= 0 && stateIndex < this.slots.length) {
-      this.selectedSlotIndex = stateIndex;
+    const selectedSlotIndex =
+      navigation?.extras.state?.['selectedSlotIndex'] ?? history.state?.['selectedSlotIndex'];
+    const signupState = navigation?.extras.state?.['signup'] ?? history.state?.['signup'];
+    const restoredSlots = Array.isArray(signupState?.selectedSlots)
+      ? (signupState.selectedSlots as MarketSlot[])
+      : [];
+
+    this.initializeSelectedDates(
+      typeof selectedSlotIndex === 'number' ? selectedSlotIndex : null,
+      restoredSlots,
+    );
+  }
+
+  get slots(): MarketSlot[] {
+    if (this.market?.slots?.length) {
+      return this.market.slots;
     }
+
+    if (this.routedSlots.length) {
+      return this.routedSlots;
+    }
+
+    return this.buildFallbackSlots();
   }
 
-  /** 市集日期區間文字，集中處理可避免 template 重複組字串。 */
-  get dateRangeText(): string {
-    if (!this.market) return '-';
-    return `${this.market.start_date} - ${this.market.end_date}`;
+  get selectedSlots(): MarketSlot[] {
+    return this.slots.filter((slot) => this.selectedDates[slot.date]);
   }
 
-  /** 報名截止日暫以活動開始日前 14 天計算；日期格式錯誤時改用 end_date。 */
-  get signupDeadline(): string {
-    if (!this.market) return '-';
-
-    const start = new Date(this.market.start_date);
-    if (Number.isNaN(start.getTime())) return this.market.end_date;
-
-    start.setDate(start.getDate() - 14);
-    return start.toLocaleDateString('zh-TW', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
+  get selectedDays(): number {
+    return this.selectedSlots.length;
   }
 
-  /** 場次列表從 market.slots 綁定；沒有資料時回傳空陣列避免 template 報錯。 */
-  get slots() {
-    return this.market?.slots ?? [];
+  get selectedSlot(): MarketSlot | null {
+    return this.selectedSlots[0] ?? null;
   }
 
-  /** 目前選取的場次，用於主內容與右側摘要同步顯示。 */
-  get selectedSlot() {
-    return this.slots[this.selectedSlotIndex] ?? null;
-  }
-
-  /** 目前選取場次的日期文字；沒有場次時使用市集開始日。 */
   get selectedSlotDate(): string {
-    return this.selectedSlot?.date || this.market?.start_date || '-';
+    return this.selectedSlot?.date ?? this.market?.start_date ?? '-';
   }
 
-  /** 攤位類別優先使用 market.tags，沒有 tags 時使用預設類別。 */
-  get categoryOptions(): string[] {
-    return this.market?.tags?.length ? this.market.tags : this.defaultCategories;
+  get boothFeePerDay(): number {
+    return this.market?.price ?? 650;
   }
 
-  /** 取得使用者已勾選的攤位類別，確認頁會直接顯示這份資料。 */
-  get selectedCategoryList(): string[] {
-    return Object.entries(this.selectedCategories)
-      .filter(([, checked]) => checked)
-      .map(([category]) => category);
+  get boothSubtotal(): number {
+    return this.boothFeePerDay * this.selectedDays;
   }
 
-  /** 攤位費用由 market.price 帶入，沒有資料時以 0 顯示。 */
-  get boothFee(): number {
-    return this.market?.price ?? 0;
+  get selectedEquipment(): RentalEquipment[] {
+    return this.equipment.filter((item) => item.selected && item.quantity > 0);
   }
 
-  /** 是否收取電力租借費，依使用者勾選狀態即時計算。 */
-  get selectedPowerRentalFee(): number {
-    return this.formData.rentPower ? this.powerRentalFee : 0;
+  get equipmentSubtotal(): number {
+    return this.selectedEquipment.reduce((total, item) => total + item.price * item.quantity, 0);
   }
 
-  /** 費用總計會隨市集費用與設備租借勾選狀態自動更新。 */
+  get selectedPowerOptions(): PowerOption[] {
+    return this.requiresExtraPower ? this.powerOptions.filter((option) => option.selected) : [];
+  }
+
+  get powerSubtotal(): number {
+    return this.selectedPowerOptions.reduce((total, option) => total + option.price, 0);
+  }
+
   get totalFee(): number {
-    return this.boothFee + this.boothDeposit + this.selectedPowerRentalFee;
+    return this.boothSubtotal + this.equipmentSubtotal + this.powerSubtotal + this.boothDeposit;
   }
 
-  /** 剩餘攤位加總所有場次剩餘數，供右側摘要顯示。 */
-  get remainingBooths(): number {
-    return this.slots.reduce((total, slot) => total + slot.remaining, 0);
+  get registrationPeriod(): string {
+    if (!this.market) {
+      return '-';
+    }
+
+    const start = this.parseDate(this.market.start_date);
+    if (!start) {
+      return '-';
+    }
+
+    const registrationStart = new Date(start);
+    registrationStart.setDate(registrationStart.getDate() - 45);
+    const registrationEnd = new Date(start);
+    registrationEnd.setDate(registrationEnd.getDate() - 22);
+
+    return `${this.formatFullDate(registrationStart)} 12:00－${this.formatFullDate(registrationEnd)} 23:59`;
   }
 
-  /** 供 template 判斷目前場次是否為選取狀態。 */
-  isSelectedSlot(index: number): boolean {
-    return this.selectedSlotIndex === index;
+  get categoryOptions(): string[] {
+    return this.market?.tags?.length
+      ? this.market.tags
+      : ['文創手作', '寵物生活', '植物選物', '生活選物'];
   }
 
-  /** 使用者切換場次時同步更新主內容與右側摘要。 */
-  selectSlot(index: number): void {
-    this.selectedSlotIndex = index;
+  /** 切換日期時至少保留畫面狀態，送出前再統一驗證。 */
+  toggleDate(slot: MarketSlot): void {
+    this.selectedDates[slot.date] = !this.selectedDates[slot.date];
   }
 
-  /** 回到市集詳細頁時，一樣把 market 帶回去，避免詳細頁資料遺失。 */
+  /** 切換設備後同步調整數量，避免勾選設備卻維持 0。 */
+  toggleEquipment(item: RentalEquipment): void {
+    item.selected = !item.selected;
+    item.quantity = item.selected ? Math.max(1, item.quantity) : 0;
+  }
+
+  changeEquipmentQuantity(item: RentalEquipment, delta: number): void {
+    const nextQuantity = Math.min(item.maxQuantity, Math.max(0, item.quantity + delta));
+
+    item.quantity = nextQuantity;
+    item.selected = nextQuantity > 0;
+  }
+
+  formatSlotDate(date: string): string {
+    const parsed = this.parseDate(date);
+    if (!parsed) {
+      return date;
+    }
+
+    return `${String(parsed.getMonth() + 1).padStart(2, '0')}/${String(parsed.getDate()).padStart(2, '0')}（${this.weekday(parsed)}）`;
+  }
+
+  formatEventDate(date: string): string {
+    const parsed = this.parseDate(date);
+    return parsed ? this.formatFullDate(parsed) : date;
+  }
+
   backToDetail(): void {
     this.router.navigate(['/vendor/sign-up-detail'], {
       state: { market: this.market },
     });
   }
 
-  /** 前往確認頁，將市集資料、選取場次、表單資料與費用試算一起帶入。 */
+  /** 驗證必填資料後，帶著完整報名 payload 前往確認頁。 */
   goToConfirm(): void {
+    if (!this.selectedDays) {
+      this.alert.warning('請選擇報名日期', '至少選擇一個欲參加的活動日期。');
+      return;
+    }
+
+    if (this.formData.hasVehicle && !this.formData.vehicleNumber.trim()) {
+      this.alert.warning('請填寫車牌號碼', '有車輛進場時，車牌號碼為必填資料。');
+      return;
+    }
+
     this.router.navigate(['/vendor/sign-up-confirm'], {
       state: {
         market: this.market,
         signup: {
           slot: this.selectedSlot,
           slotDate: this.selectedSlotDate,
-          categories: this.selectedCategoryList,
-          formData: this.formData,
+          selectedSlots: this.selectedSlots,
+          categories: this.categoryOptions,
+          equipment: this.selectedEquipment,
+          powerOptions: this.selectedPowerOptions,
+          formData: {
+            powerUsage: this.selectedPowerOptions.map((option) => option.label).join('、') || '無',
+            vehicleNumber: this.formData.hasVehicle ? this.formData.vehicleNumber.trim() : '無',
+            note: this.formData.note,
+            rentPower: this.requiresExtraPower,
+            hasVehicle: this.formData.hasVehicle,
+          },
           boothSpec: this.boothSpec,
-          boothFee: this.boothFee,
+          boothFee: this.boothSubtotal,
           boothDeposit: this.boothDeposit,
-          powerRentalFee: this.selectedPowerRentalFee,
+          equipmentFee: this.equipmentSubtotal,
+          powerRentalFee: this.powerSubtotal,
           totalFee: this.totalFee,
         },
       },
     });
+  }
+
+  private initializeSelectedDates(
+    selectedSlotIndex: number | null,
+    restoredSlots: MarketSlot[],
+  ): void {
+    const restoredDates = new Set(restoredSlots.map((slot) => slot.date));
+
+    this.slots.forEach((slot, index) => {
+      if (restoredDates.size) {
+        this.selectedDates[slot.date] = restoredDates.has(slot.date);
+        return;
+      }
+
+      this.selectedDates[slot.date] =
+        selectedSlotIndex === null ? true : index === selectedSlotIndex;
+    });
+  }
+
+  private buildFallbackSlots(): MarketSlot[] {
+    if (!this.market) return [];
+
+    const start = this.parseDate(this.market.start_date);
+    const end = this.parseDate(this.market.end_date);
+    if (!start || !end || end < start) return [];
+
+    const slots: MarketSlot[] = [];
+    const cursor = new Date(start);
+    while (cursor <= end) {
+      slots.push({
+        date: `${String(cursor.getMonth() + 1).padStart(2, '0')}/${String(cursor.getDate()).padStart(2, '0')}`,
+        remaining: this.capacityPerDate,
+      });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    return slots;
+  }
+
+  private parseDate(value: string): Date | null {
+    const parts = value.match(/\d+/g)?.map(Number) ?? [];
+    let year: number;
+    let month: number;
+    let day: number;
+
+    if (parts.length >= 3) {
+      [year, month, day] = parts;
+    } else if (parts.length === 2) {
+      const marketYear = this.market?.start_date.match(/\d{4}/)?.[0];
+      year = Number(marketYear) || new Date().getFullYear();
+      [month, day] = parts;
+    } else {
+      return null;
+    }
+
+    const parsed = new Date(year, month - 1, day);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+
+  private formatFullDate(date: Date): string {
+    return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}（${this.weekday(date)}）`;
+  }
+
+  private weekday(date: Date): string {
+    return ['日', '一', '二', '三', '四', '五', '六'][date.getDay()];
   }
 }
