@@ -2,7 +2,7 @@
   display: block;
 }
 
-.admin-user-managemant {
+.admin-user-management {
   padding: 0 32px 0;
   margin: auto;
   display: flex;
@@ -128,7 +128,7 @@
 }
 
 @media (max-width: 992px) {
-  .user-management-filter {
+  .admin-user-management {
     height: calc(100dvh - 40px); // dashboard-main padding: 20px top + 20px bottom
   }
 }
@@ -140,7 +140,7 @@
 }
 
 @media (max-width: 576px) {
-  .user-management-filter {
+  .admin-user-management {
     height: calc(100dvh - 32px); // dashboard-main padding: 16px top + 16px bottom
   }
 }
