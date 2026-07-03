@@ -2,7 +2,7 @@
   display: block;
 }
 
-.admin-market-managemant {
+.admin-market-management {
   padding: 0 32px 0;
   margin: auto;
   display: flex;
@@ -119,7 +119,7 @@
 }
 
 @media (max-width: 992px) {
-  .admin-market-managemant {
+  .admin-market-management {
     height: calc(100dvh - 40px); // dashboard-main padding: 20px top + 20px bottom
   }
 }
@@ -131,7 +131,7 @@
 }
 
 @media (max-width: 576px) {
-  .admin-market-managemant {
+  .admin-market-management {
     height: calc(100dvh - 32px); // dashboard-main padding: 16px top + 16px bottom
   }
 }
