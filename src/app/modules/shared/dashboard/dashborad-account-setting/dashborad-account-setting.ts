@@ -18,7 +18,7 @@ import {
 })
 export class DashboradAccountSetting {
   /** 帳號基本資料由使用此共用元件的角色頁面傳入。 */
-  @Input() account: DashboardAccountData = {
+  @Input() account= {
     name: '',
     email: '',
     googleBound: false,
@@ -67,11 +67,11 @@ export class DashboradAccountSetting {
   }
 }
 
-export interface DashboardAccountData {
-  name: string;
-  email: string;
-  googleBound: boolean;
-}
+// export interface DashboardAccountData {
+//   name: string;
+//   email: string;
+//   googleBound: boolean;
+// }
 
 export interface DashboardAccountDeletionConfig {
   canDelete: boolean;
