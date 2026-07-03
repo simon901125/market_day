@@ -1,10 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { AlertService } from '../../../../core/services/alert.service';
 import { VendorDashboardStall } from './vendor-dashboard-stall';
 
 describe('VendorDashboardStall', () => {
   let component: VendorDashboardStall;
   let fixture: ComponentFixture<VendorDashboardStall>;
+  let alert: AlertService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -13,6 +15,7 @@ describe('VendorDashboardStall', () => {
 
     fixture = TestBed.createComponent(VendorDashboardStall);
     component = fixture.componentInstance;
+    alert = TestBed.inject(AlertService);
     fixture.detectChanges();
   });
 
@@ -27,5 +30,75 @@ describe('VendorDashboardStall', () => {
     expect(textContent).toContain('基本資料');
     expect(firstInput.value).toBe(component.basicFields[0].value);
     expect(textContent).toContain(component.products[0].name);
+  });
+
+  it('should append a product returned from the shared alert form', async () => {
+    const newProduct = {
+      name: '新商品',
+      description: '商品介紹',
+      price: 180,
+      image: 'blob:new-product',
+    };
+    spyOn(alert, 'custom').and.resolveTo({
+      isConfirmed: true,
+      value: newProduct,
+    } as never);
+
+    await component.openAddProduct();
+
+    expect(component.products.at(-1)).toEqual(newProduct);
+  });
+
+  it('should show warning instead of form when product limit is reached', async () => {
+    component.products = [
+      ...component.products,
+      {
+        name: '第三個商品',
+        description: '商品介紹',
+        price: 100,
+        image: 'third-product.png',
+      },
+    ];
+    const warningSpy = spyOn(alert, 'warning').and.resolveTo({} as never);
+    const customSpy = spyOn(alert, 'custom');
+
+    await component.openAddProduct();
+
+    expect(warningSpy).toHaveBeenCalled();
+    expect(customSpy).not.toHaveBeenCalled();
+  });
+
+  it('should update the selected product returned from edit form', async () => {
+    const editedProduct = {
+      ...component.products[0],
+      name: '編輯後商品',
+      price: 320,
+    };
+    spyOn(alert, 'custom').and.resolveTo({
+      isConfirmed: true,
+      value: editedProduct,
+    } as never);
+
+    await component.openEditProduct(0);
+
+    expect(component.products[0]).toEqual(editedProduct);
+  });
+
+  it('should delete the selected product after confirmation', async () => {
+    const deletedProduct = component.products[0];
+    spyOn(alert, 'confirm').and.resolveTo(true);
+
+    await component.deleteProduct(0);
+
+    expect(component.products).not.toContain(deletedProduct);
+  });
+
+  it('should keep the product when deletion is cancelled', async () => {
+    const originalProducts = [...component.products];
+    spyOn(alert, 'confirm').and.resolveTo(false);
+
+    await component.deleteProduct(0);
+
+    expect(component.products).toEqual(originalProducts);
   });
 });
