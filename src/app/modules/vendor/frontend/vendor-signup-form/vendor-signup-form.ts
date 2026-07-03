@@ -6,6 +6,8 @@ import { Router, RouterLink } from '@angular/router';
 import { AlertService } from '../../../../core/services/alert.service';
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { MarketSlot } from '../../../../models/interface/shared/MarketSlot';
+import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
+import { VendorHeader } from '../vendor-header/vendor-header';
 
 interface RentalEquipment {
   id: string;
@@ -26,7 +28,7 @@ interface PowerOption {
 
 @Component({
   selector: 'app-vendor-signup-form',
-  imports: [DecimalPipe, FormsModule, RouterLink],
+  imports: [DecimalPipe, FormsModule, RouterLink, UserFooter, VendorHeader],
   templateUrl: './vendor-signup-form.html',
   styleUrl: './vendor-signup-form.scss',
 })
@@ -118,17 +120,12 @@ export class VendorSignupForm {
     const stateSlots = navigation?.extras.state?.['slots'] ?? history.state?.['slots'];
     this.routedSlots = Array.isArray(stateSlots) ? stateSlots : [];
 
-    const selectedSlotIndex =
-      navigation?.extras.state?.['selectedSlotIndex'] ?? history.state?.['selectedSlotIndex'];
     const signupState = navigation?.extras.state?.['signup'] ?? history.state?.['signup'];
     const restoredSlots = Array.isArray(signupState?.selectedSlots)
       ? (signupState.selectedSlots as MarketSlot[])
       : [];
 
-    this.initializeSelectedDates(
-      typeof selectedSlotIndex === 'number' ? selectedSlotIndex : null,
-      restoredSlots,
-    );
+    this.initializeSelectedDates(restoredSlots);
   }
 
   get slots(): MarketSlot[] {
@@ -171,16 +168,24 @@ export class VendorSignupForm {
     return this.equipment.filter((item) => item.selected && item.quantity > 0);
   }
 
-  get equipmentSubtotal(): number {
+  get equipmentDailySubtotal(): number {
     return this.selectedEquipment.reduce((total, item) => total + item.price * item.quantity, 0);
+  }
+
+  get equipmentSubtotal(): number {
+    return this.equipmentDailySubtotal * this.selectedDays;
   }
 
   get selectedPowerOptions(): PowerOption[] {
     return this.requiresExtraPower ? this.powerOptions.filter((option) => option.selected) : [];
   }
 
-  get powerSubtotal(): number {
+  get powerDailySubtotal(): number {
     return this.selectedPowerOptions.reduce((total, option) => total + option.price, 0);
+  }
+
+  get powerSubtotal(): number {
+    return this.powerDailySubtotal * this.selectedDays;
   }
 
   get totalFee(): number {
@@ -203,6 +208,10 @@ export class VendorSignupForm {
     registrationEnd.setDate(registrationEnd.getDate() - 22);
 
     return `${this.formatFullDate(registrationStart)} 12:00－${this.formatFullDate(registrationEnd)} 23:59`;
+  }
+
+  get signupStatusText(): string {
+    return this.market?.status === '進行中' ? '報名中' : this.market?.status || '報名中';
   }
 
   get categoryOptions(): string[] {
@@ -289,20 +298,16 @@ export class VendorSignupForm {
     });
   }
 
-  private initializeSelectedDates(
-    selectedSlotIndex: number | null,
-    restoredSlots: MarketSlot[],
-  ): void {
+  private initializeSelectedDates(restoredSlots: MarketSlot[]): void {
     const restoredDates = new Set(restoredSlots.map((slot) => slot.date));
 
-    this.slots.forEach((slot, index) => {
+    this.slots.forEach((slot) => {
       if (restoredDates.size) {
         this.selectedDates[slot.date] = restoredDates.has(slot.date);
         return;
       }
 
-      this.selectedDates[slot.date] =
-        selectedSlotIndex === null ? true : index === selectedSlotIndex;
+      this.selectedDates[slot.date] = true;
     });
   }
 

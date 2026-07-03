@@ -115,6 +115,76 @@
     background: transparent !important;
   }
 }
+
+// Dashboard 登出確認
+.logout-confirm-swal {
+  width: min(330px, calc(100vw - 32px)) !important;
+  padding: 24px 28px 22px !important;
+  border-radius: var(--radius-card) !important;
+
+  .custom-swal-actions {
+    gap: 16px !important;
+    margin-top: 20px !important;
+  }
+
+  .custom-swal-confirm,
+  .custom-swal-cancel {
+    width: 94px !important;
+    min-width: 94px !important;
+    height: 40px !important;
+    padding: 0 12px !important;
+    border-radius: var(--radius-tag) !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+  }
+
+  .custom-swal-cancel {
+    border: 1px solid var(--border-light) !important;
+    color: var(--text-dark) !important;
+    background: var(--bg-white) !important;
+
+    &:hover {
+      border-color: var(--primary-color) !important;
+      color: var(--primary-color) !important;
+      background: var(--primary-soft) !important;
+    }
+  }
+
+  .custom-swal-confirm {
+    background: var(--primary-color) !important;
+
+    &:hover {
+      background: var(--primary-hover) !important;
+    }
+  }
+}
+
+.logout-confirm-content {
+  color: var(--text-dark);
+  text-align: center;
+
+  h3 {
+    margin: 14px 0 6px;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-normal);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+}
+
+.logout-confirm-icon {
+  color: var(--primary-color);
+  font-size: 32px;
+  line-height: 1;
+}
+
 //confrim 是否退款
 .refund-confirm-swal {
   .custom-swal-html {

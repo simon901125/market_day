@@ -13,6 +13,7 @@ export interface AlertHtmlConfirmOptions {
   confirmButtonText?: string;
   cancelButtonText?: string;
   popupClass?: string;
+  showCloseButton?: boolean;
 }
 
 export interface AlertHtmlOptions {
@@ -81,7 +82,7 @@ export class AlertService {
     return Swal.fire({
       html: options.html,
       showCancelButton: true,
-      showCloseButton: true,
+      showCloseButton: options.showCloseButton ?? true,
       allowOutsideClick: false,
       confirmButtonText: options.confirmButtonText ?? EnumSwalButton.Confirm,
       cancelButtonText: options.cancelButtonText ?? EnumSwalButton.Cancel,

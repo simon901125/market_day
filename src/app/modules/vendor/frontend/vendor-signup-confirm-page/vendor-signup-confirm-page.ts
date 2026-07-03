@@ -116,8 +116,11 @@ export class VendorSignupConfirmPage {
     return this.signup?.powerRentalFee ?? 0;
   }
 
-  get totalWithoutDeposit(): number {
-    return this.boothFee + this.equipmentFee + this.powerRentalFee;
+  get totalFee(): number {
+    return (
+      this.signup?.totalFee ??
+      this.boothFee + this.equipmentFee + this.powerRentalFee + this.boothDeposit
+    );
   }
 
   get hasVehicle(): boolean {
@@ -132,22 +135,28 @@ export class VendorSignupConfirmPage {
     return this.signup?.formData.note?.trim() || '無';
   }
 
-  get eventDateText(): string {
-    if (!this.market) return '-';
-    return `${this.formatFullDate(this.market.start_date)} ${this.market.time}－${this.formatFullDate(this.market.end_date)} ${this.market.time}`;
+  get eventDates(): string[] {
+    if (!this.market) return ['-'];
+    return [
+      `${this.formatFullDate(this.market.start_date)}　${this.market.time}`,
+      `${this.formatFullDate(this.market.end_date)}　${this.market.time}`,
+    ];
   }
 
-  get registrationPeriod(): string {
-    if (!this.market) return '-';
+  get registrationDates(): string[] {
+    if (!this.market) return ['-'];
     const eventStart = this.parseDate(this.market.start_date);
-    if (!eventStart) return '-';
+    if (!eventStart) return ['-'];
 
     const registrationStart = new Date(eventStart);
     registrationStart.setDate(registrationStart.getDate() - 45);
     const registrationEnd = new Date(eventStart);
     registrationEnd.setDate(registrationEnd.getDate() - 22);
 
-    return `${this.formatFullDateObject(registrationStart)} 12:00－${this.formatFullDateObject(registrationEnd)} 23:59`;
+    return [
+      `${this.formatFullDateObject(registrationStart)}　12:00－`,
+      `${this.formatFullDateObject(registrationEnd)}　23:59`,
+    ];
   }
 
   formatSlotDate(value: string): string {
@@ -165,6 +174,14 @@ export class VendorSignupConfirmPage {
 
   powerWattage(label: string): string {
     return label.split('/')[1]?.trim() || '－';
+  }
+
+  equipmentItemTotal(item: ConfirmEquipment): number {
+    return item.price * item.quantity * this.selectedDays;
+  }
+
+  powerItemTotal(option: ConfirmPowerOption): number {
+    return option.price * this.selectedDays;
   }
 
   /** 返回表單頁時把目前資料帶回去，避免使用者修改資料時市集資訊遺失。 */

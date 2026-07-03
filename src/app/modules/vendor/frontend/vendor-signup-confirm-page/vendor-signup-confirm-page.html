@@ -26,14 +26,22 @@
           <i class="bi bi-calendar-event"></i>
           <dl>
             <dt>活動日期</dt>
-            <dd>{{ eventDateText }}</dd>
+            <dd class="date-lines">
+              @for (date of eventDates; track date) {
+                <span>{{ date }}</span>
+              }
+            </dd>
           </dl>
         </div>
         <div>
           <i class="bi bi-calendar2-check"></i>
           <dl>
             <dt>報名日期</dt>
-            <dd>{{ registrationPeriod }}</dd>
+            <dd class="date-lines">
+              @for (date of registrationDates; track date) {
+                <span>{{ date }}</span>
+              }
+            </dd>
           </dl>
         </div>
         <div>
@@ -114,6 +122,7 @@
           <h2><i class="bi bi-gift"></i>設備租借</h2>
           <div class="table-wrap">
             <table>
+              <caption>設備租借明細</caption>
               <thead>
                 <tr>
                   <th>設備項目</th>
@@ -130,7 +139,9 @@
                     <td>{{ item.detail || '－' }}</td>
                     <td>× {{ item.quantity }}</td>
                     <td>${{ item.price | number }} / 天</td>
-                    <td>${{ item.price * item.quantity | number }} / 天</td>
+                    <td>
+                      ${{ equipmentItemTotal(item) | number }} / {{ selectedDays }} 天
+                    </td>
                   </tr>
                 } @empty {
                   <tr>
@@ -146,6 +157,7 @@
           <h2><i class="bi bi-lightning-charge"></i>額外用電需求</h2>
           <div class="table-wrap">
             <table>
+              <caption>額外用電明細</caption>
               <thead>
                 <tr>
                   <th>電力類型</th>
@@ -160,7 +172,7 @@
                     <td>{{ powerVoltage(option.label) }}</td>
                     <td>{{ powerWattage(option.label) }}</td>
                     <td>${{ option.price | number }} / 天</td>
-                    <td>${{ option.price | number }} / 天</td>
+                    <td>${{ powerItemTotal(option) | number }} / {{ selectedDays }} 天</td>
                   </tr>
                 } @empty {
                   <tr>
@@ -228,8 +240,8 @@
         </dl>
 
         <div class="total-row">
-          <span>總金額 <small>（未含保證金）</small></span>
-          <strong>${{ totalWithoutDeposit | number }}</strong>
+          <span>總金額 <small>（含保證金）</small></span>
+          <strong>${{ totalFee | number }}</strong>
         </div>
 
         <div class="deposit-notice">
