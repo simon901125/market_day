@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import type { ApplicationDetail, ApplicationStatus } from '../../../../models/interface/vendor/VendorApplicationDetail';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import type {
+  ApplicationDetail,
+  ApplicationStatus,
+} from '../../../../models/interface/vendor/VendorApplicationDetail';
 import type { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { AlertService } from '../../../../core/services/alert.service';
 import { VENDOR_APPLICATION_RECORDS } from '../vendor-application-record/vendor-application-record';
@@ -24,10 +27,13 @@ export class VendorApplicationDetail {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private alert: AlertService,
   ) {
     const applicationNo = this.route.snapshot.paramMap.get('applicationNo');
-    const matchedRecord = VENDOR_APPLICATION_RECORDS.find((record) => record.applicationNo === applicationNo);
+    const matchedRecord = VENDOR_APPLICATION_RECORDS.find(
+      (record) => record.applicationNo === applicationNo,
+    );
 
     if (matchedRecord) {
       this.currentApplicationNo = matchedRecord.applicationNo;
@@ -59,14 +65,17 @@ export class VendorApplicationDetail {
   /** 目前報名編號對應的列表資料。 */
   private get currentRecord() {
     return (
-      VENDOR_APPLICATION_RECORDS.find((record) => record.applicationNo === this.currentApplicationNo) ??
-      VENDOR_APPLICATION_RECORDS[0]
+      VENDOR_APPLICATION_RECORDS.find(
+        (record) => record.applicationNo === this.currentApplicationNo,
+      ) ?? VENDOR_APPLICATION_RECORDS[0]
     );
   }
 
   /** 切換展示狀態，方便開發時檢查不同狀態版面。 */
   setStatus(status: ApplicationStatus): void {
-    const matchedRecord = VENDOR_APPLICATION_RECORDS.find((record) => record.detail.status === status);
+    const matchedRecord = VENDOR_APPLICATION_RECORDS.find(
+      (record) => record.detail.status === status,
+    );
 
     if (matchedRecord) {
       this.currentApplicationNo = matchedRecord.applicationNo;
@@ -89,14 +98,13 @@ export class VendorApplicationDetail {
     }
   }
 
-  /** 進入付款流程；目前用假資料模擬金流結果，未來可改接信用卡付款 API。 */
-  async payNow(): Promise<void> {
-    if (this.mockPaymentResult === 'failed') {
-      await this.openPaymentFailed();
-      return;
-    }
-
-    await this.openPaymentSuccess();
+  /** 進入獨立付款頁，並以報名編號載入對應的付款資料。 */
+  payNow(): void {
+    this.router.navigate([
+      '/vendor/dash-board/appliction-record/detail',
+      this.currentApplicationNo,
+      'payment',
+    ]);
   }
 
   /** 顯示付款成功確認畫面。 */

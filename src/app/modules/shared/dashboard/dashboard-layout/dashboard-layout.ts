@@ -53,12 +53,21 @@ export class DashboardLayout {
       return;
     }
 
-    const confirmed = await this.alert.confirm(
-      '確認登出',
-      '確定要登出目前帳號嗎？',
-      '確認登出',
-      '取消'
-    );
+    const confirmed = await this.alert.confirmHtml({
+      html: `
+        <div class="logout-confirm-content">
+          <div class="logout-confirm-icon" aria-hidden="true">
+            <i class="bi bi-box-arrow-right"></i>
+          </div>
+          <h3>是否登出</h3>
+          <p>登出後將返回登入畫面。</p>
+        </div>
+      `,
+      confirmButtonText: '確認登出',
+      cancelButtonText: '取消',
+      popupClass: 'logout-confirm-swal',
+      showCloseButton: false,
+    });
     if (!confirmed) {
       return;
     }

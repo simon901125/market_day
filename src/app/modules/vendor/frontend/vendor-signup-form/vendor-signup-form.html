@@ -1,4 +1,6 @@
-<main class="signup-form-page">
+<app-vendor-header></app-vendor-header>
+
+<main class="signup-form-page page-transition">
   <div class="signup-shell">
     <div class="top-row">
       <button type="button" class="back-link" (click)="backToDetail()">
@@ -28,7 +30,7 @@
       <section class="market-overview">
         <div class="market-heading">
           <h1>{{ market.title }}</h1>
-          <span class="status-tag">{{ market.status || '報名中' }}</span>
+          <span class="status-tag">{{ signupStatusText }}</span>
         </div>
 
         <div class="market-meta-grid">
@@ -183,21 +185,14 @@
 
             @if (requiresExtraPower) {
               <p class="section-help power-help">請選擇需要的電壓與所需功率（可複選）</p>
-              <div class="power-grid">
-                <div class="power-options">
-                  @for (option of powerOptions; track option.id) {
-                    <label>
-                      <input type="checkbox" [(ngModel)]="option.selected" />
-                      <span>{{ option.label }}</span>
-                      <strong>${{ option.price | number }} / 天</strong>
-                    </label>
-                  }
-                </div>
-
-                <div class="daily-power-total">
-                  <span>每日費用</span>
-                  <strong>${{ powerSubtotal | number }} / 天</strong>
-                </div>
+              <div class="power-options">
+                @for (option of powerOptions; track option.id) {
+                  <label>
+                    <input type="checkbox" [(ngModel)]="option.selected" />
+                    <span>{{ option.label }}</span>
+                    <strong>${{ option.price | number }} / 天</strong>
+                  </label>
+                }
               </div>
             }
 
@@ -277,7 +272,13 @@
               <ul class="summary-price-list">
                 @for (item of selectedEquipment; track item.id) {
                   <li>
-                    <span>{{ item.name }} @if (item.detail) {（{{ item.detail }}）}　× {{ item.quantity }}</span>
+                    <span
+                      >{{ item.name }}
+                      @if (item.detail) {
+                        （{{ item.detail }}）
+                      }
+                      　× {{ item.quantity }}</span
+                    >
                     <strong>${{ item.price * item.quantity | number }}</strong>
                   </li>
                 }
@@ -311,10 +312,14 @@
             <div>
               <span>租借設備小計</span>
               <strong>${{ equipmentSubtotal | number }}</strong>
+              <small>
+                （${{ equipmentDailySubtotal | number }} / 天 × {{ selectedDays }} 天）
+              </small>
             </div>
             <div>
               <span>額外用電小計</span>
               <strong>${{ powerSubtotal | number }}</strong>
+              <small>（${{ powerDailySubtotal | number }} / 天 × {{ selectedDays }} 天）</small>
             </div>
             <div>
               <span>保證金</span>
@@ -351,3 +356,5 @@
     }
   </div>
 </main>
+
+<app-user-footer></app-user-footer>

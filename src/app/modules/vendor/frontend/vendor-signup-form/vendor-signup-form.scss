@@ -11,7 +11,7 @@
 }
 
 .signup-shell {
-  width: min(100% - 64px, 1160px);
+  width: var(--user-content-wide-width);
   margin: 0 auto;
 }
 
@@ -391,13 +391,6 @@
   margin-top: 18px;
 }
 
-.power-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 140px;
-  gap: 22px;
-  align-items: center;
-}
-
 .power-options {
   display: grid;
   gap: 10px;
@@ -416,27 +409,6 @@
     width: 17px;
     height: 17px;
     accent-color: var(--primary-color);
-  }
-}
-
-.daily-power-total {
-  min-height: 82px;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  gap: 7px;
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-card);
-  background: var(--primary-soft);
-
-  span {
-    font-size: 13px;
-    font-weight: 800;
-  }
-
-  strong {
-    color: var(--primary-color);
-    font-size: 17px;
   }
 }
 
@@ -540,7 +512,7 @@
 
 .signup-summary {
   position: sticky;
-  top: 20px;
+  top: 92px;
   padding: 22px;
 
   > h2 {
@@ -605,6 +577,14 @@
     gap: 12px;
     font-size: 13px;
     font-weight: 800;
+
+    small {
+      grid-column: 1 / -1;
+      margin-top: -7px;
+      color: var(--text-light);
+      font-size: 11px;
+      font-weight: 600;
+    }
   }
 }
 
@@ -780,8 +760,7 @@
   .market-meta-grid,
   .signup-facts,
   .date-grid,
-  .vehicle-card,
-  .power-grid {
+  .vehicle-card {
     grid-template-columns: 1fr;
   }
 
