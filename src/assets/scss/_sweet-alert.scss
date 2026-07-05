@@ -185,6 +185,7 @@
   line-height: 1;
 }
 
+
 //confrim 是否退款
 .refund-confirm-swal {
   .custom-swal-html {
@@ -214,6 +215,7 @@
     font-weight: 900;
   }
 }
+
 //確認是否退款 >> <p>
 .refund-confirm-lead {
   margin: 0 0 0.5rem;
@@ -518,6 +520,7 @@
 }
 
 .registration-reject-form {
+
   .registration-swal-icon,
   h3,
   .registration-swal-sub {
@@ -534,11 +537,19 @@
   gap: 0.45rem;
   margin-top: 0.85rem;
 
+  
   span {
     color: var(--text-dark);
     font-size: 0.92rem;
     font-weight: 900;
-
+    
+    i {
+      font-size: 0.8rem;
+      font-style: normal;
+      color: var(--text-normal);
+      font-weight: 500;
+    }
+    
     b {
       color: #ef4444;
     }
@@ -584,7 +595,7 @@
 
 .registration-swal-field-error {
   min-height: 1.2rem;
-  margin: 0.45rem 0 0;
+  margin: 0.45rem 0 4px;
   color: #ef4444;
   font-size: 0.9rem;
   font-weight: 800;
@@ -680,6 +691,65 @@
     white-space: pre-wrap;
     word-break: break-word;
   }
+
+  .admin-swal-unpublish-form-data-section {
+    padding: 0.8rem 0.9rem;
+    display: grid;
+    gap: 1rem;
+    border-radius: var(--radius-card);
+    background: #f7f7f7;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--text-normal);
+    line-height: 1.7;
+    word-break: break-word;
+
+    .admin-swal-unpublish-form-data {
+      display: grid;
+      grid-template-columns: 5rem auto;
+      gap: 4px;
+
+      span:nth-child(even) {
+        color: var(--text-dark);
+      }
+    }
+
+    .admin-swal-unpublish-form-reason {
+      div {
+        color: var(--text-dark);
+      }
+    }
+  }
+
+  .admin-swal-unpublish-form-option-section {
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0.8rem 0;
+    gap: 4px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1.7;
+    color: var(--text-dark);
+
+    span {
+      grid-column: 1 / -1;
+    }
+
+    div input[type="radio"] {
+      appearance: none;
+      width: 1em;
+      height: 1em;
+      border: 2px solid var(--text-light);
+      border-radius: 50%;
+
+      &:checked {
+        border-color: #fff;
+        background-color: var(--primary-color);
+        outline: 2px solid var(--primary-color);
+      }
+    }
+  }
 }
 
 .restore-confirm-effects {
@@ -759,7 +829,7 @@
     display: grid;
     gap: 0.45rem;
 
-    > span {
+    >span {
       font-size: 0.88rem;
       font-weight: 700;
     }

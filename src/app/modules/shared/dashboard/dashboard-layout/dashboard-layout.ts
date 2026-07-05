@@ -178,8 +178,6 @@ export class DashboardLayout {
     ];
 
     this.userMenuItems = [
-      { label: '管理員資料', icon: 'bi-person', path: '/admin/dash-board/profile' },
-      { label: '帳號設定', icon: 'bi-gear', path: '/admin/dash-board/account' },
       { label: '登出', icon: 'bi-box-arrow-right', action: 'logout' },
     ];
   }
