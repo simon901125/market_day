@@ -158,6 +158,12 @@
     background: #eaf5ff;
     color: #1680e5;
   }
+
+  &.cancelled,
+  &.history {
+    background: #eee;
+    color: #888;
+  }
 }
 
 .summary-actions {
@@ -321,24 +327,55 @@
   border-bottom: 0;
 }
 
-.payment-list .status-value {
-  width: fit-content;
-  padding: 3px 10px;
-  border-radius: 999px;
-  color: #15803d !important;
-  background: #dcfce7;
-}
-
+.payment-list .status-value,
 .side-list .status-value {
   width: fit-content;
   padding: 3px 10px;
   border-radius: 999px;
-  color: #dc2626 !important;
-  background: #fee2e2;
 }
 
 .highlight-text {
   color: var(--primary-color) !important;
+}
+
+.status-value {
+  &.completed,
+  &.deposit-refunded {
+    background: #ecfdf3;
+    color: #16a34a !important;
+  }
+
+  &.reviewing,
+  &.refund-applying {
+    background: var(--bg-primary);
+    color: var(--primary-color) !important;
+  }
+
+  &.refunded {
+    background: #fef2f2;
+    color: #dc2626 !important;
+  }
+
+  &.payment {
+    background: #fff4df;
+    color: var(--primary-color) !important;
+  }
+
+  &.refund-processing {
+    background: #f4efff;
+    color: #6d28d9 !important;
+  }
+
+  &.booth {
+    background: #eaf5ff;
+    color: #1680e5 !important;
+  }
+
+  &.cancelled,
+  &.history {
+    background: #eee;
+    color: #888 !important;
+  }
 }
 
 .pay-now-btn,

@@ -117,6 +117,23 @@ export class VendorApplicationDetail {
     return this.detail.paymentLines.reduce((total, item) => total + item.amount, 0);
   }
 
+  getStatusValueClass(statusText: string): string | null {
+    const statusClassMap: Record<string, string> = {
+      待審核: 'reviewing',
+      待付款: 'payment',
+      已付款: 'completed',
+      報名完成: 'completed',
+      待選位: 'booth',
+      保證金已退還: 'deposit-refunded',
+      退款申請中: 'refund-applying',
+      退款處理中: 'refund-processing',
+      已退款: 'refunded',
+      已取消: 'history',
+    };
+
+    return statusClassMap[statusText.trim()] ?? null;
+  }
+
   /** 目前報名編號對應的列表資料。 */
   private get currentRecord() {
     return (

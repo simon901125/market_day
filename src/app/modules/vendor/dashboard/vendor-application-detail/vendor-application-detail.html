@@ -144,6 +144,7 @@
               <strong
                 [class.highlight-text]="row.highlight"
                 [class.status-value]="row.label === '付款狀態'"
+                [ngClass]="row.label === '付款狀態' ? getStatusValueClass(row.value) : null"
               >
                 {{ row.value }}
               </strong>
@@ -248,6 +249,7 @@
               <strong
                 [class.highlight-text]="row.highlight"
                 [class.status-value]="row.label === '退款狀態'"
+                [ngClass]="row.label === '退款狀態' ? getStatusValueClass(row.value) : null"
               >
                 {{ row.value }}
               </strong>
