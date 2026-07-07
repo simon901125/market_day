@@ -10,7 +10,8 @@ export type ApplicationStatus =
   | 'refunded'
   | 'refundApplying'
   | 'refundProcessing'
-  | 'refundSuccess';
+  | 'refundSuccess'
+  | 'booth';
 
 /** 報名詳細右側資訊卡類型。 */
 export type SideCardType = 'booth' | 'refund';
@@ -157,6 +158,9 @@ export interface ApplicationDetail {
 
   /** 狀態需要顯示的成功彈窗資料。 */
   dialog?: DetailDialog;
+
+  /** 活動是否正由主辦方申請下架；不影響攤主原本的報名狀態。 */
+  marketUnpublishPending?: boolean;
 }
 
 /** 清單進入詳細頁時，用報名編號覆蓋的活動摘要資料。 */

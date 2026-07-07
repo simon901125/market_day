@@ -6,58 +6,100 @@
   </nav>
 
   <header class="page-title app-page-header">
-  <div class="app-page-title-wrap">
-    <a
-      routerLink="/vendor/dash-board/application-record"
-      class="back-btn"
-      aria-label="返回我的報名紀錄"
-    >
-      <i class="bi bi-arrow-left"></i>
-    </a>
+    <div class="app-page-title-wrap">
+      <a
+        routerLink="/vendor/dash-board/application-record"
+        class="back-btn"
+        aria-label="返回我的報名紀錄"
+      >
+        <i class="bi bi-arrow-left"></i>
+      </a>
 
-    <h1 class="app-page-title">報名詳細</h1>
-  </div>
+      <h1 class="app-page-title">報名詳細</h1>
+    </div>
 
-  @if (detail.actionButton) {
-    <button
-      type="button"
-      class="header-action app-btn primary"
-      (click)="handleAction(detail.actionButton.action)"
-    >
-      {{ detail.actionButton.label }}
-    </button>
-  }
-</header>
+    @if (
+      detail.actionButton ||
+      currentStatus === 'reviewing' ||
+      currentStatus === 'payment'
+    ) {
+      <div class="header-actions">
+        @if (currentStatus === 'reviewing' || currentStatus === 'payment') {
+          <button
+            type="button"
+            class="header-action app-btn primary"
+            (click)="cancelRegistration()"
+          >
+            取消報名
+          </button>
+        }
+
+        @if (detail.actionButton) {
+          <button
+            type="button"
+            class="header-action app-btn primary"
+            (click)="handleAction(detail.actionButton.action)"
+          >
+            {{ detail.actionButton.label }}
+          </button>
+        }
+      </div>
+    }
+  </header>
 
   <section class="summary-card">
     <img [src]="detail.image" [alt]="detail.title" />
 
     <div class="summary-info">
-      <h2>{{ detail.title }}</h2>
-      <p>報名編號：{{ detail.applicationNo }}</p>
+      <div class="market-title-line">
+        <h2>{{ detail.title }}</h2>
+        <span class="status-badge" [ngClass]="detail.statusClass">{{ detail.statusText }}</span>
+      </div>
+      <p class="application-number">報名編號：{{ detail.applicationNo }}</p>
       <p>
         <i class="bi bi-calendar4"></i>
-        {{ detail.dateRange }}
+        活動時間：{{ eventDateText }}
       </p>
       <p>
         <i class="bi bi-geo-alt"></i>
-        {{ detail.location }}
+        活動地點：{{ detail.location }}
+      </p>
+      <p>
+        <i class="bi bi-geo-alt"></i>
+        活動地址：{{ market.address }}
       </p>
     </div>
 
     <div class="summary-actions">
-      <span class="status-badge" [ngClass]="detail.statusClass">{{ detail.statusText }}</span>
-      <a routerLink="/user/activity-detail" [state]="{ market: market }" class="outline-link">
-        查看活動詳細
-        <i class="bi bi-arrow-right"></i>
-      </a>
+      @if (
+        currentStatus === 'payment' ||
+        currentStatus === 'refunded' ||
+        currentStatus === 'refundSuccess' ||
+        detail.marketUnpublishPending
+      ) {
+        <a routerLink="/user/activity-detail" [state]="{ market: market }" class="outline-link">
+          查看活動詳細
+          <i class="bi bi-arrow-right"></i>
+        </a>
+      }
     </div>
   </section>
 
-  <section class="progress-card">
-    <h2>報名進度</h2>
+  @if (detail.marketUnpublishPending) {
+    <section class="notice-box activity-unpublish-notice" role="status">
+      <i class="bi bi-exclamation-circle"></i>
+      <div>
+        <h2>活動目前處於下架申請中</h2>
+        <p>主辦方已向平台提出下架申請，目前等待系統管理員審核。</p>
+        <p>若活動取消，將依您的報名狀態安排退款或取消報名，請留意通知。</p>
+      </div>
+    </section>
+  }
 
-    <div class="progress-steps">
+  <section class="progress-card">
+    <h2><i class="bi bi-clock"></i>狀態紀錄</h2>
+
+    <div class="progress-steps" [class.cancelled-progress]="currentStatus === 'cancelled'">
       @for (step of detail.progress; track step.label; let last = $last) {
         <article class="progress-step">
           <span>{{ step.label }}</span>
@@ -99,7 +141,12 @@
           @for (row of detail.paymentRows; track row.label) {
             <div>
               <span>{{ row.label }}</span>
-              <strong [class.highlight-text]="row.highlight">{{ row.value }}</strong>
+              <strong
+                [class.highlight-text]="row.highlight"
+                [class.status-value]="row.label === '付款狀態'"
+              >
+                {{ row.value }}
+              </strong>
             </div>
           }
         </div>
@@ -152,18 +199,58 @@
       }
     </section>
 
-    <section class="detail-card side-card" [class.refund-card]="detail.sideCard.type === 'refund'">
+    <section
+      id="booth-information"
+      class="detail-card side-card"
+      [class.refund-card]="detail.sideCard.type === 'refund'"
+    >
       <h2>
         <i class="bi" [ngClass]="detail.sideCard.icon"></i>
         {{ detail.sideCard.title }}
       </h2>
 
-      @if (detail.sideCard.rows.length) {
+      @if (detail.marketUnpublishPending) {
+        <div class="empty-state empty-booth unpublish-booth-state">
+          <div class="empty-icon">
+            <i class="bi bi-cone-striped"></i>
+          </div>
+          <h3>活動目前正在申請下架，暫停攤位分配。</h3>
+          <p>待審核完成後，<br />將通知是否恢復活動或辦理退款。</p>
+        </div>
+      } @else if (detail.sideCard.type === 'booth' && detail.booth.selected) {
+        <div class="booth-table-wrap">
+          <table class="booth-table">
+            <thead>
+              <tr>
+                <th>日期</th>
+                <th>攤位編號</th>
+                <th>攤位分區</th>
+                <th>攤位狀態</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (booth of boothAssignments; track booth.date) {
+                <tr>
+                  <td>{{ booth.date }}</td>
+                  <td>{{ booth.number }}</td>
+                  <td>{{ booth.zone }}</td>
+                  <td><span>已完成選位</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else if (detail.sideCard.rows.length) {
         <div class="info-list side-list">
           @for (row of detail.sideCard.rows; track row.label) {
             <div>
               <span>{{ row.label }}</span>
-              <strong [class.highlight-text]="row.highlight">{{ row.value }}</strong>
+              <strong
+                [class.highlight-text]="row.highlight"
+                [class.status-value]="row.label === '退款狀態'"
+              >
+                {{ row.value }}
+              </strong>
             </div>
           }
         </div>
@@ -189,4 +276,131 @@
       }
     </section>
   </div>
+
+  <div class="resource-grid">
+    <section class="detail-card resource-card">
+      <h2><i class="bi bi-gift"></i>基本設備 <small>（免費提供）</small></h2>
+      <div class="detail-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>設備名稱</th>
+              <th>規格說明</th>
+              <th>數量</th>
+              <th>單位</th>
+              <th>小計</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of basicEquipment; track item.name) {
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.spec }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unit }}</td>
+                <td>NT$0</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="subsection-title"><i class="bi bi-tag"></i>租借設備明細</h2>
+      <div class="detail-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>設備名稱</th>
+              <th>規格說明</th>
+              <th>數量</th>
+              <th>單價</th>
+              <th>小計</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of rentalEquipment; track item.name) {
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.spec }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.subtotal }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="section-subtotal">設備租借費小計：<strong>NT$300（2天）</strong></p>
+    </section>
+
+    <section class="detail-card resource-card">
+      <h2><i class="bi bi-lightning-charge"></i>基本用電 <small>（免費提供）</small></h2>
+      <div class="detail-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>電力規格</th>
+              <th>功率</th>
+              <th>費價</th>
+              <th>小計</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>基本用電（免費提供）</td>
+              <td>110V / 500W</td>
+              <td>免費</td>
+              <td>NT$0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="subsection-title"><i class="bi bi-lightning-charge"></i>額外申請用電</h2>
+      <div class="detail-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>電力規格</th>
+              <th>功率</th>
+              <th>費價</th>
+              <th>小計</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of extraPower; track item.voltage) {
+              <tr>
+                <td>{{ item.voltage }}</td>
+                <td>－</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.subtotal }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="section-subtotal">額外用電小計：<strong>NT$1,200（2天）</strong></p>
+    </section>
+  </div>
+
+  <section class="detail-card fee-breakdown-card">
+    <h2><i class="bi bi-file-earmark-text"></i>費用明細</h2>
+    <div class="fee-table">
+      <div class="fee-table-head">
+        <span>項目</span><span>內容</span><span>金額</span>
+      </div>
+      @for (item of feeBreakdown; track item.label) {
+        <div>
+          <strong>{{ item.label }}</strong>
+          <span>{{ item.content }}</span>
+          <span>{{ item.amount }}</span>
+        </div>
+      }
+      <div class="fee-total">
+        <strong>總計</strong>
+        <span></span>
+        <b>NT$3,800</b>
+      </div>
+    </div>
+  </section>
 </main>

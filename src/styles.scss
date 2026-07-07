@@ -130,3 +130,56 @@ body.market-loading-lock {
   }
 }
 
+/* 攤主報名詳細：活動下架申請提示（報名狀態維持原狀）。 */
+.activity-unpublish-notice {
+  align-items: flex-start;
+  margin: 0 0 10px !important;
+  border: 1px solid var(--border-primary);
+  background: var(--primary-soft) !important;
+
+  > i {
+    color: var(--primary-color);
+    font-size: 20px;
+  }
+
+  h2 {
+    margin: 0 0 8px;
+    color: var(--primary-color);
+    font-size: 16px;
+    font-weight: 900;
+  }
+
+  p {
+    margin: 0 0 4px;
+    color: var(--text-dark);
+  }
+}
+
+.application-detail-page .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .header-action.app-btn {
+    width: 138px;
+    text-decoration: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .application-detail-page {
+    .app-page-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .header-actions {
+      width: 100%;
+
+      .header-action.app-btn {
+        width: 100%;
+      }
+    }
+  }
+}
+

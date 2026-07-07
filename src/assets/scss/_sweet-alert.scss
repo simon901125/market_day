@@ -314,6 +314,95 @@
   font-weight: 800;
 }
 
+.cancel-registration-swal {
+  width: min(380px, calc(100vw - 32px)) !important;
+  padding: 18px 28px 20px !important;
+
+  .custom-swal-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 14px !important;
+    margin-top: 16px !important;
+  }
+
+  .custom-swal-confirm,
+  .custom-swal-cancel {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 42px !important;
+    padding: 0 12px !important;
+    border-radius: var(--radius-tag) !important;
+    font-size: 14px !important;
+  }
+
+  .custom-swal-cancel {
+    border: 1px solid var(--border-light) !important;
+    background: var(--bg-white) !important;
+    color: var(--text-dark) !important;
+  }
+}
+
+.cancel-registration-content {
+  color: var(--text-dark);
+  text-align: center;
+
+  h3 {
+    margin: 12px 0 8px;
+    font-size: 21px;
+    font-weight: 900;
+  }
+}
+
+.cancel-registration-icon {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  color: var(--primary-color);
+  font-size: 34px;
+}
+
+.cancel-registration-lead {
+  margin: 0;
+  color: var(--text-normal);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.65;
+}
+
+.cancel-registration-notice {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-card);
+  background: var(--primary-soft);
+  text-align: left;
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+    color: var(--primary-color);
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 22px;
+  }
+
+  li {
+    color: var(--text-normal);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.7;
+  }
+}
+
 .refund-success-swal {
   .custom-swal-html {
     text-align: center !important;

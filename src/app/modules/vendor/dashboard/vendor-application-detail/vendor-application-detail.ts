@@ -25,6 +25,57 @@ export class VendorApplicationDetail {
   /** 付款結果假資料；之後串接金流 API 時可由後端回傳決定 success 或 failed。 */
   mockPaymentResult: 'success' | 'failed' = 'success';
 
+  readonly basicEquipment = [
+    { name: '桌子（基本）', spec: '180 × 60 公分', quantity: 1, unit: '張' },
+    { name: '椅子（基本）', spec: '一般塑膠椅', quantity: 2, unit: '張' },
+  ];
+
+  readonly rentalEquipment = [
+    {
+      name: '桌子（加租）',
+      spec: '180 × 60 公分',
+      quantity: 1,
+      price: 'NT$100 / 張',
+      subtotal: 'NT$200（2天）',
+    },
+    {
+      name: '椅子（加租）',
+      spec: '一般塑膠椅',
+      quantity: 2,
+      price: 'NT$50 / 張',
+      subtotal: 'NT$100（2天）',
+    },
+  ];
+
+  readonly extraPower = [
+    { voltage: '110V / 1000W', price: 'NT$200 / 天', subtotal: 'NT$400（2天）' },
+    { voltage: '220V / 2000W', price: 'NT$400 / 天', subtotal: 'NT$800（2天）' },
+  ];
+
+  readonly boothAssignments = [
+    { date: '2026/05/30', number: 'A12', zone: 'A 區' },
+    { date: '2026/05/31', number: 'A12', zone: 'A 區' },
+  ];
+
+  readonly feeBreakdown = [
+    {
+      label: '報名費',
+      content: '2 天（05/30 ＋ 05/31）',
+      amount: 'NT$1,300（NT$650 × 2 天）',
+    },
+    {
+      label: '設備租借費',
+      content: '桌子（加租）× 1、椅子（加租）× 2',
+      amount: 'NT$300（NT$150 × 2 天）',
+    },
+    {
+      label: '額外用電費',
+      content: '110V / 1000W、220V / 2000W',
+      amount: 'NT$1,200（NT$600 × 2 天）',
+    },
+    { label: '保證金', content: '活動結束後退還', amount: 'NT$1,000' },
+  ];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -55,6 +106,10 @@ export class VendorApplicationDetail {
   /** 目前報名關聯的市集卡片資料，提供 activity-detail 讀取。 */
   get market(): MarketCardItem {
     return this.currentRecord.market;
+  }
+
+  get eventDateText(): string {
+    return `${this.formatMarketDate(this.market.start_date)} ${this.market.time}－${this.formatMarketDate(this.market.end_date)} ${this.market.time}`;
   }
 
   /** 付款總金額。 */
@@ -96,6 +151,16 @@ export class VendorApplicationDetail {
       this.setStatus('refundSuccess');
       await this.openRefundSuccess();
     }
+  }
+
+  /** 待審核、待付款狀態取消報名前的二次確認。 */
+  async cancelRegistration(): Promise<void> {
+    await this.alert.confirmHtml({
+      html: this.getCancelRegistrationConfirmHtml(),
+      confirmButtonText: '確認取消報名',
+      cancelButtonText: '取消',
+      popupClass: 'cancel-registration-swal',
+    });
   }
 
   /** 進入獨立付款頁，並以報名編號載入對應的付款資料。 */
@@ -242,6 +307,39 @@ export class VendorApplicationDetail {
 
   /** 金額格式化。 */
   formatCurrency(amount: number): string {
-    return `$${amount.toLocaleString()}`;
+    return `NT$${amount.toLocaleString()}`;
+  }
+
+  /** 組合取消報名確認內容。 */
+  private getCancelRegistrationConfirmHtml(): string {
+    return `
+      <div class="cancel-registration-content">
+        <div class="cancel-registration-icon">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
+
+        <h3>確認取消報名？</h3>
+        <p class="cancel-registration-lead">
+          取消報名後，將失去本次活動報名資格。<br>
+          請確認是否要取消報名。
+        </p>
+
+        <section class="cancel-registration-notice">
+          <h4><i class="bi bi-exclamation-circle"></i>注意事項</h4>
+          <ul>
+            <li>取消報名後將無法恢復。</li>
+            <li>若要再次參加活動，需重新報名。</li>
+            <li>請確認後再送出申請。</li>
+          </ul>
+        </section>
+      </div>
+    `;
+  }
+
+  private formatMarketDate(value: string): string {
+    const parsed = new Date(`${value.replaceAll('/', '-')}T00:00:00`);
+    if (Number.isNaN(parsed.getTime())) return value;
+    const weekday = ['日', '一', '二', '三', '四', '五', '六'][parsed.getDay()];
+    return `${value}（${weekday}）`;
   }
 }
