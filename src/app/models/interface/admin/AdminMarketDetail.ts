@@ -17,6 +17,7 @@ export interface AdminMarketDetail {
     name: string;
     type: string;
     time: string;
+    locationName: string;
     location: string;
     description: string;
   };

@@ -23,7 +23,7 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
 const DETAIL_LINK = '/vendor/dash-board/appliction-record/detail';
 
 type MarketKey = string;
-type RecordActionType = 'view' | 'payment' | 'booth' | 'refund' | 'review';
+type RecordActionType = 'view' | 'payment' | 'booth' | 'refund' | 'review' | 'cancel';
 
 interface ApplicationRecordJson {
   id: number;
@@ -45,6 +45,7 @@ const RECORD_ACTION_MAP: Record<RecordActionType, RecordAction> = {
   booth: { label: '選擇攤位', style: 'primary', link: DETAIL_LINK },
   refund: { label: '退款', style: 'primary',link: DETAIL_LINK },
   review: { label: '審核', style: 'primary',link: DETAIL_LINK },
+  cancel: { label: '取消報名', style: 'primary', link: DETAIL_LINK },
 };
 
 const DETAIL_FACTORY_MAP: Record<ApplicationStatus, () => ApplicationDetail> = {
@@ -57,6 +58,7 @@ const DETAIL_FACTORY_MAP: Record<ApplicationStatus, () => ApplicationDetail> = {
   refundApplying: createRefundApplyingDetail,
   refundProcessing: createRefundProcessingDetail,
   refundSuccess: createRefundSuccessDetail,
+  booth: createUnpublishPendingDetail,
 };
 
 /** 報名紀錄關聯的市集卡片資料，activity-detail 可直接讀取這份 MarketCardItem。 */
@@ -260,7 +262,7 @@ export const VENDOR_APPLICATION_RECORD_JSON: ApplicationRecordJson[] = [
     status: 'payment',
     statusText: '待付款',
     statusClass: 'payment',
-    actionTypes: ['payment'],
+    actionTypes: ['payment', 'cancel'],
     detailType: 'payment',
   },
   {
@@ -273,7 +275,7 @@ export const VENDOR_APPLICATION_RECORD_JSON: ApplicationRecordJson[] = [
     status: 'reviewing',
     statusText: '待審核',
     statusClass: 'reviewing',
-    actionTypes: ['review'],
+    actionTypes: ['review', 'cancel'],
     detailType: 'reviewing',
   },
   {
@@ -314,6 +316,19 @@ export const VENDOR_APPLICATION_RECORD_JSON: ApplicationRecordJson[] = [
     statusClass: 'booth',
     actionTypes: ['booth', 'refund'],
     detailType: 'refundSuccess',
+  },
+  {
+    id: 11,
+    marketKey: 'forestCat',
+    marketName: '新動市集・貓貓森林市',
+    eventDate: '2024/06/15 - 2024/06/16',
+    location: '新北市板橋區 新板特區公園',
+    applicationNo: 'MD202406150099',
+    status: 'booth',
+    statusText: '待選位',
+    statusClass: 'booth',
+    actionTypes: ['view'],
+    detailType: 'booth',
   },
 ];
 
@@ -532,7 +547,7 @@ function createMarket(market: Omit<MarketCardItem, 'time' | 'description' | 'ima
 
   return {
     ...marketInfo,
-    time: '13:30 - 20:30',
+    time: '10:00 - 18:00',
     description: `${market.title} 聚集特色品牌、手作設計與生活風格攤位，適合慢慢逛、好好交流。`,
     image: imagePath(imageNo),
     status: MarketStatus.ended,
@@ -573,12 +588,11 @@ function createRefundSuccessDetail(): ApplicationDetail {
   return {
     ...baseDetail('refundSuccess', '待選位', 'booth'),
     progress: [
-      { label: '報名時間', value: '2026/06/01 14:30' },
+      { label: '報名日期', value: '2026/06/01 14:30' },
       { label: '審核時間', value: '2026/06/02 15:30' },
       { label: '付款時間', value: '2026/06/03 16:45' },
-      { label: '選擇攤位', value: '尚未完成' },
-      { label: '報名完成', value: '尚未完成' },
     ],
+    paymentLines: [],
     actionButton: { label: '申請退款', action: 'requestRefund' },
     sideCard: {
       type: 'booth',
@@ -602,21 +616,42 @@ function createRefundSuccessDetail(): ApplicationDetail {
   };
 }
 
+/** 活動申請下架期間仍保留攤主原本的待選位狀態，只暫停攤位分配。 */
+function createUnpublishPendingDetail(): ApplicationDetail {
+  return {
+    ...baseDetail('booth', '待選位', 'booth'),
+    marketUnpublishPending: true,
+    progress: [
+      { label: '報名日期', value: '2026/06/01 10:15' },
+      { label: '審核時間', value: '2026/06/02 15:30' },
+      { label: '付款時間', value: '2026/06/03 16:45' },
+    ],
+    paymentRows: paidRows(),
+    paymentLines: [],
+    sideCard: {
+      type: 'booth',
+      title: '攤位資訊',
+      icon: 'bi-shop',
+      rows: [],
+    },
+    booth: {
+      selected: false,
+      rows: [],
+    },
+  };
+}
+
 function createPaymentDetail(): ApplicationDetail {
   return {
     ...baseDetail('payment', '待付款', 'payment'),
     progress: [
-      { label: '報名時間', value: '2026/06/01 14:30' },
+      { label: '報名日期', value: '2026/06/01 14:30' },
       { label: '審核時間', value: '2026/06/02 15:30' },
-      { label: '付款時間', value: '尚未完成' },
-      { label: '攤位完成時間', value: '尚未完成' },
-      { label: '最終確認時間', value: '尚未完成' },
-      { label: '保證金退還', value: '尚未完成' },
     ],
     paymentRows: [
       { label: '付款狀態', value: '待付款', highlight: true },
-      { label: '付款期限', value: '2026/06/05 23:59', highlight: true },
-      { label: '付款金額', value: '$1,200' },
+      { label: '付款期限', value: '2026/06/09 23:59' },
+      { label: '付款金額', value: 'NT$3,800', highlight: true },
     ],
     paymentLines: [],
     sideCard: {
@@ -680,23 +715,21 @@ function createDepositRefundedDetail(): ApplicationDetail {
   return {
     ...baseDetail('depositRefunded', '保證金已退還', 'deposit-refunded'),
     progress: [
-      { label: '報名時間', value: '2026/06/01 14:30' },
+      { label: '報名日期', value: '2026/06/01 14:30' },
       { label: '審核時間', value: '2026/06/02 15:30' },
       { label: '付款時間', value: '2026/06/03 16:45' },
-      { label: '攤位完成時間', value: '2026/06/04 11:20' },
-      { label: '最終確認時間', value: '2026/06/16 20:30' },
-      { label: '保證金退還', value: '2026/06/25 10:30' },
+      { label: '退款申請時間', value: '2026/06/04 11:20' },
+      { label: '取消時間', value: '2026/06/04 11:20' },
+      { label: '最終確認時間', value: '2026/06/10 14:30' },
+      { label: '保證金完成時間', value: '2026/06/15 10:00' },
     ],
-    paymentRows: [
-      ...paidRows(),
-      { label: '保證金退還', value: '2026/06/25 10:30', highlight: true },
-    ],
+    paymentRows: paidRows(),
+    paymentLines: [],
     sideCard: {
       type: 'booth',
       title: '攤位資訊',
       icon: 'bi-shop',
       rows: boothRows(),
-      notice: '活動已完成結案，保證金已依原付款方式退還。',
     },
   };
 }
@@ -705,17 +738,16 @@ function createCancelledDetail(): ApplicationDetail {
   return {
     ...baseDetail('cancelled', '已取消', 'cancelled'),
     progress: [
-      { label: '報名時間', value: '2026/06/01 14:30' },
+      { label: '報名日期', value: '2026/06/01 10:15' },
       { label: '審核時間', value: '2026/06/02 15:30' },
-      { label: '取消時間', value: '2026/06/06 00:00' },
+      { label: '付款時間', value: '2026/06/03 16:45' },
+      { label: '取消時間', value: '2026/06/04 11:20' },
+      { label: '取消原因', value: '因個人行程安排，故申請取消本次報名。' },
     ],
-    paymentRows: [
-      { label: '付款狀態', value: '已逾期', highlight: true },
-      { label: '付款期限', value: '2026/06/05 23:59' },
-      { label: '付款金額', value: '$1,700' },
-      { label: '保證金', value: '$1,000' },
-    ],
+    paymentRows: [],
     paymentLines: [],
+    paymentEmptyTitle: '尚未付款',
+    paymentEmptyText: '審核通過後，將提供付款資訊',
     sideCard: {
       type: 'booth',
       title: '攤位資訊',
@@ -729,18 +761,20 @@ function createCancelledDetail(): ApplicationDetail {
 function createRefundedDetail(): ApplicationDetail {
   return {
     ...baseDetail('refunded', '已退款', 'refunded'),
-    progress: [
-      { label: '報名時間', value: '2026/06/01 14:30' },
-      { label: '審核時間', value: '2026/06/02 15:30' },
-      { label: '退款完成時間', value: '2026/06/09 10:20' },
-    ],
-    paymentRows: [
-      { label: '付款狀態', value: '已退款', highlight: true },
-      { label: '退款時間', value: '2026/06/09 10:20' },
-      { label: '退款金額', value: '$1,700' },
-    ],
+    progress: refundProgress('2026/06/06 14:30', '2026/06/08 10:15'),
+    paymentRows: paidRows(),
     paymentLines: [],
-    sideCard: refundCard('已退款', '2026/06/09 10:20'),
+    sideCard: {
+      type: 'refund',
+      title: '退款資訊',
+      icon: 'bi-bank',
+      rows: [
+        { label: '退款狀態', value: '已退款', highlight: true },
+        { label: '退款方式', value: '信用卡' },
+        { label: '退款編號', value: 'R20240608000123' },
+        { label: '退款金額', value: 'NT$3,800', highlight: true },
+      ],
+    },
   };
 }
 
@@ -777,7 +811,7 @@ function refundProgress(reviewTime: string, refundTime: string): ProgressStep[] 
     { label: '報名時間', value: '2026/06/01 14:30' },
     { label: '審核時間', value: '2026/06/02 15:30' },
     { label: '付款時間', value: '2026/06/03 16:45' },
-    { label: '退款申請時間', value: '2026/06/07 15:55' },
+    { label: '退款申請時間', value: '2026/06/04 11:20' },
     { label: '退款審核時間', value: reviewTime },
     { label: '退款時間', value: refundTime },
   ];
@@ -785,11 +819,9 @@ function refundProgress(reviewTime: string, refundTime: string): ProgressStep[] 
 
 function applicationRows(): DetailRow[] {
   return [
-    { label: '參加場次', value: '2024/06/15（六）' },
-    { label: '攤位類型', value: '2*3米 / 2*3米 / 1.5米' },
+    { label: '參加場次', value: '05/30（六）　10:00 - 18:00\n05/31（日）　10:00 - 18:00' },
+    { label: '攤位尺寸', value: '3 × 3 公尺' },
     { label: '攤位類別', value: '寵物生活' },
-    { label: '租借設備', value: '電力 $50/天' },
-    { label: '使用電器與瓦數', value: '小型製冰機 300W' },
     { label: '車牌登記', value: 'ABC-1234' },
     { label: '備註', value: '-' },
   ];
@@ -797,10 +829,10 @@ function applicationRows(): DetailRow[] {
 
 function paidRows(): DetailRow[] {
   return [
-    { label: '付款狀態', value: '已付款' },
+    { label: '付款狀態', value: '已付款', highlight: true },
     { label: '付款方式', value: '信用卡' },
-    { label: '付款金額', value: '$1,700' },
-    { label: '付款時間', value: '2026/06/03 16:45' },
+    { label: '付款編號', value: 'T202406030000123' },
+    { label: '付款金額', value: 'NT$3,800', highlight: true },
   ];
 }
 
@@ -828,7 +860,7 @@ function refundCard(refundStatus: string, requestTime: string) {
     icon: 'bi-currency-dollar',
     rows: [
       { label: '退款狀態', value: refundStatus, highlight: true },
-      { label: '退款金額', value: '$1,700', highlight: true },
+      { label: '退款金額', value: 'NT$3,800', highlight: true },
       { label: '申請時間', value: requestTime },
       { label: '預計退款', value: '7 - 14 個工作天' },
       { label: '退款方式', value: '原付款方式退回' },

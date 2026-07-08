@@ -132,7 +132,7 @@
 }
 
 @media (max-width: 992px) {
-  .logs-filter {
+  .admin-logs {
     height: calc(100dvh - 40px); // dashboard-main padding: 20px top + 20px bottom
   }
 }
@@ -144,7 +144,7 @@
 }
 
 @media (max-width: 576px) {
-  .logs-filter {
+  .admin-logs {
     height: calc(100dvh - 32px); // dashboard-main padding: 16px top + 16px bottom
   }
 }

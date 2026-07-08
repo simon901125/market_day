@@ -8,30 +8,30 @@ import { AdminMarketDetail } from '../../../../models/interface/admin/AdminMarke
 
 /** 模擬後端列表資料，串接 API 後可移除 */
 const MOCK_ACTIVITIES: ActivityListItem[] = [
-  { id: 1,  image: 'assets/images/market/cards/market-card-01.png', name: '夏日綠意市集',   organizer: '森林生活市集',   startDate: '2026-07-01', endDate: '2026-07-02', status: ActivityStatus.pendingReview,    createdAt: '2026-05-28 14:30' },
-  { id: 2,  image: 'assets/images/market/cards/market-card-02.png', name: '秋季手作市集',   organizer: '日日好市',       startDate: '2026-09-15', endDate: '2026-09-16', status: ActivityStatus.registrationOpen, createdAt: '2026-05-27 10:00' },
-  { id: 3,  image: 'assets/images/market/cards/market-card-03.png', name: '春語花市',       organizer: '春語市集',       startDate: '2026-05-01', endDate: '2026-05-02', status: ActivityStatus.full,             createdAt: '2026-04-25 18:00' },
-  { id: 4,  image: 'assets/images/market/cards/market-card-04.png', name: '星光夜市集',     organizer: '歡樂市集團隊',   startDate: '2026-08-20', endDate: '2026-08-21', status: ActivityStatus.mapBuilding,      createdAt: '2026-05-26 16:00' },
-  { id: 5,  image: 'assets/images/market/cards/market-card-05.png', name: '寵物歡聚市集',   organizer: '森林生活市集',   startDate: '2026-12-24', endDate: '2026-12-25', status: ActivityStatus.revisionRequired,  createdAt: '2026-05-19 10:15' },
-  { id: 6,  image: 'assets/images/market/cards/market-card-06.png', name: '丹丹香農市集',   organizer: '日日好市',       startDate: '2026-10-05', endDate: '2026-10-06', status: ActivityStatus.registrationOpen, createdAt: '2026-05-18 15:00' },
-  { id: 7,  image: 'assets/images/market/cards/market-card-07.png', name: '楓糖森活市集',   organizer: '春語市集',       startDate: '2026-06-05', endDate: '2026-06-06', status: ActivityStatus.published,        createdAt: '2026-05-20 09:30' },
-  { id: 8,  image: 'assets/images/market/cards/market-card-08.png', name: '海福生活市集',   organizer: '歡樂市集團隊',   startDate: '2026-07-18', endDate: '2026-07-19', status: ActivityStatus.unpublished,      createdAt: '2026-05-17 15:30' },
-  { id: 9,  image: 'assets/images/market/cards/market-card-09.png', name: '晨光手作市集',   organizer: '森林生活市集',   startDate: '2026-06-20', endDate: '2026-06-21', status: ActivityStatus.active,           createdAt: '2026-05-10 11:00' },
-  { id: 10, image: 'assets/images/market/cards/market-card-10.png', name: '暖陽農夫市集',   organizer: '日日好市',       startDate: '2026-04-10', endDate: '2026-04-11', status: ActivityStatus.ended,            createdAt: '2026-03-01 09:00' },
-  { id: 11, image: 'assets/images/market/cards/market-card-01.png', name: '月光甜點市集',   organizer: '春語市集',       startDate: '2026-11-12', endDate: '2026-11-13', status: ActivityStatus.readyToPublish,   createdAt: '2026-05-29 13:20' },
-  { id: 12, image: 'assets/images/market/cards/market-card-02.png', name: '城市綠洲市集',   organizer: '歡樂市集團隊',   startDate: '2026-09-01', endDate: '2026-09-02', status: ActivityStatus.pendingReview,    createdAt: '2026-05-30 09:00' },
-  { id: 13, image: 'assets/images/market/cards/market-card-03.png', name: '海岸風情市集',   organizer: '森林生活市集',   startDate: '2026-08-08', endDate: '2026-08-09', status: ActivityStatus.registrationOpen, createdAt: '2026-05-15 10:00' },
-  { id: 14, image: 'assets/images/market/cards/market-card-04.png', name: '童趣手作市集',   organizer: '日日好市',       startDate: '2026-07-25', endDate: '2026-07-26', status: ActivityStatus.full,             createdAt: '2026-05-14 14:00' },
-  { id: 15, image: 'assets/images/market/cards/market-card-05.png', name: '山林野營市集',   organizer: '春語市集',       startDate: '2026-10-20', endDate: '2026-10-21', status: ActivityStatus.mapBuilding,      createdAt: '2026-05-25 11:30' },
-  { id: 16, image: 'assets/images/market/cards/market-card-06.png', name: '老街懷舊市集',   organizer: '歡樂市集團隊',   startDate: '2026-06-13', endDate: '2026-06-14', status: ActivityStatus.revisionRequired,  createdAt: '2026-05-22 17:00' },
-  { id: 17, image: 'assets/images/market/cards/market-card-07.png', name: '花漾市集',       organizer: '森林生活市集',   startDate: '2026-05-30', endDate: '2026-05-31', status: ActivityStatus.published,        createdAt: '2026-05-12 08:45' },
-  { id: 18, image: 'assets/images/market/cards/market-card-08.png', name: '夜光氣球市集',   organizer: '日日好市',       startDate: '2026-08-30', endDate: '2026-08-31', status: ActivityStatus.unpublished,      createdAt: '2026-04-28 13:00' },
-  { id: 19, image: 'assets/images/market/cards/market-card-09.png', name: '早晨咖啡市集',   organizer: '春語市集',       startDate: '2026-06-01', endDate: '2026-06-02', status: ActivityStatus.active,           createdAt: '2026-05-05 09:10' },
-  { id: 20, image: 'assets/images/market/cards/market-card-10.png', name: '冬季暖心市集',   organizer: '歡樂市集團隊',   startDate: '2026-01-10', endDate: '2026-01-11', status: ActivityStatus.ended,            createdAt: '2025-12-01 10:00' },
-  { id: 21, image: 'assets/images/market/cards/market-card-01.png', name: '文創手作市集',   organizer: '森林生活市集',   startDate: '2026-11-01', endDate: '2026-11-02', status: ActivityStatus.readyToPublish,   createdAt: '2026-05-31 16:40' },
-  { id: 22, image: 'assets/images/market/cards/market-card-02.png', name: '寶寶用品市集',   organizer: '日日好市',       startDate: '2026-09-20', endDate: '2026-09-21', status: ActivityStatus.pendingReview,    createdAt: '2026-06-01 09:00' },
-  { id: 23, image: 'assets/images/market/cards/market-card-03.png', name: '復古玩具市集',   organizer: '春語市集',       startDate: '2026-07-10', endDate: '2026-07-11', status: ActivityStatus.registrationOpen, createdAt: '2026-05-23 14:50' },
-  { id: 24, image: 'assets/images/market/cards/market-card-04.png', name: '手沖咖啡市集',   organizer: '歡樂市集團隊',   startDate: '2026-08-15', endDate: '2026-08-16', status: ActivityStatus.full,             createdAt: '2026-05-21 10:25' },
+  { id: 1, image: 'assets/images/market/cards/market-card-01.png', name: '夏日綠意市集', organizer: '森林生活市集', startDate: '2026-07-01', endDate: '2026-07-02', status: ActivityStatus.pendingReview, createdAt: '2026-05-28 14:30' },
+  { id: 2, image: 'assets/images/market/cards/market-card-02.png', name: '秋季手作市集', organizer: '日日好市', startDate: '2026-09-15', endDate: '2026-09-16', status: ActivityStatus.registrationOpen, createdAt: '2026-05-27 10:00' },
+  { id: 3, image: 'assets/images/market/cards/market-card-03.png', name: '春語花市', organizer: '春語市集', startDate: '2026-05-01', endDate: '2026-05-02', status: ActivityStatus.full, createdAt: '2026-04-25 18:00' },
+  { id: 4, image: 'assets/images/market/cards/market-card-04.png', name: '星光夜市集', organizer: '歡樂市集團隊', startDate: '2026-08-20', endDate: '2026-08-21', status: ActivityStatus.mapBuilding, createdAt: '2026-05-26 16:00' },
+  { id: 5, image: 'assets/images/market/cards/market-card-05.png', name: '寵物歡聚市集', organizer: '森林生活市集', startDate: '2026-12-24', endDate: '2026-12-25', status: ActivityStatus.revisionRequired, createdAt: '2026-05-19 10:15' },
+  { id: 6, image: 'assets/images/market/cards/market-card-06.png', name: '丹丹香農市集', organizer: '日日好市', startDate: '2026-10-05', endDate: '2026-10-06', status: ActivityStatus.registrationOpen, createdAt: '2026-05-18 15:00' },
+  { id: 7, image: 'assets/images/market/cards/market-card-07.png', name: '楓糖森活市集', organizer: '春語市集', startDate: '2026-06-05', endDate: '2026-06-06', status: ActivityStatus.published, createdAt: '2026-05-20 09:30' },
+  { id: 8, image: 'assets/images/market/cards/market-card-08.png', name: '海福生活市集', organizer: '歡樂市集團隊', startDate: '2026-07-18', endDate: '2026-07-19', status: ActivityStatus.unpublished, createdAt: '2026-05-17 15:30' },
+  { id: 9, image: 'assets/images/market/cards/market-card-09.png', name: '晨光手作市集', organizer: '森林生活市集', startDate: '2026-06-20', endDate: '2026-06-21', status: ActivityStatus.active, createdAt: '2026-05-10 11:00' },
+  { id: 10, image: 'assets/images/market/cards/market-card-10.png', name: '暖陽農夫市集', organizer: '日日好市', startDate: '2026-04-10', endDate: '2026-04-11', status: ActivityStatus.ended, createdAt: '2026-03-01 09:00' },
+  { id: 11, image: 'assets/images/market/cards/market-card-01.png', name: '月光甜點市集', organizer: '春語市集', startDate: '2026-11-12', endDate: '2026-11-13', status: ActivityStatus.readyToPublish, createdAt: '2026-05-29 13:20' },
+  { id: 12, image: 'assets/images/market/cards/market-card-02.png', name: '城市綠洲市集', organizer: '歡樂市集團隊', startDate: '2026-09-01', endDate: '2026-09-02', status: ActivityStatus.pendingReview, createdAt: '2026-05-30 09:00' },
+  { id: 13, image: 'assets/images/market/cards/market-card-03.png', name: '海岸風情市集', organizer: '森林生活市集', startDate: '2026-08-08', endDate: '2026-08-09', status: ActivityStatus.registrationOpen, createdAt: '2026-05-15 10:00' },
+  { id: 14, image: 'assets/images/market/cards/market-card-04.png', name: '童趣手作市集', organizer: '日日好市', startDate: '2026-07-25', endDate: '2026-07-26', status: ActivityStatus.full, createdAt: '2026-05-14 14:00' },
+  { id: 15, image: 'assets/images/market/cards/market-card-05.png', name: '山林野營市集', organizer: '春語市集', startDate: '2026-10-20', endDate: '2026-10-21', status: ActivityStatus.mapBuilding, createdAt: '2026-05-25 11:30' },
+  { id: 16, image: 'assets/images/market/cards/market-card-06.png', name: '老街懷舊市集', organizer: '歡樂市集團隊', startDate: '2026-06-13', endDate: '2026-06-14', status: ActivityStatus.revisionRequired, createdAt: '2026-05-22 17:00' },
+  { id: 17, image: 'assets/images/market/cards/market-card-07.png', name: '花漾市集', organizer: '森林生活市集', startDate: '2026-05-30', endDate: '2026-05-31', status: ActivityStatus.published, createdAt: '2026-05-12 08:45' },
+  { id: 18, image: 'assets/images/market/cards/market-card-08.png', name: '夜光氣球市集', organizer: '日日好市', startDate: '2026-08-30', endDate: '2026-08-31', status: ActivityStatus.unpublished, createdAt: '2026-04-28 13:00' },
+  { id: 19, image: 'assets/images/market/cards/market-card-09.png', name: '早晨咖啡市集', organizer: '春語市集', startDate: '2026-06-01', endDate: '2026-06-02', status: ActivityStatus.active, createdAt: '2026-05-05 09:10' },
+  { id: 20, image: 'assets/images/market/cards/market-card-10.png', name: '冬季暖心市集', organizer: '歡樂市集團隊', startDate: '2026-01-10', endDate: '2026-01-11', status: ActivityStatus.ended, createdAt: '2025-12-01 10:00' },
+  { id: 21, image: 'assets/images/market/cards/market-card-01.png', name: '文創手作市集', organizer: '森林生活市集', startDate: '2026-11-01', endDate: '2026-11-02', status: ActivityStatus.readyToPublish, createdAt: '2026-05-31 16:40' },
+  { id: 22, image: 'assets/images/market/cards/market-card-02.png', name: '寶寶用品市集', organizer: '日日好市', startDate: '2026-09-20', endDate: '2026-09-21', status: ActivityStatus.pendingReview, createdAt: '2026-06-01 09:00' },
+  { id: 23, image: 'assets/images/market/cards/market-card-03.png', name: '復古玩具市集', organizer: '春語市集', startDate: '2026-07-10', endDate: '2026-07-11', status: ActivityStatus.registrationOpen, createdAt: '2026-05-23 14:50' },
+  { id: 24, image: 'assets/images/market/cards/market-card-04.png', name: '手沖咖啡市集', organizer: '歡樂市集團隊', startDate: '2026-08-15', endDate: '2026-08-16', status: ActivityStatus.full, createdAt: '2026-05-21 10:25' },
 ];
 
 /** 模擬後端詳細資料，串接 API 後可移除 */
@@ -42,7 +42,8 @@ const MOCK_DETAIL: AdminMarketDetail = {
     name: '夏日綠意市集',
     type: '生活文創・生活選物・綠市場',
     time: '2026/07/01 ~ 2026/08/02 10:00 ~ 19:00',
-    location: '台北市信義區君悅大道',
+    location: '台北市信義區君悅大道1號',
+    locationName: '勤美綠原道',
     description: '夏天，是感受夏天好精選的季節。我們誠摯邀請一起品嚐這裡—在林蔭散策散步中，整城市到土地與人們的距離與共鳴。\n\n現場有豐富音樂現場演出和手作攤位，探索自然蔬食品和真實農夫，美食飲品音樂和演奏，適合全家人一起感受豐盛的美好時光。',
   },
   timeline: {
@@ -111,7 +112,7 @@ export class AdminDashboardMarketDetail implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private alert: AlertService,
-  ) {}
+  ) { }
 
   activity: ActivityListItem | null = null;
   detail: AdminMarketDetail | null = null;
@@ -173,12 +174,14 @@ export class AdminDashboardMarketDetail implements OnInit {
       didOpen: () => {
         const textarea = document.getElementById('supplementReason') as HTMLTextAreaElement;
         const counter = document.getElementById('supplementCount');
+        const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
         if (initialReason && textarea) {
           textarea.value = initialReason;
           if (counter) counter.textContent = `${initialReason.length}/200`;
         }
         textarea?.addEventListener('input', () => {
           if (counter) counter.textContent = `${textarea.value.length}/200`;
+          if (error) error.textContent = '';
         });
       },
       preConfirm: () => {
@@ -280,23 +283,149 @@ export class AdminDashboardMarketDetail implements OnInit {
   };
 
   onUnpublishHandler = async (): Promise<void> => {
-    const confirmed = await this.alert.confirm(
-      '確定下架活動',
-      '確定要下架此活動嗎?<br />下架後活動狀態將更新為「已下架」，主辦方將收到通知。',
-      '確認下架',
-      '取消',
-    );
+    await this.openUnpublishForm();
+  };
 
-    if (!confirmed) return;
+  // 定義按下下架審核通過要跳出的彈窗
+  private async openUnpublishForm(initialReason = ''): Promise<void> {
+    const result = await this.alert.custom<{ approved: boolean; reason: string }>({
+      html: `
+      <div class="registration-swal-content">
+        <div class="supplement-swal-header">
+            <div class="restore-confirm-icon">
+                <i class="bi bi-exclamation-circle"></i>
+            </div>
+            <h3>審核下架活動</h3>
+            <p class="registration-swal-main">是否同意主辦方提出的活動下架申請，<br>審核結果將影響活動狀態並通知相關人員。</p>
+        </div>
+        <div class="admin-swal-unpublish-form-data-section">
+            <div class="admin-swal-unpublish-form-data">
+                <span>活動名稱</span><span>${ this.detail?.activityInfo.name }</span>
+                <span>主辦方</span><span>${this.detail?.organizerInfo.organizerName}</span>
+                <span>申請時間</span><span>${"//TODO:Datetime"}</span>
+            </div>
+            <div class="admin-swal-unpublish-form-reason">
+                <span>申請原因</span>
+                <div>${"//TODO:Reason"}</div>
+            </div>
+        </div>
+        <div class="admin-swal-unpublish-form-option-section">
+            <span>審核結果</span>
+            <div>
+              <input type="radio" value="1" name="approval" id="agreeUnpublish" />
+              <label for="agreeUnpublish">同意下架</label>
+            </div>
+            <div>
+              <input type="radio" value="0" name="approval" id="disagreeUnpublish" />
+              <label for="disagreeUnpublish">不同意下架</label>
+            </div>
+        </div>
+        <label class="registration-swal-field">
+            <span>審核說明 <i>*不同意時為必填欄位</i></span>
+            <textarea id="supplementReason" class="supplement-swal-textarea" maxlength="200"
+                placeholder="請輸入說明"></textarea>
+            <em class="supplement-swal-counter" id="supplementCount">0/200</em>
+        </label>
+        <p class="registration-swal-field-error" aria-live="polite"></p>
+    </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: '確認送出',
+      cancelButtonText: '取消',
+      reverseButtons: true,
+      customClass: {
+        popup: 'require-supplement-swal'
+      },
+      didOpen: () => {
+        const textarea = document.getElementById('supplementReason') as HTMLTextAreaElement;
+        const counter = document.getElementById('supplementCount');
+        const agreeRadio = document.getElementById('agreeUnpublish') as HTMLInputElement;
+        const disagreeRadio = document.getElementById('disagreeUnpublish') as HTMLInputElement;
+        const reminder = document.querySelector<HTMLElement>('.registration-swal-field span i')
+        const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
+        if (initialReason && textarea) {
+          textarea.value = initialReason;
+          if (counter) counter.textContent = `${initialReason.length}/200`;
+        }
+        textarea?.addEventListener('input', () => {
+          if (counter) counter.textContent = `${textarea.value.length}/200`;
+          if (error) {
+            error.textContent = '';
+          }
+        });
+        const updateReminderColor = () => {
+          reminder?.style.setProperty("color", disagreeRadio.checked ? "#ef4444" : "var(--text-normal)");
+          reminder?.style.setProperty("font-weight", disagreeRadio.checked ? "600" : "500");
+          if (error && agreeRadio.checked) {
+            error.textContent = '';
+          }
+        };
+        agreeRadio?.addEventListener('change', updateReminderColor);
+        disagreeRadio?.addEventListener('change', updateReminderColor);
+      },
+      preConfirm: () => {
+        const textarea = document.getElementById('supplementReason') as HTMLTextAreaElement;
+        const value = textarea?.value?.trim() ?? '';
+        const agreeRadio = document.getElementById('agreeUnpublish') as HTMLInputElement;
+        const disagreeRadio = document.getElementById('disagreeUnpublish') as HTMLInputElement;
+        const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
 
+        if (disagreeRadio.checked && !value) {
+          if (error) error.textContent = '請填寫審核說明';
+          return false;
+        }
+        if (!agreeRadio.checked && !disagreeRadio.checked) {
+          if (error) error.textContent = '請選擇審核結果';
+          return false;
+        }
+        if (error) {
+          error.textContent = '';
+        }
+        return { approved: agreeRadio.checked, reason: value };
+      },
+    });
+
+    if (!result.isConfirmed || !result.value) return;
+
+    if (result.value.approved) {
+      this.handleUnpublishApproved();
+    } else {
+      this.handleUnpublishRejected(result.value.reason);
+    }
+  }
+
+  private handleUnpublishApproved(): void {
     // TODO: 呼叫後端 API，將活動狀態改為「已下架」
     this.alert.success(
-      '活動已下架',
+      '審核通過',
       '活動已成功下架。<br />活動狀態更新為「已下架」，已通知主辦方。',
     );
-  };
+  }
+
+  private handleUnpublishRejected(reason: string): void {
+    // TODO: 呼叫後端 API，將下架申請駁回（帶上 reason），活動狀態維持原狀並通知主辦方
+    const escapedReason = reason
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    this.alert.success(
+      '已駁回下架申請',
+      `已駁回主辦方的下架申請。<br />活動狀態維持不變，已通知主辦方。<br /><br />審核說明：${escapedReason}`,
+    );
+  }
 
   downloadImg = (): void => {
     // TODO: 呼叫後端 API，下載圖片
   };
+
+
+
+
+
+
+
+
+
+
+
 }

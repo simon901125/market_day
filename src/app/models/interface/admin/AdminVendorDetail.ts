@@ -2,7 +2,7 @@
 export interface AdminVendorDetail {
   /** 使用者唯一識別碼 */
   userId: number;
-  data: {
+  detail: {
     /** 使用者基本資料 */
     userInfo: {
       /** 使用者名稱 */

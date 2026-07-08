@@ -18,7 +18,7 @@ const MOCK_VENDOR_USERS: UserListItem[] = [
 /** 模擬後端回傳的攤主詳情，串接 API 後可移除 */
 const MOCK_DETAIL: AdminVendorDetail = {
   userId: 1,
-  data: {
+  detail: {
     userInfo: {
       username: '李小花',
       role: 'vendor',
@@ -91,11 +91,11 @@ export class AdminDashboardUserDetailVender implements OnInit {
   readonly loginPageSize = 6;
 
   get loginRecordTotal(): number {
-    return this.detail?.data.loginRecords.total ?? 0;
+    return this.detail?.detail.loginRecords.total ?? 0;
   }
 
-  get paginatedLoginRecords(): AdminVendorDetail['data']['loginRecords']['items'] {
-    const items = this.detail?.data.loginRecords.items ?? [];
+  get paginatedLoginRecords(): AdminVendorDetail['detail']['loginRecords']['items'] {
+    const items = this.detail?.detail.loginRecords.items ?? [];
     const start = (this.loginCurrentPage - 1) * this.loginPageSize;
     return items.slice(start, start + this.loginPageSize);
   }
@@ -108,11 +108,11 @@ export class AdminDashboardUserDetailVender implements OnInit {
   readonly registrationPageSize = 8;
 
   get registrationRecordTotal(): number {
-    return this.detail?.data.activityRegistrationRecords.total ?? 0;
+    return this.detail?.detail.activityRegistrationRecords.total ?? 0;
   }
 
-  get paginatedRegistrationRecords(): AdminVendorDetail['data']['activityRegistrationRecords']['items'] {
-    const items = this.detail?.data.activityRegistrationRecords.items ?? [];
+  get paginatedRegistrationRecords(): AdminVendorDetail['detail']['activityRegistrationRecords']['items'] {
+    const items = this.detail?.detail.activityRegistrationRecords.items ?? [];
     const start = (this.registrationCurrentPage - 1) * this.registrationPageSize;
     return items.slice(start, start + this.registrationPageSize);
   }
@@ -137,7 +137,7 @@ export class AdminDashboardUserDetailVender implements OnInit {
   }
 
   get accountStatus(): string {
-    return this.detail?.data.userInfo.accountStatus ?? '';
+    return this.detail?.detail.userInfo.accountStatus ?? '';
   }
 
   get isAccountActive(): boolean {
@@ -169,8 +169,8 @@ export class AdminDashboardUserDetailVender implements OnInit {
   }
 
   async toggleAccountStatus(): Promise<void> {
-    const username = this.detail?.data.userInfo.username ?? '';
-    const email = this.detail?.data.userInfo.email ?? '';
+    const username = this.detail?.detail.userInfo.username ?? '';
+    const email = this.detail?.detail.userInfo.email ?? '';
 
     if (this.isAccountActive) {
       const confirmed = await this.alert.confirmHtml({
@@ -194,7 +194,7 @@ export class AdminDashboardUserDetailVender implements OnInit {
       });
       if (!confirmed) return;
       // TODO: 呼叫後端 API 將帳號狀態改為「已停用」
-      this.detail!.data.userInfo.accountStatus = UserStatus.disabled;
+      this.detail!.detail.userInfo.accountStatus = UserStatus.disabled;
       this.alert.success(
         '帳號已停用',
         `使用者「${username}」 的帳號已成功停用。 <br />停用期間將無法登入系統，且無法進行報名、付款及其他操作。`,
@@ -221,7 +221,7 @@ export class AdminDashboardUserDetailVender implements OnInit {
       });
       if (!confirmed) return;
       // TODO: 呼叫後端 API 將帳號狀態改為「正常」
-      this.detail!.data.userInfo.accountStatus = UserStatus.active;
+      this.detail!.detail.userInfo.accountStatus = UserStatus.active;
       this.alert.success(
         '帳號已恢復',
         `使用者「${username}」 的帳號已成功恢復。<br />該帳號可重新登入系統並使用原本角色的相關功能。`,
@@ -229,7 +229,7 @@ export class AdminDashboardUserDetailVender implements OnInit {
     }
   }
 
-  onViewRecord(_record: AdminVendorDetail['data']['activityRegistrationRecords']['items'][number]): void {
+  onViewRecord(_record: AdminVendorDetail['detail']['activityRegistrationRecords']['items'][number]): void {
     // TODO: 導向活動報名詳情頁
   }
 }

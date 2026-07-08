@@ -24,7 +24,7 @@ const MOCK_ORGANIZER_USERS: UserListItem[] = [
 /** 模擬後端回傳的主辦方詳情，串接 API 後可移除 */
 const MOCK_DETAIL: AdminOrganizerDetail = {
   userId: 3,
-  data: {
+  detail: {
     userInfo: {
       username: '王曉三',
       role: 'organizer',
@@ -100,11 +100,11 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   readonly loginPageSize = 6;
 
   get loginRecordTotal(): number {
-    return this.detail?.data.loginRecords.total ?? 0;
+    return this.detail?.detail.loginRecords.total ?? 0;
   }
 
-  get paginatedLoginRecords(): AdminOrganizerDetail['data']['loginRecords']['items'] {
-    const items = this.detail?.data.loginRecords.items ?? [];
+  get paginatedLoginRecords(): AdminOrganizerDetail['detail']['loginRecords']['items'] {
+    const items = this.detail?.detail.loginRecords.items ?? [];
     const start = (this.loginCurrentPage - 1) * this.loginPageSize;
     return items.slice(start, start + this.loginPageSize);
   }
@@ -117,11 +117,11 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   readonly activityPageSize = 8;
 
   get activityRecordTotal(): number {
-    return this.detail?.data.activityManagementRecords.total ?? 0;
+    return this.detail?.detail.activityManagementRecords.total ?? 0;
   }
 
-  get paginatedActivityRecords(): AdminOrganizerDetail['data']['activityManagementRecords']['items'] {
-    const items = this.detail?.data.activityManagementRecords.items ?? [];
+  get paginatedActivityRecords(): AdminOrganizerDetail['detail']['activityManagementRecords']['items'] {
+    const items = this.detail?.detail.activityManagementRecords.items ?? [];
     const start = (this.activityCurrentPage - 1) * this.activityPageSize;
     return items.slice(start, start + this.activityPageSize);
   }
@@ -147,7 +147,7 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   }
 
   get accountStatus(): string {
-    return this.detail?.data.userInfo.accountStatus ?? '';
+    return this.detail?.detail.userInfo.accountStatus ?? '';
   }
 
   get isAccountActive(): boolean {
@@ -183,8 +183,8 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   }
 
   async toggleAccountStatus(): Promise<void> {
-    const username = this.detail?.data.userInfo.username ?? '';
-    const email = this.detail?.data.userInfo.email ?? '';
+    const username = this.detail?.detail.userInfo.username ?? '';
+    const email = this.detail?.detail.userInfo.email ?? '';
 
     if (this.isAccountActive) {
       const confirmed = await this.alert.confirmHtml({
@@ -208,7 +208,7 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
       });
       if (!confirmed) return;
       // TODO: 呼叫後端 API 將帳號狀態改為「已停用」
-      this.detail!.data.userInfo.accountStatus = UserStatus.disabled;
+      this.detail!.detail.userInfo.accountStatus = UserStatus.disabled;
       this.alert.success(
         '帳號已停用',
         `使用者「${username}」 的帳號已成功停用。 <br />停用期間將無法登入系統，且無法進行報名、付款及其他操作。`,
@@ -235,7 +235,7 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
       });
       if (!confirmed) return;
       // TODO: 呼叫後端 API 將帳號狀態改為「正常」
-      this.detail!.data.userInfo.accountStatus = UserStatus.active;
+      this.detail!.detail.userInfo.accountStatus = UserStatus.active;
       this.alert.success(
         '帳號已恢復',
         `使用者「${username}」 的帳號已成功恢復。<br />該帳號可重新登入系統並使用原本角色的相關功能。`,
@@ -243,7 +243,7 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
     }
   }
 
-  onViewActivity(_record: AdminOrganizerDetail['data']['activityManagementRecords']['items'][number]): void {
+  onViewActivity(_record: AdminOrganizerDetail['detail']['activityManagementRecords']['items'][number]): void {
     // TODO: 導向活動詳情頁
   }
 

@@ -1,3 +1,8 @@
+.swal2-container {
+  // 帳號註銷等確認訊息需顯示在 Dashboard 帳號設定彈窗之上。
+  z-index: 1400 !important;
+}
+
 .custom-swal-popup {
   width: 26rem !important;
   padding: 1.8rem 2.8rem 2rem !important;
@@ -110,7 +115,78 @@
     background: transparent !important;
   }
 }
-//confrim 是否退款 
+
+// Dashboard 登出確認
+.logout-confirm-swal {
+  width: min(330px, calc(100vw - 32px)) !important;
+  padding: 24px 28px 22px !important;
+  border-radius: var(--radius-card) !important;
+
+  .custom-swal-actions {
+    gap: 16px !important;
+    margin-top: 20px !important;
+  }
+
+  .custom-swal-confirm,
+  .custom-swal-cancel {
+    width: 94px !important;
+    min-width: 94px !important;
+    height: 40px !important;
+    padding: 0 12px !important;
+    border-radius: var(--radius-tag) !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+  }
+
+  .custom-swal-cancel {
+    border: 1px solid var(--border-light) !important;
+    color: var(--text-dark) !important;
+    background: var(--bg-white) !important;
+
+    &:hover {
+      border-color: var(--primary-color) !important;
+      color: var(--primary-color) !important;
+      background: var(--primary-soft) !important;
+    }
+  }
+
+  .custom-swal-confirm {
+    background: var(--primary-color) !important;
+
+    &:hover {
+      background: var(--primary-hover) !important;
+    }
+  }
+}
+
+.logout-confirm-content {
+  color: var(--text-dark);
+  text-align: center;
+
+  h3 {
+    margin: 14px 0 6px;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-normal);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+}
+
+.logout-confirm-icon {
+  color: var(--primary-color);
+  font-size: 32px;
+  line-height: 1;
+}
+
+
+//confrim 是否退款
 .refund-confirm-swal {
   .custom-swal-html {
     text-align: left !important;
@@ -139,6 +215,7 @@
     font-weight: 900;
   }
 }
+
 //確認是否退款 >> <p>
 .refund-confirm-lead {
   margin: 0 0 0.5rem;
@@ -158,7 +235,7 @@
 
   i {
     color: var(--primary-color);
-    font-size: 1.30rem;
+    font-size: 1.3rem;
   }
 
   h4 {
@@ -170,7 +247,7 @@
   p {
     margin: 0;
     color: var(--text-normal);
-    font-size: 0.80rem;
+    font-size: 0.8rem;
     font-weight: 800;
     line-height: 1.1;
   }
@@ -201,7 +278,7 @@
   background: var(--primary-soft);
   position: relative;
 
-   i {
+  i {
     position: absolute;
     top: 1.05rem;
     left: 1rem;
@@ -235,6 +312,95 @@
   text-align: center;
   font-size: 0.92rem;
   font-weight: 800;
+}
+
+.cancel-registration-swal {
+  width: min(380px, calc(100vw - 32px)) !important;
+  padding: 18px 28px 20px !important;
+
+  .custom-swal-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 14px !important;
+    margin-top: 16px !important;
+  }
+
+  .custom-swal-confirm,
+  .custom-swal-cancel {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 42px !important;
+    padding: 0 12px !important;
+    border-radius: var(--radius-tag) !important;
+    font-size: 14px !important;
+  }
+
+  .custom-swal-cancel {
+    border: 1px solid var(--border-light) !important;
+    background: var(--bg-white) !important;
+    color: var(--text-dark) !important;
+  }
+}
+
+.cancel-registration-content {
+  color: var(--text-dark);
+  text-align: center;
+
+  h3 {
+    margin: 12px 0 8px;
+    font-size: 21px;
+    font-weight: 900;
+  }
+}
+
+.cancel-registration-icon {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  color: var(--primary-color);
+  font-size: 34px;
+}
+
+.cancel-registration-lead {
+  margin: 0;
+  color: var(--text-normal);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.65;
+}
+
+.cancel-registration-notice {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-card);
+  background: var(--primary-soft);
+  text-align: left;
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+    color: var(--primary-color);
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 22px;
+  }
+
+  li {
+    color: var(--text-normal);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.7;
+  }
 }
 
 .refund-success-swal {
@@ -443,6 +609,7 @@
 }
 
 .registration-reject-form {
+
   .registration-swal-icon,
   h3,
   .registration-swal-sub {
@@ -459,11 +626,19 @@
   gap: 0.45rem;
   margin-top: 0.85rem;
 
+  
   span {
     color: var(--text-dark);
     font-size: 0.92rem;
     font-weight: 900;
-
+    
+    i {
+      font-size: 0.8rem;
+      font-style: normal;
+      color: var(--text-normal);
+      font-weight: 500;
+    }
+    
     b {
       color: #ef4444;
     }
@@ -509,59 +684,15 @@
 
 .registration-swal-field-error {
   min-height: 1.2rem;
-  margin: 0.45rem 0 0;
+  margin: 0.45rem 0 4px;
   color: #ef4444;
   font-size: 0.9rem;
   font-weight: 800;
 }
 
 .restore-confirm-swal {
-  width: min(480px, calc(100vw - 32px)) !important;
-  padding: 1.65rem 2.1rem 1.55rem !important;
-  border-radius: 14px !important;
-  background: var(--bg-white) !important;
-  box-shadow: var(--shadow-card) !important;
-
   .custom-swal-html {
     text-align: center !important;
-  }
-
-  .custom-swal-actions {
-    display: flex !important;
-    justify-content: center !important;
-    gap: 14px !important;
-    margin-top: 1.25rem !important;
-  }
-
-  .custom-swal-confirm,
-  .custom-swal-cancel {
-    height: 46px !important;
-    padding: 0 1.4rem !important;
-    border-radius: 7px !important;
-    font-size: 1rem !important;
-    font-weight: 900 !important;
-  }
-
-  .custom-swal-confirm {
-    width: 180px !important;
-    min-width: 180px !important;
-    background: var(--primary-color) !important;
-
-    &:hover {
-      background: var(--primary-hover) !important;
-    }
-  }
-
-  .custom-swal-cancel {
-    width: 112px !important;
-    min-width: 112px !important;
-    border: 0 !important;
-    background: #f3f4f6 !important;
-    color: #4b5563 !important;
-
-    &:hover {
-      background: #e5e7eb !important;
-    }
   }
 }
 
@@ -598,53 +729,10 @@
 }
 
 .require-supplement-swal {
-  width: min(480px, calc(100vw - 32px)) !important;
-  padding: 1.65rem 2.1rem 1.55rem !important;
-  border-radius: 14px !important;
-  background: var(--bg-white) !important;
-  box-shadow: var(--shadow-card) !important;
   overflow: visible !important;
 
   .custom-swal-html {
     text-align: left !important;
-  }
-
-  .custom-swal-actions {
-    display: flex !important;
-    justify-content: center !important;
-    gap: 14px !important;
-    margin-top: 1rem !important;
-  }
-
-  .custom-swal-confirm,
-  .custom-swal-cancel {
-    height: 46px !important;
-    padding: 0 1.4rem !important;
-    border-radius: 7px !important;
-    font-size: 1rem !important;
-    font-weight: 900 !important;
-  }
-
-  .custom-swal-confirm {
-    width: 160px !important;
-    min-width: 160px !important;
-    background: var(--primary-color) !important;
-
-    &:hover {
-      background: var(--primary-hover) !important;
-    }
-  }
-
-  .custom-swal-cancel {
-    width: 112px !important;
-    min-width: 112px !important;
-    border: 0 !important;
-    background: #f3f4f6 !important;
-    color: #4b5563 !important;
-
-    &:hover {
-      background: #e5e7eb !important;
-    }
   }
 
   .supplement-swal-header {
@@ -692,6 +780,65 @@
     white-space: pre-wrap;
     word-break: break-word;
   }
+
+  .admin-swal-unpublish-form-data-section {
+    padding: 0.8rem 0.9rem;
+    display: grid;
+    gap: 1rem;
+    border-radius: var(--radius-card);
+    background: #f7f7f7;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--text-normal);
+    line-height: 1.7;
+    word-break: break-word;
+
+    .admin-swal-unpublish-form-data {
+      display: grid;
+      grid-template-columns: 5rem auto;
+      gap: 4px;
+
+      span:nth-child(even) {
+        color: var(--text-dark);
+      }
+    }
+
+    .admin-swal-unpublish-form-reason {
+      div {
+        color: var(--text-dark);
+      }
+    }
+  }
+
+  .admin-swal-unpublish-form-option-section {
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0.8rem 0;
+    gap: 4px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1.7;
+    color: var(--text-dark);
+
+    span {
+      grid-column: 1 / -1;
+    }
+
+    div input[type="radio"] {
+      appearance: none;
+      width: 1em;
+      height: 1em;
+      border: 2px solid var(--text-light);
+      border-radius: 50%;
+
+      &:checked {
+        border-color: #fff;
+        background-color: var(--primary-color);
+        outline: 2px solid var(--primary-color);
+      }
+    }
+  }
 }
 
 .restore-confirm-effects {
@@ -713,5 +860,233 @@
     font-size: 0.9rem;
     font-weight: 800;
     line-height: 1.6;
+  }
+}
+
+//攤主後台 商品新增視窗
+.product-form-swal {
+  width: min(40rem, calc(100vw - 2rem)) !important;
+
+  .custom-swal-html {
+    text-align: left !important;
+  }
+}
+
+.product-form-content {
+  color: var(--text-dark);
+
+  h3 {
+    margin: 0 0 0.9rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+}
+
+.product-form-section {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  background: var(--bg-white);
+
+  h4 {
+    margin: 0 0 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+
+    span {
+      width: 0.45rem;
+      height: 0.45rem;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--primary-color);
+    }
+  }
+}
+
+.product-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 1.5rem;
+
+  label {
+    min-width: 0;
+    display: grid;
+    gap: 0.45rem;
+
+    >span {
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-tag);
+    background: var(--bg-white);
+    color: var(--text-dark);
+    font: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: var(--primary-color);
+    }
+  }
+
+  input {
+    height: 2rem;
+    padding: 0 0.7rem;
+  }
+
+  textarea {
+    min-height: 4.2rem;
+    padding: 0.5rem 0.8rem;
+    resize: vertical;
+  }
+}
+
+.product-description-field {
+  grid-column: 1 / -1;
+}
+
+.product-price-input {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-tag);
+  overflow: hidden;
+
+  &:focus-within {
+    border-color: var(--primary-color);
+  }
+
+  input {
+    border: 0;
+    border-radius: 0;
+  }
+
+  span {
+    padding-right: 0.8rem;
+    color: var(--text-normal);
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+}
+
+.product-upload-row {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(12rem, 1.25fr);
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.product-image-upload {
+  min-height: 7rem;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.55rem;
+  border: 1px dashed var(--text-light);
+  border-radius: var(--radius-card);
+  color: var(--text-normal);
+  cursor: pointer;
+
+  input {
+    display: none;
+  }
+
+  i {
+    font-size: 1.55rem;
+  }
+
+  strong {
+    font-size: 0.88rem;
+  }
+}
+
+.product-edit-image {
+  display: grid;
+  justify-items: start;
+  gap: 0.65rem;
+
+  img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    display: block;
+    border-radius: var(--radius-card);
+    object-fit: cover;
+  }
+}
+
+.product-change-image {
+  min-height: 2.25rem;
+  width: 6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.9rem;
+  border: 1px solid var(--primary-color);
+  border-radius: var(--radius-tag);
+  background: var(--bg-white);
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  input {
+    display: none;
+  }
+}
+
+.product-upload-guide {
+  min-width: 0;
+  display: grid;
+  gap: 0.45rem;
+
+  strong {
+    overflow: hidden;
+    color: var(--primary-color);
+    font-size: 0.88rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span {
+    color: var(--text-normal);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+}
+
+.product-form-error {
+  min-height: 1.25rem;
+  margin: 0.65rem 0 0;
+  color: #ef4444;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+@media (max-width: 600px) {
+  .product-form-swal {
+    width: calc(100vw - 1rem) !important;
+  }
+
+  .product-form-grid,
+  .product-upload-row {
+    grid-template-columns: 1fr;
+  }
+
+  .product-description-field {
+    grid-column: auto;
   }
 }

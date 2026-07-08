@@ -36,11 +36,6 @@
           <span></span>
           品牌大頭貼
         </h2>
-
-        <!-- <button type="button" class="outline-btn">
-          <i class="bi bi-plus-lg"></i>
-          新增照片
-        </button> -->
       </div>
 
       <div class="avatar-row">
@@ -64,11 +59,6 @@
           品牌封面
           <small>（限制 1 個）</small>
         </h2>
-
-        <!-- <button type="button" class="outline-btn">
-          <i class="bi bi-plus-lg"></i>
-          新增封面
-        </button> -->
       </div>
 
       <div class="cover-row">
@@ -122,17 +112,17 @@
         <h2 class="card-title">
           <span></span>
           品牌商品
-          <small>（最多 3 個）</small>
+          <small>（最多 {{ maxProducts }} 個）</small>
         </h2>
 
-        <button type="button" class="outline-btn">
+        <button type="button" class="outline-btn" (click)="openAddProduct()">
           <i class="bi bi-plus-lg"></i>
           新增商品
         </button>
       </div>
 
       <div class="product-list">
-        @for (product of products; track product.name) {
+        @for (product of products; track product.name; let productIndex = $index) {
           <article class="product-item">
             <img [src]="product.image" [alt]="product.name" />
 
@@ -144,10 +134,18 @@
             <strong class="product-price">${{ product.price }} 元</strong>
 
             <div class="product-actions">
-              <button type="button" [attr.aria-label]="'編輯 ' + product.name">
+              <button
+                type="button"
+                [attr.aria-label]="'編輯 ' + product.name"
+                (click)="openEditProduct(productIndex)"
+              >
                 <i class="bi bi-pencil"></i>
               </button>
-              <button type="button" [attr.aria-label]="'刪除 ' + product.name">
+              <button
+                type="button"
+                [attr.aria-label]="'刪除 ' + product.name"
+                (click)="deleteProduct(productIndex)"
+              >
                 <i class="bi bi-trash"></i>
               </button>
             </div>

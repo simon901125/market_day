@@ -1,0 +1,108 @@
+<main class="payment-page page-transition">
+  <nav class="breadcrumb-line" aria-label="breadcrumb">
+    <a routerLink="/vendor/dash-board/application-record">我的報名紀錄</a>
+    <span>›</span>
+    <a [routerLink]="['/vendor/dash-board/appliction-record/detail', record.applicationNo]">
+      報名詳細
+    </a>
+    <span>›</span>
+    <strong>付款頁面</strong>
+  </nav>
+
+  <header class="page-header">
+    <a
+      [routerLink]="['/vendor/dash-board/appliction-record/detail', record.applicationNo]"
+      aria-label="返回報名詳細"
+    >
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <h1>付款頁面</h1>
+  </header>
+
+  <section class="application-summary">
+    <img [src]="detail.image" [alt]="detail.title" />
+
+    <div class="application-info">
+      <h2>{{ detail.title }}</h2>
+      <p>報名編號：{{ detail.applicationNo }}</p>
+      <p><i class="bi bi-calendar4"></i>{{ detail.dateRange }}</p>
+      <p><i class="bi bi-geo-alt"></i>{{ detail.location }}</p>
+    </div>
+
+    <div class="payment-status">
+      <span>待付款</span>
+      <p>付款期限</p>
+      <strong>{{ paymentDeadline }}</strong>
+    </div>
+  </section>
+
+  <div class="payment-layout">
+    <section class="payment-card fee-card">
+      <h2>付款明細</h2>
+
+      <dl class="fee-list">
+        <div>
+          <dt>攤位費用</dt>
+          <dd>${{ boothFee | number }}</dd>
+        </div>
+        <div>
+          <dt>設備租借費用（電力）</dt>
+          <dd>${{ equipmentFee | number }}</dd>
+        </div>
+        <div>
+          <dt>保證金（活動結束後退還）</dt>
+          <dd>${{ deposit | number }}</dd>
+        </div>
+      </dl>
+
+      <div class="total-row">
+        <span>總計</span>
+        <strong>${{ total | number }}</strong>
+      </div>
+
+      <aside class="deposit-note">
+        <i class="bi bi-info-circle"></i>
+        <div>
+          <strong>關於保證金</strong>
+          <p>
+            活動結束且確認無違規事項後，系統將於 7–14 個工作天內原路退還保證金 ${{
+              deposit | number
+            }}。
+          </p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="payment-card credit-card">
+      <h2>信用卡付款資訊</h2>
+
+      <div class="credit-intro">
+        <span><i class="bi bi-credit-card"></i></span>
+        <p>點擊下方按鈕後，將前往安全的金流平台完成信用卡付款。</p>
+        <p>付款完成後，系統將自動更新您的付款狀態，並在通知中心提醒。</p>
+      </div>
+
+      <dl class="credit-summary">
+        <div>
+          <dt>付款方式</dt>
+          <dd>信用卡</dd>
+        </div>
+        <div>
+          <dt>付款金額</dt>
+          <dd>${{ total | number }}</dd>
+        </div>
+        <div>
+          <dt>付款期限</dt>
+          <dd>{{ paymentDeadline }}</dd>
+        </div>
+      </dl>
+
+      <button type="button" (click)="continueToCreditCard()">前往信用卡付款</button>
+
+      <p class="security-note">
+        <i class="bi bi-lock"></i>
+        我們不會在此網站儲存您的信用卡資訊，請安心使用。
+      </p>
+    </section>
+  </div>
+</main>
