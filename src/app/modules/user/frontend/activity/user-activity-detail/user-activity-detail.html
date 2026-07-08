@@ -92,55 +92,21 @@
         <i class="bi bi-map"></i>
         <h2>攤位地圖</h2>
       </div>
-      <span>參與品牌與攤位資訊將於報名截止後公開</span>
+      <span class="booth-map-hint">
+        <i class="bi bi-hand-index-thumb" aria-hidden="true"></i>
+        <span>點擊攤位，看看有哪些小店</span>
+      </span>
     </div>
+    <p class="booth-orientation-note">
+      <i class="bi bi-phone-landscape" aria-hidden="true"></i>
+      <span>橫向觀看更清楚，或是</span>
+      <button type="button" (click)="marketMap.openFullscreenMap()">
+        <i class="bi bi-arrows-fullscreen" aria-hidden="true"></i>
+        <span>放大地圖</span>
+      </button>
+    </p>
 
-    <div class="map-card">
-      <img
-        src="https://via.placeholder.com/980x360/f8f4ed/5f5a54?text=Market+Booth+Map"
-        alt="攤位地圖"
-      />
-    </div>
-
-    <aside class="booth-detail-card">
-      <img
-        class="booth-image"
-        src="https://via.placeholder.com/360x180/DCC5A0/ffffff?text=Brand+Image"
-        alt="品牌圖片"
-      />
-
-      <div class="booth-info">
-        <div class="booth-heading">
-          <span class="booth-number">B03</span>
-          <h3>拾甜甜點</h3>
-        </div>
-
-        <div class="tag-list">
-          <span>餐飲美食</span>
-        </div>
-
-        <p>
-          手作甜點與季節果醬品牌，擅長以在地食材製作適合市集分享的小點。
-        </p>
-      </div>
-
-      <ul class="social-list">
-        <li>
-          <i class="bi bi-instagram"></i>
-          <a href="#" target="_blank" rel="noopener noreferrer">@sweet.ten.market</a>
-        </li>
-
-        <li>
-          <i class="bi bi-facebook"></i>
-          <a href="#" target="_blank" rel="noopener noreferrer">拾甜甜點</a>
-        </li>
-
-        <li>
-          <i class="bi bi-globe"></i>
-          <a href="#" target="_blank" rel="noopener noreferrer">官方網站</a>
-        </li>
-      </ul>
-    </aside>
+    <app-market-map #marketMap mode="public"></app-market-map>
   </section>
 
   <section class="bottom-info-grid">
@@ -179,7 +145,7 @@
       <ul class="traffic-list">
         @for (item of trafficItems; track item.label) {
           <li>
-            <strong>{{ item.label }}：</strong>
+            <strong>{{ item.label }}</strong>
             <span>{{ item.text }}</span>
           </li>
         }

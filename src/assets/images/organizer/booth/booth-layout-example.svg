@@ -8,7 +8,6 @@
   <text x="56" y="278" class="label">A區</text>
   <text x="500" y="42" class="label" text-anchor="middle">B區</text>
   <text x="335" y="178" class="label">C區</text>
-  <text x="555" y="178" class="label">D區</text>
   <text x="350" y="490" class="label">E區</text>
   <text x="742" y="278" class="label">F區</text>
 
@@ -50,17 +49,6 @@
     <rect x="300" y="314" width="42" height="42"/><text x="321" y="335" class="booth">C06</text>
     <rect x="347" y="314" width="42" height="42"/><text x="368" y="335" class="booth">C05</text>
     <rect x="394" y="314" width="42" height="42"/><text x="415" y="335" class="booth">C04</text>
-  </g>
-
-  <g fill="#F6C900">
-    <rect x="540" y="220" width="42" height="42"/><text x="561" y="241" class="booth">D08</text>
-    <rect x="587" y="220" width="42" height="42"/><text x="608" y="241" class="booth">D01</text>
-    <rect x="634" y="220" width="42" height="42"/><text x="655" y="241" class="booth">D02</text>
-    <rect x="540" y="267" width="42" height="42"/><text x="561" y="288" class="booth">D07</text>
-    <rect x="634" y="267" width="42" height="42"/><text x="655" y="288" class="booth">D03</text>
-    <rect x="540" y="314" width="42" height="42"/><text x="561" y="335" class="booth">D06</text>
-    <rect x="587" y="314" width="42" height="42"/><text x="608" y="335" class="booth">D05</text>
-    <rect x="634" y="314" width="42" height="42"/><text x="655" y="335" class="booth">D04</text>
   </g>
 
   <g fill="#FF7A59">

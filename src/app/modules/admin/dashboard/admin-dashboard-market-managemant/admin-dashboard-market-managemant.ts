@@ -46,7 +46,7 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
     ActivityStatus.published,
     ActivityStatus.active,
     ActivityStatus.ended,
-    ActivityStatus.pendingUnpublish,
+    ActivityStatus.unpublishRequested,
     ActivityStatus.unpublished,
   ];
 
@@ -54,13 +54,13 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
   private readonly needsReviewStatuses: string[] = [
     ActivityStatus.pendingReview,
     ActivityStatus.mapBuilding,
-    ActivityStatus.pendingUnpublish,
+    ActivityStatus.unpublishRequested,
   ];
 
   /** 假資料：模擬後端回傳的活動列表，之後可替換成真正的 API 呼叫結果 */
   private readonly mockActivities: ActivityListItem[] = [
     { id: 1, image: 'assets/images/market/cards/market-card-01.png', name: '夏日綠意市集', organizer: '森林生活市集', startDate: '2026-07-01', endDate: '2026-07-02', status: ActivityStatus.pendingReview, createdAt: '2026-05-28 14:30' },
-    { id: 2, image: 'assets/images/market/cards/market-card-02.png', name: '秋季手作市集', organizer: '日日好市', startDate: '2026-09-15', endDate: '2026-09-16', status: ActivityStatus.pendingUnpublish, createdAt: '2026-05-27 10:00' },
+    { id: 2, image: 'assets/images/market/cards/market-card-02.png', name: '秋季手作市集', organizer: '日日好市', startDate: '2026-09-15', endDate: '2026-09-16', status: ActivityStatus.unpublishRequested, createdAt: '2026-05-27 10:00' },
     { id: 3, image: 'assets/images/market/cards/market-card-03.png', name: '春語花市', organizer: '春語市集', startDate: '2026-05-01', endDate: '2026-05-02', status: ActivityStatus.full, createdAt: '2026-04-25 18:00' },
     { id: 4, image: 'assets/images/market/cards/market-card-04.png', name: '星光夜市集', organizer: '歡樂市集團隊', startDate: '2026-08-20', endDate: '2026-08-21', status: ActivityStatus.mapBuilding, createdAt: '2026-05-26 16:00' },
     { id: 5, image: 'assets/images/market/cards/market-card-05.png', name: '寵物歡聚市集', organizer: '森林生活市集', startDate: '2026-12-24', endDate: '2026-12-25', status: ActivityStatus.revisionRequired, createdAt: '2026-05-19 10:15' },

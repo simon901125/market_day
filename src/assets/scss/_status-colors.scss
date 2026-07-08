@@ -56,6 +56,17 @@
   color: #5F6368;
 }
 
+// 保證金狀態標籤配色
+.tag-deposit-pending {
+  background-color: #F3F4F6;
+  color: #6B7280;
+}
+
+.tag-deposit-refunded {
+  background-color: #FCE7F3;
+  color: #EC4899;
+}
+
 // Dashboard 共用狀態標籤配色
 .green {
   background: #ecfdf3;

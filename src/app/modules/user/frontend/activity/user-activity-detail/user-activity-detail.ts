@@ -6,26 +6,15 @@ import { MarketCardItem } from '../../../../../models/interface/shared/MarketCar
 import { TrafficItem } from '../../../../../models/interface/user/TrafficItem';
 import { MarketStatus } from '../../../../../models/status/MarketStatus';
 import { BrandType } from '../../../../../models/type/BrandType ';
+import { MarketMap } from '../../../../shared/market-map/market-map';
 
 const DAY_MS = 1000 * 60 * 60 * 24;
+type MarketDetailSample = Omit<MarketCardItem, 'status' | 'statusClass'> &
+  Partial<Pick<MarketCardItem, 'status'>>;
 
-/** 依活動日期計算前台顯示狀態：8 天以上為活動預告，7 天內為即將開始。 */
-const withStatus = (market: Omit<MarketCardItem, 'status' | 'statusClass'>): MarketCardItem => {
-  const today = new Date();
-  const current = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const [startYear, startMonth, startDay] = market.start_date.split('/').map(Number);
-  const [endYear, endMonth, endDay] = market.end_date.split('/').map(Number);
-  const start = new Date(startYear, startMonth - 1, startDay);
-  const end = new Date(endYear, endMonth - 1, endDay);
-  const daysUntilStart = Math.ceil((start.getTime() - current.getTime()) / DAY_MS);
-
-  const status = current > end
-    ? MarketStatus.ended
-    : current >= start && current <= end
-      ? MarketStatus.active
-      : daysUntilStart <= 7
-        ? MarketStatus.upcoming
-        : MarketStatus.preview;
+/** 補上狀態樣式；活動狀態以資料來源為準。 */
+const withStatus = (market: MarketDetailSample): MarketCardItem => {
+  const status = market.status ?? MarketStatus.upcoming;
 
   return {
     ...market,
@@ -36,7 +25,7 @@ const withStatus = (market: Omit<MarketCardItem, 'status' | 'statusClass'>): Mar
 
 @Component({
   selector: 'app-user-activity-detail',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MarketMap],
   templateUrl: './user-activity-detail.html',
   styleUrl: './user-activity-detail.scss',
 })

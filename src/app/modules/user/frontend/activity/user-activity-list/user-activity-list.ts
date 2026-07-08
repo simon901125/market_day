@@ -12,39 +12,13 @@ import { Pagination } from '../../../../shared/pagination/pagination';
 import { UserMarketCard } from '../../shared/user-market-card/user-market-card';
 import { UserHistoryMarketCard } from '../../shared/user-history-market-card/user-history-market-card';
 
-type MarketSample = Omit<MarketCardItem, 'status' | 'statusClass'>;
+type MarketSample = Omit<MarketCardItem, 'status' | 'statusClass'> &
+  Partial<Pick<MarketCardItem, 'status'>>;
 type HistoryMarketSample = Omit<HistoryMarketCardItem, 'status' | 'statusClass'>;
 
-const parseMarketDate = (value: string): Date => {
-  const [year, month, day] = value.split('/').map(Number);
-  return new Date(year, month - 1, day);
-};
-
-const todayStart = (): Date => {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-};
-
-/** 依活動日期計算前台顯示狀態：8 天以上為活動預告，7 天內為即將開始。 */
-const resolveCurrentMarketStatus = (market: Pick<MarketCardItem, 'start_date' | 'end_date'>): string => {
-  const today = todayStart();
-  const startDate = parseMarketDate(market.start_date);
-  const endDate = parseMarketDate(market.end_date);
-  const daysUntilStart = Math.ceil((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-
-  if (today > endDate) {
-    return MarketStatus.ended;
-  }
-
-  if (today >= startDate && today <= endDate) {
-    return MarketStatus.active;
-  }
-
-  return daysUntilStart <= 7 ? MarketStatus.upcoming : MarketStatus.preview;
-};
-
+/** 補上狀態樣式；活動狀態以資料來源為準。 */
 const withCurrentStatus = (market: MarketSample): MarketCardItem => {
-  const status = resolveCurrentMarketStatus(market);
+  const status = market.status ?? MarketStatus.upcoming;
   return {
     ...market,
     status,
@@ -375,7 +349,7 @@ export class UserActivityList {
 
   /** 套用前端狀態後的目前活動列表。 */
   get markets(): MarketCardItem[] {
-    return this.marketSamples.map(withCurrentStatus).filter((market) => market.status !== MarketStatus.ended);
+    return this.marketSamples.map(withCurrentStatus);
   }
 
   /** 套用已結束狀態後的歷史活動列表。 */

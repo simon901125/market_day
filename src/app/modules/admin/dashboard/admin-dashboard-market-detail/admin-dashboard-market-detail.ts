@@ -37,7 +37,7 @@ const MOCK_ACTIVITIES: ActivityListItem[] = [
 /** 模擬後端詳細資料，串接 API 後可移除 */
 const MOCK_DETAIL: AdminMarketDetail = {
   activityId: 2,
-  activityStatus: ActivityStatus.pendingUnpublish,
+  activityStatus: ActivityStatus.unpublishRequested,
   activityInfo: {
     name: '夏日綠意市集',
     type: '生活文創・生活選物・綠市場',
