@@ -1855,7 +1855,9 @@
   .market-map.is-public .map-viewport.is-fullscreen,
   .market-map.is-public .map-viewport.is-fullscreen.is-closing,
   .map-viewport.is-fullscreen .fullscreen-modal-panel,
-  .map-viewport.is-fullscreen.is-closing .fullscreen-modal-panel {
+  .map-viewport.is-fullscreen.is-closing .fullscreen-modal-panel,
+  .booth-preview-card,
+  .booth-preview-fo.is-closing .booth-preview-card {
     animation: none;
   }
 }
