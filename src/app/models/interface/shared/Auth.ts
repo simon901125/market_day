@@ -43,9 +43,15 @@ export interface MarketDayUser {
   role: MarketDayRole;
   status: string;
   isLogin: boolean;
+  provider?: string;
+  googleSub?: string | null;
 }
 
 export interface LoginResponse {
   token: string;
+  user: MarketDayUser;
+}
+
+export interface UserProfileResponse {
   user: MarketDayUser;
 }

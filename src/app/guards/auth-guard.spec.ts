@@ -60,9 +60,25 @@ describe('authGuard', () => {
     expect(adminResult).toBeTrue();
   });
 
-  function setLoginSession(role: 'VENDOR' | 'ORGANIZER' | 'ADMIN'): void {
+  it('should clear expired sessions and redirect to login', () => {
+    setLoginSession('VENDOR', -60);
+
+    const result = executeGuard({ data: { role: 'vendor' } } as any, {} as any) as UrlTree;
+
+    expect(router.serializeUrl(result)).toBe('/vendor/login');
+    expect(localStorage.getItem(getAuthTokenKey('vendor'))).toBeNull();
+    expect(localStorage.getItem(getAuthUserKey('vendor'))).toBeNull();
+  });
+
+  function setLoginSession(
+    role: 'VENDOR' | 'ORGANIZER' | 'ADMIN',
+    expiresInSeconds = 3600
+  ): void {
     const portalRole = role.toLowerCase() as 'vendor' | 'organizer' | 'admin';
-    localStorage.setItem(getAuthTokenKey(portalRole), 'test-token');
+    localStorage.setItem(
+      getAuthTokenKey(portalRole),
+      createJwt(Math.floor(Date.now() / 1000) + expiresInSeconds)
+    );
     localStorage.setItem(
       getAuthUserKey(portalRole),
       JSON.stringify({
@@ -73,5 +89,20 @@ describe('authGuard', () => {
         isLogin: true,
       })
     );
+  }
+
+  function createJwt(exp: number): string {
+    return [
+      encodeBase64Url({ alg: 'HS256', typ: 'JWT' }),
+      encodeBase64Url({ sub: 'test@example.com', exp }),
+      'signature',
+    ].join('.');
+  }
+
+  function encodeBase64Url(payload: object): string {
+    return btoa(JSON.stringify(payload))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/g, '');
   }
 });

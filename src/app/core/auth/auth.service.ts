@@ -18,8 +18,9 @@ import {
   PasswordResetVerificationResponse,
   RegisterRequest,
   ResetPasswordRequest,
+  UserProfileResponse,
 } from '../../models/interface/shared/Auth';
-import { HttpService } from '../http/http.service';
+import { HttpRequestOptions, HttpService } from '../http/http.service';
 
 const DASHBOARD_HOME: Record<AuthPortalRole, string> = {
   vendor: '/vendor/dash-board/home',
@@ -88,6 +89,16 @@ export class AuthService {
     );
   }
 
+  bindGoogle(
+    payload: GoogleCredentialRequest
+  ): Observable<ApiResult<null>> {
+    return this.httpService.post<null>('api/auth/google-bind', payload);
+  }
+
+  me(options: HttpRequestOptions = {}): Observable<ApiResult<UserProfileResponse>> {
+    return this.httpService.get<UserProfileResponse>('api/auth/me', options);
+  }
+
   requestPasswordReset(
     payload: PasswordResetCodeRequest
   ): Observable<ApiResult<null>> {
@@ -115,6 +126,10 @@ export class AuthService {
     );
   }
 
+  deactivateAccount(): Observable<ApiResult<null>> {
+    return this.httpService.post<null>('api/account/deactivate', {});
+  }
+
   logout(role: AuthPortalRole): Observable<ApiResult<null>> {
     return this.httpService
       .post<null>('api/auth/logout', {})
@@ -130,8 +145,17 @@ export class AuthService {
     localStorage.setItem(getAuthUserKey(role), JSON.stringify(user));
   }
 
+  saveUser(role: AuthPortalRole, user: MarketDayUser): void {
+    localStorage.setItem(getAuthUserKey(role), JSON.stringify(user));
+  }
+
   getToken(role: AuthPortalRole): string | null {
     return localStorage.getItem(getAuthTokenKey(role));
+  }
+
+  isTokenExpired(token: string): boolean {
+    const expiresAt = this.getTokenExpiresAt(token);
+    return expiresAt === null || Date.now() >= expiresAt;
   }
 
   /**
@@ -170,7 +194,19 @@ export class AuthService {
   }
 
   isLoggedIn(role: AuthPortalRole): boolean {
-    return Boolean(this.getToken(role) && this.getUser(role));
+    const token = this.getToken(role);
+    const user = this.getUser(role);
+
+    if (!token || !user) {
+      return false;
+    }
+
+    if (this.isTokenExpired(token)) {
+      this.clearSession(role);
+      return false;
+    }
+
+    return true;
   }
 
   getPortalRole(role?: MarketDayRole): AuthPortalRole | null {
@@ -197,5 +233,28 @@ export class AuthService {
   getRoleFromUrl(url: string): AuthPortalRole | null {
     const role = url.split('?')[0].split('/').filter(Boolean)[0];
     return this.isPortalRole(role) ? role : null;
+  }
+
+  private getTokenExpiresAt(token: string): number | null {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    try {
+      const payload = JSON.parse(this.decodeBase64Url(parts[1])) as { exp?: unknown };
+      return typeof payload.exp === 'number' ? payload.exp * 1000 : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private decodeBase64Url(value: string): string {
+    const base64 = value.replace(/-/g, '+').replace(/_/g, '/');
+    const paddedBase64 = base64.padEnd(
+      base64.length + ((4 - (base64.length % 4)) % 4),
+      '='
+    );
+    return atob(paddedBase64);
   }
 }

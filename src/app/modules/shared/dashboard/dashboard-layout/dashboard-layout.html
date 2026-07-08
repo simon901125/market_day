@@ -9,6 +9,7 @@
     [userInitial]="userInitial"
     [isCollapsed]="isSidebarCollapsed"
     (collapseToggle)="toggleSidebar()"
+    (accountSettingsRequested)="openAccountSettings()"
     (logoutRequested)="logout()"
   ></app-dashboard-sidebar>
 
@@ -17,4 +18,18 @@
       <router-outlet></router-outlet>
     </div>
   </main>
+
+  @if (isAccountSettingsOpen && role === 'vendor') {
+    <app-vendor-account-settings
+      [navigateOnClose]="false"
+      (closed)="closeAccountSettings()"
+    ></app-vendor-account-settings>
+  }
+
+  @if (isAccountSettingsOpen && role === 'organizer') {
+    <app-organizer-account-settings
+      [navigateOnClose]="false"
+      (closed)="closeAccountSettings()"
+    ></app-organizer-account-settings>
+  }
 </div>

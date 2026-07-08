@@ -20,6 +20,7 @@ import {
   getPendingRegistrationEmailKey,
 } from '../../../core/auth/auth-storage.constants';
 import { AlertService } from '../../../core/services/alert.service';
+import { isApiSuccessStatus } from '../../../models/interface/shared/ApiResult';
 
 type VerifyRole = 'vendor' | 'organizer';
 
@@ -75,16 +76,34 @@ export class AuthVerifyEmail implements OnInit, OnDestroy {
       : this.backLink;
   }
 
+  get isCodeComplete(): boolean {
+    return /^\d{6}$/.test(this.code.join(''));
+  }
+
   ngOnDestroy(): void {
     this.clearResendTimer();
   }
 
   onCodeInput(value: string, index: number): void {
-    const onlyNumber = value.replace(/\D/g, '').slice(-1);
-    this.code[index] = onlyNumber;
+    if (this.isSubmitting) {
+      return;
+    }
 
-    if (onlyNumber && index < this.code.length - 1) {
-      this.focusCodeInput(index + 1);
+    const numbers = value.replace(/\D/g, '');
+    if (!numbers) {
+      this.code[index] = '';
+      return;
+    }
+
+    const digits = numbers.slice(0, this.code.length - index).split('');
+    digits.forEach((digit, digitIndex) => {
+      this.code[index + digitIndex] = digit;
+    });
+
+    const nextIndex = Math.min(index + digits.length, this.code.length - 1);
+
+    if (nextIndex > index || index < this.code.length - 1) {
+      this.focusCodeInput(nextIndex);
     }
   }
 
@@ -92,6 +111,13 @@ export class AuthVerifyEmail implements OnInit, OnDestroy {
     if (!this.code[index] && index > 0) {
       this.focusCodeInput(index - 1);
     }
+  }
+
+  onCodePaste(event: ClipboardEvent, index: number): void {
+    event.preventDefault();
+
+    const pastedCode = event.clipboardData?.getData('text') ?? '';
+    this.onCodeInput(pastedCode, index);
   }
 
   async verifyCode(): Promise<void> {
@@ -140,10 +166,7 @@ export class AuthVerifyEmail implements OnInit, OnDestroy {
       })
     );
 
-    if (
-      response.statusCode !== 200 ||
-      response.message !== 'Email verified successfully'
-    ) {
+    if (!isApiSuccessStatus(response.statusCode)) {
       await this.showVerificationError(response.message);
       return;
     }
@@ -168,7 +191,7 @@ export class AuthVerifyEmail implements OnInit, OnDestroy {
       })
     );
 
-    if (response.statusCode !== 200) {
+    if (!isApiSuccessStatus(response.statusCode)) {
       await this.showVerificationError(response.message);
       return;
     }
@@ -210,7 +233,7 @@ export class AuthVerifyEmail implements OnInit, OnDestroy {
       const response = await firstValueFrom(
         this.authService.requestPasswordReset({ email: this.email })
       );
-      if (response.statusCode !== 200) {
+      if (!isApiSuccessStatus(response.statusCode)) {
         await this.alert.error(
           '寄送失敗',
           response.message || '驗證碼寄送失敗，請稍後再試。',

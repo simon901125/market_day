@@ -8,6 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
 import { getPasswordResetEmailKey } from '../../../core/auth/auth-storage.constants';
 import { AlertService } from '../../../core/services/alert.service';
+import { isApiSuccessStatus } from '../../../models/interface/shared/ApiResult';
 
 type ForgotPasswordRole = 'vendor' | 'organizer';
 
@@ -49,7 +50,7 @@ export class AuthForgotPassword {
         this.authService.requestPasswordReset({ email })
       );
 
-      if (response.statusCode !== 200) {
+      if (!isApiSuccessStatus(response.statusCode)) {
         await this.alert.error(
           '寄送失敗',
           this.getApiMessage(response.message),

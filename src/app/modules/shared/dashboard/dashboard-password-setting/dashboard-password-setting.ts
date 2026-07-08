@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -8,7 +16,9 @@ import { FormsModule } from '@angular/forms';
   // 沿用原有密碼彈窗 SCSS，僅將檔案移至共用元件目錄。
   styleUrl: './dashboard-password-setting.scss',
 })
-export class DashboardPasswordSetting {
+export class DashboardPasswordSetting implements OnChanges, OnDestroy {
+  private readonly closeAnimationMs = 150;
+  private closeTimer?: number;
   /** 控制修改密碼彈窗是否顯示，可由父元件使用雙向綁定。 */
   @Input() open = false;
 
@@ -34,6 +44,26 @@ export class DashboardPasswordSetting {
 
   readonly passwordRule = '至少 8 個字元，並包含英文字母與數字。';
   errorMessage = '';
+  isClosing = false;
+
+  get hasPasswordMinLength(): boolean {
+    return this.passwordForm.newPassword.length >= 8;
+  }
+
+  get hasPasswordLetterAndNumber(): boolean {
+    return /[A-Za-z]/.test(this.passwordForm.newPassword) && /\d/.test(this.passwordForm.newPassword);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['open']?.currentValue) {
+      this.isClosing = false;
+
+      if (this.closeTimer) {
+        window.clearTimeout(this.closeTimer);
+        this.closeTimer = undefined;
+      }
+    }
+  }
 
   /** 切換指定欄位的明碼顯示狀態。 */
   toggleVisible(field: keyof DashboardPasswordPayload): void {
@@ -49,8 +79,17 @@ export class DashboardPasswordSetting {
 
   /** 清空敏感資料並通知父元件關閉彈窗。 */
   close(): void {
-    this.resetForm();
-    this.openChange.emit(false);
+    if (this.isClosing) {
+      return;
+    }
+
+    this.isClosing = true;
+    this.closeTimer = window.setTimeout(() => {
+      this.resetForm();
+      this.openChange.emit(false);
+      this.isClosing = false;
+      this.closeTimer = undefined;
+    }, this.closeAnimationMs);
   }
 
   /** 驗證密碼規則與兩次輸入結果，通過後送出資料。 */
@@ -95,6 +134,12 @@ export class DashboardPasswordSetting {
       confirmPassword: false,
     };
     this.errorMessage = '';
+  }
+
+  ngOnDestroy(): void {
+    if (this.closeTimer) {
+      window.clearTimeout(this.closeTimer);
+    }
   }
 }
 

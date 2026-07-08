@@ -6,6 +6,10 @@ import { environment } from '../../../environments/environment';
 import { ApiResult } from '../../models/interface/shared/ApiResult';
 import { LoadingService } from '../services/loading.service';
 
+export interface HttpRequestOptions {
+  skipLoading?: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -15,28 +19,51 @@ export class HttpService {
     private readonly loadingService: LoadingService
   ) {}
 
-  get<T>(api: string): Observable<ApiResult<T>> {
-    return this.withLoading(this.http.get<ApiResult<T>>(this.getUrl(api)));
-  }
-
-  post<T>(api: string, body: unknown): Observable<ApiResult<T>> {
-    return this.withLoading(
-      this.http.post<ApiResult<T>>(this.getUrl(api), body)
+  get<T>(api: string, options: HttpRequestOptions = {}): Observable<ApiResult<T>> {
+    return this.withOptionalLoading(
+      this.http.get<ApiResult<T>>(this.getUrl(api)),
+      options
     );
   }
 
-  delete<T>(api: string): Observable<ApiResult<T>> {
-    return this.withLoading(this.http.delete<ApiResult<T>>(this.getUrl(api)));
+  post<T>(
+    api: string,
+    body: unknown,
+    options: HttpRequestOptions = {}
+  ): Observable<ApiResult<T>> {
+    return this.withOptionalLoading(
+      this.http.post<ApiResult<T>>(this.getUrl(api), body),
+      options
+    );
   }
 
-  upload<T>(api: string, formData: FormData): Observable<ApiResult<T>> {
-    return this.withLoading(
-      this.http.post<ApiResult<T>>(this.getUrl(api), formData)
+  delete<T>(api: string, options: HttpRequestOptions = {}): Observable<ApiResult<T>> {
+    return this.withOptionalLoading(
+      this.http.delete<ApiResult<T>>(this.getUrl(api)),
+      options
+    );
+  }
+
+  upload<T>(
+    api: string,
+    formData: FormData,
+    options: HttpRequestOptions = {}
+  ): Observable<ApiResult<T>> {
+    return this.withOptionalLoading(
+      this.http.post<ApiResult<T>>(this.getUrl(api), formData),
+      options
     );
   }
 
   private getUrl(api: string): string {
     return `${environment.apiBaseUrl}${api.replace(/^\/+/, '')}`;
+  }
+
+  private withOptionalLoading<T>(
+    request$: Observable<T>,
+    options: HttpRequestOptions
+  ): Observable<T> {
+    return options.skipLoading ? request$ : this.withLoading(request$);
   }
 
   private withLoading<T>(request$: Observable<T>): Observable<T> {

@@ -16,6 +16,21 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const token = role ? authService.getToken(role) : null;
   const isBackendRequest = request.url.startsWith(environment.apiBaseUrl);
 
+  if (role && token && isBackendRequest && authService.isTokenExpired(token)) {
+    authService.clearSession(role);
+    void router.navigateByUrl(authService.getLoginPath(role));
+
+    return throwError(
+      () =>
+        new HttpErrorResponse({
+          status: 401,
+          statusText: 'Unauthorized',
+          url: request.url,
+          error: { message: 'Session expired' },
+        })
+    );
+  }
+
   const authorizedRequest =
     token && isBackendRequest
       ? request.clone({

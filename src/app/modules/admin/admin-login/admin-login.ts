@@ -6,6 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { AlertService } from '../../../core/services/alert.service';
+import { isApiSuccessStatus } from '../../../models/interface/shared/ApiResult';
 
 @Component({
   selector: 'app-admin-login',
@@ -53,7 +54,7 @@ export class AdminLogin {
         next: async (res) => {
           this.isSubmitting = false;
 
-          if (res.statusCode !== 200 || !res.data?.token || !res.data.user) {
+          if (!isApiSuccessStatus(res.statusCode) || !res.data?.token || !res.data.user) {
             await this.alert.error(
               '登入失敗',
               res.message || '帳號或密碼錯誤，請重新確認後再登入。',

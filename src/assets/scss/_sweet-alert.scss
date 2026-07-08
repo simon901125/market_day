@@ -1,3 +1,60 @@
+:root {
+  --alert-backdrop-bg: rgba(0, 0, 0, 0.4);
+  --modal-motion-in: 0.16s;
+  --modal-motion-out: 0.15s;
+  --modal-motion-ease-out: ease-out;
+  --modal-motion-ease-in: ease;
+}
+
+.market-modal-in {
+  animation: market-modal-in var(--modal-motion-in) var(--modal-motion-ease-out) both !important;
+}
+
+.market-modal-out {
+  animation: market-modal-out var(--modal-motion-out) var(--modal-motion-ease-in) both !important;
+}
+
+@keyframes market-modal-backdrop-out {
+  from {
+    background-color: var(--alert-backdrop-bg, rgba(0, 0, 0, 0.4));
+  }
+
+  to {
+    background-color: transparent;
+  }
+}
+
+@keyframes market-modal-in {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, -4px, 0) scale(0.998);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes market-modal-out {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -50px, 0) scale(0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .market-modal-in,
+  .market-modal-out {
+    animation: none !important;
+  }
+}
+
 .swal2-container {
   // 帳號註銷等確認訊息需顯示在 Dashboard 帳號設定彈窗之上。
   z-index: 1400 !important;

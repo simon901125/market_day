@@ -9,6 +9,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { MarketDayUser } from '../../../models/interface/shared/Auth';
 import { AlertService } from '../../../core/services/alert.service';
 import { GoogleAuthService } from '../../../core/services/google-auth.service';
+import { isApiSuccessStatus } from '../../../models/interface/shared/ApiResult';
 
 type LoginRole = 'vendor' | 'organizer';
 
@@ -77,7 +78,7 @@ export class AuthLogin {
         next: async (res) => {
           this.isSubmitting = false;
 
-          if (res.statusCode !== 200 || !res.data?.token || !res.data.user) {
+          if (!isApiSuccessStatus(res.statusCode) || !res.data?.token || !res.data.user) {
             await this.alert.error(
               '登入失敗',
               this.getLocalApiMessage(res.message),
@@ -116,7 +117,7 @@ export class AuthLogin {
       );
 
       if (
-        response.statusCode !== 200 ||
+        !isApiSuccessStatus(response.statusCode) ||
         !response.data?.token ||
         !response.data.user
       ) {

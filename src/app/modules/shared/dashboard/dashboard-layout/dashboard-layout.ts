@@ -5,13 +5,16 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { AuthPortalRole } from '../../../../models/interface/shared/Auth';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 import { MenuItem } from '../../../../models/interface/shared/MenuItem';
 import { UserMenuItem } from '../../../../models/interface/shared/UserMenuItem';
+import { OrganizerAccountSettings } from '../../../organizer/dashboard/organizer-account-settings/organizer-account-settings';
+import { VendorAccountSettings } from '../../../vendor/dashboard/vendor-account-settings/vendor-account-settings';
 import { DashboardSidebar } from '../dashboard-sidebar/dashboard-sidebar';
 
 @Component({
   selector: 'app-dashboard-layout',
-  imports: [DashboardSidebar, RouterOutlet],
+  imports: [DashboardSidebar, RouterOutlet, VendorAccountSettings, OrganizerAccountSettings],
   templateUrl: './dashboard-layout.html',
   styleUrl: './dashboard-layout.scss',
 })
@@ -28,6 +31,7 @@ export class DashboardLayout {
   userInitial = '使';
   role: AuthPortalRole = 'vendor';
   isLoggingOut = false;
+  isAccountSettingsOpen = false;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -76,7 +80,7 @@ export class DashboardLayout {
 
     try {
       const response = await firstValueFrom(this.authService.logout(this.role));
-      if (response.statusCode !== 200) {
+      if (!isApiSuccessStatus(response.statusCode)) {
         await this.alert.warning(
           '登出狀態提醒',
           response.message || '系統已清除本機登入資訊，請重新登入。',
@@ -94,6 +98,18 @@ export class DashboardLayout {
       this.isLoggingOut = false;
       await this.router.navigateByUrl(this.authService.getLoginPath(this.role));
     }
+  }
+
+  openAccountSettings(): void {
+    if (this.role === 'admin') {
+      return;
+    }
+
+    this.isAccountSettingsOpen = true;
+  }
+
+  closeAccountSettings(): void {
+    this.isAccountSettingsOpen = false;
   }
 
   /** 取得使用者資訊 */
@@ -139,7 +155,7 @@ export class DashboardLayout {
     ];
 
     this.userMenuItems = [
-      { label: '帳號設定', icon: 'bi-person', path: '/vendor/dash-board/account-settings' },
+      { label: '帳號設定', icon: 'bi-person', action: 'account-settings' },
       { label: '登出', icon: 'bi-box-arrow-right', action: 'logout' },
     ];
   }
@@ -160,7 +176,7 @@ export class DashboardLayout {
 
     this.userMenuItems = [
       { label: '主辦資料', icon: 'bi-person', path: '/organizer/dash-board/profile' },
-      { label: '帳號設定', icon: 'bi-gear', path: '/organizer/dash-board/account' },
+      { label: '帳號設定', icon: 'bi-gear', action: 'account-settings' },
       { label: '登出', icon: 'bi-box-arrow-right', action: 'logout' },
     ];
   }

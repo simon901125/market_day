@@ -9,6 +9,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { getPendingRegistrationEmailKey } from '../../../core/auth/auth-storage.constants';
 import { AlertService } from '../../../core/services/alert.service';
 import { GoogleAuthService } from '../../../core/services/google-auth.service';
+import { isApiSuccessStatus } from '../../../models/interface/shared/ApiResult';
 
 type RegisterRole = 'vendor' | 'organizer';
 
@@ -111,10 +112,7 @@ export class AuthRegister {
         })
       );
 
-      if (
-        response.statusCode !== 200 ||
-        !response.message.includes('registered successfully')
-      ) {
+      if (!isApiSuccessStatus(response.statusCode)) {
         await this.alert.error(
           '註冊失敗',
           this.getRegisterApiMessage(response.message),
@@ -149,10 +147,7 @@ export class AuthRegister {
         this.authService.googleRegister(this.role, { credential })
       );
 
-      if (
-        response.statusCode !== 200 ||
-        !response.message.includes('registered successfully')
-      ) {
+      if (!isApiSuccessStatus(response.statusCode)) {
         await this.alert.error(
           'Google 註冊失敗',
           this.getGoogleRegisterApiMessage(response.message),

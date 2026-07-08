@@ -6,6 +6,7 @@ import { filter, firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { MarketDayUser } from '../../../../models/interface/shared/Auth';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
 @Component({
   selector: 'app-vendor-header',
@@ -69,7 +70,7 @@ export class VendorHeader {
 
     try {
       const response = await firstValueFrom(this.authService.logout('vendor'));
-      if (response.statusCode !== 200) {
+      if (!isApiSuccessStatus(response.statusCode)) {
         await this.alert.warning(
           '登出狀態提醒',
           response.message || '系統已清除本機登入資訊，請重新登入。',

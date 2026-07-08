@@ -7,15 +7,25 @@
   inset: 0;
   z-index: 1000;
   padding: 24px;
-  background: rgba(31, 31, 31, 0.48);
+  background: transparent;
   backdrop-filter: blur(1px);
   display: grid;
   place-items: center;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--alert-backdrop-bg, rgba(0, 0, 0, 0.4));
+  }
 }
 
 .layout-example-dialog {
   --layout-example-content-width: 560px;
 
+  position: relative;
+  z-index: 1;
   width: min(620px, calc(100vw - 48px));
   max-height: calc(100dvh - 48px);
   padding: 22px 24px 18px;
@@ -23,6 +33,10 @@
   background: var(--bg-white);
   overflow-y: auto;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+  animation: market-modal-in var(--modal-motion-in, 220ms) var(--modal-motion-ease-out, ease-out) both;
+  backface-visibility: hidden;
+  transform-origin: center;
+  will-change: transform;
 
   > header {
     margin-bottom: 16px;

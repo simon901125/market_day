@@ -13,6 +13,7 @@ import { OrganizerDashboardEventDetail } from './modules/organizer/dashboard/org
 import { OrganizerDashboardRegistrationManagement } from './modules/organizer/dashboard/organizer-dashboard-registration-management/organizer-dashboard-registration-management';
 import { OrganizerDashboardRegistrationDetail } from './modules/organizer/dashboard/organizer-dashboard-registration-detail/organizer-dashboard-registration-detail';
 import { OrganizerDashboardEventManagement } from './modules/organizer/dashboard/organizer-dashboard-event-management/organizer-dashboard-event-management';
+import { OrganizerAccountSettings } from './modules/organizer/dashboard/organizer-account-settings/organizer-account-settings';
 import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organizer-home';
 import { OrganizerAbout } from './modules/organizer/frontend/organizer-about/organizer-about';
 import { UserBrandSearch } from './modules/user/frontend/brand/user-brand-search/user-brand-search';
@@ -236,6 +237,10 @@ export const routes: Routes = [
         path: 'activity/detail/:id',
         component: OrganizerDashboardEventDetail,
         canDeactivate: [(component: OrganizerDashboardEventDetail) => component.canDeactivate()],
+      },
+      {
+        path: 'account-settings',
+        component: OrganizerAccountSettings,
       },
     ],
   },

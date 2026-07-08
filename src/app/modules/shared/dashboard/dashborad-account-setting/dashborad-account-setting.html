@@ -1,56 +1,5 @@
-<!-- 後台側邊欄 帳號設定 -->
 <section class="account-settings-page">
-  <div class="page-preview" aria-hidden="true">
-    <div class="preview-heading">
-      <h1>歡迎回來，{{ account.name }}！</h1>
-      <p>這裡幫你整理近期需要處理的報名與通知。</p>
-    </div>
-
-    <div class="preview-summary">
-      <article>
-        <i class="bi bi-clipboard-check"></i>
-        <span>待審核報名</span>
-        <strong>{{ preview.pendingReviewCount }}</strong>
-      </article>
-      <article>
-        <i class="bi bi-calendar2-week"></i>
-        <span>待選位報名</span>
-        <strong>{{ preview.pendingSelectionCount }}</strong>
-      </article>
-    </div>
-
-    <section class="preview-notifications">
-      <header>
-        <h2>最新通知</h2>
-        <span>查看全部通知</span>
-      </header>
-
-      <div class="preview-notice-list">
-        <div>
-          <i class="bi bi-clipboard-check"></i><strong>【待審核】</strong
-          ><span>市集報名資料已送出，等待主辦方審核</span><time>2026/06/02 14:30</time>
-        </div>
-        <div>
-          <i class="bi bi-wallet2"></i><strong>【待付款】</strong
-          ><span>報名審核已通過，請於期限內完成付款</span><time>2026/06/02 13:10</time>
-        </div>
-        <div>
-          <i class="bi bi-map"></i><strong>【待選位】</strong
-          ><span>付款完成，請前往選擇您的活動攤位</span><time>2026/06/02 10:15</time>
-        </div>
-        <div>
-          <i class="bi bi-megaphone"></i><strong>【活動通知】</strong
-          ><span>活動行前通知與進場資訊已更新</span><time>2026/06/01 16:20</time>
-        </div>
-        <div>
-          <i class="bi bi-x-circle"></i><strong>【已取消】</strong
-          ><span>冬季暖心市集付款逾期，報名已取消</span><time>2026/05/31 11:45</time>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <div class="account-overlay">
+  <div class="account-overlay" [class.is-closing]="isClosing">
     <article
       class="account-modal"
       role="dialog"
@@ -73,26 +22,36 @@
           <div class="setting-content">
             <h3>基本帳號資料</h3>
 
-            <!-- 帳號資料由外層角色頁面綁定，之後可直接替換成會員 API 結果。 -->
             <dl class="account-data">
               <div>
-                <dt>負責人姓名：</dt>
+                <dt>負責人姓名</dt>
                 <dd>{{ account.name }}</dd>
               </div>
               <div>
-                <dt>Email：</dt>
+                <dt>Email</dt>
                 <dd>{{ account.email }}</dd>
               </div>
             </dl>
 
             <div class="google-row">
               <img src="assets/images/shared/google-icon.png" alt="Google" />
-              <strong>Google 帳號綁定：</strong>
+              <strong>Google 帳號綁定</strong>
               <span class="bind-status">{{ account.googleBound ? '已綁定' : '未綁定' }}</span>
-              <a [routerLink]="googleBindPath" class="outline-action">前往綁定</a>
+              @if (!account.googleBound) {
+                <button
+                  type="button"
+                  class="outline-action"
+                  [disabled]="googleBinding"
+                  (click)="requestGoogleBind()"
+                >
+                  {{ googleBinding ? '綁定中...' : '前往綁定' }}
+                </button>
+              }
             </div>
 
-            <p class="muted">可綁定 Google 帳號以方便快速登入。</p>
+            @if (!account.googleBound) {
+              <p class="muted">可綁定 Google 帳號以方便快速登入。</p>
+            }
           </div>
         </section>
 

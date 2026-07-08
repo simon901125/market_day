@@ -7,13 +7,23 @@
   inset: 0;
   z-index: 1000;
   padding: 24px;
-  background: rgba(31, 31, 31, 0.48);
+  background: transparent;
   backdrop-filter: blur(1px);
   display: grid;
   place-items: center;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--alert-backdrop-bg, rgba(0, 0, 0, 0.4));
+  }
 }
 
 .zone-dialog {
+  position: relative;
+  z-index: 1;
   width: min(520px, calc(100vw - 48px));
   padding: 28px;
   border-radius: 10px;
@@ -22,6 +32,10 @@
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
   column-gap: 14px;
+  animation: market-modal-in var(--modal-motion-in, 220ms) var(--modal-motion-ease-out, ease-out) both;
+  backface-visibility: hidden;
+  transform-origin: center;
+  will-change: transform;
 
   > header {
     grid-column: 1 / -1;

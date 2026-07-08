@@ -11,6 +11,7 @@ import {
   getPasswordResetTokenKey,
 } from '../../../core/auth/auth-storage.constants';
 import { AlertService } from '../../../core/services/alert.service';
+import { isApiSuccessStatus } from '../../../models/interface/shared/ApiResult';
 
 type ResetPasswordRole = 'vendor' | 'organizer';
 
@@ -113,10 +114,7 @@ export class AuthResetPassword implements OnInit {
         })
       );
 
-      if (
-        response.statusCode !== 200 ||
-        response.message !== 'Password reset successfully'
-      ) {
+      if (!isApiSuccessStatus(response.statusCode)) {
         await this.alert.error(
           '密碼重設失敗',
           this.getApiMessage(response.message),

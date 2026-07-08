@@ -7,17 +7,17 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { GoogleAuthService } from '../../../../core/services/google-auth.service';
 import { DashboradAccountSetting } from '../../../shared/dashboard/dashborad-account-setting/dashborad-account-setting';
-import { VendorAccountSettings } from './vendor-account-settings';
+import { OrganizerAccountSettings } from './organizer-account-settings';
 
-describe('VendorAccountSettings', () => {
-  let component: VendorAccountSettings;
-  let fixture: ComponentFixture<VendorAccountSettings>;
+describe('OrganizerAccountSettings', () => {
+  let component: OrganizerAccountSettings;
+  let fixture: ComponentFixture<OrganizerAccountSettings>;
   let router: Router;
 
   const user = {
-    email: 'vendor@example.com',
-    name: '測試攤主',
-    role: 'VENDOR' as const,
+    email: 'organizer@example.com',
+    name: '測試主辦方',
+    role: 'ORGANIZER' as const,
     status: 'ACTIVE',
     isLogin: true,
     provider: 'LOCAL',
@@ -26,7 +26,7 @@ describe('VendorAccountSettings', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VendorAccountSettings],
+      imports: [OrganizerAccountSettings],
       providers: [
         provideRouter([]),
         {
@@ -53,7 +53,7 @@ describe('VendorAccountSettings', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(VendorAccountSettings);
+    fixture = TestBed.createComponent(OrganizerAccountSettings);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
     fixture.detectChanges();
@@ -66,8 +66,8 @@ describe('VendorAccountSettings', () => {
   it('should render account data by binding', () => {
     const textContent: string = fixture.nativeElement.textContent;
 
-    expect(textContent).toContain('測試攤主');
-    expect(textContent).toContain('vendor@example.com');
+    expect(textContent).toContain('測試主辦方');
+    expect(textContent).toContain('organizer@example.com');
     expect(textContent).toContain('未綁定');
   });
 
@@ -76,7 +76,7 @@ describe('VendorAccountSettings', () => {
 
     component.close();
 
-    expect(navigateSpy).toHaveBeenCalledWith(['/vendor/dash-board/home']);
+    expect(navigateSpy).toHaveBeenCalledWith(['/organizer/dash-board/home']);
   });
 
   it('should open shared password setting from account settings', () => {

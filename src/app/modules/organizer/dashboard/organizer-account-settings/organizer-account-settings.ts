@@ -15,32 +15,32 @@ import { AccountDeletionBlocker } from '../../../shared/dashboard/account-deleti
 import { DashboradAccountSetting } from '../../../shared/dashboard/dashborad-account-setting/dashborad-account-setting';
 
 @Component({
-  selector: 'app-vendor-account-settings',
+  selector: 'app-organizer-account-settings',
   imports: [DashboradAccountSetting],
-  templateUrl: './vendor-account-settings.html',
+  templateUrl: './organizer-account-settings.html',
 })
-export class VendorAccountSettings {
+export class OrganizerAccountSettings {
   @Input() navigateOnClose = true;
   @Output() closed = new EventEmitter<void>();
 
-  role: AuthPortalRole = 'vendor';
+  role: AuthPortalRole = 'organizer';
   googleBinding = false;
 
   account = {
     email: '',
-    name: '使用者',
+    name: '主辦方',
     googleBound: false,
   };
 
   readonly passwordRule = '至少 8 碼，並建議包含英文與數字。';
-  readonly cancellationWarning = '帳號註銷後將無法復原，請確認沒有進行中的報名、付款或活動。';
+  readonly cancellationWarning = '帳號註銷後將無法復原，請確認沒有進行中的活動或報名審核。';
 
   readonly accountDeletion = {
     canDelete: false,
     blockers: [
-      { type: 'active-registration', text: '仍有進行中的報名' },
-      { type: 'pending-payment', text: '仍有待付款項目' },
-      { type: 'unfinished-event', text: '仍有未完成活動' },
+      { type: 'active-registration', text: '仍有進行中的活動' },
+      { type: 'pending-payment', text: '仍有待處理帳務' },
+      { type: 'unfinished-event', text: '仍有未完成的報名審核' },
     ] satisfies AccountDeletionBlocker[],
   };
 
@@ -58,7 +58,7 @@ export class VendorAccountSettings {
     this.closed.emit();
 
     if (this.navigateOnClose) {
-      this.router.navigate(['/vendor/dash-board/home']);
+      this.router.navigate(['/organizer/dash-board/home']);
     }
   }
 
@@ -127,7 +127,7 @@ export class VendorAccountSettings {
   }
 
   private applyUserInfo(userInfo: MarketDayUser): void {
-    this.account.name = userInfo.name?.trim() || '使用者';
+    this.account.name = userInfo.name?.trim() || '主辦方';
     this.account.email = userInfo.email || '';
     this.account.googleBound = this.isGoogleBound(userInfo);
   }

@@ -6,6 +6,7 @@ import { filter, firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { MarketDayUser } from '../../../../models/interface/shared/Auth';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
 @Component({
   selector: 'app-organizer-header',
@@ -85,7 +86,7 @@ export class OrganizerHeader {
 
     try {
       const response = await firstValueFrom(this.authService.logout('organizer'));
-      if (response.statusCode !== 200) {
+      if (!isApiSuccessStatus(response.statusCode)) {
         await this.alert.warning(
           '登入狀態已清除',
           response.message || '伺服器登出未完成，但本機登入資料已清除。',

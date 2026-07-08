@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 
 import {
   AccountDeletion,
@@ -12,11 +11,14 @@ import {
 
 @Component({
   selector: 'app-dashborad-account-setting',
-  imports: [RouterLink, AccountDeletion, DashboardPasswordSetting],
+  imports: [AccountDeletion, DashboardPasswordSetting],
   templateUrl: './dashborad-account-setting.html',
   styleUrl: './dashborad-account-setting.scss',
 })
-export class DashboradAccountSetting {
+export class DashboradAccountSetting implements OnDestroy {
+  private readonly closeAnimationMs = 150;
+  private closeTimer?: number;
+
   /** 帳號基本資料由使用此共用元件的角色頁面傳入。 */
   @Input() account= {
     name: '',
@@ -25,7 +27,7 @@ export class DashboradAccountSetting {
   };
 
   /** 不同角色可傳入自己的 Google 綁定頁。 */
-  @Input() googleBindPath = '/';
+  @Input() googleBinding = false;
 
   /** 註銷成功後返回的登入頁。 */
   @Input() loginPath = '/';
@@ -41,29 +43,49 @@ export class DashboradAccountSetting {
 
   @Input() passwordRule = '至少 8 個字元，並包含英文字母與數字。';
   @Input() cancellationWarning = '若有活動正在進行中，將無法註銷帳號。';
-  @Input() preview: DashboardAccountPreview = {
-    pendingReviewCount: 0,
-    pendingSelectionCount: 0,
-  };
-
   /** 關閉帳號設定時通知外層角色頁面處理導頁。 */
   @Output() closed = new EventEmitter<void>();
 
   /** 修改密碼驗證通過後，將資料交給外層串接 API。 */
   @Output() passwordSaved = new EventEmitter<DashboardPasswordPayload>();
 
+  @Output() googleBindRequested = new EventEmitter<void>();
+
   passwordSettingOpen = false;
+  isClosing = false;
 
   openPasswordSetting(): void {
     this.passwordSettingOpen = true;
   }
 
   close(): void {
-    this.closed.emit();
+    if (this.isClosing) {
+      return;
+    }
+
+    this.isClosing = true;
+    this.closeTimer = window.setTimeout(() => {
+      this.closed.emit();
+      this.isClosing = false;
+    }, this.closeAnimationMs);
   }
 
   handlePasswordSaved(payload: DashboardPasswordPayload): void {
     this.passwordSaved.emit(payload);
+  }
+
+  requestGoogleBind(): void {
+    if (this.account.googleBound || this.googleBinding) {
+      return;
+    }
+
+    this.googleBindRequested.emit();
+  }
+
+  ngOnDestroy(): void {
+    if (this.closeTimer) {
+      window.clearTimeout(this.closeTimer);
+    }
   }
 }
 
@@ -78,7 +100,3 @@ export interface DashboardAccountDeletionConfig {
   blockers: AccountDeletionBlocker[];
 }
 
-export interface DashboardAccountPreview {
-  pendingReviewCount: number;
-  pendingSelectionCount: number;
-}

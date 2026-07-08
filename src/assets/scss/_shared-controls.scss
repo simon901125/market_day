@@ -9,25 +9,11 @@
 
 // 全站共用頁面標題文字。
 .app-page-title {
-  position: relative;
   margin: 0;
-  padding-left: 12px;
   color: #1f1a16;
   font-size: 26px;
   font-weight: 900;
   line-height: 1.25;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 4px;
-    height: 1em;
-    border-radius: 999px;
-    background: var(--primary-color);
-    transform: translateY(-50%);
-  }
 }
 
 // 搜尋 / 篩選欄位外層，負責包住標題與輸入框。

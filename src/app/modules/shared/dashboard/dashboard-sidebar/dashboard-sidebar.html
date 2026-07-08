@@ -33,6 +33,11 @@
               <i class="bi" [ngClass]="item.icon"></i>
               <span>{{ item.label }}</span>
             </button>
+          } @else if (item.action === 'account-settings') {
+            <button type="button" class="user-menu-item" (click)="openAccountSettings()">
+              <i class="bi" [ngClass]="item.icon"></i>
+              <span>{{ item.label }}</span>
+            </button>
           } @else {
             <a class="user-menu-item" [routerLink]="item.path">
               <i class="bi" [ngClass]="item.icon"></i>
