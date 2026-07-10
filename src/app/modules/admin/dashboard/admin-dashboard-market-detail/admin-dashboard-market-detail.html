@@ -22,7 +22,7 @@
       @if (activity?.status === ActivityStatus.mapBuilding) {
       <button type="button" class="app-btn primary" (click)="onMapBuildingDoneHandler()">地圖建置完成</button>
       }
-      @if (activity?.status === ActivityStatus.pendingUnpublish) {
+      @if (activity?.status === ActivityStatus.unpublishRequested) {
         <button type="button" class="app-btn primary" (click)="onUnpublishHandler()">審核通過</button>
       }
     </div>
