@@ -1,4 +1,10 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+
+import { AuthService } from '../../../../core/auth/auth.service';
+import { AlertService } from '../../../../core/services/alert.service';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
 import {
   AccountDeletion,
@@ -18,6 +24,11 @@ import {
 export class DashboradAccountSetting implements OnDestroy {
   private readonly closeAnimationMs = 150;
   private closeTimer?: number;
+
+  constructor(
+    private readonly authService: AuthService,
+    private readonly alert: AlertService
+  ) {}
 
   /** 帳號基本資料由使用此共用元件的角色頁面傳入。 */
   @Input() account= {
@@ -52,10 +63,19 @@ export class DashboradAccountSetting implements OnDestroy {
   @Output() googleBindRequested = new EventEmitter<void>();
 
   passwordSettingOpen = false;
+  passwordSaving = false;
+  passwordErrorMessage = '';
   isClosing = false;
 
   openPasswordSetting(): void {
+    this.passwordErrorMessage = '';
     this.passwordSettingOpen = true;
+  }
+
+  closeFromBackdrop(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.close();
+    }
   }
 
   close(): void {
@@ -70,8 +90,33 @@ export class DashboradAccountSetting implements OnDestroy {
     }, this.closeAnimationMs);
   }
 
-  handlePasswordSaved(payload: DashboardPasswordPayload): void {
-    this.passwordSaved.emit(payload);
+  async handlePasswordSaved(payload: DashboardPasswordPayload): Promise<void> {
+    if (this.passwordSaving) {
+      return;
+    }
+
+    this.passwordSaving = true;
+    this.passwordErrorMessage = '';
+
+    try {
+      const result = await firstValueFrom(
+        this.authService.changePassword({ password: payload.newPassword })
+      );
+
+      if (!isApiSuccessStatus(result.statusCode)) {
+        this.passwordErrorMessage =
+          result.messageDetails || result.message || '密碼變更失敗，請稍後再試。';
+        return;
+      }
+
+      this.passwordSaved.emit(payload);
+      this.passwordSettingOpen = false;
+      await this.alert.success('密碼已更新', '下次登入請使用新密碼。');
+    } catch (error) {
+      this.passwordErrorMessage = this.getPasswordErrorMessage(error);
+    } finally {
+      this.passwordSaving = false;
+    }
   }
 
   requestGoogleBind(): void {
@@ -86,6 +131,19 @@ export class DashboradAccountSetting implements OnDestroy {
     if (this.closeTimer) {
       window.clearTimeout(this.closeTimer);
     }
+  }
+
+  private getPasswordErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      const backendMessage =
+        error.error?.messageDetails || error.error?.message || error.message;
+
+      if (typeof backendMessage === 'string' && backendMessage.trim()) {
+        return backendMessage;
+      }
+    }
+
+    return '密碼變更失敗，請確認密碼格式後再試一次。';
   }
 }
 

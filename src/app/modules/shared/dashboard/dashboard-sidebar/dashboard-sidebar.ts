@@ -35,6 +35,7 @@ export class DashboardSidebar {
   @Output() collapseToggle = new EventEmitter<void>();
   @Output() logoutRequested = new EventEmitter<void>();
   @Output() accountSettingsRequested = new EventEmitter<void>();
+  @Output() organizerProfileRequested = new EventEmitter<void>();
 
   /** 使用者選單是否展開 */
   isUserMenuOpen = false;
@@ -63,6 +64,11 @@ export class DashboardSidebar {
   openAccountSettings(): void {
     this.isUserMenuOpen = false;
     this.accountSettingsRequested.emit();
+  }
+
+  openOrganizerProfile(): void {
+    this.isUserMenuOpen = false;
+    this.organizerProfileRequested.emit();
   }
 
   /** 點擊頁面其他區域時關閉使用者選單 */

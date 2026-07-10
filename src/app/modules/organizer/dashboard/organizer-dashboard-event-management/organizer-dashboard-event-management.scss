@@ -23,6 +23,61 @@
   }
 }
 
+:host ::ng-deep .event-table {
+  .dashboard-table-wrap {
+    overflow-x: hidden;
+  }
+
+  .dashboard-table {
+    table-layout: fixed;
+
+    th,
+    td {
+      padding: 13px 10px;
+    }
+  }
+
+  .image-text-cell {
+    gap: 8px;
+    min-width: 0;
+
+    img {
+      width: 42px;
+      height: 32px;
+    }
+
+    span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  td[data-column='location'] span {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .status-badge {
+    min-width: 66px;
+    padding: 0 8px;
+    font-size: 13px;
+  }
+
+  .table-actions {
+    gap: 6px;
+    justify-content: flex-end;
+  }
+
+  .table-action {
+    height: 32px;
+    padding: 0 10px;
+  }
+}
+
 .organizer-event-filter {
   grid-template-columns: minmax(220px, 1.2fr) minmax(170px, 0.8fr) minmax(300px, 1.4fr) 92px;
 }

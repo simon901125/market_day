@@ -1,5 +1,5 @@
 <section class="account-settings-page">
-  <div class="account-overlay" [class.is-closing]="isClosing">
+  <div class="account-overlay" [class.is-closing]="isClosing" (click)="closeFromBackdrop($event)">
     <article
       class="account-modal"
       role="dialog"
@@ -106,6 +106,9 @@
 
   <app-dashboard-password-setting
     [(open)]="passwordSettingOpen"
+    [isSubmitting]="passwordSaving"
+    [serverErrorMessage]="passwordErrorMessage"
+    [closeOnSave]="false"
     (saved)="handlePasswordSaved($event)"
   ></app-dashboard-password-setting>
 </section>

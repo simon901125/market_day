@@ -5,10 +5,9 @@
 .zone-dialog-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 1000;
-  padding: 24px;
+  z-index: 1200;
+  padding: 32px;
   background: transparent;
-  backdrop-filter: blur(1px);
   display: grid;
   place-items: center;
   isolation: isolate;
@@ -18,6 +17,16 @@
     position: absolute;
     inset: 0;
     background: var(--alert-backdrop-bg, rgba(0, 0, 0, 0.4));
+  }
+
+  &.is-closing {
+    &::before {
+      animation: market-modal-backdrop-out var(--modal-motion-out, 180ms) ease-in both;
+    }
+
+    .zone-dialog {
+      animation: market-modal-out var(--modal-motion-out, 180ms) var(--modal-motion-ease-in, ease-in) both;
+    }
   }
 }
 
@@ -40,7 +49,7 @@
   > header {
     grid-column: 1 / -1;
     grid-row: 1;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -49,9 +58,18 @@
     h2 {
       margin: 0;
       color: var(--text-dark);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       font-size: 20px;
       font-weight: 900;
       line-height: 1.2;
+
+      i {
+        color: var(--primary-color);
+        font-size: 22px;
+        line-height: 1;
+      }
     }
 
     button {
@@ -152,6 +170,15 @@ input {
 .zone-dialog-name {
   grid-column: 1;
   grid-row: 3;
+}
+
+.zone-dialog-name,
+.zone-color-field,
+.zone-dialog > .field:not(.zone-dialog-name) {
+  padding: 16px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-tag);
+  background: var(--bg-white);
 }
 
 .zone-name-row {
@@ -273,11 +300,17 @@ input {
 .zone-dialog-cancel,
 .zone-dialog-save {
   min-width: 112px;
-  height: 38px;
+  height: 40px;
+  padding: 0 22px;
+  border: 1px solid transparent;
   border-radius: var(--radius-tag);
   font-size: 14px;
   font-weight: 900;
   cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 @media (max-width: 600px) {
@@ -330,6 +363,7 @@ input {
   color: #fff;
 
   &:hover {
+    border-color: var(--primary-hover);
     background: var(--primary-hover);
   }
 }

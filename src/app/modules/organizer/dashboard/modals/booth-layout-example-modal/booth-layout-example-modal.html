@@ -1,4 +1,4 @@
-<div class="layout-example-backdrop" role="presentation" (click)="closeDialog.emit()">
+<div class="layout-example-backdrop" [class.is-closing]="closing" role="presentation" (click)="closeDialog.emit()">
   <section
     class="layout-example-dialog"
     role="dialog"
@@ -7,7 +7,7 @@
     (click)="$event.stopPropagation()"
   >
     <header>
-      <h2 id="layout-example-title">攤位配置圖範例</h2>
+      <h2 id="layout-example-title"><i class="bi bi-map"></i>攤位配置圖範例</h2>
       <button type="button" aria-label="關閉範例" (click)="closeDialog.emit()">
         <i class="bi bi-x-lg"></i>
       </button>

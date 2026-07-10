@@ -70,7 +70,7 @@
                   </div>
                 }
                 @default {
-                  {{ row[column.key] ?? '-' }}
+                  <span [class]="row[column.key + 'TextClass'] ?? null">{{ row[column.key] ?? '-' }}</span>
                 }
               }
             </td>

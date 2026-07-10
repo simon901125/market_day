@@ -10,6 +10,7 @@
     [isCollapsed]="isSidebarCollapsed"
     (collapseToggle)="toggleSidebar()"
     (accountSettingsRequested)="openAccountSettings()"
+    (organizerProfileRequested)="openOrganizerProfile()"
     (logoutRequested)="logout()"
   ></app-dashboard-sidebar>
 
@@ -32,4 +33,12 @@
       (closed)="closeAccountSettings()"
     ></app-organizer-account-settings>
   }
+
+  <app-organizer-profile-modal
+    [open]="isOrganizerProfileOpen && role === 'organizer'"
+    [name]="userName"
+    [email]="userEmail"
+    (closed)="closeOrganizerProfile()"
+    (saved)="saveOrganizerProfile()"
+  ></app-organizer-profile-modal>
 </div>

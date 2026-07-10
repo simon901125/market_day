@@ -560,6 +560,28 @@
   }
 }
 
+.collection-refund-swal {
+  .registration-swal-content {
+    h3 {
+      margin: 1rem 0 0.75rem;
+    }
+  }
+
+  .registration-swal-main {
+    margin-bottom: 0.35rem;
+  }
+
+  .registration-swal-sub {
+    max-width: 21rem;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+
+  .custom-swal-actions {
+    margin-top: 1.35rem !important;
+  }
+}
+
 .registration-reject-form-swal {
   overflow: visible !important;
 

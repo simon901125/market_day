@@ -1,0 +1,323 @@
+<main class="equipment-detail-page page-transition">
+  <header class="detail-header">
+    <div>
+      <nav class="app-breadcrumb" aria-label="麵包屑">
+        <a routerLink="/organizer/dash-board/equipment" [queryParams]="{ page: returnPage, status: returnStatus || null }">
+          設備管理
+        </a>
+        <i class="bi bi-chevron-right"></i>
+        <span>設備詳情</span>
+      </nav>
+
+      <div class="title-row">
+        <button type="button" class="app-back-link" aria-label="返回設備管理" (click)="goBack()">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        <h1 class="app-page-title">設備詳情</h1>
+      </div>
+    </div>
+
+    <button type="button" class="report-download-button" (click)="downloadEquipmentReport()">
+      <i class="bi bi-download"></i>
+      下載設備報表
+    </button>
+  </header>
+
+  <div class="detail-scroll">
+    <section class="summary-grid">
+      <article class="detail-card activity-card">
+        <h2><i class="bi bi-calendar-event"></i>活動摘要</h2>
+        <div class="card-heading">
+          <span></span>
+          <a class="outline-button activity-view-link" [routerLink]="['/organizer/dash-board/activity/detail', detail.id]">
+            <i class="bi bi-eye"></i>
+            查看活動
+          </a>
+        </div>
+        <div class="activity-content">
+          <div class="activity-image-frame">
+            <img [src]="detail.image" [alt]="detail.title" />
+          </div>
+          <div class="activity-info">
+            <div class="activity-title-row">
+              <h3>{{ detail.title }}</h3>
+              @if (detail.activityRows[0]; as statusRow) {
+                @if (statusRow.type === 'status') {
+                  <span class="status-badge" [class]="getStatusClass(statusRow.value)">{{ statusRow.value }}</span>
+                }
+              }
+            </div>
+            <dl>
+              @for (row of detail.activityRows; track row.label) {
+                @if (row.type !== 'status') {
+                  <div>
+                    <dt>{{ row.label }}</dt>
+                    <dd>{{ row.value }}</dd>
+                  </div>
+                }
+              }
+            </dl>
+          </div>
+        </div>
+      </article>
+
+      <article class="detail-card equipment-overview-card">
+        <h2><i class="bi bi-bar-chart"></i>設備總覽</h2>
+        <div class="overview-list">
+          @for (item of detail.overviewItems; track item.label) {
+            <div class="overview-item">
+              <span>{{ item.label }}</span>
+              <strong>{{ item.value }}</strong>
+              <small>{{ item.unit }}</small>
+            </div>
+          }
+        </div>
+      </article>
+    </section>
+
+    <article class="detail-card table-card">
+      <h2><i class="bi bi-box-seam"></i>活動設備設定</h2>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              @for (column of equipmentColumns; track column.key) {
+                <th [class.center]="column.align === 'center'" [class.end]="column.align === 'end'">{{ column.label }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of detail.equipmentSettings; track row['name']) {
+              <tr>
+                @for (column of equipmentColumns; track column.key) {
+                  <td [class.center]="column.align === 'center'" [class.end]="column.align === 'end'">{{ row[column.key] }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <section class="two-grid">
+      <article class="detail-card table-card">
+        <h2><i class="bi bi-lightning-charge"></i>基本用電設定</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                @for (column of basePowerColumns; track column.key) {
+                  <th [class.center]="column.align === 'center'">{{ column.label }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of detail.basePowerSettings; track row['voltage']) {
+                <tr>
+                  @for (column of basePowerColumns; track column.key) {
+                    <td [class.center]="column.align === 'center'">{{ row[column.key] }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="detail-card table-card">
+        <h2><i class="bi bi-lightning-charge-fill"></i>額外用電設定</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                @for (column of extraPowerColumns; track column.key) {
+                  <th [class.center]="column.align === 'center'">{{ column.label }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of detail.extraPowerSettings; track row['plan']) {
+                <tr>
+                  @for (column of extraPowerColumns; track column.key) {
+                    <td [class.center]="column.align === 'center'">{{ row[column.key] }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section class="detail-management-pair">
+      <article class="detail-card table-card management-table">
+        <h2><i class="bi bi-box-seam"></i>租借設備管理</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                @for (column of rentalColumns; track column.key) {
+                  <th [class.center]="column.align === 'center'">{{ column.label }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of pagedRentalRows; track row['boothNo']) {
+                <tr>
+                  @for (column of rentalColumns; track column.key) {
+                    <td [class.center]="column.align === 'center'">{{ row[column.key] }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-dashboard-pagination
+          class="detail-table-pagination"
+          [currentPage]="rentalCurrentPage"
+          [pageSize]="detailPageSize"
+          [totalItems]="detail.rentalRows.length"
+          (pageChange)="onRentalPageChange($event)"
+        ></app-dashboard-pagination>
+      </article>
+
+      <article class="detail-card table-card summary-table-card">
+        <h2><i class="bi bi-pie-chart-fill"></i>租借設備統計</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                @for (column of equipmentStatsColumns; track column.key) {
+                  <th [class.center]="column.align === 'center'">{{ column.label }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of detail.equipmentStats; track row['name']) {
+                <tr [class.total-row]="row['name'] === '總計'">
+                  @for (column of equipmentStatsColumns; track column.key) {
+                    <td [class.center]="column.align === 'center'">{{ row[column.key] }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section class="detail-management-pair">
+      <article class="detail-card table-card management-table">
+        <h2><i class="bi bi-plug"></i>額外用電管理</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                @for (column of extraPowerManageColumns; track column.key) {
+                  <th [class.center]="column.align === 'center'">{{ column.label }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of pagedExtraPowerRows; track row['boothNo']) {
+                <tr>
+                  @for (column of extraPowerManageColumns; track column.key) {
+                    <td [class.center]="column.align === 'center'">{{ row[column.key] }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-dashboard-pagination
+          class="detail-table-pagination"
+          [currentPage]="extraPowerCurrentPage"
+          [pageSize]="detailPageSize"
+          [totalItems]="detail.extraPowerRows.length"
+          (pageChange)="onExtraPowerPageChange($event)"
+        ></app-dashboard-pagination>
+      </article>
+
+      <article class="detail-card table-card summary-table-card">
+        <h2><i class="bi bi-plug-fill"></i>額外用電申請統計</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                @for (column of extraPowerStatsColumns; track column.key) {
+                  <th [class.center]="column.align === 'center'">{{ column.label }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of detail.extraPowerStats; track row['plan']) {
+                <tr [class.total-row]="row['plan'] === '總計'">
+                  @for (column of extraPowerStatsColumns; track column.key) {
+                    <td [class.center]="column.align === 'center'">{{ row[column.key] }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section class="detail-management-pair">
+      <article class="detail-card table-card management-table">
+        <h2><i class="bi bi-car-front"></i>車牌管理</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                @for (column of vehicleColumns; track column.key) {
+                  <th [class.center]="column.align === 'center'">{{ column.label }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of pagedVehicleRows; track row['boothNo']) {
+                <tr>
+                  @for (column of vehicleColumns; track column.key) {
+                    <td [class.center]="column.align === 'center'">{{ row[column.key] }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-dashboard-pagination
+          class="detail-table-pagination"
+          [currentPage]="vehicleCurrentPage"
+          [pageSize]="detailPageSize"
+          [totalItems]="detail.vehicleRows.length"
+          (pageChange)="onVehiclePageChange($event)"
+        ></app-dashboard-pagination>
+      </article>
+
+      <article class="detail-card table-card summary-table-card">
+        <h2><i class="bi bi-car-front-fill"></i>車牌登記統計</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                @for (column of vehicleStatsColumns; track column.key) {
+                  <th [class.center]="column.align === 'center'">{{ column.label }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of detail.vehicleStats; track row['status']) {
+                <tr [class.total-row]="row['status'] === '總計'">
+                  @for (column of vehicleStatsColumns; track column.key) {
+                    <td [class.center]="column.align === 'center'">{{ row[column.key] }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </div>
+</main>

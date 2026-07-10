@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-booth-layout-example-modal',
@@ -8,6 +8,9 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 /** 攤位配置圖範例 Modal，讓主辦方查看上傳配置圖的格式說明。 */
 export class BoothLayoutExampleModal {
+  /** 父層準備關閉時套用退場動畫。 */
+  @Input() closing = false;
+
   /** 通知父層關閉範例 Modal。 */
   @Output() closeDialog = new EventEmitter<void>();
 }

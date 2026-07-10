@@ -1,4 +1,4 @@
-<div class="zone-dialog-backdrop" role="presentation" (click)="closeDialog.emit()">
+<div class="zone-dialog-backdrop" [class.is-closing]="closing" role="presentation" (click)="closeDialog.emit()">
   <section
     class="zone-dialog"
     role="dialog"
@@ -7,7 +7,7 @@
     (click)="$event.stopPropagation()"
   >
     <header>
-      <h2 id="zone-dialog-title">{{ editing ? '編輯攤位分區' : '新增攤位分區' }}</h2>
+      <h2 id="zone-dialog-title"><i class="bi bi-grid-3x3-gap"></i>{{ editing ? '編輯攤位分區' : '新增攤位分區' }}</h2>
       <button type="button" aria-label="關閉分區視窗" (click)="closeDialog.emit()">
         <i class="bi bi-x-lg"></i>
       </button>

@@ -1,0 +1,57 @@
+<section class="organizer-equipment-management dashboard-list-page page-transition">
+  <header class="app-page-header">
+    <h1 class="app-page-title">設備管理</h1>
+    <button type="button" class="app-btn primary app-create-btn" routerLink="/organizer/dash-board/activity/detail">
+      <i class="bi bi-plus-lg"></i>
+      建立活動
+    </button>
+  </header>
+
+  <section class="app-filter-bar organizer-equipment-filter" aria-label="設備管理篩選">
+    <label class="app-search-field keyword-field">
+      <span class="app-control-title">關鍵字</span>
+      <span class="app-search-input">
+        <i class="bi bi-search"></i>
+        <input
+          type="search"
+          placeholder="搜尋活動名稱"
+          [(ngModel)]="keyword"
+          (keyup.enter)="searchEquipmentActivities()"
+        />
+      </span>
+    </label>
+
+    <app-dropdown
+      title="活動狀態"
+      [options]="statusOptions"
+      [selectedValue]="selectedStatus"
+      (optionSelected)="selectStatus($event)"
+    ></app-dropdown>
+
+    <app-date-range-selector
+      selectorTitle="活動日期"
+      [startDate]="filterStartDate"
+      [endDate]="filterEndDate"
+    ></app-date-range-selector>
+
+    <button type="button" class="app-btn search" (click)="searchEquipmentActivities()">搜尋</button>
+  </section>
+
+  <div class="dashboard-list-content">
+    <app-dashboard-data-table
+      [columns]="columns"
+      [rows]="displayRows"
+      tableMinWidth="100%"
+      emptyText="目前沒有符合條件的設備資料"
+      (actionClick)="onTableAction($event)"
+    ></app-dashboard-data-table>
+  </div>
+
+  <app-dashboard-pagination
+    class="dashboard-list-pagination"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems"
+    (pageChange)="onPageChange($event)"
+  ></app-dashboard-pagination>
+</section>

@@ -30,7 +30,6 @@ export interface VenueBoothForm {
   venueName: string;
   boothWidth: number | null;
   boothLength: number | null;
-  boothHeight: number | null;
   totalBooths: number | null;
   boothPrice: number | null;
   layoutFileName: string;
@@ -47,6 +46,28 @@ export interface FormStep {
   title: string;
   description: string;
 }
+
+export interface EventEquipment {
+  name: string;
+  specification: string;
+  unit: string;
+  freeQuantity: number;
+  rentable: boolean;
+  rentalPrice: number | null;
+  rentalLimit: number | null;
+  dailyRentalQuantity: number | null;
+}
+
+export interface EventPowerPlan {
+  voltage: string;
+  wattage: number | null;
+  fee: number | null;
+  description: string;
+}
+
+export interface EventEquipmentDraft extends EventEquipment {}
+
+export interface EventPowerPlanDraft extends EventPowerPlan {}
 
 export interface StatusAction {
   key: 'delete' | 'edit' | 'submit' | 'withdraw' | 'resubmit' | 'publish' | 'unpublish' | 'view';

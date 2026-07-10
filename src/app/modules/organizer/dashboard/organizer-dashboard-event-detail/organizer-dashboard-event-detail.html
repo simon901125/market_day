@@ -48,6 +48,7 @@
         [class.basic-info-form]="currentStep === 0"
         [class.time-view-content]="currentStep === 1"
         [class.venue-booth-form]="currentStep === 2"
+        [class.equipment-power-form]="currentStep === 3"
       >
         @if (currentStep === 0) {
           <h2 class="form-section-title">
@@ -89,11 +90,11 @@
           </div>
 
           <label class="field full">
-            <span>活動簡介 <small class="app-field-context">顯示於活動列表</small> <b>*</b></span>
+            <span>活動簡介 <b>*</b><small class="app-field-context">（顯示於活動列表）</small></span>
             <span class="textarea-control view-disabled-control"><textarea disabled>{{ form.description }}</textarea></span>
           </label>
           <label class="field full">
-            <span>活動介紹 <small class="app-field-context">顯示於活動詳情</small> <b>*</b></span>
+            <span>活動介紹 <b>*</b><small class="app-field-context">（顯示於活動詳情）</small></span>
             <span class="textarea-control introduction-control view-disabled-control"><textarea disabled>{{ form.introduction }}</textarea></span>
           </label>
         } @else if (currentStep === 1) {
@@ -128,7 +129,7 @@
               <label><strong>開車</strong><input type="text" [value]="timeForm.driving" disabled /></label>
             </div>
           </section>
-        } @else {
+        } @else if (currentStep === 2) {
           <div class="venue-booth-top-grid">
             <section class="venue-panel">
               <h2 class="form-section-title"><i class="bi bi-geo-alt"></i>活動場地資訊</h2>
@@ -141,10 +142,9 @@
             </section>
             <section class="venue-panel booth-info-panel">
               <h2 class="form-section-title"><i class="bi bi-shop"></i>攤位資訊</h2>
-              <div class="booth-size-group"><span class="field-label">攤位大小 <b>*</b></span><div class="booth-size-grid">
+              <div class="booth-size-group"><span class="field-label">攤位尺寸 <b>*</b></span><div class="booth-size-grid">
                 <label class="field compact-field"><span class="dimension-label">長</span><span class="unit-control view-disabled-control"><input [value]="venueForm.boothLength ?? ''" disabled /><small>公尺</small></span></label>
                 <label class="field compact-field"><span class="dimension-label">寬</span><span class="unit-control view-disabled-control"><input [value]="venueForm.boothWidth ?? ''" disabled /><small>公尺</small></span></label>
-                <label class="field compact-field"><span class="dimension-label">高</span><span class="unit-control view-disabled-control"><input [value]="venueForm.boothHeight ?? ''" disabled /><small>公尺</small></span></label>
               </div></div>
               <div class="booth-summary-grid">
                 <label class="field"><span>攤位總數 <b>*</b></span><span class="unit-control view-disabled-control"><input [value]="venueForm.totalBooths ?? ''" disabled /><small>攤</small></span></label>
@@ -155,9 +155,7 @@
           <section class="venue-panel booth-zone-panel detail-zone-panel">
             <h2 class="form-section-title">
               <i class="bi bi-grid-3x3-gap"></i>
-              攤位分區
-              <b>*</b>
-              <small>（可依需求設定不同分區，方便攤主選擇攤位報名。）</small>
+              <span class="section-title-text">攤位分區 <b>*</b><small>（可依需求設定不同分區，方便攤主選擇攤位報名。）</small></span>
             </h2>
             <div class="booth-zone-grid">
               @for (zone of boothZones; track zone.name) {
@@ -179,6 +177,93 @@
                 <div class="detail-empty-media">
                   <i class="bi bi-map"></i>
                   <span>尚未上傳配置圖</span>
+                </div>
+              }
+            </div>
+          </section>
+        } @else {
+          <section class="equipment-power-section power-settings-section">
+            <div class="section-heading-with-action">
+              <div>
+                <h2 class="form-section-title"><i class="bi bi-box-seam"></i>設備提供與租借設定 <b>*</b></h2>
+                <p>設定每項設備的免費提供數量與租借規則，租借以「每日」為單位計算。</p>
+              </div>
+            </div>
+            <div class="radio-row readonly-radio-row">
+              <label><input type="radio" name="readonlyProvidesEquipmentRental" [checked]="!providesEquipmentRental" disabled /> 不提供設備租借</label>
+              <label><input type="radio" name="readonlyProvidesEquipmentRental" [checked]="providesEquipmentRental" disabled /> 提供設備租借</label>
+            </div>
+            @if (providesEquipmentRental) {
+              <div class="equipment-table-wrap readonly-table-wrap">
+                <table class="equipment-table">
+                  <thead>
+                    <tr>
+                      <th>設備名稱</th>
+                      <th>設備規格</th>
+                      <th>單位</th>
+                      <th>免費提供</th>
+                      <th>租借狀態</th>
+                      <th>租借價格<br>（元 / 天）</th>
+                      <th>每攤租借<br>上限</th>
+                      <th>每日可租<br>借總數</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (item of equipmentItems; track item.name) {
+                      <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.specification }}</td>
+                        <td>{{ item.unit }}</td>
+                        <td>{{ item.freeQuantity }}</td>
+                        <td>{{ item.rentable ? '開放租借' : '不開放租借' }}</td>
+                        <td>{{ item.rentable ? item.rentalPrice : '-' }}</td>
+                        <td>{{ item.rentable ? item.rentalLimit : '-' }}</td>
+                        <td>{{ item.rentable ? item.dailyRentalQuantity : '-' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </section>
+
+          <section class="equipment-power-section power-settings-section">
+            <h2 class="form-section-title"><i class="bi bi-lightning-charge"></i>用電設定</h2>
+            <div class="power-panel">
+              <h3>基本用電（免費提供） <b>*</b></h3>
+              <div class="radio-row readonly-radio-row">
+                <label><input type="radio" name="readonlyProvidesBasicPower" [checked]="!providesBasicPower" disabled /> 不提供基本用電</label>
+                <label><input type="radio" name="readonlyProvidesBasicPower" [checked]="providesBasicPower" disabled /> 提供基本用電</label>
+              </div>
+              @if (providesBasicPower) {
+                <div class="equipment-table-wrap readonly-table-wrap">
+                  <table class="equipment-table compact">
+                    <thead><tr><th>電壓</th><th>每攤每日免費供電量</th><th>說明</th></tr></thead>
+                    <tbody>
+                      @for (plan of basicPowerPlans; track plan.voltage) {
+                        <tr><td>{{ plan.voltage }}</td><td>{{ plan.wattage }}W</td><td>{{ plan.description || '-' }}</td></tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </div>
+            <div class="power-panel">
+              <h3>額外申請用電 <b>*</b></h3>
+              <div class="radio-row readonly-radio-row">
+                <label><input type="radio" name="readonlyAllowsExtraPower" [checked]="!allowsExtraPower" disabled /> 不開放額外申請</label>
+                <label><input type="radio" name="readonlyAllowsExtraPower" [checked]="allowsExtraPower" disabled /> 開放額外申請</label>
+              </div>
+              @if (allowsExtraPower) {
+                <div class="equipment-table-wrap readonly-table-wrap">
+                  <table class="equipment-table compact">
+                    <thead><tr><th>電壓</th><th>額外供電量</th><th>每日費用（元 / 天）</th><th>說明</th></tr></thead>
+                    <tbody>
+                      @for (plan of extraPowerPlans; track plan.voltage) {
+                        <tr><td>{{ plan.voltage }}</td><td>{{ plan.wattage }}W</td><td>{{ plan.fee }}</td><td>{{ plan.description || '-' }}</td></tr>
+                      }
+                    </tbody>
+                  </table>
                 </div>
               }
             </div>
@@ -213,8 +298,8 @@
     <div class="header-actions">
       <button type="button" class="app-btn neutral app-create-btn" (click)="cancelEditor()">取消</button>
       <button type="button" class="app-btn secondary app-create-btn" (click)="saveDraft()">儲存草稿</button>
-      <button type="button" class="app-btn primary app-create-btn" (click)="currentStep === 2 ? submitForReview() : goNext()">
-        {{ currentStep === 2 ? '送出審核' : '下一步' }}
+      <button type="button" class="app-btn primary app-create-btn" (click)="currentStep === 3 ? submitForReview() : goNext()">
+        {{ currentStep === 3 ? '送出審核' : '下一步' }}
       </button>
     </div>
   </header>
@@ -254,6 +339,7 @@
       class="event-form"
       [class.basic-info-form]="currentStep === 0"
       [class.venue-booth-form]="currentStep === 2"
+      [class.equipment-power-form]="currentStep === 3"
     >
       @if (validationMessage && totalErrorCount > 0) {
         <div class="validation-summary" role="alert">
@@ -336,7 +422,7 @@
       </div>
 
       <label class="field full">
-        <span>活動簡介 <small class="app-field-context">（顯示於活動列表）</small> <b>*</b></span>
+        <span>活動簡介 <b>*</b><small class="app-field-context">（顯示於活動列表）</small></span>
         <span class="textarea-control with-count" [class.invalid]="submitAttempted && !form.description.trim()" [attr.data-invalid]="submitAttempted && !form.description.trim()">
           <textarea class="app-textarea"
             maxlength="300"
@@ -352,7 +438,7 @@
       </label>
 
       <label class="field full">
-        <span>活動介紹 <small class="app-field-context">（顯示於活動詳情）</small> <b>*</b></span>
+        <span>活動介紹 <b>*</b><small class="app-field-context">（顯示於活動詳情）</small></span>
         <span class="textarea-control introduction-control with-count" [class.invalid]="submitAttempted && !form.introduction.trim()" [attr.data-invalid]="submitAttempted && !form.introduction.trim()">
           <textarea class="app-textarea"
             maxlength="800"
@@ -514,7 +600,7 @@
 
           <div class="transport-fields">
             <label>
-              <strong>捷運：</strong>
+              <strong>捷運</strong>
               <span>
                 <input class="transport-input" [class.invalid]="submitAttempted && !timeForm.metro.trim()" [attr.data-invalid]="submitAttempted && !timeForm.metro.trim()" type="text" placeholder="請輸入最近捷運站與步行時間" [(ngModel)]="timeForm.metro" name="metro" />
                 @if (submitAttempted && !timeForm.metro.trim()) {
@@ -523,7 +609,7 @@
               </span>
             </label>
             <label>
-              <strong>公車：</strong>
+              <strong>公車</strong>
               <span>
                 <input class="transport-input" [class.invalid]="submitAttempted && !timeForm.bus.trim()" [attr.data-invalid]="submitAttempted && !timeForm.bus.trim()" type="text" placeholder="請輸入公車路線與下車站點" [(ngModel)]="timeForm.bus" name="bus" />
                 @if (submitAttempted && !timeForm.bus.trim()) {
@@ -532,7 +618,7 @@
               </span>
             </label>
             <label>
-              <strong>開車：</strong>
+              <strong>開車</strong>
               <span>
                 <input class="transport-input" [class.invalid]="submitAttempted && !timeForm.driving.trim()" [attr.data-invalid]="submitAttempted && !timeForm.driving.trim()" type="text" placeholder="請輸入停車資訊或開車說明" [(ngModel)]="timeForm.driving" name="driving" />
                 @if (submitAttempted && !timeForm.driving.trim()) {
@@ -608,7 +694,7 @@
             </h2>
 
             <div class="booth-size-group">
-              <span class="field-label">攤位大小 <b>*</b></span>
+              <span class="field-label">攤位尺寸 <b>*</b></span>
               <div class="booth-size-grid">
                 <label class="field compact-field">
                   <span class="dimension-label">長</span>
@@ -624,16 +710,9 @@
                     <small>公尺</small>
                   </span>
                 </label>
-                <label class="field compact-field">
-                  <span class="dimension-label">高</span>
-                  <span class="unit-control" [class.invalid]="submitAttempted && !(venueForm.boothHeight !== null && venueForm.boothHeight > 0)" [attr.data-invalid]="submitAttempted && !(venueForm.boothHeight !== null && venueForm.boothHeight > 0)">
-                    <input type="number" min="0" step="0.1" [(ngModel)]="venueForm.boothHeight" name="boothHeight" />
-                    <small>公尺</small>
-                  </span>
-                </label>
               </div>
-              @if (submitAttempted && (!(venueForm.boothLength !== null && venueForm.boothLength > 0) || !(venueForm.boothWidth !== null && venueForm.boothWidth > 0) || !(venueForm.boothHeight !== null && venueForm.boothHeight > 0))) {
-                <small class="field-error">長、寬、高皆須大於 0</small>
+              @if (submitAttempted && (!(venueForm.boothLength !== null && venueForm.boothLength > 0) || !(venueForm.boothWidth !== null && venueForm.boothWidth > 0))) {
+                <small class="field-error">長、寬皆須大於 0</small>
               }
             </div>
 
@@ -667,9 +746,7 @@
             <div>
               <h2 class="form-section-title">
                 <i class="bi bi-grid-3x3-gap"></i>
-                攤位分區
-                <b>*</b>
-                <small>（可依需求設定不同分區，方便攤主選擇攤位報名。）</small>
+                <span class="section-title-text">攤位分區 <b>*</b><small>（可依需求設定不同分區，方便攤主選擇攤位報名。）</small></span>
               </h2>
             </div>
           </div>
@@ -777,12 +854,169 @@
               </div>
               <div class="layout-note-footer">
                 <small>配置圖分區需與左方「攤位分區」一致。</small>
-                <button type="button" class="layout-example-btn" (click)="showLayoutExample = true">
+                <button type="button" class="layout-example-btn" (click)="openLayoutExampleDialog()">
                   <i class="bi bi-eye"></i>
                   查看範例
                 </button>
               </div>
             </aside>
+          </div>
+        </section>
+      } @else if (currentStep === 3) {
+        <section class="equipment-power-section power-settings-section">
+          <div class="section-heading-with-action">
+            <div>
+              <h2 class="form-section-title"><i class="bi bi-box-seam"></i>設備提供與租借設定 <b>*</b></h2>
+              <p>設定每項設備的免費提供數量與租借規則，租借以「每日」為單位計算。</p>
+            </div>
+            <button type="button" class="app-btn secondary app-create-btn" (click)="openAddEquipmentDialog()" [disabled]="!providesEquipmentRental">
+              <i class="bi bi-plus-lg"></i>
+              新增設備
+            </button>
+          </div>
+          <div class="radio-row">
+            <label><input type="radio" name="providesEquipmentRental" [ngModel]="providesEquipmentRental" (ngModelChange)="providesEquipmentRental = false" [value]="false" /> 不提供設備租借</label>
+            <label><input type="radio" name="providesEquipmentRental" [ngModel]="providesEquipmentRental" (ngModelChange)="providesEquipmentRental = true" [value]="true" /> 提供設備租借</label>
+          </div>
+          @if (submitAttempted && providesEquipmentRental && equipmentItems.length === 0) {
+            <small class="field-error section-error" data-invalid="true">請至少新增一項設備</small>
+          }
+          @if (providesEquipmentRental) {
+            <div class="equipment-table-wrap">
+              <table class="equipment-table">
+                <thead>
+                  <tr>
+                    <th>設備名稱</th>
+                    <th>設備規格</th>
+                    <th>單位</th>
+                    <th>免費提供</th>
+                    <th>租借狀態</th>
+                    <th>租借價格<br>（元 / 天）</th>
+                    <th>每攤租借<br>上限</th>
+                    <th>每日可租<br>借總數</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of equipmentItems; track item.name; let i = $index) {
+                    <tr>
+                      <td>{{ item.name }}</td>
+                      <td>{{ item.specification }}</td>
+                      <td>{{ item.unit }}</td>
+                      <td>{{ item.freeQuantity }}</td>
+                      <td>{{ item.rentable ? '開放租借' : '不開放租借' }}</td>
+                      <td>{{ item.rentable ? item.rentalPrice : '-' }}</td>
+                      <td>{{ item.rentable ? item.rentalLimit : '-' }}</td>
+                      <td>{{ item.rentable ? item.dailyRentalQuantity : '-' }}</td>
+                      <td>
+                        <div class="table-actions">
+                          <button type="button" title="編輯設備" (click)="openEditEquipmentDialog(i)"><i class="bi bi-pencil"></i></button>
+                          <button type="button" class="danger" title="刪除設備" (click)="removeEquipment(i)"><i class="bi bi-trash3"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr><td colspan="9" class="empty-table-cell">尚未新增設備</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <p class="section-note"><i class="bi bi-info-circle-fill"></i>租借設備依可租借數量控管，攤主報名時會保留數量，額滿後即不可租借。</p>
+          }
+        </section>
+
+        <section class="equipment-power-section power-settings-section">
+          <h2 class="form-section-title"><i class="bi bi-lightning-charge"></i>用電設定</h2>
+
+          <div class="power-panel">
+            <div class="section-heading-with-action">
+              <div>
+                <h3>基本用電（免費提供） <b>*</b></h3>
+                <p>設定活動免費提供的基本用電類別與每攤每日免費供電量。</p>
+              </div>
+              <button type="button" class="app-btn secondary app-create-btn" (click)="openAddBasicPowerDialog()" [disabled]="!providesBasicPower">
+                <i class="bi bi-plus-lg"></i>
+                新增基本用電
+              </button>
+            </div>
+            <div class="radio-row">
+              <label><input type="radio" name="providesBasicPower" [ngModel]="providesBasicPower" (ngModelChange)="providesBasicPower = false" [value]="false" /> 不提供基本用電</label>
+              <label><input type="radio" name="providesBasicPower" [ngModel]="providesBasicPower" (ngModelChange)="providesBasicPower = true" [value]="true" /> 提供基本用電</label>
+            </div>
+            @if (submitAttempted && providesBasicPower && basicPowerPlans.length === 0) {
+              <small class="field-error section-error" data-invalid="true">請至少新增一筆基本用電</small>
+            }
+            @if (providesBasicPower) {
+              <div class="equipment-table-wrap">
+                <table class="equipment-table compact">
+                  <thead><tr><th>電壓</th><th>每攤每日免費供電量</th><th>說明</th><th>操作</th></tr></thead>
+                  <tbody>
+                    @for (plan of basicPowerPlans; track plan.voltage; let i = $index) {
+                      <tr>
+                        <td>{{ plan.voltage }}</td>
+                        <td>{{ plan.wattage }}W</td>
+                        <td>{{ plan.description || '-' }}</td>
+                        <td>
+                          <div class="table-actions">
+                            <button type="button" title="編輯基本用電" (click)="openEditBasicPowerDialog(i)"><i class="bi bi-pencil"></i></button>
+                            <button type="button" class="danger" title="刪除基本用電" (click)="removeBasicPower(i)"><i class="bi bi-trash3"></i></button>
+                          </div>
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr><td colspan="4" class="empty-table-cell">尚未新增基本用電</td></tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              <p class="section-note"><i class="bi bi-info-circle-fill"></i>基本用電將免費提供給每個攤位使用，不另收費。</p>
+            }
+          </div>
+
+          <div class="power-panel">
+            <div class="section-heading-with-action">
+              <div>
+                <h3>額外申請用電 <b>*</b></h3>
+                <p>開放攤位申請超出基本用電之額外供電，並依方案收費。</p>
+              </div>
+              <button type="button" class="app-btn secondary app-create-btn" (click)="openAddExtraPowerDialog()" [disabled]="!allowsExtraPower">
+                <i class="bi bi-plus-lg"></i>
+                新增用電方案
+              </button>
+            </div>
+            <div class="radio-row">
+              <label><input type="radio" name="allowsExtraPower" [ngModel]="allowsExtraPower" (ngModelChange)="allowsExtraPower = false" [value]="false" /> 不開放額外申請</label>
+              <label><input type="radio" name="allowsExtraPower" [ngModel]="allowsExtraPower" (ngModelChange)="allowsExtraPower = true" [value]="true" /> 開放額外申請</label>
+            </div>
+            @if (submitAttempted && allowsExtraPower && extraPowerPlans.length === 0) {
+              <small class="field-error section-error" data-invalid="true">請至少新增一筆用電方案</small>
+            }
+            @if (allowsExtraPower) {
+              <div class="equipment-table-wrap">
+                <table class="equipment-table compact">
+                  <thead><tr><th>電壓</th><th>額外供電量</th><th>每日費用（元 / 天）</th><th>說明</th><th>操作</th></tr></thead>
+                  <tbody>
+                    @for (plan of extraPowerPlans; track plan.voltage; let i = $index) {
+                      <tr>
+                        <td>{{ plan.voltage }}</td>
+                        <td>{{ plan.wattage }}W</td>
+                        <td>{{ plan.fee }}</td>
+                        <td>{{ plan.description || '-' }}</td>
+                        <td>
+                          <div class="table-actions">
+                            <button type="button" title="編輯用電方案" (click)="openEditExtraPowerDialog(i)"><i class="bi bi-pencil"></i></button>
+                            <button type="button" class="danger" title="刪除用電方案" (click)="removeExtraPower(i)"><i class="bi bi-trash3"></i></button>
+                          </div>
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr><td colspan="5" class="empty-table-cell">尚未新增用電方案</td></tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              <p class="section-note"><i class="bi bi-info-circle-fill"></i>實際供電能力將依現場電力配置與安全規範調整，主辦方保有最終決定權。</p>
+            }
           </div>
         </section>
       }
@@ -796,6 +1030,7 @@
       [existingZoneNames]="zoneNamesForValidation"
       [existingZoneColors]="zoneColorsForValidation"
       [editing]="editingZoneIndex !== null"
+      [closing]="isZoneDialogClosing"
       (closeDialog)="closeZoneDialog()"
       (saveDialog)="saveZoneDialog()"
       (colorSelected)="selectZoneColor($event)"
@@ -804,8 +1039,82 @@
 
   @if (showLayoutExample) {
     <app-booth-layout-example-modal
-      (closeDialog)="showLayoutExample = false"
+      [closing]="isLayoutExampleClosing"
+      (closeDialog)="closeLayoutExampleDialog()"
     ></app-booth-layout-example-modal>
+  }
+
+  @if (showEquipmentDialog) {
+    <div class="event-config-dialog-backdrop" [class.is-closing]="isEquipmentDialogClosing" role="presentation" (click)="closeEquipmentDialog()">
+      <section class="event-config-dialog large" role="dialog" aria-modal="true" aria-labelledby="equipment-dialog-title" (click)="$event.stopPropagation()">
+        <header>
+          <h2 id="equipment-dialog-title"><i class="bi bi-box-seam"></i>{{ editingEquipmentIndex === null ? '新增設備' : '編輯設備' }}</h2>
+          <button type="button" aria-label="關閉設備視窗" (click)="closeEquipmentDialog()"><i class="bi bi-x-lg"></i></button>
+        </header>
+        <div class="dialog-panel">
+          <h3>設備資訊</h3>
+          <div class="dialog-grid two">
+            <label class="field"><span>設備名稱 <b>*</b></span><span class="text-control"><input type="text" placeholder="請輸入設備名稱" [(ngModel)]="equipmentDraft.name" name="equipmentName" /></span></label>
+            <label class="field"><span>單位 <b>*</b></span><span class="text-control"><input type="text" placeholder="例如：張、頂、條、組" [(ngModel)]="equipmentDraft.unit" name="equipmentUnit" /></span></label>
+          </div>
+          <label class="field full"><span>設備規格 <b>*</b></span><span class="textarea-control"><textarea maxlength="100" placeholder="例如：180 x 60 x 75 cm、3 x 3 公尺、LED 投光燈 100W" [(ngModel)]="equipmentDraft.specification" name="equipmentSpecification"></textarea><small>{{ equipmentDraft.specification.length }} / 100</small></span></label>
+        </div>
+        <div class="dialog-panel">
+          <h3>設備規則</h3>
+          <div class="dialog-grid compact">
+            <label class="field"><span>每攤每日免費提供數量 <b>*</b></span><span class="unit-control"><input type="number" min="0" [(ngModel)]="equipmentDraft.freeQuantity" name="equipmentFreeQuantity" /><small>單位</small></span></label>
+          </div>
+          <div class="radio-row dialog-radio-row">
+            <label><input type="radio" name="equipmentRentable" [(ngModel)]="equipmentDraft.rentable" [value]="true" /> 開放租借</label>
+            <label><input type="radio" name="equipmentRentable" [(ngModel)]="equipmentDraft.rentable" [value]="false" /> 不開放租借</label>
+          </div>
+          @if (equipmentDraft.rentable) {
+            <div class="rental-rule-box">
+              <label class="field"><span>每日租借價格（元 / 天） <b>*</b></span><span class="unit-control"><input type="number" min="0" [(ngModel)]="equipmentDraft.rentalPrice" name="equipmentRentalPrice" /><small>元 / 天</small></span></label>
+              <label class="field"><span>每攤每日最多租借數量 <b>*</b></span><span class="unit-control"><input type="number" min="1" [(ngModel)]="equipmentDraft.rentalLimit" name="equipmentRentalLimit" /><small>單位</small></span></label>
+              <label class="field"><span>每日可租借總數 <b>*</b></span><span class="unit-control"><input type="number" min="1" [(ngModel)]="equipmentDraft.dailyRentalQuantity" name="equipmentDailyRentalQuantity" /><small>單位</small></span></label>
+              <p class="section-note"><i class="bi bi-info-circle-fill"></i>租借設備依每日可租借數量控管，額滿後即不可租借。</p>
+            </div>
+          }
+        </div>
+        <footer>
+          <button type="button" class="dialog-cancel-btn" (click)="closeEquipmentDialog()">取消</button>
+          <button type="button" class="dialog-save-btn" (click)="saveEquipmentDialog()">{{ editingEquipmentIndex === null ? '確認新增' : '儲存變更' }}</button>
+        </footer>
+      </section>
+    </div>
+  }
+
+  @if (showBasicPowerDialog || showExtraPowerDialog) {
+    <div class="event-config-dialog-backdrop" [class.is-closing]="showBasicPowerDialog ? isBasicPowerDialogClosing : isExtraPowerDialogClosing" role="presentation" (click)="showBasicPowerDialog ? closeBasicPowerDialog() : closeExtraPowerDialog()">
+      <section class="event-config-dialog" role="dialog" aria-modal="true" aria-labelledby="power-dialog-title" (click)="$event.stopPropagation()">
+        <header>
+          <h2 id="power-dialog-title">
+            <i class="bi bi-lightning-charge"></i>
+            @if (showBasicPowerDialog) {
+              {{ editingBasicPowerIndex === null ? '新增基本用電' : '編輯基本用電' }}
+            } @else {
+              {{ editingExtraPowerIndex === null ? '新增用電方案' : '編輯用電方案' }}
+            }
+          </h2>
+          <button type="button" aria-label="關閉用電視窗" (click)="showBasicPowerDialog ? closeBasicPowerDialog() : closeExtraPowerDialog()"><i class="bi bi-x-lg"></i></button>
+        </header>
+        <div class="dialog-panel">
+          <h3>{{ showBasicPowerDialog ? '基本用電資訊' : '用電方案資訊' }}</h3>
+          <label class="field"><span>電壓 <b>*</b></span><span class="unit-control"><input type="text" placeholder="請輸入電壓，例如：110V、220V" [(ngModel)]="powerPlanDraft.voltage" name="powerVoltage" /><small>V</small></span></label>
+          <label class="field"><span>{{ showBasicPowerDialog ? '每攤每日免費供電量' : '額外供電量' }} <b>*</b></span><span class="unit-control"><input type="number" min="1" [(ngModel)]="powerPlanDraft.wattage" name="powerWattage" /><small>W</small></span></label>
+          @if (showExtraPowerDialog) {
+            <label class="field"><span>每日費用（元 / 天） <b>*</b></span><span class="unit-control"><input type="number" min="0" [(ngModel)]="powerPlanDraft.fee" name="powerFee" /><small>元</small></span></label>
+          }
+          <label class="field full"><span>說明（選填）</span><span class="textarea-control"><textarea maxlength="100" placeholder="例如：一般文創攤位適用、小型設備、高功率設備適用等" [(ngModel)]="powerPlanDraft.description" name="powerDescription"></textarea><small>{{ powerPlanDraft.description.length }} / 100</small></span></label>
+          <p class="section-note"><i class="bi bi-info-circle-fill"></i>{{ showBasicPowerDialog ? '基本用電將免費提供給每個攤位使用，不另收費。' : '實際供電能力將依現場電力配置與安全規範調整。' }}</p>
+        </div>
+        <footer>
+          <button type="button" class="dialog-cancel-btn" (click)="showBasicPowerDialog ? closeBasicPowerDialog() : closeExtraPowerDialog()">取消</button>
+          <button type="button" class="dialog-save-btn" (click)="showBasicPowerDialog ? saveBasicPowerDialog() : saveExtraPowerDialog()">儲存</button>
+        </footer>
+      </section>
+    </div>
   }
 </section>
 }

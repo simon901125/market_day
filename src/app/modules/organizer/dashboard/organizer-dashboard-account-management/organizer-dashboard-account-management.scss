@@ -1,0 +1,60 @@
+:host {
+  display: block;
+}
+
+.organizer-account-management {
+  width: min(100%, var(--dashboard-content-width));
+  min-height: calc(100dvh - 48px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: visible;
+
+  app-dashboard-data-table {
+    flex: 0 0 auto;
+    min-height: 0;
+    display: block;
+  }
+
+  app-dashboard-pagination {
+    flex: 0 0 40px;
+    display: block;
+  }
+}
+
+.organizer-account-filter {
+  grid-template-columns: minmax(220px, 1.2fr) minmax(170px, 0.8fr) minmax(300px, 1.4fr) 92px;
+}
+
+:host ::ng-deep .organizer-account-management {
+  .dashboard-table th,
+  .dashboard-table td {
+    padding-inline: 10px;
+  }
+
+  .image-text-cell {
+    gap: 8px;
+
+    img {
+      width: 44px;
+      height: 32px;
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .organizer-account-filter {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .organizer-account-management {
+    gap: 16px;
+  }
+
+  .organizer-account-filter {
+    grid-template-columns: 1fr;
+  }
+}

@@ -24,6 +24,9 @@ export class BoothZoneModal {
   /** 判斷目前 Modal 是新增模式還是編輯模式。 */
   @Input() editing = false;
 
+  /** 父層準備關閉時套用退場動畫。 */
+  @Input() closing = false;
+
   /** 通知父層關閉 Modal。 */
   @Output() closeDialog = new EventEmitter<void>();
 

@@ -9,12 +9,13 @@ import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResul
 import { MenuItem } from '../../../../models/interface/shared/MenuItem';
 import { UserMenuItem } from '../../../../models/interface/shared/UserMenuItem';
 import { OrganizerAccountSettings } from '../../../organizer/dashboard/organizer-account-settings/organizer-account-settings';
+import { OrganizerProfileModal } from '../../../organizer/dashboard/organizer-profile-modal/organizer-profile-modal';
 import { VendorAccountSettings } from '../../../vendor/dashboard/vendor-account-settings/vendor-account-settings';
 import { DashboardSidebar } from '../dashboard-sidebar/dashboard-sidebar';
 
 @Component({
   selector: 'app-dashboard-layout',
-  imports: [DashboardSidebar, RouterOutlet, VendorAccountSettings, OrganizerAccountSettings],
+  imports: [DashboardSidebar, RouterOutlet, VendorAccountSettings, OrganizerAccountSettings, OrganizerProfileModal],
   templateUrl: './dashboard-layout.html',
   styleUrl: './dashboard-layout.scss',
 })
@@ -32,6 +33,7 @@ export class DashboardLayout {
   role: AuthPortalRole = 'vendor';
   isLoggingOut = false;
   isAccountSettingsOpen = false;
+  isOrganizerProfileOpen = false;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -112,6 +114,22 @@ export class DashboardLayout {
     this.isAccountSettingsOpen = false;
   }
 
+  openOrganizerProfile(): void {
+    if (this.role !== 'organizer') {
+      return;
+    }
+
+    this.isOrganizerProfileOpen = true;
+  }
+
+  closeOrganizerProfile(): void {
+    this.isOrganizerProfileOpen = false;
+  }
+
+  async saveOrganizerProfile(): Promise<void> {
+    await this.alert.success('主辦方資料已儲存', '資料已更新。');
+  }
+
   /** 取得使用者資訊 */
   private loadUserInfo(): void {
     const user = this.authService.getUser(this.role);
@@ -171,11 +189,12 @@ export class DashboardLayout {
       { label: '報名管理', icon: 'bi-clipboard-check', path: '/organizer/dash-board/register' },
       { label: '收款管理', icon: 'bi-cash-coin', path: '/organizer/dash-board/collection' },
       { label: '攤位管理', icon: 'bi-shop', path: '/organizer/dash-board/stall' },
+      { label: '設備管理', icon: 'bi-box-seam', path: '/organizer/dash-board/equipment' },
       { label: '帳務管理', icon: 'bi-receipt', path: '/organizer/dash-board/account' },
     ];
 
     this.userMenuItems = [
-      { label: '主辦資料', icon: 'bi-person', path: '/organizer/dash-board/profile' },
+      { label: '主辦方資料', icon: 'bi-person', action: 'organizer-profile' },
       { label: '帳號設定', icon: 'bi-gear', action: 'account-settings' },
       { label: '登出', icon: 'bi-box-arrow-right', action: 'logout' },
     ];
