@@ -1,0 +1,285 @@
+<main class="collection-detail-page page-transition">
+  <header class="detail-header">
+    <div>
+      <nav class="app-breadcrumb" aria-label="麵包屑">
+        <a routerLink="/organizer/dash-board/collection" [queryParams]="{ page: returnPage, status: returnStatus || null }">
+          收款管理
+        </a>
+        <i class="bi bi-chevron-right"></i>
+        <span>收款詳情</span>
+      </nav>
+
+      <div class="title-row">
+        <button type="button" class="app-back-link" aria-label="返回收款管理" (click)="goBack()">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        <h1 class="app-page-title">收款詳情</h1>
+      </div>
+    </div>
+
+    @if (detail.actions?.length) {
+      <div class="header-actions">
+        @for (action of detail.actions; track action.key) {
+          <button
+            type="button"
+            class="detail-action"
+            [class.primary]="action.variant === 'primary'"
+            [class.danger]="action.variant === 'danger'"
+            (click)="handleAction(action)"
+          >
+            {{ action.label }}
+          </button>
+        }
+      </div>
+    }
+  </header>
+
+  <div class="detail-scroll">
+    <section class="top-grid">
+      <article class="detail-card payment-overview-card">
+        <h2><i class="bi bi-wallet2"></i>收款資訊</h2>
+        <dl class="summary-list payment-summary-list">
+          @for (row of paymentSummaryRows; track row.label) {
+            <div>
+              <dt>{{ row.label }}</dt>
+              <dd [class.amount]="row.type === 'amount'">
+                @if (row.type === 'status') {
+                  <span class="status-badge" [class]="paymentStatusClass">{{ row.value }}</span>
+                } @else {
+                  {{ row.value }}
+                }
+              </dd>
+            </div>
+          }
+          @if (detail.depositStatus) {
+            <div>
+              <dt>保證金狀態</dt>
+              <dd><span class="status-badge" [class]="depositStatusClass">{{ detail.depositStatus }}</span></dd>
+            </div>
+            <div>
+              <dt>退還編號</dt>
+              <dd>{{ detail.depositNo || '-' }}</dd>
+            </div>
+          }
+        </dl>
+      </article>
+
+      <article class="detail-card registration-summary-card">
+        <div class="card-heading">
+          <h2><i class="bi bi-receipt"></i>報名摘要</h2>
+          <div class="card-actions">
+            <button type="button" class="outline-button" (click)="viewRegistrationDetail()">
+              <i class="bi bi-eye"></i>
+              查看報名詳情
+            </button>
+            <button type="button" class="outline-button" (click)="viewActivityDetail()">
+              <i class="bi bi-eye"></i>
+              查看活動
+            </button>
+          </div>
+        </div>
+        <dl class="info-grid compact">
+          @for (row of registrationSummaryRows; track row.label) {
+            <div>
+              <dt>{{ row.label }}</dt>
+              <dd>{{ row.value }}</dd>
+            </div>
+          }
+          <div>
+            <dt>報名狀態</dt>
+            <dd><span class="status-badge" [class]="registrationStatusClass">{{ detail.registrationStatus }}</span></dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+
+    <section class="detail-card record-card">
+      <h2><i class="bi bi-clock-history"></i>狀態記錄</h2>
+      <div class="record-flow">
+        @for (record of detail.records; track record.label; let last = $last) {
+          <div class="record-step" [class.highlight]="record.highlight">
+            <span>{{ record.label }}</span>
+            <strong>{{ record.value }}</strong>
+          </div>
+          @if (!last) {
+            <i class="bi bi-chevron-right record-arrow"></i>
+          }
+        }
+      </div>
+    </section>
+
+    <section class="middle-grid">
+      @if (detail.refundInfo?.length) {
+        <article class="detail-card refund-info-card">
+          <h2><i class="bi bi-file-earmark-text"></i>退款資訊</h2>
+          <dl class="info-grid compact">
+            @for (row of detail.refundInfo; track row.label) {
+              <div>
+                <dt>{{ row.label }}</dt>
+                <dd>{{ row.value }}</dd>
+              </div>
+            }
+          </dl>
+        </article>
+      }
+
+      @if (detail.refundRows?.length) {
+        <article class="detail-card table-card refund-detail-card">
+          <h2><i class="bi bi-file-earmark-text"></i>退款明細</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>項目</th>
+                <th>內容</th>
+                <th>金額</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of detail.refundRows; track row.item) {
+                <tr>
+                  <td>{{ row.item }}</td>
+                  <td>{{ row.content }}</td>
+                  <td>{{ row.amount }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          <div class="table-total">
+            <span>退款金額總計</span>
+            <strong>{{ detail.refundTotal }}</strong>
+          </div>
+        </article>
+      }
+
+      <article class="detail-card table-card wide">
+        <h2><i class="bi bi-file-earmark-text"></i>報名費用明細</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>項目</th>
+              <th>內容</th>
+              <th>金額</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of detail.feeRows; track row.item) {
+              <tr>
+                <td>{{ row.item }}</td>
+                <td>{{ row.content }}</td>
+                <td>{{ row.amount }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <div class="table-total">
+          <span>總計</span>
+          <strong>{{ detail.feeTotal }}</strong>
+        </div>
+      </article>
+    </section>
+
+    <section class="bottom-grid">
+      <article class="detail-card table-card">
+        <h2><i class="bi bi-gift"></i>基本設備</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>設備名稱</th>
+              <th>規格說明</th>
+              <th>數量</th>
+              <th>單位</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of detail.equipmentRows; track row.name) {
+              <tr>
+                <td>{{ row.name }}</td>
+                <td>{{ row.spec }}</td>
+                <td>{{ row.quantity }}</td>
+                <td>{{ row.unit }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </article>
+
+      <article class="detail-card table-card">
+        <h2><i class="bi bi-lightning-charge"></i>基本用電</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>電力規格</th>
+              <th>功率</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of detail.electricityRows; track row.spec) {
+              <tr>
+                <td>{{ row.spec }}</td>
+                <td>{{ row.power }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </article>
+
+      <article class="detail-card table-card">
+        <h2><i class="bi bi-bag"></i>租借設備明細</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>設備名稱</th>
+              <th>規格說明</th>
+              <th>數量</th>
+              <th>單價</th>
+              <th>小計</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of detail.rentalRows; track row.name) {
+              <tr>
+                <td>{{ row.name }}</td>
+                <td>{{ row.spec }}</td>
+                <td>{{ row.quantity }}</td>
+                <td>{{ row.price }}</td>
+                <td>{{ row.subtotal }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <div class="table-total">
+          <span>設備租借費小計</span>
+          <strong>{{ detail.rentalTotal }}</strong>
+        </div>
+      </article>
+
+      <article class="detail-card table-card">
+        <h2><i class="bi bi-plug"></i>額外申請用電</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>電力規格</th>
+              <th>功率</th>
+              <th>單價</th>
+              <th>小計</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of detail.extraElectricityRows; track row.spec) {
+              <tr>
+                <td>{{ row.spec }}</td>
+                <td>{{ row.power }}</td>
+                <td>{{ row.price }}</td>
+                <td>{{ row.subtotal }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <div class="table-total">
+          <span>額外用電小計</span>
+          <strong>{{ detail.electricityTotal }}</strong>
+        </div>
+      </article>
+    </section>
+  </div>
+</main>

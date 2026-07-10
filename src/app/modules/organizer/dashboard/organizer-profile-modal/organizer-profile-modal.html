@@ -1,0 +1,115 @@
+@if (open) {
+  <div class="organizer-profile-backdrop" [class.is-closing]="isClosing" role="presentation" (click)="closeFromBackdrop($event)">
+    <section
+      class="organizer-profile-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="organizerProfileTitle"
+    >
+      <header>
+        <h2 id="organizerProfileTitle"><i class="bi bi-person-badge"></i>主辦方資料</h2>
+        <button type="button" aria-label="關閉主辦方資料" (click)="close()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </header>
+
+      <form class="profile-form" (ngSubmit)="save()">
+        <div class="profile-section">
+          <h3>基本資料</h3>
+
+          <label class="field full">
+            <span>主辦方名稱</span>
+            <input type="text" name="organizerName" [(ngModel)]="form.organizerName" />
+          </label>
+
+          <div class="field-grid two">
+            <label class="field">
+              <span>聯絡人</span>
+              <input type="text" name="contactName" [(ngModel)]="form.contactName" />
+            </label>
+
+            <label class="field">
+              <span>聯絡電話</span>
+              <input type="tel" name="phone" [(ngModel)]="form.phone" />
+            </label>
+          </div>
+
+          <label class="field full">
+            <span>聯絡電子郵件</span>
+            <input type="email" name="email" [(ngModel)]="form.email" />
+          </label>
+
+          <label class="field full">
+            <span>公司/團體名稱<small>（選填）</small></span>
+            <input type="text" name="companyName" [(ngModel)]="form.companyName" />
+          </label>
+
+          <label class="field full">
+            <span>統一編號<small>（選填）</small></span>
+            <input type="text" name="taxId" [(ngModel)]="form.taxId" />
+          </label>
+
+          <div class="field-grid location">
+            <label class="field">
+              <span>縣市</span>
+              <select name="city" [ngModel]="form.city" (ngModelChange)="onCityChange($event)">
+                @for (city of cityOptions; track city) {
+                  <option [value]="city">{{ city }}</option>
+                }
+              </select>
+            </label>
+
+            <label class="field">
+              <span>區</span>
+              <select name="district" [(ngModel)]="form.district">
+                @for (district of districtOptions; track district) {
+                  <option [value]="district">{{ district }}</option>
+                }
+              </select>
+            </label>
+
+            <label class="field">
+              <span>地址</span>
+              <input type="text" name="address" [(ngModel)]="form.address" />
+            </label>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h3>服務時間</h3>
+          <span class="weekday-label">星期</span>
+          <div class="weekday-grid" aria-label="服務星期">
+            @for (day of weekdayOptions; track day) {
+              <label class="weekday-option" [class.selected]="isWeekdaySelected(day)">
+                <input
+                  type="checkbox"
+                  [name]="'weekday' + day"
+                  [checked]="isWeekdaySelected(day)"
+                  (change)="toggleWeekday(day, $any($event.target).checked)"
+                />
+                {{ day }}
+              </label>
+            }
+          </div>
+
+          <div class="time-row">
+            <label class="field">
+              <span>服務時間</span>
+              <input type="time" name="startTime" [(ngModel)]="form.startTime" />
+            </label>
+            <span class="time-separator">~</span>
+            <label class="field time-end">
+              <span aria-hidden="true">&nbsp;</span>
+              <input type="time" name="endTime" [(ngModel)]="form.endTime" />
+            </label>
+          </div>
+        </div>
+
+        <footer>
+          <button type="button" class="profile-cancel-btn" (click)="close()">取消</button>
+          <button type="submit" class="profile-save-btn">儲存</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+}

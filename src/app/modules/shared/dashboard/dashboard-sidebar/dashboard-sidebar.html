@@ -38,6 +38,11 @@
               <i class="bi" [ngClass]="item.icon"></i>
               <span>{{ item.label }}</span>
             </button>
+          } @else if (item.action === 'organizer-profile') {
+            <button type="button" class="user-menu-item" (click)="openOrganizerProfile()">
+              <i class="bi" [ngClass]="item.icon"></i>
+              <span>{{ item.label }}</span>
+            </button>
           } @else {
             <a class="user-menu-item" [routerLink]="item.path">
               <i class="bi" [ngClass]="item.icon"></i>

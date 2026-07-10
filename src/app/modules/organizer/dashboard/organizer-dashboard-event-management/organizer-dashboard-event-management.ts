@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -51,13 +51,13 @@ export class OrganizerDashboardEventManagement implements OnInit {
 
   /** 活動管理列表欄位設定。 */
   columns: DashboardTableColumn[] = [
-    { key: 'name', label: '活動名稱', type: 'imageText' },
-    { key: 'date', label: '活動日期' },
-    { key: 'location', label: '活動地點' },
-    { key: 'status', label: '狀態', type: 'status', align: 'center' },
-    { key: 'signupProgress', label: '報名人數', align: 'center' },
-    { key: 'paidCount', label: '付款人數', align: 'center' },
-    { key: 'action', label: '操作', type: 'action', align: 'end' },
+    { key: 'name', label: '活動名稱', type: 'imageText', width: '20%' },
+    { key: 'date', label: '活動日期', nowrap: true, width: '17%' },
+    { key: 'status', label: '活動狀態', type: 'status', align: 'center', width: '11%' },
+    { key: 'location', label: '活動地點', width: '24%' },
+    { key: 'signupProgress', label: '報名人數', align: 'center', nowrap: true, width: '8%' },
+    { key: 'paidCount', label: '付款人數', align: 'center', nowrap: true, width: '7%' },
+    { key: 'action', label: '', type: 'action', align: 'end', width: '13%' },
   ];
 
   /**
@@ -74,7 +74,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.pendingReview,
       signupProgress: '128 / 150',
       paidCount: '118',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 2,
@@ -85,7 +85,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.revisionRequired,
       signupProgress: '120 / 120',
       paidCount: '102',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 3,
@@ -96,7 +96,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.mapBuilding,
       signupProgress: '100 / 100',
       paidCount: '96',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 4,
@@ -107,7 +107,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.readyToPublish,
       signupProgress: '64 / 90',
       paidCount: '58',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 5,
@@ -118,7 +118,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.registrationOpen,
       signupProgress: '72 / 110',
       paidCount: '63',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 6,
@@ -129,7 +129,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.full,
       signupProgress: '54 / 100',
       paidCount: '46',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 7,
@@ -140,7 +140,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.published,
       signupProgress: '48 / 80',
       paidCount: '41',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 8,
@@ -151,7 +151,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.active,
       signupProgress: '36 / 90',
       paidCount: '29',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 9,
@@ -162,7 +162,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.registrationOpen,
       signupProgress: '-',
       paidCount: '-',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 10,
@@ -173,7 +173,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.unpublished,
       signupProgress: '-',
       paidCount: '-',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 11,
@@ -184,7 +184,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.ended,
       signupProgress: '80 / 80',
       paidCount: '80',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 12,
@@ -195,7 +195,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.ended,
       signupProgress: '68 / 70',
       paidCount: '68',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 13,
@@ -206,7 +206,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.ended,
       signupProgress: '74 / 80',
       paidCount: '72',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 14,
@@ -217,7 +217,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       status: ActivityStatus.ended,
       signupProgress: '88 / 90',
       paidCount: '86',
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
     {
       id: 15,
@@ -229,7 +229,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       signupProgress: '',
       paidCount: '',
       canSubmitReview: false,
-      actionLabel: '查看詳情',
+      actionLabel: '查看',
     },
   ];
 
@@ -390,20 +390,29 @@ export class OrganizerDashboardEventManagement implements OnInit {
             disabled: !row.canSubmitReview,
             hint: row.canSubmitReview ? undefined : '請先完成所有必填資料後再送出審核',
           },
-          { key: 'delete', label: '刪除', variant: 'danger' },
         ];
       case ActivityStatus.pendingReview:
-        return [{ key: 'withdraw', label: '撤回申請', variant: 'outline' }];
+        return [
+          { key: 'withdraw', label: '撤回申請', variant: 'outline' },
+          { key: 'view', label: '查看', variant: 'outline' },
+        ];
       case ActivityStatus.revisionRequired:
         return [
           { key: 'edit', label: '編輯', variant: 'outline' },
           { key: 'resubmit', label: '重新送審', variant: 'primary' },
         ];
+      case ActivityStatus.mapBuilding:
+        return [{ key: 'view', label: '查看', variant: 'outline' }];
       case ActivityStatus.readyToPublish:
-        return [{ key: 'publish', label: '發布活動', variant: 'primary' }];
+        return [
+          { key: 'publish', label: '發布活動', variant: 'primary' },
+          { key: 'view', label: '查看', variant: 'outline' },
+        ];
       case ActivityStatus.registrationOpen:
+      case ActivityStatus.full:
         return [
           { key: 'unpublish', label: '下架活動', variant: 'danger' },
+          { key: 'view', label: '查看', variant: 'outline' },
         ];
       default:
         return [{ key: 'view', label: '查看', variant: 'outline' }];
@@ -440,3 +449,4 @@ export class OrganizerDashboardEventManagement implements OnInit {
     };
   }
 }
+

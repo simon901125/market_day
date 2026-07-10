@@ -1,0 +1,78 @@
+:host {
+  display: block;
+}
+
+.organizer-equipment-management {
+  width: min(100%, var(--dashboard-content-width));
+  min-height: calc(100dvh - 48px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: visible;
+
+  app-dashboard-data-table {
+    flex: 0 0 auto;
+    min-height: 0;
+    display: block;
+  }
+
+  app-dashboard-pagination {
+    flex: 0 0 40px;
+    display: block;
+    margin-top: auto;
+  }
+}
+
+.dashboard-list-content {
+  flex: 0 0 auto;
+}
+
+:host ::ng-deep .organizer-equipment-management {
+  .dashboard-table {
+    th,
+    td {
+      padding-right: 12px;
+      padding-left: 12px;
+    }
+  }
+
+  .image-text-cell {
+    gap: 10px;
+
+    img {
+      width: 44px;
+      height: 32px;
+    }
+  }
+
+  .table-action {
+    min-width: 0;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+}
+
+.organizer-equipment-filter {
+  grid-template-columns:
+    minmax(250px, 1.05fr)
+    minmax(190px, 0.75fr)
+    minmax(340px, 1.35fr)
+    92px;
+}
+
+@media (max-width: 1200px) {
+  .organizer-equipment-filter {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .organizer-equipment-management {
+    gap: 16px;
+  }
+
+  .organizer-equipment-filter {
+    grid-template-columns: 1fr;
+  }
+}

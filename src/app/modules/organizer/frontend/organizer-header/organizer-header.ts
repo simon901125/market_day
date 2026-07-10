@@ -40,10 +40,7 @@ export class OrganizerHeader {
   }
 
   get isLoggedIn(): boolean {
-    return Boolean(
-      this.authService.getToken('organizer') &&
-      this.user?.role === 'ORGANIZER'
-    );
+    return this.authService.isLoggedIn('organizer');
   }
 
   get managementUrl(): string {
@@ -108,6 +105,11 @@ export class OrganizerHeader {
   }
 
   private loadOrganizerUser(): void {
+    if (!this.authService.isLoggedIn('organizer')) {
+      this.user = null;
+      return;
+    }
+
     const user = this.authService.getUser('organizer');
     this.user = user?.role === 'ORGANIZER' ? user : null;
   }

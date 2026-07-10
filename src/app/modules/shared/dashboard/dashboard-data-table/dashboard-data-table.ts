@@ -57,7 +57,7 @@ export class DashboardDataTable {
 
     return [
       {
-        label: String(row[`${column.key}Label`] ?? '查看詳情'),
+        label: String(row[`${column.key}Label`] ?? '查看'),
         variant: (row[`${column.key}Variant`] as DashboardTableAction['variant']) ?? 'outline',
       },
     ];
@@ -76,7 +76,7 @@ export class DashboardDataTable {
 
   emitAction(column: DashboardTableColumn, row: Record<string, unknown>): void {
     this.actionClick.emit({
-      label: String(row[`${column.key}Label`] ?? '查看詳情'),
+      label: String(row[`${column.key}Label`] ?? '查看'),
       variant: (row[`${column.key}Variant`] as DashboardTableAction['variant']) ?? 'outline',
       row,
     });

@@ -1,0 +1,186 @@
+﻿<main class="account-detail-page page-transition">
+  <header class="detail-header">
+    <div>
+      <nav class="app-breadcrumb" aria-label="麵包屑">
+        <a
+          routerLink="/organizer/dash-board/account"
+          [queryParams]="{ page: returnPage, status: returnStatus || null }"
+        >
+          帳務管理
+        </a>
+        <i class="bi bi-chevron-right"></i>
+        <span>帳務詳情</span>
+      </nav>
+
+      <div class="title-row">
+        <button type="button" class="app-back-link" aria-label="返回帳務管理" (click)="goBack()">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        <h1 class="app-page-title">
+          帳務詳情
+        </h1>
+      </div>
+    </div>
+    <button type="button" class="report-download-button" (click)="downloadAccountReport()">
+      <i class="bi bi-download"></i>
+      下載帳務報表
+    </button>
+  </header>
+
+  <div class="detail-scroll">
+    <section class="overview-grid">
+      <article class="detail-card activity-card">
+        <h2><i class="bi bi-calendar-event"></i>活動資訊</h2>
+        <div class="activity-content">
+          <img [src]="detail.activityImage" [alt]="detail.activityName" />
+          <div class="activity-identity">
+            <div class="activity-name-row">
+              <strong>{{ detail.activityName }}</strong>
+              <span class="status-badge" [class]="detail.activityStatusClass">{{ detail.activityStatus }}</span>
+            </div>
+            <dl class="activity-meta">
+              <div>
+                <dt>活動日期</dt>
+                <dd>{{ detail.activityDate }}</dd>
+              </div>
+              <div>
+                <dt>活動地點</dt>
+                <dd>{{ detail.activityLocation }}</dd>
+              </div>
+            </dl>
+            <div class="activity-counts">
+              <span>攤位 {{ detail.totalBooths }}</span>
+              <span>已付款 {{ detail.paidBooths }}</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="detail-card summary-card">
+        <h2><i class="bi bi-receipt"></i>帳務摘要</h2>
+        <div class="summary-metrics">
+          @for (item of detail.summary; track item.label) {
+            <div>
+              <span>{{ item.label }}</span>
+              <strong>{{ item.value }}</strong>
+            </div>
+          }
+        </div>
+        <div class="net-row">
+          <div class="calculation-rule">
+            <span>計算方式</span>
+            <strong>收款總額 - 退款總額 - 已退保證金</strong>
+            <small>= 實收金額</small>
+          </div>
+          <div class="calculation-result">
+            <span>本場計算</span>
+            <strong>{{ grossAmount }} - {{ refundTotal }} - {{ returnedDeposit }} =</strong>
+            <em>{{ detail.netAmount }}</em>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="stat-grid">
+      <article class="detail-card stat-card">
+        <h2><i class="bi bi-currency-dollar"></i>付款統計</h2>
+        <div class="stat-items">
+          @for (item of detail.paymentStats; track item.label) {
+            <div>
+              <span>{{ item.label }}</span>
+              <strong>{{ item.value }}</strong>
+            </div>
+          }
+        </div>
+      </article>
+
+      <article class="detail-card stat-card">
+        <h2><i class="bi bi-arrow-counterclockwise"></i>退款統計</h2>
+        <div class="stat-items">
+          @for (item of detail.refundStats; track item.label) {
+            <div>
+              <span>{{ item.label }}</span>
+              <strong>{{ item.value }}</strong>
+            </div>
+          }
+        </div>
+      </article>
+
+      <article class="detail-card stat-card">
+        <h2><i class="bi bi-shield-check"></i>保證金統計</h2>
+        <div class="stat-items">
+          @for (item of detail.depositStats; track item.label) {
+            <div>
+              <span>{{ item.label }}</span>
+              <strong>{{ item.value }}</strong>
+            </div>
+          }
+        </div>
+      </article>
+    </section>
+
+    <section class="detail-card ledger-card">
+      <h2><i class="bi bi-list-ul"></i>帳務明細</h2>
+      <div class="ledger-tabs" role="tablist" aria-label="帳務狀態篩選">
+        @for (tab of tabLabels; track tab.label) {
+          <button
+            type="button"
+            [class.active]="selectedTab === tab.label"
+            (click)="selectTab(tab.label)"
+          >
+            {{ tab.label }}（{{ tab.count }}）
+          </button>
+        }
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>付款編號</th>
+              <th>攤主名稱</th>
+              <th>品牌名稱</th>
+              <th>付款時間</th>
+              <th>付款金額</th>
+              <th>退款金額</th>
+              <th>保證金狀態</th>
+              <th>帳務狀態</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of pagedLedgerRows; track row.paymentNo) {
+              <tr>
+                <td>{{ row.paymentNo }}</td>
+                <td>{{ row.vendorName }}</td>
+                <td>{{ row.brandName }}</td>
+                <td>{{ row.paidAt }}</td>
+                <td>{{ row.paymentAmount }}</td>
+                <td [class.refund-amount]="row.refundAmount !== '$0'">{{ row.refundAmount }}</td>
+                <td><span class="status-badge" [class]="row.depositStatusClass">{{ row.depositStatus }}</span></td>
+                <td><span class="status-badge" [class]="row.accountStatusClass">{{ row.accountStatus }}</span></td>
+                <td>
+                  <button type="button" class="outline-button" (click)="viewCollectionDetail(row)">
+                    查看收款詳情
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="9" class="empty-cell">目前沒有符合條件的帳務明細</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <app-dashboard-pagination
+        class="ledger-pagination"
+        [currentPage]="ledgerPage"
+        [pageSize]="ledgerPageSize"
+        [totalItems]="ledgerTotalItems"
+        (pageChange)="onLedgerPageChange($event)"
+      ></app-dashboard-pagination>
+    </section>
+  </div>
+</main>

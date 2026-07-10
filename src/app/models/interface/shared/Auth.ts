@@ -32,7 +32,11 @@ export interface PasswordResetVerificationResponse {
 }
 
 export interface ResetPasswordRequest {
-  resetToken: string;
+  resetToken?: string;
+  password: string;
+}
+
+export interface ChangePasswordRequest {
   password: string;
 }
 

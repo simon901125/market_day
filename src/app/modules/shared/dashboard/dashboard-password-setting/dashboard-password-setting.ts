@@ -22,6 +22,10 @@ export class DashboardPasswordSetting implements OnChanges, OnDestroy {
   /** 控制修改密碼彈窗是否顯示，可由父元件使用雙向綁定。 */
   @Input() open = false;
 
+  @Input() isSubmitting = false;
+  @Input() serverErrorMessage = '';
+  @Input() closeOnSave = true;
+
   /** 關閉彈窗時同步更新父元件的顯示狀態。 */
   @Output() openChange = new EventEmitter<boolean>();
 
@@ -46,6 +50,10 @@ export class DashboardPasswordSetting implements OnChanges, OnDestroy {
   errorMessage = '';
   isClosing = false;
 
+  get displayErrorMessage(): string {
+    return this.errorMessage || this.serverErrorMessage;
+  }
+
   get hasPasswordMinLength(): boolean {
     return this.passwordForm.newPassword.length >= 8;
   }
@@ -63,6 +71,10 @@ export class DashboardPasswordSetting implements OnChanges, OnDestroy {
         this.closeTimer = undefined;
       }
     }
+
+    if (changes['open'] && changes['open'].currentValue === false) {
+      this.resetForm();
+    }
   }
 
   /** 切換指定欄位的明碼顯示狀態。 */
@@ -79,7 +91,7 @@ export class DashboardPasswordSetting implements OnChanges, OnDestroy {
 
   /** 清空敏感資料並通知父元件關閉彈窗。 */
   close(): void {
-    if (this.isClosing) {
+    if (this.isClosing || this.isSubmitting) {
       return;
     }
 
@@ -94,6 +106,10 @@ export class DashboardPasswordSetting implements OnChanges, OnDestroy {
 
   /** 驗證密碼規則與兩次輸入結果，通過後送出資料。 */
   save(): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     this.errorMessage = this.validateForm();
 
     if (this.errorMessage) {
@@ -101,7 +117,10 @@ export class DashboardPasswordSetting implements OnChanges, OnDestroy {
     }
 
     this.saved.emit({ ...this.passwordForm });
-    this.close();
+
+    if (this.closeOnSave) {
+      this.close();
+    }
   }
 
   private validateForm(): string {

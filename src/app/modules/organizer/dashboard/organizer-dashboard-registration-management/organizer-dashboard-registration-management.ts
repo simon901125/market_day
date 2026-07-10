@@ -46,12 +46,12 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
   columns: DashboardTableColumn[] = [
     { key: 'activity', label: '活動名稱', type: 'imageText' },
     { key: 'activityTime', label: '活動日期', nowrap: true },
+    { key: 'status', label: '報名狀態', type: 'status', align: 'center' },
     { key: 'brandName', label: '品牌名稱' },
     { key: 'brandType', label: '品牌類型' },
     { key: 'vendorName', label: '攤主姓名' },
     { key: 'registeredAt', label: '報名時間' },
-    { key: 'status', label: '狀態', type: 'status', align: 'center' },
-    { key: 'action', label: '操作', type: 'action', align: 'center' },
+    { key: 'action', label: '', type: 'action', align: 'end', minWidth: '72px' },
   ];
 
   // 報名管理目前使用靜態資料展示，內容需對齊活動管理與使用者市集活動資料。
@@ -249,26 +249,25 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     return this.filteredRows.length;
   }
 
-  // 保證金退回只有活動進行中可以操作，其餘時間顯示停用狀態。
+  // 保證金退回需活動結束後才能操作，其餘時間顯示停用狀態。
   private createDepositReturnAction(activityTime: string): OrganizerRegistrationAction {
-    const isEnabled = this.isActivityInProgress(activityTime);
+    const isEnabled = this.isActivityEnded(activityTime);
 
     return {
       key: 'deposit-return',
       label: '退還保證金',
       variant: isEnabled ? 'primary' : 'muted',
       disabled: !isEnabled,
-      hint: isEnabled ? undefined : '報名場次結束後才可退還',
+      hint: isEnabled ? undefined : '活動結束後即可退還保證金',
     };
   }
 
-  private isActivityInProgress(activityTime: string): boolean {
-    const [startText, endText] = activityTime.split(' - ');
-    const startDate = this.parseActivityDate(startText, false);
+  private isActivityEnded(activityTime: string): boolean {
+    const [, endText] = activityTime.split(' - ');
     const endDate = this.parseActivityDate(endText, true);
     const today = new Date();
 
-    return today >= startDate && today <= endDate;
+    return today > endDate;
   }
 
   private parseActivityDate(dateText: string, isEndDate: boolean): Date {
@@ -317,9 +316,20 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     this.updateDisplayRows();
   }
 
-  // 列表操作統一導到報名詳情，並保留目前頁碼與狀態方便返回。
+  // 退款相關操作直接導到收款詳情；其他操作仍導到報名詳情。
   onTableAction(action: DashboardTableAction): void {
     const registration = action.row as unknown as OrganizerRegistrationRow;
+
+    if (action.key === 'refund-confirm' || action.key === 'refund-info' || action.key === 'deposit-info') {
+      this.router.navigate(['/organizer/dash-board/collection/detail', this.getCollectionDetailId(registration.status)], {
+        queryParams: {
+          returnPage: this.currentPage,
+          returnStatus: null,
+        },
+      });
+      return;
+    }
+
     this.router.navigate(['/organizer/dash-board/register/detail', registration.id], {
       queryParams: {
         returnPage: this.currentPage,
@@ -327,6 +337,23 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
         action: action.key,
       },
     });
+  }
+
+  private getCollectionDetailId(status: string): number {
+    switch (status) {
+      case ApplicationStatus.refundPending:
+        return 2;
+      case ApplicationStatus.refunding:
+        return 3;
+      case ApplicationStatus.refunded:
+        return 8;
+      case ApplicationStatus.depositReturned:
+        return 9;
+      case ApplicationStatus.cancelled:
+        return 6;
+      default:
+        return 1;
+    }
   }
 
   // 將目前列表條件同步到網址，重整或從詳情返回時可以保留操作位置。
@@ -361,11 +388,36 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
   private getRowActions(row: OrganizerRegistrationRow): OrganizerRegistrationAction[] {
     switch (row.status) {
       case ApplicationStatus.pendingReview:
-        return [{ key: 'review', label: '審核', variant: 'primary' }];
+        return [
+          { key: 'review', label: '審核', variant: 'primary' },
+          { key: 'view', label: '查看', variant: 'outline' },
+        ];
+      case ApplicationStatus.pendingPayment:
+      case ApplicationStatus.pendingSelection:
+      case ApplicationStatus.reviewRejected:
+        return [{ key: 'view', label: '查看', variant: 'outline' }];
       case ApplicationStatus.completed:
-        return [this.createDepositReturnAction(row.activityTime)];
+        return [
+          this.createDepositReturnAction(row.activityTime),
+          { key: 'view', label: '查看', variant: 'outline' },
+        ];
+      case ApplicationStatus.depositReturned:
+        return [
+          { key: 'deposit-info', label: '保證金資訊', variant: 'outline' },
+          { key: 'view', label: '查看', variant: 'outline' },
+        ];
       case ApplicationStatus.refundPending:
-        return [{ key: 'refund-confirm', label: '前往退款確認', variant: 'primary' }];
+        return [
+          { key: 'refund-confirm', label: '退款確認', variant: 'primary' },
+          { key: 'view', label: '查看', variant: 'outline' },
+        ];
+      case ApplicationStatus.refunding:
+      case ApplicationStatus.refunded:
+      case ApplicationStatus.cancelled:
+        return [
+          { key: 'refund-info', label: '退款資訊', variant: 'outline' },
+          { key: 'view', label: '查看', variant: 'outline' },
+        ];
       default:
         return [{ key: 'view', label: '查看', variant: 'outline' }];
     }

@@ -13,6 +13,12 @@ import { OrganizerDashboardEventDetail } from './modules/organizer/dashboard/org
 import { OrganizerDashboardRegistrationManagement } from './modules/organizer/dashboard/organizer-dashboard-registration-management/organizer-dashboard-registration-management';
 import { OrganizerDashboardRegistrationDetail } from './modules/organizer/dashboard/organizer-dashboard-registration-detail/organizer-dashboard-registration-detail';
 import { OrganizerDashboardEventManagement } from './modules/organizer/dashboard/organizer-dashboard-event-management/organizer-dashboard-event-management';
+import { OrganizerDashboardCollectionManagement } from './modules/organizer/dashboard/organizer-dashboard-collection-management/organizer-dashboard-collection-management';
+import { OrganizerDashboardCollectionDetail } from './modules/organizer/dashboard/organizer-dashboard-collection-detail/organizer-dashboard-collection-detail';
+import { OrganizerDashboardEquipmentManagement } from './modules/organizer/dashboard/organizer-dashboard-equipment-management/organizer-dashboard-equipment-management';
+import { OrganizerDashboardEquipmentDetail } from './modules/organizer/dashboard/organizer-dashboard-equipment-detail/organizer-dashboard-equipment-detail';
+import { OrganizerDashboardAccountManagement } from './modules/organizer/dashboard/organizer-dashboard-account-management/organizer-dashboard-account-management';
+import { OrganizerDashboardAccountDetail } from './modules/organizer/dashboard/organizer-dashboard-account-detail/organizer-dashboard-account-detail';
 import { OrganizerAccountSettings } from './modules/organizer/dashboard/organizer-account-settings/organizer-account-settings';
 import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organizer-home';
 import { OrganizerAbout } from './modules/organizer/frontend/organizer-about/organizer-about';
@@ -227,6 +233,30 @@ export const routes: Routes = [
       {
         path: 'register/detail/:id',
         component: OrganizerDashboardRegistrationDetail,
+      },
+      {
+        path: 'collection',
+        component: OrganizerDashboardCollectionManagement,
+      },
+      {
+        path: 'collection/detail/:id',
+        component: OrganizerDashboardCollectionDetail,
+      },
+      {
+        path: 'equipment',
+        component: OrganizerDashboardEquipmentManagement,
+      },
+      {
+        path: 'equipment/detail/:id',
+        component: OrganizerDashboardEquipmentDetail,
+      },
+      {
+        path: 'account',
+        component: OrganizerDashboardAccountManagement,
+      },
+      {
+        path: 'account/detail/:id',
+        component: OrganizerDashboardAccountDetail,
       },
       {
         path: 'activity/detail',

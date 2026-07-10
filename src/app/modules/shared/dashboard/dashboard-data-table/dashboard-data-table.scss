@@ -124,6 +124,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  white-space: nowrap;
 
   img {
     width: 48px;
@@ -131,6 +132,10 @@
     border-radius: var(--radius-tag);
     object-fit: cover;
     flex: 0 0 auto;
+  }
+
+  span {
+    white-space: nowrap;
   }
 }
 
@@ -147,8 +152,10 @@
 }
 
 .table-action {
-  min-width: 96px;
+  width: auto;
+  min-width: 0;
   height: 34px;
+  padding: 0 16px;
   border: 1px solid var(--primary-color);
   border-radius: var(--radius-tag);
   background: var(--bg-white);

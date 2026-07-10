@@ -1,0 +1,48 @@
+<section class="organizer-account-management dashboard-list-page page-transition">
+  <header class="app-page-header">
+    <h1 class="app-page-title">帳務管理</h1>
+  </header>
+
+  <section class="app-filter-bar organizer-account-filter" aria-label="帳務管理篩選">
+    <label class="app-search-field">
+      <span class="app-control-title">關鍵字</span>
+      <span class="app-search-input">
+        <i class="bi bi-search"></i>
+        <input type="search" placeholder="搜尋活動名稱" [(ngModel)]="keyword" (keyup.enter)="searchAccounts()" />
+      </span>
+    </label>
+
+    <app-dropdown
+      title="活動狀態"
+      [options]="statusOptions"
+      [selectedValue]="selectedStatus"
+      (optionSelected)="selectStatus($event)"
+    ></app-dropdown>
+
+    <app-date-range-selector
+      selectorTitle="活動日期"
+      [startDate]="filterStartDate"
+      [endDate]="filterEndDate"
+    ></app-date-range-selector>
+
+    <button type="button" class="app-btn search" (click)="searchAccounts()">搜尋</button>
+  </section>
+
+  <div class="dashboard-list-content">
+    <app-dashboard-data-table
+      [columns]="columns"
+      [rows]="displayRows"
+      tableMinWidth="100%"
+      emptyText="目前沒有符合條件的帳務資料"
+      (actionClick)="onTableAction($event)"
+    ></app-dashboard-data-table>
+  </div>
+
+  <app-dashboard-pagination
+    class="dashboard-list-pagination"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems"
+    (pageChange)="onPageChange($event)"
+  ></app-dashboard-pagination>
+</section>

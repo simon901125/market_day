@@ -40,10 +40,7 @@ export class VendorHeader {
   }
 
   get isLoggedIn(): boolean {
-    return Boolean(
-      this.authService.getToken('vendor') &&
-      this.user?.role === 'VENDOR'
-    );
+    return this.authService.isLoggedIn('vendor');
   }
 
   get vendorDashboardUrl(): string {
@@ -105,6 +102,11 @@ export class VendorHeader {
   }
 
   private loadVendorUser(): void {
+    if (!this.authService.isLoggedIn('vendor')) {
+      this.user = null;
+      return;
+    }
+
     const user = this.authService.getUser('vendor');
     this.user = user?.role === 'VENDOR' ? user : null;
   }

@@ -35,8 +35,10 @@
 
   <div class="dashboard-list-content">
     <app-dashboard-data-table
+      class="event-table"
       [columns]="columns"
       [rows]="displayRows"
+      tableMinWidth="100%"
       emptyText="目前沒有活動資料"
       (actionClick)="onTableAction($event)"
     ></app-dashboard-data-table>

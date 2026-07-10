@@ -24,6 +24,8 @@
             class="app-btn detail-status-action"
             [class.primary]="action.variant === 'primary'"
             [class.secondary]="action.variant === 'outline'"
+            [disabled]="action.disabled"
+            [attr.title]="action.hint ?? null"
             (click)="handlePageAction(action)"
           >
             @if (action.icon) {
@@ -39,20 +41,36 @@
   <div class="detail-content">
     <section class="detail-summary-grid">
       <article class="detail-card activity-card">
-        <h2><i class="bi bi-calendar-event"></i>活動資訊</h2>
+        <div class="card-heading">
+          <h2><i class="bi bi-calendar-event"></i>活動資訊</h2>
+          <button
+            type="button"
+            class="brand-button"
+            (click)="handlePageAction({ key: 'viewActivity', label: '查看活動' })"
+          >
+            <i class="bi bi-eye"></i>
+            查看活動
+          </button>
+        </div>
         <div class="activity-content">
-          <img [src]="detail.activity.image" [alt]="detail.activity.name" />
+          <div class="activity-image-frame">
+            <img [src]="detail.activity.image" [alt]="detail.activity.name" />
+          </div>
           <div class="activity-info">
             <h3>{{ detail.activity.name }}</h3>
-            <p><i class="bi bi-calendar3"></i>{{ detail.activity.date }}</p>
-            <p><i class="bi bi-geo-alt"></i>{{ detail.activity.location }}</p>
-            <p><i class="bi bi-signpost-2"></i>{{ detail.activity.address }}</p>
+            <p>
+              <span class="info-label">活動狀態</span>
+              <span class="status-badge tag-green">{{ detail.activity.status }}</span>
+            </p>
+            <p><span class="info-label">活動時間</span>{{ detail.activity.date }}</p>
+            <p><span class="info-label">活動地點</span>{{ detail.activity.location }}</p>
+            <p><span class="info-label">活動地址</span>{{ detail.activity.address }}</p>
           </div>
         </div>
       </article>
 
       <article class="detail-card registration-card">
-        <h2><i class="bi bi-card-checklist"></i>報名資訊</h2>
+        <h2><i class="bi bi-person"></i>報名資訊</h2>
         <dl class="info-list">
           <div>
             <dt>報名編號</dt>
@@ -80,16 +98,27 @@
             <i class="bi bi-chevron-right status-arrow"></i>
           }
         }
-        @if (detail.reason) {
-          <div class="status-reason">
-            <div class="reason-summary">
-              <span>{{ detail.reason.title }}</span>
-              <strong>{{ detail.reason.subtitle }}</strong>
-            </div>
+      </div>
+
+      @if (detail.reason) {
+        <div class="reason-box">
+          <strong>{{ detail.reason.title }}</strong>
+          <div>
+            <span>{{ detail.reason.subtitle }}</span>
             <p>{{ detail.reason.description }}</p>
           </div>
-        }
-      </div>
+        </div>
+      }
+
+      @if (detail.refund) {
+        <div class="reason-box">
+          <strong>退款原因</strong>
+          <div>
+            <span>{{ detail.refund.reason }}</span>
+            <p>{{ detail.refund.description }}</p>
+          </div>
+        </div>
+      }
     </section>
 
     <section class="detail-info-grid">
@@ -117,8 +146,15 @@
 
       <article class="detail-card brand-card">
         <div class="card-heading">
-          <h2><i class="bi bi-shop"></i>品牌資訊</h2>
-          <button type="button" class="brand-button">查看品牌</button>
+          <h2><i class="bi bi-tags"></i>品牌資訊</h2>
+          <button
+            type="button"
+            class="brand-button"
+            (click)="handlePageAction({ key: 'viewBrand', label: '查看品牌' })"
+          >
+            <i class="bi bi-eye"></i>
+            查看品牌
+          </button>
         </div>
         <div class="brand-content">
           <img [src]="detail.brand.image" [alt]="detail.brand.name" />
@@ -132,7 +168,7 @@
               <dd>{{ detail.brand.type }}</dd>
             </div>
             <div class="brand-description-row">
-              <dt>品牌簡介</dt>
+              <dt>品牌介紹</dt>
               <dd>{{ detail.brand.description }}</dd>
             </div>
           </dl>
@@ -140,14 +176,14 @@
       </article>
 
       <article class="detail-card content-card">
-        <h2><i class="bi bi-file-earmark-text"></i>報名內容</h2>
+        <h2><i class="bi bi-list-ul"></i>報名內容</h2>
         <dl class="table-list">
           <div>
             <dt>報名時段</dt>
             <dd>{{ detail.registration.period }}</dd>
           </div>
           <div>
-            <dt>攤位規格</dt>
+            <dt>攤位尺寸</dt>
             <dd>{{ detail.registration.boothSpec }}</dd>
           </div>
           <div>
@@ -155,31 +191,91 @@
             <dd>{{ detail.registration.boothCategories }}</dd>
           </div>
           <div>
-            <dt>租借設備</dt>
-            <dd>{{ detail.registration.rentalEquipment }}</dd>
+            <dt>車牌號碼</dt>
+            <dd>{{ detail.registration.vehiclePlate }}</dd>
+          </div>
+          <div>
+            <dt>備註</dt>
+            <dd>{{ detail.registration.note }}</dd>
           </div>
         </dl>
       </article>
 
-      <article class="detail-card fee-card">
-        <h2><i class="bi bi-receipt"></i>報名費用明細</h2>
-        <dl class="fee-list">
-          <div>
-            <dt>攤位費用</dt>
-            <dd>{{ detail.fee.boothFee }}</dd>
-          </div>
-          <div>
-            <dt>電力租借費</dt>
-            <dd>{{ detail.fee.electricityFee }}</dd>
-          </div>
-          <div>
-            <dt>保證金</dt>
-            <dd>{{ detail.fee.deposit }}</dd>
-          </div>
-          <div class="total">
-            <dt>總計</dt>
-            <dd>{{ detail.fee.total }}</dd>
-          </div>
+      <article class="detail-card booth-card">
+        <div class="card-heading">
+          <h2><i class="bi bi-shop-window"></i>攤位資訊</h2>
+          <button
+            type="button"
+            class="brand-button"
+            (click)="handlePageAction({ key: 'viewBoothMap', label: '查看攤位地圖' })"
+          >
+            <i class="bi bi-eye"></i>
+            查看攤位地圖
+          </button>
+        </div>
+        <table class="detail-table">
+          <thead>
+            <tr>
+              <th>日期</th>
+              <th>攤位編號</th>
+              <th>攤位分區</th>
+              <th>攤位狀態</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (booth of detail.boothAssignments; track booth.date) {
+              <tr>
+                <td>{{ booth.date }}</td>
+                <td>{{ booth.boothNo }}</td>
+                <td>{{ booth.zone }}</td>
+                <td><span class="status-badge tag-orange">{{ booth.status }}</span></td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="empty-cell">尚未產生攤位資料</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </article>
+
+      <article class="detail-card payment-summary-card">
+        <div class="card-heading">
+          <h2><i class="bi bi-wallet2"></i>付款資訊摘要</h2>
+          <button
+            type="button"
+            class="brand-button"
+            (click)="handlePageAction({ key: 'goPaymentManagement', label: '查看收款詳情' })"
+          >
+            <i class="bi bi-eye"></i>
+            查看收款詳情
+          </button>
+        </div>
+        <dl class="summary-list compact">
+          @for (row of paymentSummaryRows; track row.label) {
+            <div>
+              <dt>{{ row.label }}</dt>
+              <dd [class.amount]="row.type === 'amount'">
+                @if (row.type === 'status') {
+                  <span class="status-badge" [class]="statusClass">{{ row.value }}</span>
+                } @else {
+                  {{ row.value }}
+                }
+              </dd>
+            </div>
+          }
+        </dl>
+      </article>
+
+      <article class="detail-card equipment-summary-card">
+        <h2><i class="bi bi-box-seam"></i>設備／用電需求摘要</h2>
+        <dl class="summary-list">
+          @for (row of equipmentSummaryRows; track row.label) {
+            <div>
+              <dt>{{ row.label }}</dt>
+              <dd>{{ row.value }}</dd>
+            </div>
+          }
         </dl>
       </article>
     </section>

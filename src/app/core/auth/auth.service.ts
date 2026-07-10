@@ -8,6 +8,7 @@ import {
 import { ApiResult } from '../../models/interface/shared/ApiResult';
 import {
   AuthPortalRole,
+  ChangePasswordRequest,
   EmailVerificationRequest,
   GoogleCredentialRequest,
   LoginRequest,
@@ -119,6 +120,15 @@ export class AuthService {
 
   resetPassword(
     payload: ResetPasswordRequest
+  ): Observable<ApiResult<null>> {
+    return this.httpService.post<null>(
+      'api/auth/resetPassword/reset',
+      payload
+    );
+  }
+
+  changePassword(
+    payload: ChangePasswordRequest
   ): Observable<ApiResult<null>> {
     return this.httpService.post<null>(
       'api/auth/resetPassword/reset',
