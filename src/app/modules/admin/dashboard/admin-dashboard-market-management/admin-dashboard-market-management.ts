@@ -7,16 +7,16 @@ import { ActivityListItem } from '../../../../models/interface/admin/ActivityLis
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 
 @Component({
-  selector: 'app-admin-dashboard-market-managemant',
+  selector: 'app-admin-dashboard-market-management',
   imports: [
     Dropdown,
     DateRangeSelector,
     DashboardPagination,
   ],
-  templateUrl: './admin-dashboard-market-managemant.html',
-  styleUrl: './admin-dashboard-market-managemant.scss',
+  templateUrl: './admin-dashboard-market-management.html',
+  styleUrl: './admin-dashboard-market-management.scss',
 })
-export class AdminDashboardMarketManagemant implements AfterViewInit {
+export class AdminDashboardMarketManagement implements AfterViewInit {
   constructor(private router: Router) {}
 
   @ViewChild(DateRangeSelector) timeSelectorRef!: DateRangeSelector;

@@ -1,23 +1,23 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 
-import { AdminDashboardMarketManagemant } from './admin-dashboard-market-managemant';
+import { AdminDashboardMarketManagement } from './admin-dashboard-market-management';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { ActivityListItem } from '../../../../models/interface/admin/ActivityListItem';
 
-describe('AdminDashboardMarketManagemant', () => {
-  let component: AdminDashboardMarketManagemant;
-  let fixture: ComponentFixture<AdminDashboardMarketManagemant>;
+describe('AdminDashboardMarketManagement', () => {
+  let component: AdminDashboardMarketManagement;
+  let fixture: ComponentFixture<AdminDashboardMarketManagement>;
   let router: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminDashboardMarketManagemant],
+      imports: [AdminDashboardMarketManagement],
       providers: [provideRouter([])],
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AdminDashboardMarketManagemant);
+    fixture = TestBed.createComponent(AdminDashboardMarketManagement);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
     fixture.detectChanges();
