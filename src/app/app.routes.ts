@@ -30,7 +30,7 @@ import { UserBrandSearch } from './modules/user/frontend/brand/user-brand-search
 import { AdminLogin } from './modules/admin/admin-login/admin-login';
 import { AdminDashboardHome } from './modules/admin/dashboard/admin-dashboard-home/admin-dashboard-home';
 import { AdminDashboardNotification } from './modules/admin/dashboard/admin-dashboard-notification/admin-dashboard-notification';
-import { AdminDashboardMarketManagemant } from './modules/admin/dashboard/admin-dashboard-market-managemant/admin-dashboard-market-managemant';
+import { AdminDashboardMarketManagement } from './modules/admin/dashboard/admin-dashboard-market-management/admin-dashboard-market-management';
 import { AdminDashboardMarketDetail } from './modules/admin/dashboard/admin-dashboard-market-detail/admin-dashboard-market-detail';
 import { AdminDashboardUserManagement } from './modules/admin/dashboard/admin-dashboard-user-management/admin-dashboard-user-management';
 import { AdminDashboardUserDetailOrganizer } from './modules/admin/dashboard/admin-dashboard-user-detail-organizer/admin-dashboard-user-detail-organizer';
@@ -175,15 +175,15 @@ export const routes: Routes = [
         component: VendorApplicationRecord,
       },
       {
-        path: 'appliction-record/detail/:applicationNo/payment',
+        path: 'application-record/detail/:applicationNo/payment',
         component: VendorPaymentPage,
       },
       {
-        path: 'appliction-record/detail/:applicationNo',
+        path: 'application-record/detail/:applicationNo',
         component: VendorApplicationDetail,
       },
       {
-        path: 'appliction-record/detail',
+        path: 'application-record/detail',
         component: VendorApplicationDetail,
       },
       {
@@ -312,7 +312,7 @@ export const routes: Routes = [
       },
       {
         path: 'activity',
-        component: AdminDashboardMarketManagemant,
+        component: AdminDashboardMarketManagement,
       },
       {
         path: 'activity/detail/:id',

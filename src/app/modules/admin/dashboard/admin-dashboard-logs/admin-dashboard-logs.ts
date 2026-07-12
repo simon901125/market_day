@@ -20,7 +20,7 @@ export class AdminDashboardLogs implements AfterViewInit {
   constructor(private router: Router) {}
 
   @ViewChild(DateRangeSelector) timeSelectorRef!: DateRangeSelector;
-  @ViewChild('oprationDropdown') oprationDropdownRef!: Dropdown;
+  @ViewChild('operationDropdown') operationDropdownRef!: Dropdown;
   @ViewChild('tableWrapper') tableWrapperRef!: ElementRef<HTMLDivElement>;
   @ViewChild('resultSection') resultSectionRef!: ElementRef<HTMLDivElement>;
 
@@ -31,7 +31,7 @@ export class AdminDashboardLogs implements AfterViewInit {
   private readonly headerHeight = 48;
 
   /** 操作類型下拉選單*/
-  oprationOptions: string[] = [
+  operationOptions: string[] = [
     "全部",
     OperationType.activityReview,
     OperationType.requestRevision,
@@ -44,7 +44,7 @@ export class AdminDashboardLogs implements AfterViewInit {
   targetRoleOptions: string[] = ['全部', '主辦方', '攤主'];
 
   /** 操作類型 -> 標籤顏色 class 對應 */
-  private readonly oprationColorMap: Record<string, string> = {
+  private readonly operationColorMap: Record<string, string> = {
     [OperationType.activityReview]: 'admin-blue',
     [OperationType.requestRevision]: 'admin-orange',
     [OperationType.accountRestored]: 'admin-green',
@@ -81,7 +81,7 @@ export class AdminDashboardLogs implements AfterViewInit {
   }));
 
   /** 目前篩選條件：操作類型 */
-  private selectedOpration = '';
+  private selectedOperation = '';
   /** 目前篩選條件：操作對象角色。 */
   private selectedTargetRole: '' | AdminLogItem['targetRole'] = '';
   /** 目前輸入的搜尋關鍵字 */
@@ -116,8 +116,8 @@ export class AdminDashboardLogs implements AfterViewInit {
     }
   }
 
-  onOprationSelected(value: string): void {
-    this.selectedOpration = value === "全部" ? '' : value;
+  onOperationSelected(value: string): void {
+    this.selectedOperation = value === "全部" ? '' : value;
   }
 
   onTargetRoleSelected(value: string): void {
@@ -171,9 +171,9 @@ export class AdminDashboardLogs implements AfterViewInit {
         || item.target.includes(keyword)
         || item.targetEmail.includes(keyword)
         || item.details.includes(keyword);
-      const matchOprationType = !this.selectedOpration || item.actionType === this.selectedOpration;
+      const matchOperationType = !this.selectedOperation || item.actionType === this.selectedOperation;
       const matchTargetRole = !this.selectedTargetRole || item.targetRole === this.selectedTargetRole;
-      return matchKeyword && matchOprationType && matchTargetRole;
+      return matchKeyword && matchOperationType && matchTargetRole;
     });
 
     this.totalItems = filtered.length;
@@ -188,8 +188,8 @@ export class AdminDashboardLogs implements AfterViewInit {
   }
 
   /** 取得狀態對應的標籤顏色 class */
-  getOprationClass(status: string): string {
-    return this.oprationColorMap[status] ?? 'grey';
+  getOperationClass(status: string): string {
+    return this.operationColorMap[status] ?? 'grey';
   }
 
   /** 統一操作時間格式；API 僅回傳日期時補上 00:00。 */
