@@ -293,7 +293,7 @@ export const routes: Routes = [
   /** 系統管理員後台 */
   {
     path: 'admin/dash-board',
-    // canActivate: [authGuard],
+    canActivate: [authGuard],
     component: DashboardLayout,
     data: { role: 'admin' },
     children: [
