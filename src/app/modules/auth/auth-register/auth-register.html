@@ -46,8 +46,8 @@
         <button type="button" class="eye-btn" (click)="togglePassword()">
           <i
             class="bi"
-            [class.bi-eye]="!showPassword"
-            [class.bi-eye-slash]="showPassword"
+            [class.bi-eye]="showPassword"
+            [class.bi-eye-slash]="!showPassword"
           ></i>
         </button>
       </div>
@@ -85,8 +85,8 @@
       <button type="button" class="eye-btn" (click)="toggleConfirmPassword()">
         <i
           class="bi"
-          [class.bi-eye]="!showConfirmPassword"
-          [class.bi-eye-slash]="showConfirmPassword"
+          [class.bi-eye]="showConfirmPassword"
+          [class.bi-eye-slash]="!showConfirmPassword"
         ></i>
       </button>
     </div>
