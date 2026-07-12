@@ -1,6 +1,8 @@
 ﻿@use "./assets/scss/sweet-alert";
 @use "./assets/scss/shared-controls";
 @use "./assets/scss/status-colors";
+@use "./assets/scss/dashboard-ui";
+@use "./assets/scss/admin-dashboard-ui";
 @use "./assets/scss/organizer-dashboard-ui";
 @use "./assets/scss/user-frontend-ui";
 @import "bootstrap/dist/css/bootstrap.min.css";
@@ -103,43 +105,6 @@ body.market-loading-lock {
 ::-webkit-scrollbar-thumb {
   background-color: #acacac;
   border-radius: 4px;
-}
-
-// 共用換頁動畫淡入淡出
-.page-transition {
-  animation: page-fade-in 0.28s ease;
-}
-
-// Dashboard 列表頁共用版型：內容區可伸縮，分頁固定在頁面底部
-.dashboard-list-page {
-  width: 100%;
-  min-height: calc(100dvh - 48px);
-  display: flex;
-  flex-direction: column;
-  overflow: visible;
-}
-
-.dashboard-list-content {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: auto;
-}
-
-.dashboard-list-pagination {
-  flex: 0 0 auto;
-  margin-top: auto;
-}
-
-@keyframes page-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* 攤主報名詳細：活動下架申請提示（報名狀態維持原狀）。 */

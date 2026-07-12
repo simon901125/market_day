@@ -9,8 +9,12 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
   overflow: visible;
+}
+
+.admin-organizer-detail > .organizer-detail-header {
+  margin-bottom: 12px;
 }
 
 .app-breadcrumb {
@@ -60,10 +64,15 @@
 
 // 詳情內容採頁面自然捲動，與主辦方後台一致。
 .cards-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
   padding-bottom: 24px;
+
+  > .info-card {
+    grid-column: 1 / -1;
+    order: 1;
+  }
 }
 
 // 共用卡片
@@ -71,7 +80,7 @@
   background: var(--bg-white);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-card);
-  padding: 18px;
+  padding: 18px 22px 20px;
 }
 
 .card-title {
@@ -81,16 +90,15 @@
   margin: 0 0 16px 0;
 }
 
-// 中間兩欄：左3右2
+// 讓帳號資訊與主辦方資料成為第一排的左右兩欄。
 .cards-grid-mid {
-  display: grid;
-  grid-template-columns: 4fr 3fr;
-  gap: 16px;
-  align-items: stretch;
+  display: contents;
 }
 
 // 右欄登入紀錄卡片：撐滿高度並將分頁推至底部
 .login-records-card {
+  grid-column: 1 / -1;
+  order: 2;
   display: flex;
   flex-direction: column;
 
@@ -101,70 +109,114 @@
 }
 
 .table-wrapper {
-  flex: 1;
+  flex: 0 0 auto;
+  min-height: 278px;
+  height: auto;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-card);
   overflow-x: auto;
+  overflow-y: visible;
 }
 
-// 左欄：userInfo + organizerInfo 垂直排列
+// 將兩張資料卡直接放入外層兩欄網格。
 .left-col {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  display: contents;
+
+  > .info-card {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 // 通用明細列表（兩欄 grid）
 .detail-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px 24px;
+  display: flex;
+  flex-direction: column;
   margin-bottom: 0;
 }
 
-.detail-list.organizerInfo {
-  grid-template-columns: 2fr 3fr;
+.detail-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+  border-bottom: 1px solid #e5e7eb;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  .detail-item {
+    height: 46px;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
+.detail-row-full {
+  grid-template-columns: 1fr;
+
+  .detail-item {
+    height: auto;
+    min-height: 46px;
+    padding: 7px 0;
+  }
 }
 
 .detail-item {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  font-size: 0.9rem;
-  font-weight: 600;
-
-  i {
-    color: var(--text-normal);
-    font-size: 0.9rem;
-    flex-shrink: 0;
-  }
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 800;
 
   .detail-label {
     color: var(--text-normal);
+    font-weight: 900;
     white-space: nowrap;
-    min-width: 72px;
   }
 
   .detail-value {
     color: var(--text-dark);
+    overflow-wrap: anywhere;
   }
 }
 
 // 活動統計數字區
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 20px;
-  padding-top: 16px;
+  margin-top: 0;
+  padding-top: 12px;
   border-top: 1px solid var(--border-light);
+}
+
+.stats-title {
+  grid-column: 1 / -1;
+  margin: 0 0 4px;
+  color: var(--text-normal);
+  font-size: 14px;
+  font-weight: 900;
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 6px;
+  min-height: 72px;
+  padding: 10px 14px;
+  border: 1px solid #f1dfc2;
+  border-radius: 10px;
+  background: #fffaf2;
+  box-sizing: border-box;
+
+  &:last-child {
+    border-color: #e5e7eb;
+    background: #f8f9fa;
+  }
 }
 
 .stat-value {
@@ -182,8 +234,8 @@
 }
 
 .stat-label {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 800;
   color: var(--text-normal);
 }
 
@@ -200,41 +252,56 @@
 // 共用表格（登入紀錄、活動管理紀錄）
 .log-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
 
   thead tr {
-    height: 56px;
+    height: 46px;
     background: var(--bg-primary);
-    border-bottom: 1px solid var(--border-light);
   }
 
   th {
-    text-align: left;
-    padding: 12px 14px;
+    text-align: center;
+    padding: 8px 12px;
+    border-right: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 900;
     color: var(--text-dark);
   }
 
   tbody tr {
-    height: 56px;
-    border-bottom: 1px solid var(--border-light);
-
-    &:last-child {
-      border-bottom: none;
-    }
+    height: 46px;
 
     &:hover {
-      background: var(--bg-primary);
+      background: var(--primary-soft);
     }
   }
 
   td {
-    padding: 12px 14px;
+    padding: 8px 12px;
+    border-right: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
     color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 800;
+    text-align: center;
     vertical-align: middle;
+  }
+
+  th:last-child,
+  td:last-child {
+    border-right: 0;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  &.incomplete-page tbody tr:last-child td {
+    border-bottom: 1px solid var(--border-light);
   }
 }
 
@@ -263,4 +330,51 @@
   justify-content: center;
   color: var(--text-normal);
   font-size: 1.2rem;
+}
+
+// 管理員詳細頁字級規格：區塊標題 16px，區塊內容統一 14px。
+.info-card .card-title {
+  font-size: 16px;
+  margin-bottom: 16px !important;
+}
+
+.info-card p,
+.info-card span:not(.card-title),
+.info-card dt,
+.info-card dd,
+.info-card th,
+.info-card td,
+.info-card .detail-item,
+.info-card .stat-value,
+.info-card .stat-label {
+  font-size: 14px !important;
+}
+
+.info-card .stat-value {
+  font-size: 20px !important;
+}
+
+.info-card:not(.login-records-card) > app-dashboard-pagination {
+  display: block;
+  margin-top: 12px;
+}
+
+@media (max-width: 720px) {
+  .cards-container,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-row {
+    grid-template-columns: 1fr;
+    border-bottom: 0;
+
+    .detail-item {
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    &:last-child .detail-item:last-child {
+      border-bottom: 0;
+    }
+  }
 }

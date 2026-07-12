@@ -70,11 +70,13 @@
                 <span class="status-tag" [class]="getStatusClass(activity.status)">{{ activity.status }}</span>
               </td >
               <td class="activity-organizer">{{ activity.organizer }}</td>
-              <td class="activity-cdate">{{ activity.submittedAt ?? activity.createdAt }}</td>
+              <td class="activity-cdate">{{ formatDateTime(activity.submittedAt ?? activity.createdAt ?? '') }}</td>
               <td class="activity-btn">
                 <div class="activity-actions">
                   @if (isReviewNeeded(activity.status)) {
-                    <button type="button" class="app-btn primary" (click)="getDetailHandler(activity)()">審核</button>
+                    <button type="button" class="app-btn primary" (click)="getDetailHandler(activity)()">
+                      {{ getReviewButtonLabel(activity.status) }}
+                    </button>
                   }
                   <button type="button" class="app-btn secondary" (click)="getDetailHandler(activity)()">查看</button>
                 </div>

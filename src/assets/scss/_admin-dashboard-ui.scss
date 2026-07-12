@@ -1,0 +1,67 @@
+/* 管理員後台共用 UI。只集中目前已定稿且完全相同的規則。 */
+
+:is(.admin-user-management, .admin-market-management, .admin-logs) {
+  width: min(100%, var(--dashboard-content-width));
+  min-height: calc(100dvh - 48px);
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: visible;
+
+  .result-section {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-card);
+  }
+
+  :is(.user-table, .activity-table, .logs-table) {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-dark);
+
+    thead {
+      background: var(--bg-primary);
+    }
+
+    th,
+    td {
+      height: 56px;
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: middle;
+      color: var(--text-dark);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    tbody tr {
+      height: 56px;
+      border-bottom: 1px solid var(--border-light);
+      transition: background 0.2s ease;
+
+      &:last-child {
+        border-bottom: 0;
+      }
+
+      &:hover {
+        background: var(--primary-soft);
+      }
+    }
+  }
+
+  .empty-row {
+    height: 72px;
+    color: var(--text-light);
+    text-align: center;
+  }
+}

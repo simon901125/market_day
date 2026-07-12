@@ -37,47 +37,44 @@
         <div class="info-card">
           <h3 class="card-title"><i class="bi bi-person-circle"></i>帳號資訊</h3>
           <div class="detail-list">
-            <div class="detail-item">
-              <i class="bi bi-person-circle"></i>
+            <div class="detail-row"><div class="detail-item">
               <span class="detail-label">使用者名稱</span>
               <span class="detail-value">{{ detail.detail.userInfo.username }}</span>
             </div>
             <div class="detail-item">
-              <i class="bi bi-person-badge"></i>
               <span class="detail-label">角色</span>
               <span class="role-tag purple">攤主</span>
-            </div>
-            <div class="detail-item">
-              <i class="bi bi-envelope"></i>
-              <span class="detail-label">電子信箱</span>
-              <span class="detail-value">{{ detail.detail.userInfo.email }}</span>
-            </div>
-            <div class="detail-item">
-              <i class="bi bi-toggle-on"></i>
+            </div></div>
+            <div class="detail-row"><div class="detail-item">
               <span class="detail-label">帳號狀態</span>
               <span class="status-tag" [class]="getStatusClass(detail.detail.userInfo.accountStatus)">
                 {{ detail.detail.userInfo.accountStatus }}
               </span>
             </div>
             <div class="detail-item">
-              <i class="bi bi-calendar-plus"></i>
+              <span class="detail-label">Google 綁定</span>
+              <span class="status-tag" [class.green]="detail.detail.userInfo.googleLinked" [class.grey]="!detail.detail.userInfo.googleLinked">
+                {{ detail.detail.userInfo.googleLinked ? '已綁定' : '未綁定' }}
+              </span>
+            </div></div>
+            <div class="detail-row"><div class="detail-item">
               <span class="detail-label">註冊時間</span>
               <span class="detail-value">{{ detail.detail.userInfo.registeredAt }}</span>
             </div>
             <div class="detail-item">
-              <i class="bi bi-clock-history"></i>
               <span class="detail-label">最後登入</span>
               <span class="detail-value">{{ detail.detail.userInfo.lastLoginAt }}</span>
-            </div>
+            </div></div>
           </div>
           <div class="stats-grid">
+            <h4 class="stats-title">活動報名統計</h4>
             <div class="stat-item">
               <span class="stat-value ongoing">{{ detail.detail.userInfo.registrationCount }}</span>
-              <span class="stat-label">進行中</span>
+              <span class="stat-label">尚未結束活動</span>
             </div>
             <div class="stat-item">
               <span class="stat-value ended">{{ detail.detail.userInfo.completedEventCount }}</span>
-              <span class="stat-label">已結束</span>
+              <span class="stat-label">已結束活動</span>
             </div>
           </div>
         </div>
@@ -86,36 +83,30 @@
         <div class="info-card">
           <h3 class="card-title"><i class="bi bi-shop"></i>攤主資料</h3>
           <div class="detail-list vendorInfo">
-            <div class="detail-item">
-              <i class="bi bi-shop"></i>
+            <div class="detail-row"><div class="detail-item">
               <span class="detail-label">品牌名稱</span>
               <span class="detail-value">{{ detail.detail.vendorInfo.brandName }}</span>
             </div>
-                        <div class="detail-item">
-              <i class="bi bi-telephone"></i>
+            <div class="detail-item">
               <span class="detail-label">聯絡電話</span>
               <span class="detail-value">{{ detail.detail.vendorInfo.contactPhone }}</span>
-            </div>
-            <div class="detail-item">
-              <i class="bi bi-tag"></i>
+            </div></div>
+            <div class="detail-row"><div class="detail-item">
               <span class="detail-label">品牌類型</span>
               <span class="detail-value">{{ detail.detail.vendorInfo.brandType }}</span>
             </div>
-                        <div class="detail-item">
-              <i class="bi bi-envelope"></i>
-              <span class="detail-label">聯絡信箱</span>
-              <span class="detail-value">{{ detail.detail.vendorInfo.contactEmail }}</span>
-            </div>
             <div class="detail-item">
-              <i class="bi bi-person"></i>
               <span class="detail-label">負責人</span>
               <span class="detail-value">{{ detail.detail.vendorInfo.owner }}</span>
-            </div>
-            <div class="detail-item">
-              <i class="bi bi-geo-alt"></i>
+            </div></div>
+            <div class="detail-row detail-row-full"><div class="detail-item">
+              <span class="detail-label">電子信箱</span>
+              <span class="detail-value">{{ detail.detail.vendorInfo.contactEmail }}</span>
+            </div></div>
+            <div class="detail-row detail-row-full"><div class="detail-item">
               <span class="detail-label">聯絡地址</span>
               <span class="detail-value">{{ detail.detail.vendorInfo.contactAddress }}</span>
-            </div>
+            </div></div>
           </div>
         </div>
 
@@ -125,7 +116,7 @@
       <div class="info-card login-records-card">
         <h3 class="card-title"><i class="bi bi-box-arrow-in-right"></i>登入紀錄</h3>
         <div class="table-wrapper">
-          <table class="log-table">
+          <table class="log-table" [class.incomplete-page]="paginatedLoginRecords.length < loginPageSize">
             <thead>
               <tr>
                 <th>登入時間</th>
@@ -162,7 +153,7 @@
     <div class="info-card">
       <h3 class="card-title"><i class="bi bi-journal-check"></i>活動報名紀錄</h3>
       <div class="table-wrapper">
-        <table class="log-table">
+        <table class="log-table" [class.incomplete-page]="paginatedRegistrationRecords.length < registrationPageSize">
           <thead>
             <tr>
               <th>活動名稱</th>
@@ -177,7 +168,13 @@
             @for (record of paginatedRegistrationRecords; track record.activityName) {
             <tr>
               <td>{{ record.activityName }}</td>
-              <td class="col-muted">{{ record.registrationDate }}</td>
+              <td class="col-muted">
+                <div class="registration-days">
+                  @for (date of record.registrationDates; track date) {
+                    <span>{{ date }}</span>
+                  }
+                </div>
+              </td>
               <td class="col-center">
                 <span class="status-tag" [class]="getRegistrationStatusClass(record.registrationStatus)">
                   {{ record.registrationStatus }}
@@ -188,7 +185,17 @@
                   {{ record.paymentStatus }}
                 </span>
               </td>
-              <td class="col-muted col-center">{{ record.booth ?? '-' }}</td>
+              <td class="col-muted col-center">
+                @if (record.booths.length > 0) {
+                  <div class="booth-assignments">
+                    @for (booth of record.booths; track booth.date) {
+                      <span>{{ booth.date }}　{{ booth.code }}</span>
+                    }
+                  </div>
+                } @else {
+                  -
+                }
+              </td>
               <td class="col-center">
                 <button type="button" class="app-btn secondary btn-view" (click)="onViewRecord(record)">查看</button>
               </td>

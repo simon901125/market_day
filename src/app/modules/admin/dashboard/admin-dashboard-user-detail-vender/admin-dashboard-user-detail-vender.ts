@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AlertService } from '../../../../core/services/alert.service';
@@ -11,8 +11,8 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
 
 /** 模擬後端回傳的攤主列表，串接 API 後可移除 */
 const MOCK_VENDOR_USERS: UserListItem[] = [
-  { id: 1, name: '李小花', email: 'flower@example.com', role: 'vendor', createdAt: '2021-03-15', lastLoginAt: '2026-06-20', status: '正常' },
-  { id: 2, name: '陳阿明', email: 'aming@example.com', role: 'vendor', createdAt: '2022-07-01', lastLoginAt: '2025-12-01', status: '已停用' },
+  { id: 1, name: '李小花', email: 'flower@example.com', role: 'vendor', createdAt: '2021/03/15', lastLoginAt: '2026/06/20', status: '正常' },
+  { id: 2, name: '陳阿明', email: 'aming@example.com', role: 'vendor', createdAt: '2022/07/01', lastLoginAt: '2025/12/01', status: '已停用' },
 ];
 
 /** 模擬後端回傳的攤主詳情，串接 API 後可移除 */
@@ -23,9 +23,10 @@ const MOCK_DETAIL: AdminVendorDetail = {
       username: '李小花',
       role: 'vendor',
       email: 'flower@example.com',
+      googleLinked: true,
       accountStatus: UserStatus.active,
-      registeredAt: '2021-03-15 10:00',
-      lastLoginAt: '2026-06-20 14:30',
+      registeredAt: '2021/03/15 10:00',
+      lastLoginAt: '2026/06/20 14:30',
       registrationCount: 0,
       completedEventCount: 3,
     },
@@ -40,30 +41,30 @@ const MOCK_DETAIL: AdminVendorDetail = {
     activityRegistrationRecords: {
       total: 9,
       items: [
-        { activityName: '春語花市', registrationDate: '2026-04-01', registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booth: 'A-01' },
-        { activityName: '楓糖森活市集', registrationDate: '2026-05-10', registrationStatus: ApplicationStatus.pendingPayment, paymentStatus: PaymentStatus.pending, booth: null },
-        { activityName: '月光甜點市集', registrationDate: '2026-06-01', registrationStatus: ApplicationStatus.pendingReview, paymentStatus: PaymentStatus.pending, booth: null },
-        { activityName: '夏日手作市集', registrationDate: '2026-03-20', registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booth: 'B-05' },
-        { activityName: '秋風文創節', registrationDate: '2026-02-14', registrationStatus: ApplicationStatus.cancelled, paymentStatus: PaymentStatus.refunded, booth: null },
-        { activityName: '冬暖聖誕市集', registrationDate: '2025-11-01', registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booth: 'C-03' },
-        { activityName: '新年好市集', registrationDate: '2025-12-05', registrationStatus: ApplicationStatus.reviewRejected, paymentStatus: PaymentStatus.pending, booth: null },
-        { activityName: '綠意農夫市集', registrationDate: '2025-09-10', registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booth: 'A-08' },
-        { activityName: '草地音樂節', registrationDate: '2025-08-01', registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booth: 'D-02' },
+        { activityName: '春語花市', registrationDate: '2026/04/01', activityDate: '2026/05/01 - 2026/05/02', registrationDates: ['2026/05/01', '2026/05/02'], registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booths: [{ date: '2026/05/01', code: 'A-01' }, { date: '2026/05/02', code: 'A-02' }] },
+        { activityName: '楓糖森活市集', registrationDate: '2026/05/10', activityDate: '2026/06/13 - 2026/06/14', registrationDates: ['2026/06/13'], registrationStatus: ApplicationStatus.pendingPayment, paymentStatus: PaymentStatus.pending, booths: [] },
+        { activityName: '月光甜點市集', registrationDate: '2026/06/01', activityDate: '2026/07/18 - 2026/07/19', registrationDates: ['2026/07/18', '2026/07/19'], registrationStatus: ApplicationStatus.pendingReview, paymentStatus: PaymentStatus.pending, booths: [] },
+        { activityName: '夏日手作市集', registrationDate: '2026/03/20', activityDate: '2026/07/01 - 2026/07/02', registrationDates: ['2026/07/02'], registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booths: [{ date: '2026/07/02', code: 'B-06' }] },
+        { activityName: '秋風文創節', registrationDate: '2026/02/14', activityDate: '2026/03/14 - 2026/03/15', registrationDates: ['2026/03/14'], registrationStatus: ApplicationStatus.cancelled, paymentStatus: PaymentStatus.refunded, booths: [] },
+        { activityName: '冬暖聖誕市集', registrationDate: '2025/11/01', activityDate: '2025/12/24 - 2025/12/25', registrationDates: ['2025/12/24', '2025/12/25'], registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booths: [{ date: '2025/12/24', code: 'C-03' }, { date: '2025/12/25', code: 'C-03' }] },
+        { activityName: '新年好市集', registrationDate: '2025/12/05', activityDate: '2026/01/10 - 2026/01/11', registrationDates: ['2026/01/11'], registrationStatus: ApplicationStatus.reviewRejected, paymentStatus: PaymentStatus.pending, booths: [] },
+        { activityName: '綠意農夫市集', registrationDate: '2025/09/10', activityDate: '2025/10/18 - 2025/10/19', registrationDates: ['2025/10/18', '2025/10/19'], registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booths: [{ date: '2025/10/18', code: 'A-08' }, { date: '2025/10/19', code: 'A-09' }] },
+        { activityName: '草地音樂節', registrationDate: '2025/08/01', activityDate: '2025/09/06 - 2025/09/07', registrationDates: ['2025/09/06'], registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booths: [{ date: '2025/09/06', code: 'D-02' }] },
       ],
     },
     loginRecords: {
       total: 10,
       items: [
-        { loginTime: '2026-06-20 14:30', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026-06-18 09:12', loginMethod: 'Google', loginStatus: '成功' },
-        { loginTime: '2026-06-15 22:05', loginMethod: 'Email', loginStatus: '失敗' },
-        { loginTime: '2026-06-10 11:00', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026-06-05 08:45', loginMethod: 'Google', loginStatus: '成功' },
-        { loginTime: '2026-05-30 17:20', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026-05-25 13:55', loginMethod: 'Google', loginStatus: '成功' },
-        { loginTime: '2026-05-20 10:30', loginMethod: 'Email', loginStatus: '失敗' },
-        { loginTime: '2026-05-15 16:00', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026-05-10 07:50', loginMethod: 'Google', loginStatus: '成功' },
+        { loginTime: '2026/06/20 14:30', loginMethod: 'Email', loginStatus: '成功' },
+        { loginTime: '2026/06/18 09:12', loginMethod: 'Google', loginStatus: '成功' },
+        { loginTime: '2026/06/15 22:05', loginMethod: 'Email', loginStatus: '失敗' },
+        { loginTime: '2026/06/10 11:00', loginMethod: 'Email', loginStatus: '成功' },
+        { loginTime: '2026/06/05 08:45', loginMethod: 'Google', loginStatus: '成功' },
+        { loginTime: '2026/05/30 17:20', loginMethod: 'Email', loginStatus: '成功' },
+        { loginTime: '2026/05/25 13:55', loginMethod: 'Google', loginStatus: '成功' },
+        { loginTime: '2026/05/20 10:30', loginMethod: 'Email', loginStatus: '失敗' },
+        { loginTime: '2026/05/15 16:00', loginMethod: 'Email', loginStatus: '成功' },
+        { loginTime: '2026/05/10 07:50', loginMethod: 'Google', loginStatus: '成功' },
       ],
     },
   },
@@ -88,7 +89,7 @@ export class AdminDashboardUserDetailVender implements OnInit {
   detail: AdminVendorDetail | null = null;
 
   loginCurrentPage = 1;
-  readonly loginPageSize = 6;
+  readonly loginPageSize = 5;
 
   get loginRecordTotal(): number {
     return this.detail?.detail.loginRecords.total ?? 0;
@@ -105,7 +106,7 @@ export class AdminDashboardUserDetailVender implements OnInit {
   }
 
   registrationCurrentPage = 1;
-  readonly registrationPageSize = 6;
+  readonly registrationPageSize = 5;
 
   get registrationRecordTotal(): number {
     return this.detail?.detail.activityRegistrationRecords.total ?? 0;
@@ -233,3 +234,4 @@ export class AdminDashboardUserDetailVender implements OnInit {
     // TODO: 導向活動報名詳情頁
   }
 }
+

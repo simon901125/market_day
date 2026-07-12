@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AlertService } from '../../../../core/services/alert.service';
@@ -10,16 +10,16 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
 
 /** 模擬後端回傳的主辦方列表，串接 API 後可移除 */
 const MOCK_ORGANIZER_USERS: UserListItem[] = [
-  { id: 3,  name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020-01-01', lastLoginAt: '2026-05-30', status: '正常' },
-  { id: 7,  name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020-01-01', lastLoginAt: '2026-05-30', status: '正常' },
-  { id: 11, name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020-01-01', lastLoginAt: '2026-05-30', status: '正常' },
-  { id: 15, name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020-01-01', lastLoginAt: '2026-05-30', status: '正常' },
-  { id: 19, name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020-01-01', lastLoginAt: '2026-05-30', status: '正常' },
-  { id: 4,  name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020-01-01', lastLoginAt: '2024-05-30', status: '已停用' },
-  { id: 8,  name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020-01-01', lastLoginAt: '2024-05-30', status: '已停用' },
-  { id: 12, name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020-01-01', lastLoginAt: '2024-05-30', status: '已停用' },
-  { id: 16, name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020-01-01', lastLoginAt: '2024-05-30', status: '已停用' },
-  { id: 20, name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020-01-01', lastLoginAt: '2024-05-30', status: '已停用' },
+  { id: 3,  name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2026/05/30', status: '正常' },
+  { id: 7,  name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2026/05/30', status: '正常' },
+  { id: 11, name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2026/05/30', status: '正常' },
+  { id: 15, name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2026/05/30', status: '正常' },
+  { id: 19, name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2026/05/30', status: '正常' },
+  { id: 4,  name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2024/05/30', status: '已停用' },
+  { id: 8,  name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2024/05/30', status: '已停用' },
+  { id: 12, name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2024/05/30', status: '已停用' },
+  { id: 16, name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2024/05/30', status: '已停用' },
+  { id: 20, name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2024/05/30', status: '已停用' },
 ];
 
 /** 模擬後端回傳的主辦方詳情，串接 API 後可移除 */
@@ -30,9 +30,10 @@ const MOCK_DETAIL: AdminOrganizerDetail = {
       username: '王曉三',
       role: 'organizer',
       email: 'wang3@example.com',
+      googleLinked: false,
       accountStatus: UserStatus.active,
-      registeredAt: '2020-01-01 10:00',
-      lastLoginAt: '2026-06-20 09:15',
+      registeredAt: '2020/01/01 10:00',
+      lastLoginAt: '2026/06/20 09:15',
       createdActivityCount: 8,
       ongoingActivityCount: 2,
       endedActivityCount: 6,
@@ -50,30 +51,30 @@ const MOCK_DETAIL: AdminOrganizerDetail = {
     activityManagementRecords: {
       total: 9,
       items: [
-        { activityName: '春語花市', activityDate: '2026/05/01 - 2026/05/02', activityStatus: '已結束', registrationCount: '150/150' },
-        { activityName: '楓糖森活市集', activityDate: '2026/06/05 - 2026/06/06', activityStatus: '進行中', registrationCount: '88/120' },
-        { activityName: '月光甜點市集', activityDate: '2026/11/12 - 2026/11/13', activityStatus: '待審核', registrationCount: '0/100' },
-        { activityName: '春語花市', activityDate: '2026/05/01 - 2026/05/02', activityStatus: '已結束', registrationCount: '150/150' },
-        { activityName: '楓糖森活市集', activityDate: '2026/06/05 - 2026/06/06', activityStatus: '進行中', registrationCount: '88/120' },
-        { activityName: '月光甜點市集', activityDate: '2026/11/12 - 2026/11/13', activityStatus: '待審核', registrationCount: '0/100' },
-        { activityName: '春語花市', activityDate: '2026/05/01 - 2026/05/02', activityStatus: '已結束', registrationCount: '150/150' },
-        { activityName: '楓糖森活市集', activityDate: '2026/06/05 - 2026/06/06', activityStatus: '進行中', registrationCount: '88/120' },
-        { activityName: '月光甜點市集', activityDate: '2026/11/12 - 2026/11/13', activityStatus: '待審核', registrationCount: '0/100' },
+        { activityName: '春語花市', activityTime: '2026/05/01 - 2026/05/02 10:00 - 19:00', activityStatus: '已結束', registrationCount: '150/150' },
+        { activityName: '楓糖森活市集', activityTime: '2026/06/05 - 2026/06/06 10:00 - 19:00', activityStatus: '進行中', registrationCount: '88/120' },
+        { activityName: '月光甜點市集', activityTime: '2026/11/12 - 2026/11/13 10:00 - 19:00', activityStatus: '待審核', registrationCount: '0/100' },
+        { activityName: '春語花市', activityTime: '2026/05/01 - 2026/05/02 10:00 - 19:00', activityStatus: '已結束', registrationCount: '150/150' },
+        { activityName: '楓糖森活市集', activityTime: '2026/06/05 - 2026/06/06 10:00 - 19:00', activityStatus: '進行中', registrationCount: '88/120' },
+        { activityName: '月光甜點市集', activityTime: '2026/11/12 - 2026/11/13 10:00 - 19:00', activityStatus: '待審核', registrationCount: '0/100' },
+        { activityName: '春語花市', activityTime: '2026/05/01 - 2026/05/02 10:00 - 19:00', activityStatus: '已結束', registrationCount: '150/150' },
+        { activityName: '楓糖森活市集', activityTime: '2026/06/05 - 2026/06/06 10:00 - 19:00', activityStatus: '進行中', registrationCount: '88/120' },
+        { activityName: '月光甜點市集', activityTime: '2026/11/12 - 2026/11/13 10:00 - 19:00', activityStatus: '待審核', registrationCount: '0/100' },
       ],
     },
     loginRecords: {
       total: 10,
       items: [
-        { loginTime: '2026-06-20 09:15', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026-06-18 14:32', loginMethod: 'Google', loginStatus: '成功' },
-        { loginTime: '2026-06-15 08:00', loginMethod: 'Email', loginStatus: '失敗' },
-        { loginTime: '2026-06-10 20:45', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026-06-05 11:00', loginMethod: 'Google', loginStatus: '成功' },
-        { loginTime: '2026-06-20 09:15', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026-06-18 14:32', loginMethod: 'Google', loginStatus: '成功' },
-        { loginTime: '2026-06-15 08:00', loginMethod: 'Email', loginStatus: '失敗' },
-        { loginTime: '2026-06-10 20:45', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026-06-05 11:00', loginMethod: 'Google', loginStatus: '成功' },
+        { loginTime: '2026/06/20 09:15', loginMethod: 'Email', loginStatus: '成功' },
+        { loginTime: '2026/06/18 14:32', loginMethod: 'Google', loginStatus: '成功' },
+        { loginTime: '2026/06/15 08:00', loginMethod: 'Email', loginStatus: '失敗' },
+        { loginTime: '2026/06/10 20:45', loginMethod: 'Email', loginStatus: '成功' },
+        { loginTime: '2026/06/05 11:00', loginMethod: 'Google', loginStatus: '成功' },
+        { loginTime: '2026/06/20 09:15', loginMethod: 'Email', loginStatus: '成功' },
+        { loginTime: '2026/06/18 14:32', loginMethod: 'Google', loginStatus: '成功' },
+        { loginTime: '2026/06/15 08:00', loginMethod: 'Email', loginStatus: '失敗' },
+        { loginTime: '2026/06/10 20:45', loginMethod: 'Email', loginStatus: '成功' },
+        { loginTime: '2026/06/05 11:00', loginMethod: 'Google', loginStatus: '成功' },
       ],
     },
   },
@@ -98,7 +99,7 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   detail: AdminOrganizerDetail | null = null;
 
   loginCurrentPage = 1;
-  readonly loginPageSize = 6;
+  readonly loginPageSize = 5;
 
   get loginRecordTotal(): number {
     return this.detail?.detail.loginRecords.total ?? 0;
@@ -115,7 +116,7 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   }
 
   activityCurrentPage = 1;
-  readonly activityPageSize = 6;
+  readonly activityPageSize = 5;
 
   get activityRecordTotal(): number {
     return this.detail?.detail.activityManagementRecords.total ?? 0;
@@ -241,3 +242,4 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   }
 
 }
+

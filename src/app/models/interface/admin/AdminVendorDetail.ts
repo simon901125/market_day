@@ -11,6 +11,8 @@ export interface AdminVendorDetail {
       role: string;
       /** 電子信箱 */
       email: string;
+      /** 是否已綁定 Google 帳號 */
+      googleLinked: boolean;
       /** 帳號狀態（啟用/停用） */
       accountStatus: string;
       /** 註冊時間 */
@@ -47,12 +49,21 @@ export interface AdminVendorDetail {
         activityName: string;
         /** 報名日期 */
         registrationDate: string;
+        /** 活動日期區間 */
+        activityDate: string;
+        /** 攤主實際選擇的報名日期，可為一天或多天。 */
+        registrationDates: string[];
         /** 報名狀態 */
         registrationStatus: string;
         /** 付款狀態 */
         paymentStatus: string;
-        /** 攤位（若為 null 顯示 "-"） */
-        booth: string | null;
+        /** 每個活動日的攤位；尚未分配時為空陣列。 */
+        booths: {
+          /** 活動日期 */
+          date: string;
+          /** 當日攤位編號 */
+          code: string;
+        }[];
       }[];
     };
     /** 登入紀錄 */

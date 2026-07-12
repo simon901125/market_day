@@ -16,6 +16,7 @@ export interface AdminMarketDetail {
   activityInfo: {
     name: string;
     type: string;
+    tags: string[];
     time: string;
     locationName: string;
     location: string;
@@ -42,6 +43,7 @@ export interface AdminMarketDetail {
     drivingDirections: string;
   };
   boothInfo: {
+    /** 攤位長 × 寬，不包含高度。 */
     boothSpec: string;
     boothCount: number;
     boothPrice: number;

@@ -190,9 +190,6 @@
     box-sizing: border-box;
   }
 
-  .detail-card + .detail-card,
-  .info-card + .info-card { margin-top: 14px; }
-
   .detail-card > h2,
   .detail-card .card-heading h2,
   .info-card > .card-title {

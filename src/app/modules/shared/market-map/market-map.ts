@@ -166,7 +166,7 @@ export class MarketMap {
   @Input() mode: MarketMapMode = 'public';
   @Input() mapData: MarketMapData = DEFAULT_MAP;
 
-  selectedBooth: MarketMapBooth | null = DEFAULT_MAP.booths.find((booth) => booth.code === 'A12') ?? null;
+  selectedBooth: MarketMapBooth | null = null;
   hoveredBooth: MarketMapBooth | null = null;
   isPreviewPinned = false;
   isPreviewClosing = false;

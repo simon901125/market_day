@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { UserStatus } from '../../../../models/status/UserStatus';
@@ -58,26 +58,26 @@ export class AdminDashboardUserManagement implements AfterViewInit{
 
   /** 假資料：模擬後端回傳的使用者列表，之後可替換成真正的 API 呼叫結果 */
   private readonly mockUsers: UserListItem[] = [
-    {id:1, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020-01-01", lastLoginAt:"2026-05-30", status:UserStatus.active },
-    {id:2, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020-01-01", lastLoginAt:"2024-05-30", status:UserStatus.disabled },
-    {id:3, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020-01-01", lastLoginAt:"2026-05-30", status:UserStatus.active },
-    {id:4, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020-01-01", lastLoginAt:"2024-05-30", status:UserStatus.disabled }, 
-    {id:5, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020-01-01", lastLoginAt:"2026-05-30", status:UserStatus.active },
-    {id:6, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020-01-01", lastLoginAt:"2024-05-30", status:UserStatus.disabled },
-    {id:7, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020-01-01", lastLoginAt:"2026-05-30", status:UserStatus.active },
-    {id:8, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020-01-01", lastLoginAt:"2024-05-30", status:UserStatus.disabled }, 
-    {id:9, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020-01-01", lastLoginAt:"2026-05-30", status:UserStatus.active },
-    {id:10, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020-01-01", lastLoginAt:"2024-05-30", status:UserStatus.disabled },
-    {id:11, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020-01-01", lastLoginAt:"2026-05-30", status:UserStatus.active },
-    {id:12, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020-01-01", lastLoginAt:"2024-05-30", status:UserStatus.disabled }, 
-    {id:13, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020-01-01", lastLoginAt:"2026-05-30", status:UserStatus.active },
-    {id:14, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020-01-01", lastLoginAt:"2024-05-30", status:UserStatus.disabled },
-    {id:15, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020-01-01", lastLoginAt:"2026-05-30", status:UserStatus.active },
-    {id:16, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020-01-01", lastLoginAt:"2024-05-30", status:UserStatus.disabled }, 
-    {id:17, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020-01-01", lastLoginAt:"2026-05-30", status:UserStatus.active },
-    {id:18, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020-01-01", lastLoginAt:"2024-05-30", status:UserStatus.disabled },
-    {id:19, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020-01-01", lastLoginAt:"2026-05-30", status:UserStatus.active },
-    {id:20, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020-01-01", lastLoginAt:"2024-05-30", status:UserStatus.disabled }, 
+    {id:1, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
+    {id:2, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled },
+    {id:3, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
+    {id:4, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled }, 
+    {id:5, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
+    {id:6, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled },
+    {id:7, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
+    {id:8, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled }, 
+    {id:9, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
+    {id:10, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled },
+    {id:11, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
+    {id:12, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled }, 
+    {id:13, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
+    {id:14, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled },
+    {id:15, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
+    {id:16, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled }, 
+    {id:17, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
+    {id:18, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled },
+    {id:19, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
+    {id:20, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled }, 
   ];
 
   /** 目前篩選條件：帳號角色 */
@@ -218,7 +218,8 @@ export class AdminDashboardUserManagement implements AfterViewInit{
     if (!normalized) return '-';
 
     const [date, time = '00:00'] = normalized.split(/\s+/, 2);
-    return `${date} ${time.slice(0, 5)}`;
+    return `${date.replaceAll('-', '/')} ${time.slice(0, 5)}`;
   }
 
 }
+

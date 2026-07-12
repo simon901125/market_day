@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
@@ -54,26 +54,26 @@ export class AdminDashboardLogs implements AfterViewInit {
 
   /** 假資料：操作對象統一使用攤主姓名或主辦方名稱。 */
   private readonly mockLogs: AdminLogItem[] = ([
-    { id: 1, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '森林生活市集', details: '操作內容'},
-    { id: 2, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.accountRestored, target: '王曉明', details: '操作內容'},
-    { id: 3, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '日日好市', details: '操作內容'},
-    { id: 4, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.requestRevision, target: '春光小日子', details: '操作內容'},
-    { id: 5, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '陳怡君', details: '操作內容'},
-    { id: 6, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '歡樂市集團隊', details: '操作內容'},
-    { id: 7, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.requestRevision, target: '森林生活市集', details: '操作內容'},
-    { id: 8, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.systemSetting, target: '林美玲', details: '操作內容'},
-    { id: 9, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.accountRestored, target: '張家豪', details: '操作內容'},
-    { id: 10, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '日日好市', details: '操作內容'},
-    { id: 11, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '春光小日子', details: '操作內容'},
-    { id: 12, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.requestRevision, target: '歡樂市集團隊', details: '操作內容'},
-    { id: 13, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '森林生活市集', details: '操作內容'},
-    { id: 14, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.systemSetting, target: '李佳穎', details: '操作內容'},
-    { id: 15, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '日日好市', details: '操作內容'},
-    { id: 16, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.requestRevision, target: '春光小日子', details: '操作內容'},
-    { id: 17, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.activityReview, target: '歡樂市集團隊', details: '操作內容'},
-    { id: 18, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '黃筱雯', details: '操作內容'},
-    { id: 19, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '周承恩', details: '操作內容'},
-    { id: 20, createdAt: '2026-01-01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '吳品妍', details: '操作內容'},
+    { id: 1, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '森林生活市集', details: '操作內容'},
+    { id: 2, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.accountRestored, target: '王曉明', details: '操作內容'},
+    { id: 3, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '日日好市', details: '操作內容'},
+    { id: 4, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.requestRevision, target: '春光小日子', details: '操作內容'},
+    { id: 5, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '陳怡君', details: '操作內容'},
+    { id: 6, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '歡樂市集團隊', details: '操作內容'},
+    { id: 7, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.requestRevision, target: '森林生活市集', details: '操作內容'},
+    { id: 8, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.systemSetting, target: '林美玲', details: '操作內容'},
+    { id: 9, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.accountRestored, target: '張家豪', details: '操作內容'},
+    { id: 10, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '日日好市', details: '操作內容'},
+    { id: 11, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '春光小日子', details: '操作內容'},
+    { id: 12, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.requestRevision, target: '歡樂市集團隊', details: '操作內容'},
+    { id: 13, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '森林生活市集', details: '操作內容'},
+    { id: 14, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.systemSetting, target: '李佳穎', details: '操作內容'},
+    { id: 15, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '日日好市', details: '操作內容'},
+    { id: 16, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.requestRevision, target: '春光小日子', details: '操作內容'},
+    { id: 17, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '歡樂市集團隊', details: '操作內容'},
+    { id: 18, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '黃筱雯', details: '操作內容'},
+    { id: 19, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '周承恩', details: '操作內容'},
+    { id: 20, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '吳品妍', details: '操作內容'},
     
   ] as Array<Omit<AdminLogItem, 'targetRole' | 'targetEmail'>>).map((log) => ({
     ...log,
@@ -198,7 +198,7 @@ export class AdminDashboardLogs implements AfterViewInit {
     if (!normalized) return '-';
 
     const [date, time = '00:00'] = normalized.split(/\s+/, 2);
-    return `${date} ${time.slice(0, 5)}`;
+    return `${date.replaceAll('-', '/')} ${time.slice(0, 5)}`;
   }
 
   /** 假資料用身分快照；正式 API 應直接回傳 targetRole 與 targetEmail。 */
@@ -228,3 +228,4 @@ export class AdminDashboardLogs implements AfterViewInit {
   }
 
 }
+

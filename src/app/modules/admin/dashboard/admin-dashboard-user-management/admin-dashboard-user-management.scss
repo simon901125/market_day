@@ -2,33 +2,8 @@
   display: block;
 }
 
-.admin-user-management {
-  width: min(100%, var(--dashboard-content-width));
-  min-height: calc(100dvh - 48px);
-  margin: 0 auto;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  overflow: visible;
-}
-
 .user-management-filter {
   grid-template-columns: minmax(180px, 1.6fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) 112px;
-}
-
-.result-section {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-}
-
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  background: var(--bg-white);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-card);
 }
 
 .user-table {
@@ -81,7 +56,7 @@
     &:last-child { border-bottom: 0; }
 
     &:hover {
-      background: var(--bg-primary);
+      background: var(--primary-soft);
     }
   }
 
@@ -125,12 +100,6 @@
   padding: 0 12px;
   font-size: 13px;
   font-weight: 800;
-}
-
-.empty-row {
-  text-align: center;
-  color: var(--text-light);
-  height: 72px;
 }
 
 @media (max-width: 1200px) {

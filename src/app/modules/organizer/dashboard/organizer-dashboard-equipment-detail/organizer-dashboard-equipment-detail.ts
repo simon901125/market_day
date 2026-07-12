@@ -50,7 +50,7 @@ interface EquipmentDetailData {
 export class OrganizerDashboardEquipmentDetail implements OnInit {
   returnPage = 1;
   returnStatus = '';
-  detailPageSize = 6;
+  detailPageSize = 5;
   rentalCurrentPage = 1;
   extraPowerCurrentPage = 1;
   vehicleCurrentPage = 1;

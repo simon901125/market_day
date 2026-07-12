@@ -9,8 +9,12 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
   overflow: visible;
+}
+
+.admin-market-detail > .organizer-detail-header {
+  margin-bottom: 12px;
 }
 
 .app-breadcrumb {
@@ -62,7 +66,7 @@
 .cards-container {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   padding-bottom: 24px;
 }
 
@@ -71,14 +75,28 @@
   background: var(--bg-white);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-card);
-  padding: 18px;
+  padding: 18px 22px 20px;
 }
 
 .card-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-size: 16px;
   font-weight: 900;
   color: var(--text-dark);
-  margin: 0 0 16px 0;
+  margin: 0 0 14px;
+
+  i {
+    color: var(--primary-color) !important;
+    font-size: 19px;
+    line-height: 1;
+  }
+}
+
+// 覆蓋共用詳細頁的零 margin，確保區塊標題與內容有明確間距。
+.admin-market-detail .info-card > .card-title {
+  margin: 0 0 14px;
 }
 
 // 兩欄 grid
@@ -86,27 +104,43 @@
   display: grid;
   grid-template-columns: 3fr 2fr;
   gap: 16px;
+  align-items: stretch;
 }
 
 .cards-grid-booth {
   display: grid;
   grid-template-columns: 2fr 3fr;
   gap: 16px;
+  align-items: stretch;
+}
+
+.cards-grid > .info-card,
+.cards-grid-booth > .info-card {
+  height: 100%;
+  margin-top: 0;
+  box-sizing: border-box;
 }
 
 // 活動主資訊卡
 .activity-main-card {
-  display: flex;
-  gap: 24px;
+  .activity-main-content {
+    display: flex;
+    align-items: stretch;
+    gap: 20px;
+  }
 
   .main-card-image {
-    flex: 0 0 200px;
+    position: relative;
+    flex: 0 0 260px;
+    align-self: stretch;
 
     img {
-      width: 200px;
-      height: 140px;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      border-radius: var(--radius-card);
+      border-radius: var(--radius-tag);
     }
   }
 
@@ -119,57 +153,68 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
   }
 
   .activity-name {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.2rem;
+    font-size: 20px;
     font-weight: 900;
     color: var(--text-dark);
     margin: 0;
-
-    i {
-      color: var(--primary-color);
-      font-size: 19px;
-    }
   }
 
   .main-card-meta {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .main-card-meta-row {
+    min-height: 46px;
+    padding: 7px 0;
+    border-bottom: 1px solid #e5e7eb;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px 24px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+    align-items: center;
+    box-sizing: border-box;
+
+    &:last-child {
+      border-bottom: 0;
+    }
   }
 
   .meta-item {
-    display: flex;
-    align-items: baseline;
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    align-items: center;
     gap: 14px;
-    font-size: 0.9rem;
-    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 800;
 
-    i {
-    color: var(--text-normal);
-    font-size: 0.9rem;
-    flex-shrink: 0;
+    > span:first-child {
+      color: var(--text-normal);
+      font-weight: 900;
     }
 
     .meta-value {
-      color: var(--text-normal);
-      margin-left: 8px;
+      min-width: 0;
+      color: var(--text-dark);
     }
   }
 }
 
 // 狀態標籤
 .status-tag {
-  display: inline-block;
-  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 74px;
+  height: 26px;
+  padding: 0 10px;
   border-radius: var(--radius-tag);
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 900;
   white-space: nowrap;
 }
 
@@ -187,32 +232,43 @@
 .timeline-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
 }
 
 .timeline-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  font-size: 0.9rem;
-  font-weight: 600;
-
-  i {
-    color: var(--text-normal);
-    font-size: 0.9rem;
-    flex-shrink: 0;
-  }
+  font-size: 14px;
+  font-weight: 800;
 
   div {
-    display: flex;
-    gap: 48px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 14px;
   }
 }
 
+.activity-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.activity-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 3px 10px;
+  border-radius: var(--radius-tag);
+  background: var(--primary-soft);
+  color: var(--primary-hover);
+  font-size: 14px;
+  font-weight: 900;
+}
+
 .timeline-label {
-    color: var(--text-normal);
-    white-space: nowrap;
-    min-width: 80px;
+  color: var(--text-normal);
+  font-weight: 900;
+  white-space: nowrap;
 }
 
 .timeline-value {
@@ -221,41 +277,57 @@
 
 // 主辦方 / 交通 通用列表
 .detail-list-organizer {
+  display: flex;
+  flex-direction: column;
+}
+
+.organizer-detail-row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+  border-bottom: 1px solid #e5e7eb;
+
+  .detail-item {
+    min-height: 46px;
+    padding: 7px 0;
+    border-bottom: 0;
+    box-sizing: border-box;
+  }
+}
+
+.organizer-address-row {
+  grid-template-columns: 1fr;
+  border-bottom: 0;
 }
 
 .detail-list-transportation {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
 }
 
 .detail-list-booth {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
+
+  .detail-item {
+    grid-template-columns: 124px minmax(0, 1fr);
+  }
 }
 
 .detail-item {
-  display: flex;
-  align-items: baseline;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: center;
   gap: 14px;
-  font-size: 0.9rem;
-  font-weight: 600;
-
-
-  i {
-    color: var(--text-normal);
-    font-size: 0.9rem;
-    flex-shrink: 0;
-  }
+  font-size: 14px;
+  font-weight: 800;
 
   .detail-label {
     color: var(--text-normal);
+    font-weight: 900;
     white-space: nowrap;
-    min-width: 80px;
   }
 
   .detail-value {
@@ -263,22 +335,33 @@
   }
 }
 
-.detail-item.booth {
-  flex-direction: column;
-  gap: 14px;
+.booth-zone-row {
+  align-items: start;
+}
 
+.booth-zone-values {
+  min-width: 0;
+}
 
-  div {
-    display: flex;
-    gap: 14px;
-  }
+// 參考主辦方報名詳情：標題與內容分隔，資訊列以底線區分。
+.timeline-list .timeline-item,
+.detail-list-transportation .detail-item,
+.detail-list-booth .detail-item {
+  min-height: 46px;
+  padding: 7px 0;
+  border-bottom: 1px solid #e5e7eb;
+  box-sizing: border-box;
+}
+
+.timeline-list .timeline-item:last-child,
+.detail-list-transportation .detail-item:last-child,
+.detail-list-booth .detail-item:last-child {
+  border-bottom: 0;
 }
 
 // 攤位分區
 .booth-card-body {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 16px;
+  display: block;
 }
 
 
@@ -286,71 +369,116 @@
 .booth-layout-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  margin-bottom: 14px;
+
+  .card-title {
+    margin: 0;
+  }
 
   .app-btn {
     width: auto;
-    height: 32px;
-    margin-top: -6px;
+    min-width: 148px;
+    height: 40px;
+    margin: 0;
+    border-color: var(--primary-color);
+    background: var(--bg-white);
+    color: var(--primary-color);
+    font-size: 14px;
+
+    i {
+      color: currentColor;
+    }
   }
 }
 
 .booth-layout-image {
+  width: 100%;
+  height: auto;
+  padding: 12px;
+  border-radius: var(--radius-card);
+  background: var(--bg-white);
+  box-sizing: border-box;
+
   img {
+    display: block;
     width: 100%;
-    border-radius: var(--radius-card);
-    object-fit: contain;
-    max-height: 260px;
-    background: var(--bg-soft);
+    height: auto;
+    border-radius: 0;
+    object-fit: initial;
+    background: transparent;
   }
 }
 
 // 狀態紀錄表格
 .table-wrapper {
-  flex: 1;
+  flex: 0 0 auto;
+  min-height: 278px;
+  height: auto;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-card);
   overflow-x: auto;
+  overflow-y: visible;
 }
 
 .status-log-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
 
   thead tr {
-    height: 56px;
+    height: 46px;
     background: var(--bg-primary);
-    border-bottom: 1px solid var(--border-light);
   }
 
   th {
-    text-align: left;
-    padding: 12px 14px;
+    text-align: center;
+    padding: 8px 12px;
+    border-right: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 900;
     color: var(--text-dark);
   }
 
   tbody tr {
-    height: 56px;
-    border-bottom: 1px solid var(--border-light);
-
-    &:last-child {
-      border-bottom: none;
-    }
+    height: 46px;
 
     &:hover {
-      background: var(--bg-primary);
+      background: var(--primary-soft);
     }
   }
 
   td {
-    padding: 12px 14px;
+    padding: 8px 12px;
+    border-right: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
     color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 800;
+    text-align: center;
     vertical-align: middle;
   }
+
+  th:last-child,
+  td:last-child {
+    border-right: 0;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  &.incomplete-page tbody tr:last-child td {
+    border-bottom: 1px solid var(--border-light);
+  }
+}
+
+.detail-table-pagination {
+  display: block;
+  margin-top: 12px;
 }
 
 .log-datetime,
@@ -368,4 +496,77 @@
   justify-content: center;
   color: var(--text-normal);
   font-size: 1.2rem;
+}
+
+// 管理員詳細頁字級規格：區塊標題 16px，區塊內容統一 14px。
+.info-card .card-title {
+  font-size: 16px;
+}
+
+.info-card p,
+.info-card span:not(.card-title),
+.info-card dt,
+.info-card dd,
+.info-card th,
+.info-card td,
+.info-card .meta-item,
+.info-card .timeline-item,
+.info-card .detail-item,
+.info-card .card-description {
+  font-size: 14px !important;
+}
+
+.info-card .activity-name {
+  font-size: 20px !important;
+}
+
+@media (max-width: 960px) {
+  .cards-grid,
+  .cards-grid-booth {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-list-organizer {
+    .organizer-detail-row {
+      grid-template-columns: 1fr;
+      border-bottom: 0;
+    }
+
+    .detail-item {
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .organizer-address-row .detail-item {
+      border-bottom: 0;
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .activity-main-card {
+    .activity-main-content {
+      flex-direction: column;
+    }
+
+    .main-card-image {
+      position: static;
+      flex-basis: auto;
+
+      img {
+        position: static;
+        width: 100%;
+        height: 200px;
+      }
+    }
+
+    .main-card-meta-row {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+  }
+
+  .booth-card-body {
+    grid-template-columns: 1fr;
+  }
+
 }
