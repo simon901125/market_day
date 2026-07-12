@@ -101,7 +101,7 @@ export class AdminDashboardUserManagement implements AfterViewInit{
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.recalculatePageSize();
-      this.fetchusers();
+      this.fetchUsers();
     });
   }
 
@@ -112,7 +112,7 @@ export class AdminDashboardUserManagement implements AfterViewInit{
 
     if (this.pageSize !== previousPageSize) {
       this.currentPage = 1;
-      this.fetchusers();
+      this.fetchUsers();
     }
   }
 
@@ -132,16 +132,15 @@ export class AdminDashboardUserManagement implements AfterViewInit{
   /** 搜尋按鈕：彙整篩選條件後重新查詢（回到第一頁） */
   onSearch(): void {
     this.currentPage = 1;
-    this.fetchusers();
+    this.fetchUsers();
   }
 
   /** 切換頁碼：每次切頁都重新呼叫一次「後端」 */
   onPageChange(page: number): void {
     this.currentPage = page;
-    this.fetchusers();
+    this.fetchUsers();
   }
 
-  //TODO:按鈕按下後的動作
     /** 產生操作欄位按鈕的點擊處理函式，導向使用者詳細頁 */
     getDetailHandler(user: UserListItem): () => void {
       return () => this.goToDetail(user, user.role);
@@ -181,7 +180,7 @@ export class AdminDashboardUserManagement implements AfterViewInit{
    *     this.totalItems = res.totalItems;
    *   });
    */
-  private fetchusers(): void {
+  private fetchUsers(): void {
     const keyword = this.searchKeyword.trim();
 
     const filtered = this.mockUsers.filter((item) => {
