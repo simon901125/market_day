@@ -893,7 +893,7 @@
     gap: 1rem;
     border-radius: var(--radius-card);
     background: #f7f7f7;
-    font-size: 0.9rem;
+    font-size: 14px;
     font-weight: 800;
     color: var(--text-normal);
     line-height: 1.7;
@@ -918,10 +918,9 @@
 
   .admin-swal-unpublish-form-option-section {
     display: grid;
-    grid-template-rows: repeat(2, 1fr);
-    grid-template-columns: repeat(2, 1fr);
-    padding: 0.8rem 0;
-    gap: 4px;
+    grid-template-columns: repeat(2, max-content);
+    padding: 0.8rem 0 0.2rem;
+    gap: 6px 40px;
     font-size: 0.9rem;
     font-weight: 800;
     line-height: 1.7;
@@ -929,6 +928,23 @@
 
     span {
       grid-column: 1 / -1;
+    }
+
+    .required-mark {
+      color: #ef4444;
+      font-style: normal;
+    }
+
+    &.is-invalid {
+      div input[type="radio"] {
+        border-color: #ef4444;
+      }
+    }
+
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
     div input[type="radio"] {
@@ -947,7 +963,65 @@
   }
 }
 
+// 管理員下架審核內容較長：限制於視窗內，僅讓內容區捲動。
+.admin-unpublish-review-swal {
+  width: min(640px, calc(100vw - 32px)) !important;
+  max-height: none !important;
+  overflow: visible !important;
+
+  .admin-swal-unpublish-form-data-section {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .supplement-swal-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .supplement-swal-counter {
+    font-size: 12px;
+  }
+
+  .registration-swal-field > span i {
+    font-size: 11px;
+  }
+
+  #unpublishReviewError {
+    min-height: 15px;
+    margin: 1px 0 0;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: left;
+  }
+
+  .custom-swal-html {
+    max-height: none;
+    padding-right: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+  }
+
+  .swal2-actions.custom-swal-actions {
+    flex: 0 0 auto;
+    margin-top: 0.5rem !important;
+  }
+
+  @media (max-width: 700px) {
+    .admin-swal-unpublish-form-data-section {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+
+}
+
 .unpublish-request-swal {
+  .supplement-swal-counter {
+    font-size: 12px;
+  }
+
   &.custom-swal-popup .swal2-actions.custom-swal-actions {
     margin: 1.25rem auto 0 !important;
   }

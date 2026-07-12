@@ -67,15 +67,7 @@
               <div class="meta-item"><span>活動類型</span><span class="meta-value">{{ detail.activityInfo.type }}</span></div>
             </div>
             <div class="main-card-meta-row">
-              <div class="meta-item"><span>活動地址</span><span class="meta-value">{{ detail.activityInfo.location }}</span></div>
-              <div class="meta-item">
-                <span>活動標籤</span>
-                <span class="activity-tags">
-                  @for (tag of detail.activityInfo.tags; track tag) {
-                    <span class="activity-tag">{{ tag }}</span>
-                  }
-                </span>
-              </div>
+              <div class="meta-item full-width"><span>活動地址</span><span class="meta-value">{{ detail.activityInfo.location }}</span></div>
             </div>
           </div>
         </div>

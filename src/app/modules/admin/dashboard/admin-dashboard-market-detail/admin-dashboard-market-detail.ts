@@ -361,7 +361,7 @@ export class AdminDashboardMarketDetail implements OnInit {
             </div>
         </div>
         <div class="admin-swal-unpublish-form-option-section">
-            <span>審核結果</span>
+            <span>審核結果 <i class="required-mark">*</i></span>
             <div>
               <input type="radio" value="1" name="approval" id="agreeUnpublish" />
               <label for="agreeUnpublish">同意下架</label>
@@ -371,13 +371,15 @@ export class AdminDashboardMarketDetail implements OnInit {
               <label for="disagreeUnpublish">不同意下架</label>
             </div>
         </div>
-        <label class="registration-swal-field">
+        <label class="registration-swal-field required-reason-field">
             <span>審核說明 <i>*不同意時為必填欄位</i></span>
-            <textarea id="supplementReason" class="supplement-swal-textarea" maxlength="200"
-                placeholder="請輸入說明"></textarea>
-            <em class="supplement-swal-counter" id="supplementCount">0/200</em>
+            <span class="required-reason-control">
+              <textarea id="supplementReason" class="supplement-swal-textarea" maxlength="200"
+                  placeholder="請輸入說明"></textarea>
+              <em class="supplement-swal-counter" id="supplementCount">0/200</em>
+            </span>
         </label>
-        <p class="registration-swal-field-error" aria-live="polite"></p>
+        <p class="registration-swal-field-error" id="unpublishReviewError" aria-live="polite"></p>
     </div>
       `,
       showCancelButton: true,
@@ -385,13 +387,14 @@ export class AdminDashboardMarketDetail implements OnInit {
       cancelButtonText: '取消',
       reverseButtons: true,
       customClass: {
-        popup: 'require-supplement-swal'
+        popup: 'require-supplement-swal admin-unpublish-review-swal'
       },
       didOpen: () => {
         const textarea = document.getElementById('supplementReason') as HTMLTextAreaElement;
         const counter = document.getElementById('supplementCount');
         const agreeRadio = document.getElementById('agreeUnpublish') as HTMLInputElement;
         const disagreeRadio = document.getElementById('disagreeUnpublish') as HTMLInputElement;
+        const approvalSection = document.querySelector<HTMLElement>('.admin-swal-unpublish-form-option-section');
         const reminder = document.querySelector<HTMLElement>('.registration-swal-field span i')
         const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
         if (initialReason && textarea) {
@@ -403,12 +406,17 @@ export class AdminDashboardMarketDetail implements OnInit {
           if (error) {
             error.textContent = '';
           }
+          textarea.classList.remove('is-invalid');
         });
         const updateReminderColor = () => {
+          approvalSection?.classList.remove('is-invalid');
           reminder?.style.setProperty("color", disagreeRadio.checked ? "#ef4444" : "var(--text-normal)");
           reminder?.style.setProperty("font-weight", disagreeRadio.checked ? "600" : "500");
           if (error && agreeRadio.checked) {
             error.textContent = '';
+          }
+          if (agreeRadio.checked) {
+            textarea?.classList.remove('is-invalid');
           }
         };
         agreeRadio?.addEventListener('change', updateReminderColor);
@@ -419,16 +427,22 @@ export class AdminDashboardMarketDetail implements OnInit {
         const value = textarea?.value?.trim() ?? '';
         const agreeRadio = document.getElementById('agreeUnpublish') as HTMLInputElement;
         const disagreeRadio = document.getElementById('disagreeUnpublish') as HTMLInputElement;
+        const approvalSection = document.querySelector<HTMLElement>('.admin-swal-unpublish-form-option-section');
         const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
 
         if (disagreeRadio.checked && !value) {
           if (error) error.textContent = '請填寫審核說明';
+          textarea?.classList.add('is-invalid');
+          textarea?.focus();
           return false;
         }
         if (!agreeRadio.checked && !disagreeRadio.checked) {
           if (error) error.textContent = '請選擇審核結果';
+          approvalSection?.classList.add('is-invalid');
           return false;
         }
+        approvalSection?.classList.remove('is-invalid');
+        textarea?.classList.remove('is-invalid');
         if (error) {
           error.textContent = '';
         }

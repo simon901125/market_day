@@ -202,6 +202,10 @@
       color: var(--text-dark);
     }
   }
+
+  .meta-item.full-width {
+    grid-column: 1 / -1;
+  }
 }
 
 // 狀態標籤
