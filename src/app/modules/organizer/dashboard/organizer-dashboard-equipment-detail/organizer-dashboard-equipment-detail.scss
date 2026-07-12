@@ -86,7 +86,7 @@
 
 .summary-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.28fr) minmax(360px, 0.88fr);
   gap: 12px;
   align-items: stretch;
   margin-bottom: 12px;
@@ -126,25 +126,17 @@
   margin-top: 0;
 }
 
-.activity-card {
-  position: relative;
-
-  > h2 {
-    margin-right: 124px;
-  }
-}
-
 .activity-card .card-heading {
-  position: absolute;
-  top: 16px;
-  right: 22px;
-  z-index: 1;
   display: flex;
+  align-items: center;
+  gap: 16px;
   justify-content: flex-end;
-}
+  margin-bottom: 16px;
 
-.activity-card .card-heading > span {
-  display: none;
+  h2 {
+    margin: 0;
+    margin-right: auto;
+  }
 }
 
 .activity-view-link {
@@ -176,7 +168,7 @@
 
 .activity-content {
   display: grid;
-  grid-template-columns: minmax(320px, 372px) minmax(0, 1fr);
+  grid-template-columns: 260px minmax(0, 1fr);
   align-items: stretch;
   gap: 22px;
 }
@@ -212,57 +204,26 @@
     font-weight: 900;
   }
 
-  dl {
-    display: grid;
-    gap: 10px;
-    margin: 0;
-  }
-
-  div {
-    display: grid;
-    grid-template-columns: 72px minmax(0, 1fr);
-    gap: 10px;
+  p {
+    display: flex;
     align-items: center;
-  }
-
-  dt,
-  dd {
+    gap: 10px;
     margin: 0;
+    color: var(--text-dark);
     font-size: 14px;
     font-weight: 800;
     line-height: 1.35;
   }
-
-  dt {
-    color: var(--text-normal);
-    font-weight: 900;
-  }
-
-  dd {
-    color: var(--text-dark);
-  }
 }
 
-.activity-title-row {
-  display: flex;
+.info-label {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  min-height: 28px;
-  margin-bottom: 12px;
-
-  h3 {
-    min-width: 0;
-    max-width: 100%;
-    line-height: 1.35;
-    white-space: nowrap;
-  }
-
-  .status-badge {
-    flex: 0 0 auto;
-    width: fit-content;
-    min-width: 78px;
-    white-space: nowrap;
-  }
+  gap: 8px;
+  width: 72px;
+  flex: 0 0 72px;
+  color: var(--text-normal);
+  font-weight: 900;
 }
 
 .equipment-overview-card {
@@ -284,6 +245,7 @@
   grid-template-areas:
     "label label label"
     ". value unit";
+  align-items: end;
   align-content: center;
   gap: 3px 5px;
   padding: 10px 12px;
@@ -293,6 +255,7 @@
 
   span {
     grid-area: label;
+    align-self: start;
     color: var(--text-normal);
     font-size: 13px;
     font-weight: 800;
@@ -300,6 +263,7 @@
 
   strong {
     grid-area: value;
+    align-self: end;
     color: var(--text-dark);
     font-size: 22px;
     font-weight: 900;
@@ -313,6 +277,7 @@
     color: var(--text-light);
     font-size: 12px;
     font-weight: 800;
+    line-height: 1;
   }
 }
 
@@ -506,7 +471,7 @@
   }
 
   .activity-content {
-    grid-template-columns: minmax(320px, 372px) minmax(0, 1fr);
+    grid-template-columns: 298px minmax(0, 1fr);
     align-items: stretch;
   }
 
@@ -545,10 +510,6 @@
   }
 
   .activity-card {
-    > h2 {
-      margin-right: 0;
-    }
-
     .card-heading {
       position: static;
       justify-content: flex-start;

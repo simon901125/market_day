@@ -649,3 +649,59 @@
     }
   }
 }
+
+/* Vendor sign-up flow: align with the public-facing Market Day visual system. */
+.market-detail-page {
+  width: var(--user-content-width);
+  padding-top: 32px;
+}
+
+.detail-hero,
+.content-card {
+  border-color: var(--border-primary);
+  border-radius: var(--radius-card);
+  box-shadow: none;
+}
+
+.detail-hero {
+  gap: 28px;
+  padding: 16px;
+}
+
+.hero-image {
+  min-height: 360px;
+}
+
+.status-badge {
+  color: var(--primary-hover);
+  background: var(--bg-primary);
+}
+
+.content-card {
+  margin-top: 16px;
+  padding: 22px 24px;
+
+  h2.green i {
+    color: var(--primary-color);
+  }
+}
+
+.signup-info-card {
+  background: var(--bg-soft);
+}
+
+@media (max-width: 992px) {
+  .market-detail-page {
+    width: var(--user-content-wide-width);
+  }
+}
+
+@media (max-width: 768px) {
+  .market-detail-page {
+    padding-top: 24px;
+  }
+
+  .detail-hero {
+    gap: 20px;
+  }
+}

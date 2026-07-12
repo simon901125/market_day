@@ -1,0 +1,30 @@
+<main class="stall-map-page organizer-detail-page page-transition">
+  <header class="detail-header organizer-detail-header">
+    <div>
+      <nav class="app-breadcrumb" aria-label="麵包屑">
+        <a routerLink="/organizer/dash-board/stall">攤位管理</a>
+        <i class="bi bi-chevron-right"></i>
+        <a (click)="goBack()">攤位詳情</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>攤位地圖</span>
+      </nav>
+      <div class="title-row">
+        <button type="button" class="app-back-link" aria-label="返回攤位詳情" (click)="goBack()"><i class="bi bi-arrow-left"></i></button>
+        <h1 class="app-page-title">攤位地圖</h1>
+      </div>
+    </div>
+  </header>
+
+  <section class="activity-summary" aria-label="活動資訊">
+    <strong class="activity-name">夏日綠意市集</strong>
+    <span class="summary-item activity-time"><i class="bi bi-calendar3"></i>2026/07/18 - 2026/07/19　14:00 - 18:00</span>
+    <span class="summary-item activity-place"><i class="bi bi-geo-alt"></i>宜蘭天天園森林廣場</span>
+    <span class="summary-item booth-stat booth-total"><i class="bi bi-shop"></i><span>攤位總數</span><strong>150</strong> 攤</span>
+    <span class="summary-item booth-stat available-count"><span>可選擇攤位</span><strong>32</strong> 攤</span>
+    <span class="summary-item booth-stat selected-count"><span>已選擇攤位</span><strong>118</strong> 攤</span>
+  </section>
+
+  <section class="map-card">
+    <app-market-map mode="organizer-view"></app-market-map>
+  </section>
+</main>

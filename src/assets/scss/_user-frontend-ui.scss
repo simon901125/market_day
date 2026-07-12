@@ -1,0 +1,245 @@
+// General-user frontend only. Dashboard and vendor frontend keep their own density.
+.user-frontend-page {
+  --user-card-radius: 8px;
+  --user-control-height: 44px;
+  --user-section-gap: 24px;
+
+  min-width: 0;
+  color: var(--text-dark);
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    letter-spacing: 0;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--primary-color) 58%, white);
+    outline-offset: 2px;
+  }
+
+  input:disabled,
+  select:disabled,
+  textarea:disabled,
+  button:disabled,
+  [aria-disabled="true"] {
+    border-color: var(--primary-disable-border);
+    background: var(--primary-disable-bg);
+    color: var(--primary-disable);
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 1;
+  }
+
+  .app-filter-bar {
+    gap: 12px;
+    padding: 16px;
+    border-color: var(--border-soft);
+    border-radius: var(--user-card-radius);
+    box-shadow: none;
+  }
+
+  .app-control-title {
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .app-search-input,
+  app-dropdown .dropdown-control,
+  app-date-range-selector .date-input,
+  .app-btn {
+    min-height: var(--user-control-height);
+    border-radius: 6px;
+  }
+
+  .app-btn {
+    padding-inline: 20px;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .activity-tabs button {
+    min-width: 144px;
+    width: auto;
+    height: var(--user-control-height);
+    padding: 0 24px;
+    border-width: 1px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 800;
+
+    &:disabled {
+      transform: none;
+    }
+  }
+
+  .market-card,
+  .brand-card,
+  .history-card,
+  .content-card,
+  .info-card,
+  .intro-card,
+  .detail-card,
+  .map-card,
+  .booth-detail-card,
+  .contact-card,
+  .value-card {
+    border-color: var(--border-primary);
+    border-radius: var(--user-card-radius);
+    background: var(--bg-white);
+    box-shadow: none;
+  }
+
+  &.user-detail-page {
+    .content-card,
+    .info-card,
+    .intro-card,
+    .detail-card,
+    .map-card,
+    .booth-detail-card,
+    .contact-card,
+    .value-card {
+      border-radius: var(--user-card-radius);
+      box-shadow: none;
+    }
+  }
+
+  .market-card,
+  .brand-card,
+  .history-card {
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+
+    &:hover {
+      border-color: color-mix(in srgb, var(--primary-color) 48%, var(--border-primary));
+      box-shadow: 0 8px 20px rgba(47, 41, 36, 0.1);
+      transform: translateY(-2px);
+    }
+  }
+
+  .market-card .status-badge,
+  .activity-detail .status-badge,
+  .ended-label {
+    min-height: 28px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .tag-list {
+    gap: 8px;
+  }
+
+  .tag-list > span,
+  .tag-chip {
+    min-height: 28px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .breadcrumb,
+  .detail-breadcrumb {
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .card-heading,
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    i {
+      color: var(--primary-color);
+      font-size: 19px;
+    }
+  }
+
+  app-pagination .pagination-row {
+    min-height: 38px;
+    margin-top: 28px;
+  }
+
+  app-pagination .pagination {
+    gap: 10px;
+  }
+
+  app-pagination .pagination button {
+    width: 38px;
+    height: 38px;
+    border-color: var(--border-light);
+    border-radius: 6px;
+    font-size: 14px;
+    transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease;
+  }
+
+  app-pagination .page-info {
+    color: var(--text-normal);
+    font-size: 13px;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-frontend-page {
+    --user-section-gap: 18px;
+
+    .app-filter-bar { padding: 14px; }
+
+    .activity-tabs {
+      gap: 10px;
+
+      button {
+        min-width: 0;
+        flex: 1 1 0;
+        padding-inline: 14px;
+      }
+    }
+
+    app-pagination .pagination { gap: 8px; }
+    app-pagination .page-info { position: static; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user-frontend-page .market-card,
+  .user-frontend-page .brand-card,
+  .user-frontend-page .history-card {
+    transition: none;
+  }
+}

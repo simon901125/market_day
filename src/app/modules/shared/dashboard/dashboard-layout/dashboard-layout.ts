@@ -9,7 +9,7 @@ import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResul
 import { MenuItem } from '../../../../models/interface/shared/MenuItem';
 import { UserMenuItem } from '../../../../models/interface/shared/UserMenuItem';
 import { OrganizerAccountSettings } from '../../../organizer/dashboard/organizer-account-settings/organizer-account-settings';
-import { OrganizerProfileModal } from '../../../organizer/dashboard/organizer-profile-modal/organizer-profile-modal';
+import { OrganizerProfileModal } from '../../../organizer/dashboard/modals/organizer-profile-modal/organizer-profile-modal';
 import { VendorAccountSettings } from '../../../vendor/dashboard/vendor-account-settings/vendor-account-settings';
 import { DashboardSidebar } from '../dashboard-sidebar/dashboard-sidebar';
 

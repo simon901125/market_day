@@ -1,12 +1,12 @@
-<div class="layout-example-backdrop" [class.is-closing]="closing" role="presentation" (click)="closeDialog.emit()">
+<div class="layout-example-backdrop app-modal-backdrop" [class.is-closing]="closing" role="presentation" (click)="closeDialog.emit()">
   <section
-    class="layout-example-dialog"
+    class="layout-example-dialog app-modal app-modal--lg"
     role="dialog"
     aria-modal="true"
     aria-labelledby="layout-example-title"
     (click)="$event.stopPropagation()"
   >
-    <header>
+    <header class="app-modal-header">
       <h2 id="layout-example-title"><i class="bi bi-map"></i>攤位配置圖範例</h2>
       <button type="button" aria-label="關閉範例" (click)="closeDialog.emit()">
         <i class="bi bi-x-lg"></i>
@@ -31,8 +31,8 @@
       <span><strong>注意：</strong>攤位配置圖中的分區名稱，須與上方設定的攤位分區一致。</span>
     </p>
 
-    <footer>
-      <button type="button" class="layout-example-confirm" (click)="closeDialog.emit()">我知道了</button>
+    <footer class="app-modal-actions">
+      <button type="button" class="layout-example-confirm app-btn primary" (click)="closeDialog.emit()">我知道了</button>
     </footer>
   </section>
 </div>

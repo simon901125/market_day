@@ -1,13 +1,13 @@
-<section class="admin-market-detail page-transition">
-  <div class="app-page-header">
-    <div class="header-left">
-      <p class="breadcrumb">
-        <span class="breadcrumb-link" (click)="goBack()">活動管理</span>
-        <span class="breadcrumb-sep">＞</span>
+<section class="admin-market-detail dashboard-detail-page organizer-detail-page page-transition">
+  <header class="detail-header organizer-detail-header">
+    <div>
+      <nav class="app-breadcrumb" aria-label="麵包屑">
+        <button type="button" class="breadcrumb-link" (click)="goBack()">活動管理</button>
+        <i class="bi bi-chevron-right"></i>
         <span class="breadcrumb-mark">活動詳情</span>
-      </p>
+      </nav>
       <div class="title-row">
-        <button class="app-back-link" type="button" (click)="goBack()">
+        <button class="app-back-link" type="button" aria-label="返回活動管理" (click)="goBack()">
           <i class="bi bi-arrow-left"></i>
         </button>
         <h1 class="app-page-title">活動詳情</h1>
@@ -16,17 +16,29 @@
 
     <div class="header-actions">
       @if (activity?.status === ActivityStatus.pendingReview) {
-      <button type="button" class="app-btn secondary" (click)="onRequireSupplementHandler()">要求補件</button>
-      <button type="button" class="app-btn primary" (click)="onApproveHandler()">審核通過</button>
+      <button type="button" class="app-btn secondary" (click)="onRequireSupplementHandler()">
+        <i class="bi bi-file-earmark-text"></i>
+        要求補件
+      </button>
+      <button type="button" class="app-btn primary" (click)="onApproveHandler()">
+        <i class="bi bi-check-circle"></i>
+        審核通過
+      </button>
       }
       @if (activity?.status === ActivityStatus.mapBuilding) {
-      <button type="button" class="app-btn primary" (click)="onMapBuildingDoneHandler()">地圖建置完成</button>
+      <button type="button" class="app-btn primary" (click)="onMapBuildingDoneHandler()">
+        <i class="bi bi-map"></i>
+        地圖建置完成
+      </button>
       }
       @if (activity?.status === ActivityStatus.unpublishRequested) {
-        <button type="button" class="app-btn primary" (click)="onUnpublishHandler()">審核通過</button>
+        <button type="button" class="app-btn primary" (click)="onUnpublishHandler()">
+          <i class="bi bi-check-circle"></i>
+          審核通過
+        </button>
       }
     </div>
-  </div>
+  </header>
 
   @if (detail) {
   <div class="cards-container">
@@ -38,7 +50,7 @@
       </div>
       <div class="main-card-body">
         <div class="main-card-title-row">
-          <h2 class="activity-name">{{ detail.activityInfo.name }}</h2>
+          <h2 class="activity-name"><i class="bi bi-calendar-event"></i>{{ detail.activityInfo.name }}</h2>
         </div>
         <div class="main-card-meta">
           <div class="meta-item">
@@ -78,12 +90,12 @@
     <!-- 活動介紹 + 時間流程 -->
     <div class="cards-grid">
       <div class="info-card">
-        <h3 class="card-title">活動介紹</h3>
+        <h3 class="card-title"><i class="bi bi-card-text"></i>活動介紹</h3>
         <p class="card-description">{{ detail.activityInfo.description }}</p>
       </div>
 
       <div class="info-card">
-        <h3 class="card-title">時間流程</h3>
+        <h3 class="card-title"><i class="bi bi-clock-history"></i>時間流程</h3>
         <div class="timeline-list">
           <div class="timeline-item">
             <i class="bi bi-calendar-check"></i>
@@ -120,7 +132,7 @@
     <!-- 主辦方資料 + 交通方式 -->
     <div class="cards-grid">
       <div class="info-card">
-        <h3 class="card-title">主辦方資料</h3>
+        <h3 class="card-title"><i class="bi bi-building"></i>主辦方資料</h3>
         <div class="detail-list-organizer">
           <div class="detail-item">
             <i class="bi bi-building"></i>
@@ -161,7 +173,7 @@
       </div>
 
       <div class="info-card">
-        <h3 class="card-title">交通方式</h3>
+        <h3 class="card-title"><i class="bi bi-signpost-2"></i>交通方式</h3>
         <div class="detail-list-transportation">
           <div class="detail-item">
             <i class="bi bi-train-front"></i>
@@ -185,7 +197,7 @@
     <!-- 攤位資訊 + 攤位配置圖 -->
     <div class="cards-grid-booth">
       <div class="info-card">
-        <h3 class="card-title">攤位資訊</h3>
+        <h3 class="card-title"><i class="bi bi-grid-3x3-gap"></i>攤位資訊</h3>
         <div class="booth-card-body">
           <div class="detail-list-booth">
             <div class="detail-item ">
@@ -217,7 +229,7 @@
 
       <div class="info-card">
         <div class="booth-layout-header">
-          <h3 class="card-title">攤位配置圖</h3>
+          <h3 class="card-title"><i class="bi bi-map"></i>攤位配置圖</h3>
           <button type="button" class="app-btn secondary" (click)="downloadImg()"><i
               class="bi bi-download"></i>下載配置圖</button>
         </div>
@@ -229,7 +241,7 @@
 
     <!-- 狀態紀錄 -->
     <div class="info-card">
-      <h3 class="card-title">狀態紀錄</h3>
+      <h3 class="card-title"><i class="bi bi-clock-history"></i>狀態紀錄</h3>
       <div class="table-wrapper">
         <table class="status-log-table">
           <thead>

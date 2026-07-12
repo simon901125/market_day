@@ -118,7 +118,7 @@ export class OrganizerDashboardEquipmentDetail implements OnInit {
     image: 'assets/images/market/cards/market-card-01.png',
     activityRows: [
       { label: '活動狀態', value: ActivityStatus.active, type: 'status' },
-      { label: '活動時間', value: '2026/05/30 10:00 ~ 2026/05/31 18:00' },
+      { label: '活動時間', value: '2026/05/30 10:00 - 2026/05/31 18:00' },
       { label: '活動地點', value: '宜蘭縣頭城鎮明明天天園森林廣場' },
       { label: '活動地址', value: '宜蘭縣宜蘭市中興路二段 1 號' },
     ],

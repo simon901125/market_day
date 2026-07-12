@@ -747,3 +747,65 @@ table {
     }
   }
 }
+
+/* Shared public-facing treatment for the vendor application flow. */
+.confirm-page {
+  background: var(--primary-soft);
+}
+
+.page-toolbar {
+  min-height: 60px;
+  margin-bottom: 20px;
+  padding: 12px 18px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-card);
+  background: var(--bg-white);
+}
+
+.stepper {
+  .step-dot {
+    border-color: var(--border-primary);
+    color: var(--text-light);
+    background: var(--bg-soft);
+  }
+
+  .active .step-dot {
+    border-color: var(--primary-color);
+    color: var(--bg-white);
+    background: var(--primary-color);
+  }
+
+  .done .step-dot {
+    border-color: var(--primary-color);
+    color: var(--primary-hover);
+    background: var(--bg-primary);
+  }
+}
+
+.market-summary,
+.detail-card,
+.fee-card {
+  border-color: var(--border-primary);
+  border-radius: var(--radius-card);
+  box-shadow: none;
+}
+
+.market-summary {
+  background: var(--bg-soft);
+}
+
+.detail-card h2 i,
+.fee-card h2 i {
+  color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+  .confirm-page {
+    padding-top: 20px;
+  }
+
+  .page-toolbar {
+    gap: 14px;
+    padding: 14px;
+  }
+}

@@ -1,7 +1,6 @@
-<main class="vendor-stall-page">
-  <header class="page-title">
-    <h1>我的攤位</h1>
-    <i class="bi bi-brightness-high"></i>
+<main class="vendor-stall-page page-transition">
+  <header class="app-page-header">
+    <h1 class="app-page-title">我的攤位</h1>
   </header>
 
   <form class="stall-form" (ngSubmit)="saveChanges()">
@@ -115,7 +114,7 @@
           <small>（最多 {{ maxProducts }} 個）</small>
         </h2>
 
-        <button type="button" class="outline-btn" (click)="openAddProduct()">
+        <button type="button" class="app-btn secondary add-product-btn" (click)="openAddProduct()">
           <i class="bi bi-plus-lg"></i>
           新增商品
         </button>
@@ -154,7 +153,7 @@
       </div>
 
       <div class="save-row">
-        <button type="submit" class="save-btn">儲存變更</button>
+        <button type="submit" class="app-btn primary save-btn">儲存變更</button>
       </div>
     </section>
   </form>

@@ -20,7 +20,7 @@
 
     <app-dropdown
       #organizerDropdown
-      title="主辦方"
+      title="主辦方名稱"
       placeholder="全部"
       [options]="organizerOptions"
       (optionSelected)="onOrganizerSelected($event)"
@@ -28,8 +28,8 @@
 
     <app-dropdown
       #statusDropdown
-      title="狀態"
-      placeholder="全部"
+      title="活動狀態"
+      placeholder="全部狀態"
       [options]="statusOptions"
       (optionSelected)="onStatusSelected($event)"
     ></app-dropdown>
@@ -49,11 +49,11 @@
         <thead>
           <tr>
             <th class="activity-name">活動名稱</th>
-            <th class="activity-organizer">主辦方</th>
             <th class="activity-date">活動日期</th>
-            <th class="activity-status">狀態</th>
-            <th class="activity-cdate">建立時間</th>
-            <th class="activity-btn">操作</th>
+            <th class="activity-status">活動狀態</th>
+            <th class="activity-organizer">主辦方名稱</th>
+            <th class="activity-cdate">送審時間</th>
+            <th class="activity-btn" aria-label="操作"></th>
           </tr>
         </thead>
         <tbody>
@@ -65,18 +65,19 @@
                   <span>{{ activity.name }}</span>
                 </div>
               </td>
-              <td class="activity-organizer">{{ activity.organizer }}</td>
-              <td class="activity-date">{{ activity.startDate }} ~ {{ activity.endDate }}</td>
+              <td class="activity-date">{{ formatDateRange(activity.startDate, activity.endDate) }}</td>
               <td class="activity-status">
                 <span class="status-tag" [class]="getStatusClass(activity.status)">{{ activity.status }}</span>
               </td >
-              <td class="activity-cdate">{{ activity.createdAt }}</td>
+              <td class="activity-organizer">{{ activity.organizer }}</td>
+              <td class="activity-cdate">{{ activity.submittedAt ?? activity.createdAt }}</td>
               <td class="activity-btn">
-                @if (isReviewNeeded(activity.status)) {
-                  <button type="button" class="app-btn primary" (click)="getDetailHandler(activity)()">審核</button>
-                } @else {
+                <div class="activity-actions">
+                  @if (isReviewNeeded(activity.status)) {
+                    <button type="button" class="app-btn primary" (click)="getDetailHandler(activity)()">審核</button>
+                  }
                   <button type="button" class="app-btn secondary" (click)="getDetailHandler(activity)()">查看</button>
-                }
+                </div>
               </td>
             </tr>
           } @empty {

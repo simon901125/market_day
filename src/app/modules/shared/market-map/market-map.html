@@ -1,9 +1,10 @@
 <div
   class="market-map"
   [class.is-public]="mode === 'public'"
+  [class.is-organizer]="mode === 'organizer-view'"
   [class.is-map-fullscreen]="isFullscreenMap"
 >
-  @if (mode !== 'public') {
+  @if (mode !== 'public' && mode !== 'organizer-view') {
     <header class="map-toolbar">
       <label class="map-search">
         <i class="bi bi-search" aria-hidden="true"></i>
@@ -36,6 +37,21 @@
       [class.is-fullscreen]="isFullscreenMap"
       [class.is-closing]="isFullscreenClosing"
     >
+      @if (mode === 'organizer-view') {
+        <div class="organizer-map-toolbar">
+          <app-dropdown
+            title="活動日期"
+            [options]="organizerDates"
+            [selectedValue]="selectedOrganizerDate"
+            (optionSelected)="selectedOrganizerDate = $event"
+          ></app-dropdown>
+          <div class="organizer-map-legend" aria-label="攤位狀態">
+            <span><i class="organizer-swatch available"></i>可選擇攤位</span>
+            <span><i class="organizer-swatch selected"></i>已選擇攤位</span>
+            <span><i class="organizer-swatch active"></i>目前選取</span>
+          </div>
+        </div>
+      }
       <div class="fullscreen-modal-panel">
       @if (mode === 'public') {
         <div class="mobile-map-fullscreen-bar">
@@ -55,7 +71,7 @@
         [attr.viewBox]="viewBox"
         role="img"
         aria-label="小集日攤位地圖"
-        preserveAspectRatio="xMidYMin meet"
+        [attr.preserveAspectRatio]="mode === 'organizer-view' ? 'xMidYMid meet' : 'xMidYMin meet'"
         (click)="clearPublicBoothSelection()"
       >
         <rect
@@ -226,7 +242,7 @@
         </div>
       }
 
-      @if (mode !== 'public') {
+      @if (mode !== 'public' && mode !== 'organizer-view') {
         <div class="map-legend" aria-label="攤位狀態">
           <span><i class="legend-swatch occupied"></i>已進駐</span>
           <span><i class="legend-swatch available"></i>可選擇</span>
@@ -364,7 +380,34 @@
       </aside>
     } @else {
       <aside class="map-detail" aria-live="polite">
-        @if (selectedBooth?.brand; as brand) {
+        @if (mode === 'organizer-view' && selectedBooth; as booth) {
+          <h2 class="organizer-detail-title">攤位資訊</h2>
+          <dl class="organizer-booth-info">
+            <div><dt>攤位編號</dt><dd class="organizer-booth-code">{{ booth.code }}</dd></div>
+            <div><dt>區域</dt><dd>{{ booth.zone }}</dd></div>
+            <div><dt>攤位尺寸（長 × 寬）</dt><dd>3m × 3m</dd></div>
+            <div><dt>攤位狀態</dt><dd><span class="organizer-selected-status" [class.available]="!isOrganizerBoothSelected(booth)">{{ isOrganizerBoothSelected(booth) ? '已選擇' : '可選擇' }}</span></dd></div>
+            @if (isOrganizerBoothSelected(booth)) {
+              <div><dt>選位時間</dt><dd>2026/05/28 14:30</dd></div>
+            }
+          </dl>
+          @if (isOrganizerBoothSelected(booth) && booth.brand; as brand) {
+            <div class="organizer-brand-info">
+              <h2>品牌資訊</h2>
+              <dl>
+                <div><dt>品牌名稱</dt><dd>{{ brand.name }}</dd></div>
+                <div><dt>品牌類型</dt><dd>{{ brand.category }}</dd></div>
+                <div><dt>攤主姓名</dt><dd>林小森</dd></div>
+              </dl>
+              <a class="organizer-registration-link" routerLink="/organizer/dash-board/register/detail">查看報名詳情</a>
+            </div>
+          } @else {
+            <div class="organizer-empty-selection">
+              <i class="bi bi-shop"></i>
+              <p>此攤位尚未被選擇</p>
+            </div>
+          }
+        } @else if (selectedBooth?.brand; as brand) {
           <div class="booth-code-row">
             <span class="selected-code">{{ selectedBooth!.code }}</span>
             <span>{{ selectedBooth!.zone }}</span>

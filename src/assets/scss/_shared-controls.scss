@@ -27,7 +27,7 @@
 .app-filter-bar {
   display: grid;
   align-items: end;
-  gap: 16px;
+  gap: 12px;
   padding: 16px;
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-card);
@@ -48,8 +48,8 @@
   display: block;
   margin: 0 auto 4px 8px;
   color: var(--text-normal);
-  font-size: 0.88rem;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 // 共用搜尋輸入框樣式，讓前台與後台的高度、框線、圓角一致。
@@ -94,8 +94,8 @@
     outline: 0;
     background: transparent;
     color: var(--text-dark);
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
 
     &::placeholder {
       color: var(--text-normal);
@@ -115,8 +115,8 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 800;
   white-space: nowrap;
   cursor: pointer;
   outline: none;
@@ -172,6 +172,37 @@
       border-color: var(--primary-color);
     }
   }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    border-color: var(--primary-disable-border);
+    background: var(--primary-disable-bg);
+    color: var(--primary-disable);
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 1;
+    pointer-events: none;
+  }
+
+  &.is-loading {
+    cursor: wait;
+    pointer-events: none;
+
+    &::before {
+      content: "";
+      width: 14px;
+      height: 14px;
+      flex: 0 0 14px;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: app-button-spin 0.7s linear infinite;
+    }
+  }
+}
+
+@keyframes app-button-spin {
+  to { transform: rotate(360deg); }
 }
 
 // 頁面主要新增按鈕，桌機不滿版、手機滿版。

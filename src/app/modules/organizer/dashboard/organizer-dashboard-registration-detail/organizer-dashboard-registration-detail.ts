@@ -194,6 +194,13 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     return ApplicationStatus.getClass(this.detail.status);
   }
 
+  get registrationPeriods(): string[] {
+    return this.detail.registration.period
+      .split(/[\r\n、]+/)
+      .map((period) => period.replaceAll('、', '').trim())
+      .filter(Boolean);
+  }
+
   get equipmentSummaryRows(): DetailSummaryRow[] {
     return [
       { label: '基本設備', value: this.summarizeEquipment(this.detail.freeEquipmentRows) },
@@ -1062,7 +1069,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
 
   private getRegistrationPeriod(activityTime: string): string {
     const [start, end] = activityTime.split(' - ');
-    return `${start} 13:30 - 20:30、${end} 13:30 - 20:30`;
+    return `${start} 13:30 - 20:30\n${end} 13:30 - 20:30`;
   }
 
   private getBoothCategories(brandType: string): string {

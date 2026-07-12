@@ -1,0 +1,397 @@
+/* Dashboard 共用 UI：由主辦方後台定稿，主辦方與攤主頁面共同使用。 */
+
+@keyframes organizer-modal-backdrop-in {
+  from { background-color: transparent; }
+  to { background-color: var(--alert-backdrop-bg, rgba(0, 0, 0, 0.4)); }
+}
+
+.app-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  padding: 32px;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--alert-backdrop-bg, rgba(0, 0, 0, 0.4));
+    animation: organizer-modal-backdrop-in var(--modal-motion-in, 160ms) ease-out both;
+  }
+
+  &.is-closing::before {
+    animation: market-modal-backdrop-out var(--modal-motion-out, 150ms) ease-in both;
+  }
+}
+
+.app-modal {
+  position: relative;
+  z-index: 1;
+  width: min(560px, calc(100vw - 48px));
+  max-height: calc(100dvh - 48px);
+  border-radius: var(--radius-card);
+  background: var(--bg-white);
+  box-shadow: var(--shadow-card);
+  overflow-y: auto;
+  animation: market-modal-in var(--modal-motion-in, 160ms) ease-out both;
+  backface-visibility: hidden;
+  transform-origin: center;
+
+  &.app-modal--sm { width: min(520px, calc(100vw - 48px)); }
+  &.app-modal--lg { width: min(680px, calc(100vw - 48px)); }
+}
+
+.app-modal-header,
+.app-modal > header {
+  min-height: 34px;
+  margin: 0 0 14px;
+  padding: 24px 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  h2 {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-dark);
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.25;
+
+    i {
+      color: var(--primary-color);
+      font-size: 21px;
+      line-height: 1;
+    }
+  }
+
+  > button {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-dark);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--bg-primary);
+      color: var(--primary-color);
+    }
+  }
+}
+
+.app-modal-section,
+.app-modal .dialog-panel,
+.app-modal .profile-section {
+  margin-inline: 24px;
+  padding: 16px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-tag);
+  background: var(--bg-white);
+
+  + .app-modal-section,
+  + .dialog-panel,
+  + .profile-section {
+    margin-top: 14px;
+  }
+
+  h3 {
+    margin: 0 0 14px;
+    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 900;
+  }
+}
+
+.app-modal-actions,
+.app-modal > footer,
+.app-modal form > footer {
+  margin: 20px 24px 24px;
+  padding: 0;
+  border: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  .app-btn,
+  > button {
+    width: auto;
+    min-width: 112px;
+  }
+}
+
+.organizer-detail-page,
+.dashboard-detail-page,
+.account-detail-page {
+  width: 100%;
+  min-width: 0;
+
+  .organizer-detail-header,
+  > .detail-header,
+  > .event-detail-header {
+    min-height: 52px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .app-breadcrumb {
+    margin-bottom: 8px;
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .title-row {
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .app-page-title { font-size: 22px; }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+
+    .app-btn {
+      width: auto;
+      min-width: 112px;
+      height: 36px;
+      padding: 0 16px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+  }
+
+  .detail-card,
+  .info-card {
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-card);
+    background: var(--bg-white);
+    box-sizing: border-box;
+  }
+
+  .detail-card + .detail-card,
+  .info-card + .info-card { margin-top: 14px; }
+
+  .detail-card > h2,
+  .detail-card .card-heading h2,
+  .info-card > .card-title {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1.35;
+
+    i {
+      color: var(--primary-color);
+      font-size: 19px;
+      line-height: 1;
+    }
+  }
+}
+
+.app-modal,
+.organizer-detail-page,
+.dashboard-detail-page,
+.account-detail-page {
+  .field {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    color: var(--text-dark);
+    font-size: 13px;
+    font-weight: 800;
+
+    b { color: #ef4444; }
+  }
+
+  .field-error {
+    color: var(--validation-text, #ef4444);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    border-color: var(--border-soft);
+    border-radius: var(--radius-tag);
+    color: var(--text-dark);
+    font-size: 13px;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--primary-color);
+  }
+
+  .required,
+  .required-mark,
+  label b {
+    color: var(--validation-text, #ef4444);
+  }
+
+  .field-note,
+  .helper-text {
+    color: var(--text-normal);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .invalid,
+  [data-invalid="true"],
+  [aria-invalid="true"] {
+    border-color: var(--validation-text, #ef4444) !important;
+  }
+
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    border-color: var(--primary-color);
+    outline: 2px solid color-mix(in srgb, var(--primary-color) 18%, transparent);
+    outline-offset: 1px;
+  }
+
+  input:disabled,
+  select:disabled,
+  textarea:disabled,
+  [aria-disabled="true"] {
+    border-color: var(--primary-disable-border);
+    background: var(--primary-disable-bg);
+    color: var(--primary-disable);
+    cursor: not-allowed;
+    opacity: 1;
+  }
+}
+
+// The profile form already owns the modal's horizontal content padding.
+.app-modal .profile-form > .app-modal-section {
+  margin-inline: 0;
+}
+
+.app-choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+}
+
+.app-choice {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dark);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  input {
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    flex: 0 0 17px;
+  }
+
+  &:has(input:disabled) {
+    color: var(--primary-disable);
+    cursor: not-allowed;
+  }
+}
+
+.app-toggle {
+  position: relative;
+  width: 42px;
+  height: 24px;
+  display: inline-flex;
+  flex: 0 0 42px;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  span {
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--primary-disable-border);
+    cursor: pointer;
+    transition: background-color 150ms ease;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--bg-white);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+      transition: transform 150ms ease;
+    }
+  }
+
+  input:checked + span { background: var(--primary-color); }
+  input:checked + span::after { transform: translateX(18px); }
+  input:focus-visible + span { outline: 2px solid var(--primary-color); outline-offset: 2px; }
+  input:disabled + span { cursor: not-allowed; opacity: 0.55; }
+}
+
+@media (max-width: 720px) {
+  .app-modal-backdrop { padding: 16px; }
+  .app-modal { width: 100% !important; max-height: calc(100dvh - 32px); }
+  .app-modal-actions,
+  .app-modal > footer,
+  .app-modal form > footer { flex-direction: column-reverse; }
+  .app-modal-actions .app-btn,
+  .app-modal-actions > button,
+  .app-modal > footer > button,
+  .app-modal form > footer > button { width: 100%; }
+
+  .organizer-detail-page,
+  .dashboard-detail-page,
+  .account-detail-page {
+    .organizer-detail-header,
+    > .detail-header,
+    > .event-detail-header {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .header-actions { width: 100%; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-modal-backdrop::before,
+  .app-modal { animation: none !important; }
+}

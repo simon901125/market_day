@@ -1,5 +1,5 @@
 ﻿<main class="account-detail-page page-transition">
-  <header class="detail-header">
+  <header class="detail-header organizer-detail-header">
     <div>
       <nav class="app-breadcrumb" aria-label="麵包屑">
         <a
@@ -32,26 +32,18 @@
       <article class="detail-card activity-card">
         <h2><i class="bi bi-calendar-event"></i>活動資訊</h2>
         <div class="activity-content">
-          <img [src]="detail.activityImage" [alt]="detail.activityName" />
-          <div class="activity-identity">
-            <div class="activity-name-row">
-              <strong>{{ detail.activityName }}</strong>
+          <div class="activity-image-frame">
+            <img [src]="detail.activityImage" [alt]="detail.activityName" />
+          </div>
+          <div class="activity-info">
+            <h3>{{ detail.activityName }}</h3>
+            <p>
+              <span class="info-label">活動狀態</span>
               <span class="status-badge" [class]="detail.activityStatusClass">{{ detail.activityStatus }}</span>
-            </div>
-            <dl class="activity-meta">
-              <div>
-                <dt>活動日期</dt>
-                <dd>{{ detail.activityDate }}</dd>
-              </div>
-              <div>
-                <dt>活動地點</dt>
-                <dd>{{ detail.activityLocation }}</dd>
-              </div>
-            </dl>
-            <div class="activity-counts">
-              <span>攤位 {{ detail.totalBooths }}</span>
-              <span>已付款 {{ detail.paidBooths }}</span>
-            </div>
+            </p>
+            <p><span class="info-label">活動時間</span>{{ detail.activityDate }}</p>
+            <p><span class="info-label">活動地點</span>{{ detail.activityLocation }}</p>
+            <p><span class="info-label">活動地址</span>{{ detail.activityAddress }}</p>
           </div>
         </div>
       </article>
@@ -66,16 +58,14 @@
             </div>
           }
         </div>
-        <div class="net-row">
+        <div class="calculation-box">
           <div class="calculation-rule">
             <span>計算方式</span>
-            <strong>收款總額 - 退款總額 - 已退保證金</strong>
-            <small>= 實收金額</small>
+            <strong>收款總額 - 退款總額 - 已退保證金 = 實收金額</strong>
           </div>
-          <div class="calculation-result">
-            <span>本場計算</span>
-            <strong>{{ grossAmount }} - {{ refundTotal }} - {{ returnedDeposit }} =</strong>
-            <em>{{ detail.netAmount }}</em>
+          <div class="calculation-total">
+            <span>實收金額</span>
+            <mark>{{ detail.netAmount }}</mark>
           </div>
         </div>
       </article>
@@ -84,8 +74,12 @@
     <section class="stat-grid">
       <article class="detail-card stat-card">
         <h2><i class="bi bi-currency-dollar"></i>付款統計</h2>
-        <div class="stat-items">
-          @for (item of detail.paymentStats; track item.label) {
+        <div class="stat-primary">
+          <span>已付款攤位</span>
+          <strong>{{ detail.paymentStats[1].value }} / {{ detail.paymentStats[0].value }}</strong>
+        </div>
+        <div class="stat-supporting">
+          @for (item of [detail.paymentStats[0], detail.paymentStats[2], detail.paymentStats[3]]; track item.label) {
             <div>
               <span>{{ item.label }}</span>
               <strong>{{ item.value }}</strong>
@@ -96,8 +90,12 @@
 
       <article class="detail-card stat-card">
         <h2><i class="bi bi-arrow-counterclockwise"></i>退款統計</h2>
-        <div class="stat-items">
-          @for (item of detail.refundStats; track item.label) {
+        <div class="stat-primary">
+          <span>{{ detail.refundStats[1].label }}</span>
+          <strong>{{ detail.refundStats[1].value }}</strong>
+        </div>
+        <div class="stat-supporting">
+          @for (item of [detail.refundStats[0], detail.refundStats[2], detail.refundStats[3]]; track item.label) {
             <div>
               <span>{{ item.label }}</span>
               <strong>{{ item.value }}</strong>
@@ -108,8 +106,12 @@
 
       <article class="detail-card stat-card">
         <h2><i class="bi bi-shield-check"></i>保證金統計</h2>
-        <div class="stat-items">
-          @for (item of detail.depositStats; track item.label) {
+        <div class="stat-primary">
+          <span>{{ detail.depositStats[0].label }}</span>
+          <strong>{{ detail.depositStats[0].value }}</strong>
+        </div>
+        <div class="stat-supporting">
+          @for (item of [detail.depositStats[1], detail.depositStats[2], detail.depositStats[3]]; track item.label) {
             <div>
               <span>{{ item.label }}</span>
               <strong>{{ item.value }}</strong>

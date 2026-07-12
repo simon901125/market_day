@@ -7,21 +7,21 @@
 .market-card {
   height: 100%;
   overflow: hidden;
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-card);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
   background: var(--bg-white);
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 5px 18px rgba(47, 41, 36, 0.06);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-card);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(47, 41, 36, 0.1);
   }
 }
 
 .market-img {
   position: relative;
-  height: 185px;
+  height: 195px;
   overflow: hidden;
 
   img {
@@ -38,39 +38,40 @@
   left: 14px;
   padding: 5px 12px;
   border-radius: 6px;
-  color: var(--bg-white);
+  // 攤主前台活動卡與一般使用者前台一致：半透明色塊搭配白字。
+  color: var(--bg-white) !important;
   font-size: 13px;
   font-weight: 900;
   line-height: 1.2;
 
   &.active,
   &.status-active {
-    background: var(--market-status-active-bg);
+    background: var(--market-status-active-overlay-bg) !important;
   }
 
   &.upcoming,
   &.status-upcoming {
-    background: var(--market-status-upcoming-bg);
+    background: var(--market-status-upcoming-overlay-bg) !important;
   }
 
   &.preview,
   &.status-preview {
-    background: var(--market-status-preparing-bg);
+    background: var(--market-status-preview-overlay-bg) !important;
   }
 
   &.ended,
   &.status-ended {
-    background: var(--market-status-ended-bg);
+    background: var(--market-status-ended-overlay-bg) !important;
   }
 }
 
 .market-body {
-  padding: 16px 18px 18px;
+  padding: 17px 18px 20px;
 
   h3 {
-    margin: 14px 0 10px;
+    margin: 12px 0 10px;
     color: var(--text-dark);
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 900;
     line-height: 1.4;
   }
@@ -84,6 +85,7 @@
 
   span {
     padding: 5px 9px;
+    border: 1px solid transparent;
     border-radius: 6px;
     background: var(--bg-soft);
     font-size: 13px;
@@ -93,11 +95,22 @@
   }
 
   .deadline {
+    background: var(--bg-primary);
     color: var(--text-dark);
   }
 
   .city {
-    color: var(--primary-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-color: rgba(245, 158, 11, 0.24);
+    background: var(--bg-primary);
+    color: var(--primary-hover);
+
+    i {
+      color: var(--primary-color);
+      font-size: 12px;
+    }
   }
 }
 
@@ -160,6 +173,7 @@
   .slot-item {
     padding: 7px 10px;
     border-radius: 6px;
+    border: 1px solid var(--border-light);
     background: var(--bg-soft);
     color: var(--text-dark);
     font-size: 13px;

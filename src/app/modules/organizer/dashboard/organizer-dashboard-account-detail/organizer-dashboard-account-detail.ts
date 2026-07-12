@@ -33,6 +33,7 @@ interface AccountDetail {
   activityStatusClass: string;
   activityDate: string;
   activityLocation: string;
+  activityAddress: string;
   totalBooths: string;
   paidBooths: string;
   summary: StatItem[];
@@ -65,6 +66,7 @@ export class OrganizerDashboardAccountDetail implements OnInit {
       activityStatus: ActivityStatus.registrationOpen,
       activityDate: '2026/07/18 - 2026/07/19',
       activityLocation: '台北市信義區香堤大道廣場',
+      activityAddress: '信義區市集路 81 號',
       totalBooths: '60 攤',
       paidBooths: '28 攤',
       netAmount: '$73,600',
@@ -74,6 +76,7 @@ export class OrganizerDashboardAccountDetail implements OnInit {
       activityStatus: '待選位',
       activityDate: '2026/09/12 - 2026/09/13',
       activityLocation: '台北市大同區延平河濱公園',
+      activityAddress: '大同區延平北路二段 120 號',
       totalBooths: '70 攤',
       paidBooths: '35 攤',
       netAmount: '$116,400',
@@ -176,13 +179,14 @@ export class OrganizerDashboardAccountDetail implements OnInit {
       activityStatus: ActivityStatus.registrationOpen,
       activityDate: '2026/07/18 - 2026/07/19',
       activityLocation: '台北市信義區香堤大道廣場',
+      activityAddress: '信義區市集路 81 號',
       totalBooths: '60 攤',
       paidBooths: '28 攤',
       summary: [
         { label: '收款總額', value: '$100,800' },
         { label: '退款總額', value: '$7,200' },
         { label: '已退保證金', value: '$20,000' },
-        { label: '沒收保證金', value: '$8,000' },
+        { label: '未退還保證金', value: '$8,000' },
       ],
       netAmount: '$73,600',
       paymentStats: [

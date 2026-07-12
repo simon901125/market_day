@@ -33,24 +33,25 @@
   left: 14px;
   padding: 4px 10px;
   border-radius: 6px;
-  color: #fff;
+  // 一般使用者前台維持半透明色塊與白字，避免被 Dashboard 共用色票覆蓋。
+  color: #fff !important;
   font-size: 0.8rem;
   font-weight: 700;
 
   &.active {
-    background: var(--market-status-active-bg);
+    background: var(--market-status-active-overlay-bg) !important;
   }
 
   &.upcoming {
-    background: var(--market-status-upcoming-bg);
+    background: var(--market-status-upcoming-overlay-bg) !important;
   }
 
   &.preview {
-    background: var(--market-status-preparing-bg);
+    background: var(--market-status-preview-overlay-bg) !important;
   }
 
   &.ended {
-    background: var(--market-status-ended-bg);
+    background: var(--market-status-ended-overlay-bg) !important;
   }
 }
 

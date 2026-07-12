@@ -489,3 +489,75 @@
     }
   }
 }
+
+/* Shared public-facing treatment for the vendor application flow. */
+.complete-page {
+  width: var(--user-content-width);
+  padding-top: 32px;
+}
+
+.stepper {
+  margin-bottom: 44px;
+  padding: 14px 18px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-card);
+  background: var(--bg-white);
+
+  .step-dot {
+    border-color: var(--border-primary);
+    color: var(--text-light);
+    background: var(--bg-soft);
+  }
+
+  .active .step-dot,
+  .done .step-dot {
+    border-color: var(--primary-color);
+    color: var(--primary-hover);
+    background: var(--bg-primary);
+  }
+}
+
+.success-mark {
+  width: 88px;
+  height: 88px;
+  color: var(--primary-color);
+  background: var(--bg-primary);
+  font-size: 3rem;
+}
+
+.confetti {
+  display: none;
+}
+
+.application-meta {
+  margin: 28px auto 36px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-soft);
+}
+
+.complete-card {
+  border-color: var(--border-primary);
+  border-radius: var(--radius-card);
+  box-shadow: none;
+}
+
+.application-summary {
+  border-color: var(--border-primary);
+}
+
+@media (max-width: 992px) {
+  .complete-page {
+    width: var(--user-content-wide-width);
+  }
+}
+
+@media (max-width: 576px) {
+  .complete-page {
+    padding-top: 20px;
+  }
+
+  .stepper {
+    margin-bottom: 32px;
+    padding: 12px 10px;
+  }
+}

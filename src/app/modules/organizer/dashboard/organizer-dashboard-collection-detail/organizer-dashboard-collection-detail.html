@@ -1,5 +1,5 @@
-<main class="collection-detail-page page-transition">
-  <header class="detail-header">
+<main class="collection-detail-page organizer-detail-page page-transition">
+  <header class="detail-header organizer-detail-header">
     <div>
       <nav class="app-breadcrumb" aria-label="麵包屑">
         <a routerLink="/organizer/dash-board/collection" [queryParams]="{ page: returnPage, status: returnStatus || null }">
@@ -38,17 +38,21 @@
     <section class="top-grid">
       <article class="detail-card payment-overview-card">
         <h2><i class="bi bi-wallet2"></i>收款資訊</h2>
-        <dl class="summary-list payment-summary-list">
-          @for (row of paymentSummaryRows; track row.label) {
+        <div class="payment-focus">
+          <div>
+            <span>付款狀態</span>
+            <strong><span class="status-badge" [class]="paymentStatusClass">{{ detail.paymentStatus }}</span></strong>
+          </div>
+          <div class="payment-focus-amount">
+            <span>付款金額</span>
+            <strong>{{ detail.feeTotal }}</strong>
+          </div>
+        </div>
+        <dl class="payment-meta-list">
+          @for (row of [paymentSummaryRows[3], paymentSummaryRows[2], paymentSummaryRows[4]]; track row.label) {
             <div>
               <dt>{{ row.label }}</dt>
-              <dd [class.amount]="row.type === 'amount'">
-                @if (row.type === 'status') {
-                  <span class="status-badge" [class]="paymentStatusClass">{{ row.value }}</span>
-                } @else {
-                  {{ row.value }}
-                }
-              </dd>
+              <dd>{{ row.value }}</dd>
             </div>
           }
           @if (detail.depositStatus) {
@@ -78,17 +82,25 @@
             </button>
           </div>
         </div>
-        <dl class="info-grid compact">
-          @for (row of registrationSummaryRows; track row.label) {
+        <div class="registration-focus">
+          <div>
+            <span>活動名稱</span>
+            <strong>{{ detail.activityName }}</strong>
+          </div>
+          <div class="registration-focus-status">
+            <span>報名狀態</span>
+            <strong>
+              <span class="status-badge" [class]="registrationStatusClass">{{ detail.registrationStatus }}</span>
+            </strong>
+          </div>
+        </div>
+        <dl class="registration-meta-grid">
+          @for (row of [registrationSummaryRows[0], registrationSummaryRows[3], registrationSummaryRows[4], registrationSummaryRows[5]]; track row.label) {
             <div>
               <dt>{{ row.label }}</dt>
               <dd>{{ row.value }}</dd>
             </div>
           }
-          <div>
-            <dt>報名狀態</dt>
-            <dd><span class="status-badge" [class]="registrationStatusClass">{{ detail.registrationStatus }}</span></dd>
-          </div>
         </dl>
       </article>
     </section>

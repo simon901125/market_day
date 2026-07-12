@@ -1,39 +1,24 @@
 .vendor-stall-page {
-  width: min(1200px, 100%);
-  padding: 10px 8px 34px;
+  width: min(100%, var(--dashboard-content-width));
+  margin: 0 auto;
+  padding: 0 0 32px;
   color: var(--text-dark);
 }
 
-.page-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 22px;
-
-  h1 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 900;
-    line-height: 1;
-  }
-
-  i {
-    color: var(--primary-color);
-    font-size: 26px;
-  }
+.app-page-header {
+  margin-bottom: 14px;
 }
 
 .stall-form {
   display: grid;
-  gap: 10px;
+  gap: 14px;
 }
 
 .stall-card {
-  padding: 26px 34px;
+  padding: 18px;
   border: 1px solid var(--border-light);
-  border-radius: 14px;
+  border-radius: var(--radius-card);
   background: var(--bg-white);
-  box-shadow: var(--shadow-soft);
 }
 
 .card-title {
@@ -91,7 +76,7 @@
   select,
   textarea {
     width: 100%;
-    min-height: 46px;
+    min-height: 40px;
     padding: 0 16px;
     border: 1px solid var(--border-light);
     border-radius: 8px;
@@ -113,25 +98,8 @@
   }
 }
 
-.outline-btn,
-.save-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 900;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.outline-btn {
-  height: 42px;
-  gap: 8px;
-  padding: 0 18px;
-  border: 1px solid var(--primary-color);
-  background: var(--bg-white);
-  color: var(--primary-color);
+.add-product-btn {
+  width: auto;
 }
 
 .avatar-row {
@@ -296,10 +264,6 @@
 
 .save-btn {
   width: 170px;
-  height: 44px;
-  border: 1px solid var(--primary-color);
-  background: var(--primary-color);
-  color: var(--bg-white);
 }
 
 @media (max-width: 992px) {

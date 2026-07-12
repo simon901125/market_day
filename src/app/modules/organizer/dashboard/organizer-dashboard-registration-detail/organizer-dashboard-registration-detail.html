@@ -1,5 +1,5 @@
-<main class="registration-detail-page page-transition">
-  <header class="event-detail-header">
+<main class="registration-detail-page organizer-detail-page page-transition">
+  <header class="event-detail-header organizer-detail-header">
     <div>
       <nav class="app-breadcrumb" aria-label="麵包屑">
         <a routerLink="/organizer/dash-board/register" [queryParams]="{ page: returnPage, status: returnStatus || null }">
@@ -40,37 +40,67 @@
 
   <div class="detail-content">
     <section class="detail-summary-grid">
-      <article class="detail-card activity-card">
-        <div class="card-heading">
-          <h2><i class="bi bi-calendar-event"></i>活動資訊</h2>
-          <button
-            type="button"
-            class="brand-button"
-            (click)="handlePageAction({ key: 'viewActivity', label: '查看活動' })"
-          >
-            <i class="bi bi-eye"></i>
-            查看活動
-          </button>
-        </div>
-        <div class="activity-content">
-          <div class="activity-image-frame">
-            <img [src]="detail.activity.image" [alt]="detail.activity.name" />
+      <div class="summary-left-column">
+        <article class="detail-card activity-card">
+          <div class="card-heading">
+            <h2><i class="bi bi-calendar-event"></i>活動資訊</h2>
+            <button
+              type="button"
+              class="brand-button"
+              (click)="handlePageAction({ key: 'viewActivity', label: '查看活動' })"
+            >
+              <i class="bi bi-eye"></i>
+              查看活動
+            </button>
           </div>
-          <div class="activity-info">
-            <h3>{{ detail.activity.name }}</h3>
-            <p>
-              <span class="info-label">活動狀態</span>
-              <span class="status-badge tag-green">{{ detail.activity.status }}</span>
-            </p>
-            <p><span class="info-label">活動時間</span>{{ detail.activity.date }}</p>
-            <p><span class="info-label">活動地點</span>{{ detail.activity.location }}</p>
-            <p><span class="info-label">活動地址</span>{{ detail.activity.address }}</p>
+          <div class="activity-content">
+            <div class="activity-image-frame">
+              <img [src]="detail.activity.image" [alt]="detail.activity.name" />
+            </div>
+            <div class="activity-info">
+              <h3>{{ detail.activity.name }}</h3>
+              <p>
+                <span class="info-label">活動狀態</span>
+                <span class="status-badge tag-green">{{ detail.activity.status }}</span>
+              </p>
+              <p><span class="info-label">活動時間</span>{{ detail.activity.date }}</p>
+              <p><span class="info-label">活動地點</span>{{ detail.activity.location }}</p>
+              <p><span class="info-label">活動地址</span>{{ detail.activity.address }}</p>
+            </div>
           </div>
-        </div>
-      </article>
+        </article>
+
+        <article class="detail-card payment-summary-card top-payment-card">
+          <div class="card-heading">
+            <h2><i class="bi bi-wallet2"></i>付款資訊</h2>
+            <button
+              type="button"
+              class="brand-button"
+              (click)="handlePageAction({ key: 'goPaymentManagement', label: '查看收款詳情' })"
+            >
+              <i class="bi bi-eye"></i>
+              查看收款詳情
+            </button>
+          </div>
+          <dl class="summary-list payment-summary-grid">
+            @for (row of paymentSummaryRows; track row.label) {
+              <div>
+                <dt>{{ row.label }}</dt>
+                <dd [class.amount]="row.type === 'amount'">
+                  @if (row.type === 'status') {
+                    <span class="status-badge" [class]="statusClass">{{ row.value }}</span>
+                  } @else {
+                    {{ row.value }}
+                  }
+                </dd>
+              </div>
+            }
+          </dl>
+        </article>
+      </div>
 
       <article class="detail-card registration-card">
-        <h2><i class="bi bi-person"></i>報名資訊</h2>
+        <h2><i class="bi bi-person"></i>報名內容</h2>
         <dl class="info-list">
           <div>
             <dt>報名編號</dt>
@@ -81,6 +111,30 @@
             <dd>
               <span class="status-badge" [class]="statusClass">{{ detail.status }}</span>
             </dd>
+          </div>
+          <div class="registration-period-row">
+            <dt>報名時段</dt>
+            <dd class="registration-period-list">
+              @for (period of registrationPeriods; track period) {
+                <span>{{ period }}</span>
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>攤位尺寸</dt>
+            <dd>{{ detail.registration.boothSpec }}</dd>
+          </div>
+          <div>
+            <dt>攤位類別</dt>
+            <dd>{{ detail.registration.boothCategories }}</dd>
+          </div>
+          <div>
+            <dt>車牌號碼</dt>
+            <dd>{{ detail.registration.vehiclePlate }}</dd>
+          </div>
+          <div>
+            <dt>備註</dt>
+            <dd>{{ detail.registration.note }}</dd>
           </div>
         </dl>
       </article>
@@ -175,29 +229,15 @@
         </div>
       </article>
 
-      <article class="detail-card content-card">
-        <h2><i class="bi bi-list-ul"></i>報名內容</h2>
-        <dl class="table-list">
-          <div>
-            <dt>報名時段</dt>
-            <dd>{{ detail.registration.period }}</dd>
-          </div>
-          <div>
-            <dt>攤位尺寸</dt>
-            <dd>{{ detail.registration.boothSpec }}</dd>
-          </div>
-          <div>
-            <dt>攤位類別</dt>
-            <dd>{{ detail.registration.boothCategories }}</dd>
-          </div>
-          <div>
-            <dt>車牌號碼</dt>
-            <dd>{{ detail.registration.vehiclePlate }}</dd>
-          </div>
-          <div>
-            <dt>備註</dt>
-            <dd>{{ detail.registration.note }}</dd>
-          </div>
+      <article class="detail-card equipment-summary-card">
+        <h2><i class="bi bi-box-seam"></i>設備／用電需求摘要</h2>
+        <dl class="summary-list">
+          @for (row of equipmentSummaryRows; track row.label) {
+            <div>
+              <dt>{{ row.label }}</dt>
+              <dd>{{ row.value }}</dd>
+            </div>
+          }
         </dl>
       </article>
 
@@ -239,45 +279,6 @@
         </table>
       </article>
 
-      <article class="detail-card payment-summary-card">
-        <div class="card-heading">
-          <h2><i class="bi bi-wallet2"></i>付款資訊摘要</h2>
-          <button
-            type="button"
-            class="brand-button"
-            (click)="handlePageAction({ key: 'goPaymentManagement', label: '查看收款詳情' })"
-          >
-            <i class="bi bi-eye"></i>
-            查看收款詳情
-          </button>
-        </div>
-        <dl class="summary-list compact">
-          @for (row of paymentSummaryRows; track row.label) {
-            <div>
-              <dt>{{ row.label }}</dt>
-              <dd [class.amount]="row.type === 'amount'">
-                @if (row.type === 'status') {
-                  <span class="status-badge" [class]="statusClass">{{ row.value }}</span>
-                } @else {
-                  {{ row.value }}
-                }
-              </dd>
-            </div>
-          }
-        </dl>
-      </article>
-
-      <article class="detail-card equipment-summary-card">
-        <h2><i class="bi bi-box-seam"></i>設備／用電需求摘要</h2>
-        <dl class="summary-list">
-          @for (row of equipmentSummaryRows; track row.label) {
-            <div>
-              <dt>{{ row.label }}</dt>
-              <dd>{{ row.value }}</dd>
-            </div>
-          }
-        </dl>
-      </article>
     </section>
   </div>
 </main>

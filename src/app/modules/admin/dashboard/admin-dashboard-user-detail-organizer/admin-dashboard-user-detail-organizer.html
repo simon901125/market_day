@@ -1,13 +1,13 @@
-<section class="admin-organizer-detail page-transition">
-  <div class="app-page-header">
-    <div class="header-left">
-      <p class="breadcrumb">
-        <span class="breadcrumb-link" (click)="goBack()">使用者管理</span>
-        <span class="breadcrumb-sep">＞</span>
+<section class="admin-organizer-detail dashboard-detail-page organizer-detail-page page-transition">
+  <header class="detail-header organizer-detail-header">
+    <div>
+      <nav class="app-breadcrumb" aria-label="麵包屑">
+        <button type="button" class="breadcrumb-link" (click)="goBack()">使用者管理</button>
+        <i class="bi bi-chevron-right"></i>
         <span class="breadcrumb-mark">主辦方詳情</span>
-      </p>
+      </nav>
       <div class="title-row">
-        <button class="app-back-link" type="button" (click)="goBack()">
+        <button class="app-back-link" type="button" aria-label="返回使用者管理" (click)="goBack()">
           <i class="bi bi-arrow-left"></i>
         </button>
         <h1 class="app-page-title">主辦方詳情</h1>
@@ -22,7 +22,7 @@
       }
       }
     </div>
-  </div>
+  </header>
 
   @if (detail) {
   <div class="cards-container">
@@ -35,7 +35,7 @@
 
         <!-- 使用者基本資料 -->
         <div class="info-card">
-          <h3 class="card-title">帳號資訊</h3>
+          <h3 class="card-title"><i class="bi bi-person-circle"></i>帳號資訊</h3>
           <div class="detail-list">
             <div class="detail-item">
               <i class="bi bi-person-circle"></i>
@@ -88,7 +88,7 @@
 
         <!-- 主辦方資料 -->
         <div class="info-card">
-          <h3 class="card-title">主辦方資料</h3>
+          <h3 class="card-title"><i class="bi bi-building"></i>主辦方資料</h3>
           <div class="detail-list organizerInfo">
             <div class="detail-item">
               <i class="bi bi-building"></i>
@@ -137,7 +137,7 @@
 
       <!-- 右欄：登入紀錄 -->
       <div class="info-card login-records-card">
-        <h3 class="card-title">登入紀錄</h3>
+        <h3 class="card-title"><i class="bi bi-box-arrow-in-right"></i>登入紀錄</h3>
         <div class="table-wrapper">
           <table class="log-table">
             <thead>
@@ -174,7 +174,7 @@
 
     <!-- 活動管理紀錄 -->
     <div class="info-card">
-      <h3 class="card-title">活動管理紀錄</h3>
+      <h3 class="card-title"><i class="bi bi-calendar-event"></i>活動管理紀錄</h3>
       <div class="table-wrapper">
         <table class="log-table">
           <thead>
@@ -183,7 +183,7 @@
               <th>活動日期</th>
               <th class="col-center">活動狀態</th>
               <th class="col-center">報名人數</th>
-              <th class="col-center">操作</th>
+              <th class="col-center" aria-label="操作"></th>
             </tr>
           </thead>
           <tbody>

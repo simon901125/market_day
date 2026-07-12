@@ -1,0 +1,52 @@
+:host {
+  display: block;
+}
+
+.stall-management {
+  width: min(100%, var(--dashboard-content-width));
+  min-height: calc(100dvh - 48px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: visible;
+}
+
+.stall-filters {
+  grid-template-columns: minmax(240px, 1.15fr) minmax(180px, 0.75fr) minmax(320px, 1.25fr) 92px;
+}
+
+:host ::ng-deep .stall-table .dashboard-table {
+  table-layout: fixed;
+}
+
+:host ::ng-deep .stall-table td[data-column='location'] span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:host ::ng-deep .stall-status-pending { color: #6d3fa0; background: #f3e8ff; }
+:host ::ng-deep .stall-status-open { color: #2e7d45; background: #eaf8e8; }
+:host ::ng-deep .stall-status-full { color: #c76a12; background: #fff4e8; }
+:host ::ng-deep .stall-status-public { color: #287d68; background: #ecfdf5; }
+:host ::ng-deep .stall-status-active { color: #2f5f9e; background: #eaf2ff; }
+:host ::ng-deep .stall-status-offline { color: #b83268; background: #fce7f3; }
+:host ::ng-deep .stall-status-ended { color: #5f6368; background: #f3f4f6; }
+
+@media (max-width: 1200px) {
+  .stall-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .stall-management {
+    gap: 16px;
+  }
+
+  .stall-filters {
+    grid-template-columns: 1fr;
+  }
+}

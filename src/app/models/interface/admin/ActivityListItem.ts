@@ -14,6 +14,8 @@ export interface ActivityListItem {
   endDate: string;
   /** 活動狀態，對應 ActivityStatus 的值 */
   status: string;
-  /** 建立時間 */
-  createdAt: string;
+  /** 最近一次送審時間（管理列表使用） */
+  submittedAt?: string;
+  /** 建立時間（舊詳細頁資料相容欄位） */
+  createdAt?: string;
 }

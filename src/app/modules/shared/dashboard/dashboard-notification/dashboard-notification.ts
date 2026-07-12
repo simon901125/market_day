@@ -32,7 +32,8 @@ export class DashboardNotification {
 
   activeTab = '全部';
   currentPage = 1;
-  pageSize = 8;
+  /** 通知中心預設並可明確指定每頁 8 筆。 */
+  @Input() pageSize = 8;
 
   get filteredNotifications(): NotificationItem[] {
     if (this.activeTab === '未讀') {

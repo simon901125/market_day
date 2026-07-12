@@ -105,7 +105,7 @@ export class AdminDashboardUserDetailVender implements OnInit {
   }
 
   registrationCurrentPage = 1;
-  readonly registrationPageSize = 8;
+  readonly registrationPageSize = 6;
 
   get registrationRecordTotal(): number {
     return this.detail?.detail.activityRegistrationRecords.total ?? 0;

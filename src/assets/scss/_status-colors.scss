@@ -1,109 +1,139 @@
-﻿// 市集狀態變數與共用狀態配色
+// 全站狀態色票
 :root {
-  /** 市集狀態：進行中 */
-  --market-status-active-bg: rgba(98, 162, 29, 0.85);
-  /** 市集狀態：即將開始 */
-  --market-status-upcoming-bg: rgba(245, 158, 11, 0.85);
-  /** 市集狀態：籌備中 */
-  --market-status-preparing-bg: rgba(79, 143, 217, 0.85);
-  /** 市集狀態：已結束 */
-  --market-status-ended-bg: rgba(139, 139, 139, 0.85);
+  // 一般使用者／攤主前台的市集圖片標籤（半透明）
+  --market-status-active-overlay-bg: rgba(98, 162, 29, 0.85);
+  --market-status-upcoming-overlay-bg: rgba(245, 158, 11, 0.85);
+  --market-status-preview-overlay-bg: rgba(79, 143, 217, 0.85);
+  --market-status-ended-overlay-bg: rgba(139, 139, 139, 0.85);
+
+  // Dashboard 狀態標籤（淡色底＋深色字）
+  --status-green-bg: #eaf8e8;
+  --status-green-text: #2e7d45;
+  --status-blue-bg: #eaf2ff;
+  --status-blue-text: #2f5f9e;
+  --status-orange-bg: #fff4e8;
+  --status-orange-text: #c76a12;
+  --status-yellow-bg: #fff8dc;
+  --status-yellow-text: #a87518;
+  --status-purple-bg: #f3e8ff;
+  --status-purple-text: #6d3fa0;
+  --status-teal-bg: #ecfdf5;
+  --status-teal-text: #287d68;
+  --status-pink-bg: #fce7f3;
+  --status-pink-text: #b83268;
+  --status-red-bg: #fdecec;
+  --status-red-text: #c62828;
+  --status-grey-bg: #f3f4f6;
+  --status-grey-text: #5f6368;
 }
 
-// 活動管理狀態標籤配色
-.tag-red {
-  background-color: #FDECEC;
-  color: #C62828;
+// Dashboard 共用尺寸；各頁只需提供語意色 class。
+.status-badge,
+.status-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 76px !important;
+  width: fit-content;
+  max-width: 100%;
+  height: 26px !important;
+  padding: 0 10px !important;
+  border: 0 !important;
+  border-radius: var(--radius-tag) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  box-sizing: border-box;
 }
 
-.tag-pink {
-  background-color: #FCE7F3;
-  color: #B83268;
+// 綠色：成功、完成、報名中、保證金已退還
+:is(.status-badge, .status-tag):is(
+  .green,
+  .tag-green,
+  .completed,
+  .deposit-refunded,
+  .tag-deposit-refunded
+) {
+  background: var(--status-green-bg) !important;
+  color: var(--status-green-text) !important;
 }
 
-.tag-orange {
-  background-color: #FFF4E8;
-  color: #C76A12;
+// 藍色：資訊、選位、建圖
+:is(.status-badge, .status-tag):is(.blue, .tag-blue, .booth) {
+  background: var(--status-blue-bg) !important;
+  color: var(--status-blue-text) !important;
 }
 
-.tag-yellow {
-  background-color: #FEF9C3;
-  color: #A87518;
+// 橘色：等待處理、付款、退款申請
+:is(.status-badge, .status-tag):is(
+  .orange,
+  .tag-orange,
+  .reviewing,
+  .payment,
+  .refund-applying
+) {
+  background: var(--status-orange-bg) !important;
+  color: var(--status-orange-text) !important;
 }
 
-.tag-green {
-  background-color: #EAF8E8;
-  color: #2E7D45;
+:is(.status-badge, .status-tag):is(.yellow, .tag-yellow) {
+  background: var(--status-yellow-bg) !important;
+  color: var(--status-yellow-text) !important;
 }
 
-.tag-teal {
-  background-color: #ECFDF5;
-  color: #4D8F7A;
+:is(.status-badge, .status-tag):is(.purple, .tag-purple, .refund-processing) {
+  background: var(--status-purple-bg) !important;
+  color: var(--status-purple-text) !important;
 }
 
-.tag-blue {
-  background-color: #EAF2FF;
-  color: #2F5F9E;
+:is(.status-badge, .status-tag):is(.teal, .tag-teal) {
+  background: var(--status-teal-bg) !important;
+  color: var(--status-teal-text) !important;
 }
 
-.tag-purple {
-  background-color: #F3E8FF;
-  color: #6D3FA0;
+:is(.status-badge, .status-tag):is(.tag-pink, .refunded) {
+  background: var(--status-pink-bg) !important;
+  color: var(--status-pink-text) !important;
 }
 
-.tag-grey {
-  background-color: #F3F4F6;
-  color: #5F6368;
+:is(.status-badge, .status-tag):is(.red, .tag-red) {
+  background: var(--status-red-bg) !important;
+  color: var(--status-red-text) !important;
 }
 
-// 保證金狀態標籤配色
-.tag-deposit-pending {
-  background-color: #F3F4F6;
-  color: #6B7280;
+// 灰色：結束、取消、歷史紀錄、尚未處理
+:is(.status-badge, .status-tag):is(
+  .grey,
+  .tag-grey,
+  .tag-deposit-pending,
+  .cancelled,
+  .history
+) {
+  background: var(--status-grey-bg) !important;
+  color: var(--status-grey-text) !important;
 }
 
-.tag-deposit-refunded {
-  background-color: #FCE7F3;
-  color: #EC4899;
+// 市集狀態的共用預設色；一般使用者與攤主活動卡會在元件內覆寫為半透明色票。
+:is(.status-badge, .status-tag):is(.active, .status-active) {
+  background: var(--status-green-bg) !important;
+  color: var(--status-green-text) !important;
 }
 
-// Dashboard 共用狀態標籤配色
-.green {
-  background: #ecfdf3;
-  color: #16a34a;
+:is(.status-badge, .status-tag):is(.upcoming, .status-upcoming) {
+  background: var(--status-orange-bg) !important;
+  color: var(--status-orange-text) !important;
 }
 
-.blue {
-  background: #eaf5ff;
-  color: #1680e5;
+:is(.status-badge, .status-tag):is(.preview, .status-preview) {
+  background: var(--status-blue-bg) !important;
+  color: var(--status-blue-text) !important;
 }
 
-.orange {
-  background: var(--bg-primary);
-  color: var(--primary-color);
-}
-
-.purple {
-  background: #f5f3ff;
-  color: #7c3aed;
-}
-
-.teal {
-  background: #ecfdf5;
-  color: #0f766e;
-}
-
-.yellow {
-  background: #fffbeb;
-  color: #d97706;
-}
-
-.red {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.grey {
-  background: #eee;
-  color: #888;
+:is(.status-badge, .status-tag):is(.ended, .status-ended) {
+  background: var(--status-grey-bg) !important;
+  color: var(--status-grey-text) !important;
 }

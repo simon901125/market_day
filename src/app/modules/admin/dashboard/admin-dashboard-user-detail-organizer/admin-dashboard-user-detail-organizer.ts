@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AlertService } from '../../../../core/services/alert.service';
 import { UserStatus } from '../../../../models/status/UserStatus';
+import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { UserListItem } from '../../../../models/interface/admin/UserListItem';
 import { AdminOrganizerDetail } from '../../../../models/interface/admin/AdminOrganizerDetail';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
@@ -49,15 +50,15 @@ const MOCK_DETAIL: AdminOrganizerDetail = {
     activityManagementRecords: {
       total: 9,
       items: [
-        { activityName: '春語花市', activityDate: '2026-05-01 ~ 2026-05-02', activityStatus: '已結束', registrationCount: '150/150' },
-        { activityName: '楓糖森活市集', activityDate: '2026-06-05 ~ 2026-06-06', activityStatus: '進行中', registrationCount: '88/120' },
-        { activityName: '月光甜點市集', activityDate: '2026-11-12 ~ 2026-11-13', activityStatus: '待審核', registrationCount: '0/100' },
-        { activityName: '春語花市', activityDate: '2026-05-01 ~ 2026-05-02', activityStatus: '已結束', registrationCount: '150/150' },
-        { activityName: '楓糖森活市集', activityDate: '2026-06-05 ~ 2026-06-06', activityStatus: '進行中', registrationCount: '88/120' },
-        { activityName: '月光甜點市集', activityDate: '2026-11-12 ~ 2026-11-13', activityStatus: '待審核', registrationCount: '0/100' },
-        { activityName: '春語花市', activityDate: '2026-05-01 ~ 2026-05-02', activityStatus: '已結束', registrationCount: '150/150' },
-        { activityName: '楓糖森活市集', activityDate: '2026-06-05 ~ 2026-06-06', activityStatus: '進行中', registrationCount: '88/120' },
-        { activityName: '月光甜點市集', activityDate: '2026-11-12 ~ 2026-11-13', activityStatus: '待審核', registrationCount: '0/100' },
+        { activityName: '春語花市', activityDate: '2026/05/01 - 2026/05/02', activityStatus: '已結束', registrationCount: '150/150' },
+        { activityName: '楓糖森活市集', activityDate: '2026/06/05 - 2026/06/06', activityStatus: '進行中', registrationCount: '88/120' },
+        { activityName: '月光甜點市集', activityDate: '2026/11/12 - 2026/11/13', activityStatus: '待審核', registrationCount: '0/100' },
+        { activityName: '春語花市', activityDate: '2026/05/01 - 2026/05/02', activityStatus: '已結束', registrationCount: '150/150' },
+        { activityName: '楓糖森活市集', activityDate: '2026/06/05 - 2026/06/06', activityStatus: '進行中', registrationCount: '88/120' },
+        { activityName: '月光甜點市集', activityDate: '2026/11/12 - 2026/11/13', activityStatus: '待審核', registrationCount: '0/100' },
+        { activityName: '春語花市', activityDate: '2026/05/01 - 2026/05/02', activityStatus: '已結束', registrationCount: '150/150' },
+        { activityName: '楓糖森活市集', activityDate: '2026/06/05 - 2026/06/06', activityStatus: '進行中', registrationCount: '88/120' },
+        { activityName: '月光甜點市集', activityDate: '2026/11/12 - 2026/11/13', activityStatus: '待審核', registrationCount: '0/100' },
       ],
     },
     loginRecords: {
@@ -114,7 +115,7 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   }
 
   activityCurrentPage = 1;
-  readonly activityPageSize = 8;
+  readonly activityPageSize = 6;
 
   get activityRecordTotal(): number {
     return this.detail?.detail.activityManagementRecords.total ?? 0;
@@ -167,15 +168,7 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   }
 
   getActivityStatusClass(status: string): string {
-    const map: Record<string, string> = {
-      '進行中': 'green',
-      '已結束': 'grey',
-      '待審核': 'orange',
-      '補件中': 'red',
-      '已發布': 'blue',
-      '報名中': 'teal',
-    };
-    return map[status] ?? 'grey';
+    return ActivityStatus.getClass(status);
   }
 
   goBack(): void {

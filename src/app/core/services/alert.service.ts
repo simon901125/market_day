@@ -23,6 +23,27 @@ export interface AlertHtmlOptions {
   showCloseButton?: boolean;
 }
 
+export interface AlertRequiredReasonOptions {
+  title: string;
+  description: string;
+  fieldLabel: string;
+  placeholder?: string;
+  confirmButtonText?: string;
+  cancelButtonText?: string;
+  maxLength?: number;
+}
+
+export interface AlertReasonConfirmationOptions {
+  title: string;
+  description: string;
+  subjectLabel: string;
+  subject: string;
+  reasonLabel: string;
+  reason: string;
+  confirmButtonText?: string;
+  cancelButtonText?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -126,6 +147,97 @@ export class AlertService {
     }) as Promise<SweetAlertResult<T>>;
   }
 
+  requiredReason(options: AlertRequiredReasonOptions): Promise<string | null> {
+    const maxLength = options.maxLength ?? 300;
+
+    return this.custom<string>({
+      html: `
+        <div class="registration-swal-content">
+          <div class="supplement-swal-header">
+            <div class="restore-confirm-icon">
+              <i class="bi bi-exclamation-circle"></i>
+            </div>
+            <h3>${this.escapeHtml(options.title)}</h3>
+            <p class="registration-swal-main">${this.escapeHtml(options.description)}</p>
+          </div>
+          <label class="registration-swal-field required-reason-field">
+            <span>${this.escapeHtml(options.fieldLabel)} <b>*</b></span>
+            <span class="required-reason-control">
+              <textarea
+                id="requiredReason"
+                class="supplement-swal-textarea"
+                maxlength="${maxLength}"
+                placeholder="${this.escapeHtml(options.placeholder ?? '請輸入原因')}"
+              ></textarea>
+              <em class="supplement-swal-counter" id="requiredReasonCount">0/${maxLength}</em>
+            </span>
+          </label>
+          <p class="registration-swal-field-error" id="requiredReasonError" aria-live="polite"></p>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: options.confirmButtonText ?? '下一步',
+      cancelButtonText: options.cancelButtonText ?? '取消',
+      reverseButtons: true,
+      customClass: { popup: 'require-supplement-swal unpublish-request-swal' },
+      didOpen: () => {
+        const textarea = document.getElementById('requiredReason') as HTMLTextAreaElement | null;
+        const counter = document.getElementById('requiredReasonCount');
+        const error = document.getElementById('requiredReasonError');
+
+        textarea?.focus();
+        textarea?.addEventListener('input', () => {
+          if (counter) counter.textContent = `${textarea.value.length}/${maxLength}`;
+          if (error) error.textContent = '';
+          textarea.classList.remove('is-invalid');
+        });
+      },
+      preConfirm: () => {
+        const textarea = document.getElementById('requiredReason') as HTMLTextAreaElement | null;
+        const error = document.getElementById('requiredReasonError');
+        const reason = textarea?.value.trim() ?? '';
+
+        if (!reason) {
+          if (error) error.textContent = `請填寫${options.fieldLabel}`;
+          textarea?.classList.add('is-invalid');
+          textarea?.focus();
+          return false;
+        }
+
+        return reason;
+      },
+    }).then((result) => result.isConfirmed ? result.value ?? null : null);
+  }
+
+  confirmReason(options: AlertReasonConfirmationOptions): Promise<boolean> {
+    return this.confirmHtml({
+      html: `
+        <div class="registration-swal-content">
+          <div class="supplement-swal-header">
+            <div class="restore-confirm-icon">
+              <i class="bi bi-exclamation-circle"></i>
+            </div>
+            <h3>${this.escapeHtml(options.title)}</h3>
+            <p class="registration-swal-main">${this.escapeHtml(options.description)}</p>
+          </div>
+          <div class="admin-swal-unpublish-form-data-section">
+            <div class="admin-swal-unpublish-form-data">
+              <span>${this.escapeHtml(options.subjectLabel)}</span>
+              <span>${this.escapeHtml(options.subject)}</span>
+            </div>
+            <div class="admin-swal-unpublish-form-reason">
+              <span>${this.escapeHtml(options.reasonLabel)}</span>
+              <div>${this.escapeHtml(options.reason)}</div>
+            </div>
+          </div>
+        </div>
+      `,
+      confirmButtonText: options.confirmButtonText ?? '確認送出',
+      cancelButtonText: options.cancelButtonText ?? '取消',
+      popupClass: 'require-supplement-swal unpublish-request-swal',
+    });
+  }
+
   private alert(
     status: AlertStatus,
     title: string,
@@ -164,6 +276,16 @@ export class AlertService {
     };
 
     return iconMap[status];
+  }
+
+  private escapeHtml(value: string): string {
+    return value.replace(/[&<>'"]/g, (character) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;',
+    })[character] ?? character);
   }
 
   private getCustomClass(popupClass = '') {

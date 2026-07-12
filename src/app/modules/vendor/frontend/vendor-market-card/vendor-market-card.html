@@ -10,7 +10,10 @@
   <div class="market-body">
     <div class="market-info-row">
       <span class="deadline">{{ getDeadlineText(market.start_date) }}</span>
-      <span class="city">{{ market.city }}</span>
+      <span class="city">
+        <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+        {{ market.city }}
+      </span>
     </div>
 
     <h3>{{ market.title }}</h3>

@@ -21,15 +21,15 @@
     <app-dropdown
       #roleDropdown
       title="角色"
-      placeholder="全部"
+      placeholder="全部角色"
       [options]="roleOptions"
       (optionSelected)="onRoleSelected($event)"
     ></app-dropdown>
 
     <app-dropdown
       #statusDropdown
-      title="狀態"
-      placeholder="全部"
+      title="帳號狀態"
+      placeholder="全部狀態"
       [options]="userStatusOptions"
       (optionSelected)="onStatusSelected($event)"
     ></app-dropdown>
@@ -44,35 +44,35 @@
       <table class="user-table">
         <thead>
           <tr>
-            <th class="user-name">使用者名稱</th>
-            <th class="user-email">Email</th>
             <th class="user-role">角色</th>
-            <th class="user-cdate">註冊時間</th>
-            <th class="user-ldate">最後登入</th>
+            <th class="user-name">使用者名稱</th>
             <th class="user-status">帳號狀態</th>
-            <th class="action-btn">操作</th>
+            <th class="user-email">Email</th>
+            <th class="user-cdate">註冊時間</th>
+            <th class="user-ldate">最後登入時間</th>
+            <th class="action-btn" aria-label="操作"></th>
           </tr>
         </thead>
         <tbody>
           @for (user of users; track user.id) {
             <tr>
-              <td class="user-name">{{ user.name }}</td>
-              <td class="user-email">{{ user.email }}</td>
               <td class="user-role">
                 <span class="role-tag" [class]="getRoleClass(user.role)">{{ user.role }}</span>
               </td>
-              <td class="user-cdate">{{ user.createdAt }}</td>
-              <td class="user-ldate">{{ user.lastLoginAt }}</td>
+              <td class="user-name">{{ user.name }}</td>
               <td class="user-status">
                 <span class="status-tag" [class]="getStatusClass(user.status)">{{ user.status }}</span>
               </td>
+              <td class="user-email">{{ user.email }}</td>
+              <td class="user-cdate">{{ formatDateTime(user.createdAt) }}</td>
+              <td class="user-ldate">{{ formatDateTime(user.lastLoginAt) }}</td>
               <td class="action-btn">
-                  <button type="button" class="app-btn primary" (click)="getDetailHandler(user)()">查看</button>
+                  <button type="button" class="app-btn secondary" (click)="getDetailHandler(user)()">查看</button>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="6" class="empty-row">查無符合條件的使用者</td>
+              <td colspan="7" class="empty-row">查無符合條件的使用者</td>
             </tr>
           }
         </tbody>

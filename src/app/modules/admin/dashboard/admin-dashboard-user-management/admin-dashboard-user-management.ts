@@ -93,7 +93,8 @@ export class AdminDashboardUserManagement implements AfterViewInit{
   /** 目前頁碼 */
   currentPage = 1;
   /** 每頁筆數，依畫面剩餘高度動態計算（見 Task 8），初始為合理預設值 */
-  pageSize = 8;
+  /** 管理頁統一每頁顯示 6 筆。 */
+  pageSize = 6;
   /** 篩選後的總筆數 */
   totalItems = 0;
 
@@ -198,9 +199,7 @@ export class AdminDashboardUserManagement implements AfterViewInit{
 
   /** 依表格容器目前的高度，重新計算一頁可顯示的列數 */
   private recalculatePageSize(): void {
-    const wrapperHeight = this.resultSectionRef.nativeElement.clientHeight;
-    const availableHeight = wrapperHeight - this.headerHeight;
-    this.pageSize = Math.max(Math.floor(availableHeight / this.rowHeight), 4);
+    this.pageSize = 6;
   }
 
   /** 取得角色的標籤顏色 class */
@@ -211,6 +210,15 @@ export class AdminDashboardUserManagement implements AfterViewInit{
   /** 取得帳號狀態對應的標籤顏色 class */
   getStatusClass(status: string): string {
     return this.userStatusColorMap[status] ?? 'grey';
+  }
+
+  /** 統一管理列表日期時間格式；API 僅回傳日期時補上 00:00。 */
+  formatDateTime(value: string): string {
+    const normalized = value.trim().replace('T', ' ');
+    if (!normalized) return '-';
+
+    const [date, time = '00:00'] = normalized.split(/\s+/, 2);
+    return `${date} ${time.slice(0, 5)}`;
   }
 
 }

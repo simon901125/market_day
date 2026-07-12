@@ -1,12 +1,12 @@
 @if (open) {
-  <div class="organizer-profile-backdrop" [class.is-closing]="isClosing" role="presentation" (click)="closeFromBackdrop($event)">
+  <div class="organizer-profile-backdrop app-modal-backdrop" [class.is-closing]="isClosing" role="presentation" (click)="closeFromBackdrop($event)">
     <section
-      class="organizer-profile-modal"
+      class="organizer-profile-modal app-modal app-modal--lg"
       role="dialog"
       aria-modal="true"
       aria-labelledby="organizerProfileTitle"
     >
-      <header>
+      <header class="app-modal-header">
         <h2 id="organizerProfileTitle"><i class="bi bi-person-badge"></i>主辦方資料</h2>
         <button type="button" aria-label="關閉主辦方資料" (click)="close()">
           <i class="bi bi-x-lg"></i>
@@ -14,7 +14,7 @@
       </header>
 
       <form class="profile-form" (ngSubmit)="save()">
-        <div class="profile-section">
+        <div class="profile-section app-modal-section">
           <h3>基本資料</h3>
 
           <label class="field full">
@@ -75,7 +75,7 @@
           </div>
         </div>
 
-        <div class="profile-section">
+        <div class="profile-section app-modal-section">
           <h3>服務時間</h3>
           <span class="weekday-label">星期</span>
           <div class="weekday-grid" aria-label="服務星期">
@@ -105,9 +105,9 @@
           </div>
         </div>
 
-        <footer>
-          <button type="button" class="profile-cancel-btn" (click)="close()">取消</button>
-          <button type="submit" class="profile-save-btn">儲存</button>
+        <footer class="app-modal-actions">
+          <button type="button" class="profile-cancel-btn app-btn neutral" (click)="close()">取消</button>
+          <button type="submit" class="profile-save-btn app-btn primary">儲存</button>
         </footer>
       </form>
     </section>

@@ -211,3 +211,12 @@
     }
   }
 }
+
+/* 平板 Header 滿寬，漢堡按鈕固定距離視窗 24px。 */
+@media (min-width: 769px) and (max-width: 992px) {
+  .header-container {
+    width: 100%;
+    padding-inline: 24px;
+    box-sizing: border-box;
+  }
+}

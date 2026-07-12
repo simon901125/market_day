@@ -1,12 +1,12 @@
-<div class="zone-dialog-backdrop" [class.is-closing]="closing" role="presentation" (click)="closeDialog.emit()">
+<div class="zone-dialog-backdrop app-modal-backdrop" [class.is-closing]="closing" role="presentation" (click)="closeDialog.emit()">
   <section
-    class="zone-dialog"
+    class="zone-dialog app-modal app-modal--sm"
     role="dialog"
     aria-modal="true"
     aria-labelledby="zone-dialog-title"
     (click)="$event.stopPropagation()"
   >
-    <header>
+    <header class="app-modal-header">
       <h2 id="zone-dialog-title"><i class="bi bi-grid-3x3-gap"></i>{{ editing ? '編輯攤位分區' : '新增攤位分區' }}</h2>
       <button type="button" aria-label="關閉分區視窗" (click)="closeDialog.emit()">
         <i class="bi bi-x-lg"></i>
@@ -104,9 +104,9 @@
       }
     </label>
 
-    <footer>
-      <button type="button" class="zone-dialog-cancel" (click)="closeDialog.emit()">取消</button>
-      <button type="button" class="zone-dialog-save" (click)="onSave()">
+    <footer class="app-modal-actions">
+      <button type="button" class="zone-dialog-cancel app-btn neutral" (click)="closeDialog.emit()">取消</button>
+      <button type="button" class="zone-dialog-save app-btn primary" (click)="onSave()">
         {{ editing ? '儲存變更' : '新增分區' }}
       </button>
     </footer>

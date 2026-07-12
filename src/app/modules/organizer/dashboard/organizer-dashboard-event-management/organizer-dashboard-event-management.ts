@@ -8,6 +8,7 @@ import { DashboardDataTable, DashboardTableAction, DashboardTableColumn } from '
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
+import { AlertService } from '../../../../core/services/alert.service';
 
 @Component({
   selector: 'app-organizer-dashboard-event-management',
@@ -51,13 +52,13 @@ export class OrganizerDashboardEventManagement implements OnInit {
 
   /** 活動管理列表欄位設定。 */
   columns: DashboardTableColumn[] = [
-    { key: 'name', label: '活動名稱', type: 'imageText', width: '20%' },
-    { key: 'date', label: '活動日期', nowrap: true, width: '17%' },
-    { key: 'status', label: '活動狀態', type: 'status', align: 'center', width: '11%' },
-    { key: 'location', label: '活動地點', width: '24%' },
-    { key: 'signupProgress', label: '報名人數', align: 'center', nowrap: true, width: '8%' },
-    { key: 'paidCount', label: '付款人數', align: 'center', nowrap: true, width: '7%' },
-    { key: 'action', label: '', type: 'action', align: 'end', width: '13%' },
+    { key: 'name', label: '活動名稱', type: 'imageText', width: '18%' },
+    { key: 'date', label: '活動日期', nowrap: true, width: '16%' },
+    { key: 'status', label: '活動狀態', type: 'status', align: 'center', width: '10%' },
+    { key: 'location', label: '活動地點', width: '20%' },
+    { key: 'signupProgress', label: '報名人數', align: 'center', nowrap: true, width: '9%' },
+    { key: 'paidCount', label: '付款人數', align: 'center', nowrap: true, width: '8%' },
+    { key: 'action', label: '', type: 'action', align: 'end', width: '19%' },
   ];
 
   /**
@@ -176,6 +177,17 @@ export class OrganizerDashboardEventManagement implements OnInit {
       actionLabel: '查看',
     },
     {
+      id: 16,
+      name: '河岸文創週末市集',
+      nameImage: 'assets/images/market/cards/market-card-09.png',
+      date: '2026/10/17 - 2026/10/18',
+      location: '新北市 板橋區 新月橋河濱廣場',
+      status: ActivityStatus.unpublishRequested,
+      signupProgress: '76 / 90',
+      paidCount: '71',
+      actionLabel: '查看',
+    },
+    {
       id: 11,
       name: '春日野餐市集',
       nameImage: 'assets/images/market/history/history-market-01.png',
@@ -239,6 +251,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly alert: AlertService,
   ) {}
 
   /** 初始化列表，並從網址 query params 還原搜尋、篩選與分頁狀態。 */
@@ -319,8 +332,17 @@ export class OrganizerDashboardEventManagement implements OnInit {
   }
 
   /** 點擊列表操作按鈕，帶著返回列表所需狀態前往活動詳情。 */
-  onTableAction(action: DashboardTableAction): void {
+  async onTableAction(action: DashboardTableAction): Promise<void> {
     const activity = action.row as unknown as OrganizerEventRow;
+    if (action.key === 'unpublish') {
+      await this.requestUnpublish(activity);
+      return;
+    }
+
+    if (await this.handleQuickStatusAction(action.key ?? '', activity)) {
+      return;
+    }
+
     if (action.key === 'edit') {
       this.router.navigate(['/organizer/dash-board/activity/detail'], {
         queryParams: {
@@ -348,6 +370,108 @@ export class OrganizerDashboardEventManagement implements OnInit {
         returnStatus: this.selectedStatus,
       },
     });
+  }
+
+  /** 列表上不需閱讀完整資料的單一步驟狀態操作，統一使用確認 Alert。 */
+  private async handleQuickStatusAction(actionKey: string, activity: OrganizerEventRow): Promise<boolean> {
+    switch (actionKey) {
+      case 'submit':
+        if (!await this.alert.confirm(
+          '送出審核確認',
+          `確定要送出「${activity.name}」進行審核嗎？<br>送出後將暫時無法編輯活動內容，需等待審核結果。`,
+          '確定送出',
+        )) return true;
+        this.updateActivityStatus(activity.id, ActivityStatus.pendingReview);
+        await this.alert.success(
+          '送出審核成功',
+          `活動「${activity.name}」已送出審核，審核結果將透過通知中心告知。`,
+          '知道了',
+        );
+        return true;
+      case 'withdraw':
+        if (!await this.alert.confirm(
+          '撤回申請確認',
+          `確定要撤回「${activity.name}」的審核申請嗎？<br>撤回後活動將回到草稿狀態，可再次編輯與送審。`,
+          '確定撤回',
+        )) return true;
+        this.updateActivityStatus(activity.id, ActivityStatus.draft, { canSubmitReview: true });
+        await this.alert.success(
+          '申請已撤回',
+          `活動「${activity.name}」已回到草稿狀態。`,
+          '知道了',
+        );
+        return true;
+      case 'resubmit':
+        if (!await this.alert.confirm(
+          '重新送審確認',
+          `確定要重新送審「${activity.name}」嗎？<br>送出後將再次進入審核流程。`,
+          '確定重新送審',
+        )) return true;
+        this.updateActivityStatus(activity.id, ActivityStatus.pendingReview);
+        await this.alert.success(
+          '重新送審成功',
+          `活動「${activity.name}」已重新送出審核。`,
+          '知道了',
+        );
+        return true;
+      case 'publish':
+        if (!await this.alert.confirm(
+          '發布活動確認',
+          `確定要發布「${activity.name}」嗎？<br>發布後活動將對外公開並開放瀏覽與報名。`,
+          '確定發布',
+        )) return true;
+        this.updateActivityStatus(activity.id, ActivityStatus.registrationOpen);
+        await this.alert.success(
+          '發布活動成功',
+          `活動「${activity.name}」已發布並進入「報名中」狀態。`,
+          '知道了',
+        );
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  private updateActivityStatus(
+    activityId: number,
+    status: string,
+    changes: Partial<OrganizerEventRow> = {},
+  ): void {
+    this.rows = this.rows.map((row) => row.id === activityId ? { ...row, ...changes, status } : row);
+    this.updateDisplayRows();
+  }
+
+  private async requestUnpublish(activity: OrganizerEventRow): Promise<void> {
+    const reason = await this.alert.requiredReason({
+      title: '申請下架活動',
+      description: `請填寫「${activity.name}」的下架原因，送出後將由管理員審核。`,
+      fieldLabel: '下架原因',
+      placeholder: '請說明申請下架活動的原因',
+      confirmButtonText: '下一步',
+    });
+    if (!reason) return;
+
+    const confirmed = await this.alert.confirmReason({
+      title: '確認送出下架申請',
+      description: '請確認活動與下架原因，送出後將進入管理員審核流程。',
+      subjectLabel: '活動名稱',
+      subject: activity.name,
+      reasonLabel: '下架原因',
+      reason,
+      confirmButtonText: '確認送出',
+    });
+    if (!confirmed) return;
+
+    this.rows = this.rows.map((row) => row.id === activity.id
+      ? { ...row, status: ActivityStatus.unpublishRequested, unpublishReason: reason }
+      : row);
+    this.updateDisplayRows();
+
+    await this.alert.success(
+      '下架申請已送出',
+      `活動「${activity.name}」已進入下架審核流程。<br>審核完成前，活動狀態為「下架申請中」。`,
+      '知道了',
+    );
   }
 
   /** 同步列表狀態到 query params，讓返回頁面時可以還原目前篩選條件。 */

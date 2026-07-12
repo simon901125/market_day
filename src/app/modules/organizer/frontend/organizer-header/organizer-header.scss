@@ -8,6 +8,15 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
+/* 平板 Header 滿寬，漢堡按鈕固定距離視窗 24px。 */
+@media (min-width: 769px) and (max-width: 992px) {
+  .organizer-header .header-inner {
+    width: 100%;
+    padding-inline: 24px;
+    box-sizing: border-box;
+  }
+}
+
 .header-inner {
   width: var(--user-content-wide-width);
   height: 100%;

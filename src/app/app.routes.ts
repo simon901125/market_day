@@ -19,6 +19,9 @@ import { OrganizerDashboardEquipmentManagement } from './modules/organizer/dashb
 import { OrganizerDashboardEquipmentDetail } from './modules/organizer/dashboard/organizer-dashboard-equipment-detail/organizer-dashboard-equipment-detail';
 import { OrganizerDashboardAccountManagement } from './modules/organizer/dashboard/organizer-dashboard-account-management/organizer-dashboard-account-management';
 import { OrganizerDashboardAccountDetail } from './modules/organizer/dashboard/organizer-dashboard-account-detail/organizer-dashboard-account-detail';
+import { OrganizerDashboardStallManagement } from './modules/organizer/dashboard/organizer-dashboard-stall-management/organizer-dashboard-stall-management';
+import { OrganizerDashboardStallDetail } from './modules/organizer/dashboard/organizer-dashboard-stall-detail/organizer-dashboard-stall-detail';
+import { OrganizerDashboardStallMap } from './modules/organizer/dashboard/organizer-dashboard-stall-map/organizer-dashboard-stall-map';
 import { OrganizerAccountSettings } from './modules/organizer/dashboard/organizer-account-settings/organizer-account-settings';
 import { OrganizerHome } from './modules/organizer/frontend/organizer-home/organizer-home';
 import { OrganizerAbout } from './modules/organizer/frontend/organizer-about/organizer-about';
@@ -245,6 +248,18 @@ export const routes: Routes = [
       {
         path: 'equipment',
         component: OrganizerDashboardEquipmentManagement,
+      },
+      {
+        path: 'stall',
+        component: OrganizerDashboardStallManagement,
+      },
+      {
+        path: 'stall/detail/:id',
+        component: OrganizerDashboardStallDetail,
+      },
+      {
+        path: 'stall/detail/:id/map',
+        component: OrganizerDashboardStallMap,
       },
       {
         path: 'equipment/detail/:id',

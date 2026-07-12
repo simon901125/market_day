@@ -19,16 +19,17 @@
   color: var(--text-dark);
 
   thead {
-    background: linear-gradient(90deg, var(--bg-primary), var(--primary-soft));
+    background: var(--bg-primary);
   }
 
   th,
   td {
-    padding: 13px 16px;
+    height: 56px;
+    padding: 12px 14px;
     text-align: left;
     vertical-align: middle;
     font-size: 14px;
-    font-weight: 800;
+    font-weight: 700;
 
     &.center {
       text-align: center;
@@ -44,6 +45,7 @@
   }
 
   tbody tr {
+    height: 56px;
     border-bottom: 1px solid var(--border-light);
     transition: background 0.2s ease;
 
@@ -60,7 +62,7 @@
 .table-actions {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 10px;
   white-space: nowrap;
 }
@@ -123,12 +125,12 @@
 .image-text-cell {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   white-space: nowrap;
 
   img {
-    width: 48px;
-    height: 36px;
+    width: 44px;
+    height: 32px;
     border-radius: var(--radius-tag);
     object-fit: cover;
     flex: 0 0 auto;
@@ -153,15 +155,15 @@
 
 .table-action {
   width: auto;
-  min-width: 0;
+  min-width: 76px;
   height: 34px;
-  padding: 0 16px;
+  padding: 0 12px;
   border: 1px solid var(--primary-color);
   border-radius: var(--radius-tag);
   background: var(--bg-white);
   color: var(--primary-color);
   font-size: 13px;
-  font-weight: 900;
+  font-weight: 800;
   cursor: pointer;
   transition:
     background-color 0.2s ease,

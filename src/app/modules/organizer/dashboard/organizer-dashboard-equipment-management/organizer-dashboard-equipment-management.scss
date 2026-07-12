@@ -29,14 +29,6 @@
 }
 
 :host ::ng-deep .organizer-equipment-management {
-  .dashboard-table {
-    th,
-    td {
-      padding-right: 12px;
-      padding-left: 12px;
-    }
-  }
-
   .image-text-cell {
     gap: 10px;
 
@@ -46,11 +38,6 @@
     }
   }
 
-  .table-action {
-    min-width: 0;
-    padding-right: 10px;
-    padding-left: 10px;
-  }
 }
 
 .organizer-equipment-filter {

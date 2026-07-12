@@ -2225,6 +2225,8 @@ textarea {
 .detail-readonly-content .view-disabled-control input,
 .detail-readonly-content .view-disabled-control textarea,
 .detail-readonly-content .readonly-transport-fields input {
+  border: 0;
+  background: transparent;
   color: var(--event-disabled-text);
   opacity: 1;
   cursor: not-allowed;

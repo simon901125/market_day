@@ -134,7 +134,13 @@
 }
 
 .detail-summary-grid {
-  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.75fr);
+  grid-template-columns: minmax(0, 1.28fr) minmax(360px, 0.88fr);
+}
+
+.summary-left-column {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
 }
 
 .detail-info-grid {
@@ -143,8 +149,8 @@
 }
 
 .vendor-card,
-.content-card,
 .payment-card,
+.equipment-summary-card,
 .payment-summary-card {
   grid-column: span 5;
 }
@@ -152,10 +158,6 @@
 .brand-card,
 .booth-card,
 .fee-card {
-  grid-column: span 7;
-}
-
-.equipment-summary-card {
   grid-column: span 7;
 }
 
@@ -189,7 +191,7 @@
 
 .activity-content {
   display: grid;
-  grid-template-columns: 298px minmax(0, 1fr);
+  grid-template-columns: 260px minmax(0, 1fr);
   align-items: stretch;
   gap: 22px;
 }
@@ -252,6 +254,29 @@
 
   div {
     grid-template-columns: var(--detail-label-width) minmax(0, 1fr);
+  }
+
+  .registration-period-row {
+    min-height: 68px;
+    box-sizing: border-box;
+    align-items: start;
+    padding: 11px 0;
+
+    dt,
+    dd {
+      line-height: 1.55;
+    }
+  }
+}
+
+.registration-period-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  span {
+    display: block;
+    white-space: nowrap;
   }
 }
 
@@ -603,6 +628,25 @@
   }
 }
 
+.payment-summary-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+
+  div {
+    grid-template-columns: 88px minmax(0, 1fr);
+  }
+
+  div:nth-child(n + 3) {
+    border-bottom: 0;
+  }
+}
+
+.top-payment-card {
+  grid-column: auto;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
 .booth-card,
 .payment-card,
 .fee-card,
@@ -706,7 +750,6 @@
 
   .vendor-card,
   .brand-card,
-  .content-card,
   .booth-card,
   .payment-card,
   .fee-card,
@@ -714,6 +757,18 @@
   .equipment-summary-card,
   .payment-summary-card {
     grid-column: auto;
+  }
+
+  .payment-summary-grid {
+    grid-template-columns: 1fr;
+
+    div:nth-child(n) {
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    div:last-child {
+      border-bottom: 0;
+    }
   }
 
   .status-flow,

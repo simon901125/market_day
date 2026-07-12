@@ -8,8 +8,12 @@ export interface AdminLogItem {
   operator: string;
   /** 操作類型 */
   actionType: string;
-  /** 操作對象 */
+  /** 操作對象：攤主姓名或主辦方名稱 */
   target: string;
+  /** 操作對象角色 */
+  targetRole: '主辦方' | '攤主';
+  /** 操作對象 Email 快照 */
+  targetEmail: string;
   /** 操作內容 */
   details: string;
 }

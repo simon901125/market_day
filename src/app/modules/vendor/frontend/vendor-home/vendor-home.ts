@@ -41,6 +41,11 @@ export class VendorHome {
       tags: [BrandType.food, BrandType.handmade, BrandType.family],
       organizer: '台中市政府',
       transportation: ['捷運綠線：草悟道站', '公車：5、10、20、30路'],
+      price: 600,
+      slots: [
+        { date: '08/17', remaining: 15 },
+        { date: '08/19', remaining: 8 },
+      ],
     },
     {
       title: '台北精品咖啡生活節',
@@ -59,6 +64,11 @@ export class VendorHome {
       tags: [BrandType.food, BrandType.handmade, BrandType.fashion],
       organizer: '台北市政府',
       transportation: ['捷運紅線：忠孝新生站', '公車：藍5、藍7、藍10路'],
+      price: 600,
+      slots: [
+        { date: '08/24', remaining: 15 },
+        { date: '08/26', remaining: 5 },
+      ],
     },
     {
       title: '手作設計市集',
@@ -77,6 +87,11 @@ export class VendorHome {
       tags: [BrandType.handmade, BrandType.fashion, BrandType.toy],
       organizer: '台南市政府',
       transportation: ['公車：綠幹線、藍幹線', '計程車：台南火車站搭乘約10分鐘'],
+      price: 600,
+      slots: [
+        { date: '08/31', remaining: 6 },
+        { date: '09/02', remaining: 1 },
+      ],
     },
   ];
 

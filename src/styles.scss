@@ -1,6 +1,8 @@
 ﻿@use "./assets/scss/sweet-alert";
 @use "./assets/scss/shared-controls";
 @use "./assets/scss/status-colors";
+@use "./assets/scss/organizer-dashboard-ui";
+@use "./assets/scss/user-frontend-ui";
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
@@ -27,6 +29,16 @@ body.market-loading-lock {
   --primary-disable: #a99884;
   --primary-disable-bg: #f3f0ea;
   --primary-disable-border: #e2d8c8;
+
+  /* Dashboard chart 圖表語意色 */
+  --chart-selected: #dea064;
+  --chart-selected-hover: #ad5f22;
+  --chart-paid-pending: #ecb77a;
+  --chart-paid-pending-hover: #cf7f31;
+  --chart-unpaid: #f4d09a;
+  --chart-unpaid-hover: #e9aa55;
+  --chart-remaining: #f3f0ea;
+  --chart-remaining-hover: #e2d8c8;
 
   /* Background 背景 */
   --bg-white: #ffffff;
@@ -63,15 +75,15 @@ body.market-loading-lock {
 
 @media (max-width: 1200px) {
   :root {
-    --user-content-width: min(100% - 48px, 900px);
-    --user-content-wide-width: min(100% - 48px, 1100px);
+    --user-content-width: min(100% - 80px, 900px);
+    --user-content-wide-width: min(100% - 80px, 1100px);
   }
 }
 
 @media (max-width: 768px) {
   :root {
-    --user-content-width: min(100% - 32px, 640px);
-    --user-content-wide-width: min(100% - 32px, 640px);
+    --user-content-width: min(100% - 48px, 640px);
+    --user-content-wide-width: min(100% - 48px, 640px);
   }
 }
 

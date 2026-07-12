@@ -1,8 +1,8 @@
 <section class="vendor-home">
   @if (!hasRecords) {
     <!-- 首次登入引導 -->
-    <div class="title-row">
-      <h1>歡迎加入小集日！</h1>
+    <div class="title-row app-page-header">
+      <h1 class="app-page-title">歡迎加入小集日！</h1>
     </div>
 
     <p class="subtitle">讓我們一步步完成設定，開啟你的市集之旅吧！</p>
@@ -83,14 +83,14 @@
         未完成攤位資料前，無法報名市集活動。
       </div>
 
-      <button type="button" routerLink="/vendor/dash-board/myStall">
+      <button type="button" class="app-btn primary" routerLink="/vendor/dash-board/myStall">
         <i class="bi bi-pencil"></i>
         開始填寫資料
       </button>
     </div>
   } @else {
     <!-- 有紀錄儀錶板 -->
-    <h1>歡迎回來，董映彤！</h1>
+    <h1 class="app-page-title">歡迎回來，董映彤！</h1>
     <p class="subtitle">這裡幫你整理近期需要處理的報名與通知。</p>
 
     <div class="dashboard-summary">
@@ -117,7 +117,7 @@
     <section class="latest-card">
       <div class="latest-header">
         <h2>最新通知</h2>
-        <button type="button">查看全部通知</button>
+        <button type="button" class="app-btn secondary">查看全部通知</button>
       </div>
 
       <div class="notice-list">

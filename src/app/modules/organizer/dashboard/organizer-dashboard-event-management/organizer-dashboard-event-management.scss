@@ -30,19 +30,14 @@
 
   .dashboard-table {
     table-layout: fixed;
-
-    th,
-    td {
-      padding: 13px 10px;
-    }
   }
 
   .image-text-cell {
-    gap: 8px;
+    gap: 10px;
     min-width: 0;
 
     img {
-      width: 42px;
+      width: 44px;
       height: 32px;
     }
 
@@ -61,21 +56,6 @@
     white-space: nowrap;
   }
 
-  .status-badge {
-    min-width: 66px;
-    padding: 0 8px;
-    font-size: 13px;
-  }
-
-  .table-actions {
-    gap: 6px;
-    justify-content: flex-end;
-  }
-
-  .table-action {
-    height: 32px;
-    padding: 0 10px;
-  }
 }
 
 .organizer-event-filter {

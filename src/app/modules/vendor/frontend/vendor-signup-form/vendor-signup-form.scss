@@ -785,3 +785,77 @@
     padding-block: 16px;
   }
 }
+
+/* Shared public-facing treatment for the vendor application flow. */
+.signup-form-page {
+  background: var(--primary-soft);
+}
+
+.top-row {
+  min-height: 60px;
+  margin-bottom: 20px;
+  padding: 12px 18px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-card);
+  background: var(--bg-white);
+}
+
+.stepper {
+  .step span {
+    border-color: var(--border-primary);
+    color: var(--text-light);
+    background: var(--bg-soft);
+  }
+
+  .step.active span {
+    border-color: var(--primary-color);
+    color: var(--bg-white);
+    background: var(--primary-color);
+  }
+
+  .step.done span {
+    border-color: var(--primary-color);
+    color: var(--primary-hover);
+    background: var(--bg-primary);
+  }
+}
+
+.market-overview,
+.form-card,
+.signup-summary,
+.empty-state {
+  border-color: var(--border-primary);
+  border-radius: var(--radius-card);
+  box-shadow: none;
+}
+
+.market-overview {
+  background: var(--bg-soft);
+}
+
+.form-card,
+.signup-summary {
+  h2,
+  h3 {
+    i {
+      color: var(--primary-color);
+    }
+  }
+}
+
+.tag-green {
+  color: var(--primary-hover);
+  background: var(--bg-primary);
+}
+
+@media (max-width: 640px) {
+  .signup-form-page {
+    padding-top: 20px;
+  }
+
+  .top-row {
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px;
+  }
+}

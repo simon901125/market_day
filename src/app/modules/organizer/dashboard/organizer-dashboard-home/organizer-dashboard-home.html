@@ -1,7 +1,13 @@
 <section class="organizer-dashboard-home page-transition">
   <header class="welcome-header">
-    <h1 class="welcome-title">歡迎回來，董映彤！ <span aria-hidden="true">👋</span></h1>
-    <p class="welcome-subtitle">一起打造精彩的市集活動，讓好品牌被更多人看見！</p>
+    <div>
+      <h1 class="welcome-title">歡迎回來，董映彤！ <span aria-hidden="true">👋</span></h1>
+      <p class="welcome-subtitle">快速掌握活動進度，開始今天的工作吧！</p>
+    </div>
+    <a class="create-activity-button" routerLink="/organizer/dash-board/activity/detail">
+      <i class="bi bi-plus-lg" aria-hidden="true"></i>
+      建立新活動
+    </a>
   </header>
 
   <section class="todo-section">
@@ -19,15 +25,42 @@
     </div>
   </section>
 
-  <app-dashboard-notification
-    title="最新通知"
-    [tabs]="tabs"
-    [notifications]="notifications"
-    [maxItems]="6"
-    [limitItems]="true"
-    [showTabs]="false"
-    [showPagination]="false"
-    viewAllLink="/organizer/dash-board/notification"
-    viewAllText="查看全部"
-  />
+  <div class="dashboard-overview-grid">
+    <section class="registration-overview-card" aria-labelledby="registration-overview-title">
+      <div class="registration-overview-header">
+        <div>
+          <h2 id="registration-overview-title">活動報名概況</h2>
+        </div>
+        <a routerLink="/organizer/dash-board/activity" class="view-all-link">
+          查看全部活動 <i class="bi bi-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
+
+      <div class="registration-chart-scroll">
+        <div class="registration-chart-wrap">
+          <canvas
+            #registrationChart
+            role="img"
+            aria-label="近期五場活動的已選位、付款未選位、報名未付款與剩餘名額堆疊比較圖"
+          >
+            近期活動報名概況圖表
+          </canvas>
+        </div>
+      </div>
+    </section>
+
+    <app-dashboard-notification
+      class="overview-notification"
+      title="最新通知"
+      [tabs]="tabs"
+      [notifications]="notifications"
+      [maxItems]="3"
+      [limitItems]="true"
+      [showTabs]="false"
+      [showPagination]="false"
+      viewAllLink="/organizer/dash-board/notification"
+      viewAllText="查看全部"
+    />
+  </div>
+
 </section>

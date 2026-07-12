@@ -50,7 +50,7 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
     ActivityStatus.unpublished,
   ];
 
-  /** 需要管理員處理（顯示「審核」按鈕）的狀態，其餘顯示「查看」 */
+  /** 需要管理員處理（同時顯示「審核」與「查看」按鈕）的狀態。 */
   private readonly needsReviewStatuses: string[] = [
     ActivityStatus.pendingReview,
     ActivityStatus.mapBuilding,
@@ -58,7 +58,7 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
   ];
 
   /** 假資料：模擬後端回傳的活動列表，之後可替換成真正的 API 呼叫結果 */
-  private readonly mockActivities: ActivityListItem[] = [
+  private readonly mockActivities: ActivityListItem[] = ([
     { id: 1, image: 'assets/images/market/cards/market-card-01.png', name: '夏日綠意市集', organizer: '森林生活市集', startDate: '2026-07-01', endDate: '2026-07-02', status: ActivityStatus.pendingReview, createdAt: '2026-05-28 14:30' },
     { id: 2, image: 'assets/images/market/cards/market-card-02.png', name: '秋季手作市集', organizer: '日日好市', startDate: '2026-09-15', endDate: '2026-09-16', status: ActivityStatus.unpublishRequested, createdAt: '2026-05-27 10:00' },
     { id: 3, image: 'assets/images/market/cards/market-card-03.png', name: '春語花市', organizer: '春語市集', startDate: '2026-05-01', endDate: '2026-05-02', status: ActivityStatus.full, createdAt: '2026-04-25 18:00' },
@@ -83,7 +83,9 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
     { id: 22, image: 'assets/images/market/cards/market-card-02.png', name: '寶寶用品市集', organizer: '日日好市', startDate: '2026-09-20', endDate: '2026-09-21', status: ActivityStatus.pendingReview, createdAt: '2026-06-01 09:00' },
     { id: 23, image: 'assets/images/market/cards/market-card-03.png', name: '復古玩具市集', organizer: '春語市集', startDate: '2026-07-10', endDate: '2026-07-11', status: ActivityStatus.registrationOpen, createdAt: '2026-05-23 14:50' },
     { id: 24, image: 'assets/images/market/cards/market-card-04.png', name: '手沖咖啡市集', organizer: '歡樂市集團隊', startDate: '2026-08-15', endDate: '2026-08-16', status: ActivityStatus.full, createdAt: '2026-05-21 10:25' },
-  ];
+  ] as Array<Omit<ActivityListItem, 'submittedAt'> & { createdAt: string }>).map(
+    ({ createdAt, ...activity }) => ({ ...activity, submittedAt: createdAt }),
+  );
 
   /** 目前篩選條件：主辦方 */
   private selectedOrganizer = '';
@@ -98,7 +100,8 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
   /** 目前頁碼 */
   currentPage = 1;
   /** 每頁筆數，依畫面剩餘高度動態計算（見 Task 8），初始為合理預設值 */
-  pageSize = 8;
+  /** 管理頁統一每頁顯示 6 筆。 */
+  pageSize = 6;
   /** 篩選後的總筆數 */
   totalItems = 0;
 
@@ -202,9 +205,7 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
 
   /** 依表格容器目前的高度，重新計算一頁可顯示的列數 */
   private recalculatePageSize(): void {
-    const wrapperHeight = this.resultSectionRef.nativeElement.clientHeight;
-    const availableHeight = wrapperHeight - this.headerHeight;
-    this.pageSize = Math.max(Math.floor(availableHeight / this.rowHeight), 4);
+    this.pageSize = 6;
   }
 
   /** 取得狀態對應的標籤顏色 class */
@@ -212,7 +213,12 @@ export class AdminDashboardMarketManagemant implements AfterViewInit {
     return ActivityStatus.getClass(status);
   }
 
-  /** 是否需要顯示「審核」按鈕（否則顯示「查看」） */
+  /** 將 API 使用的 ISO 日期轉成全站統一的活動日期區間格式。 */
+  formatDateRange(startDate: string, endDate: string): string {
+    return `${startDate.replaceAll('-', '/')} - ${endDate.replaceAll('-', '/')}`;
+  }
+
+  /** 是否需要在固定顯示的「查看」按鈕左側加上「審核」按鈕。 */
   isReviewNeeded(status: string): boolean {
     return this.needsReviewStatuses.includes(status);
   }

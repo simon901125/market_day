@@ -166,7 +166,7 @@ export class MarketMap {
   @Input() mode: MarketMapMode = 'public';
   @Input() mapData: MarketMapData = DEFAULT_MAP;
 
-  selectedBooth: MarketMapBooth | null = null;
+  selectedBooth: MarketMapBooth | null = DEFAULT_MAP.booths.find((booth) => booth.code === 'A12') ?? null;
   hoveredBooth: MarketMapBooth | null = null;
   isPreviewPinned = false;
   isPreviewClosing = false;
@@ -177,6 +177,9 @@ export class MarketMap {
   searchText = '';
   selectedZone = 'all';
   zoom = 1;
+  readonly organizerDates = ['2026/07/18（六）', '2026/07/19（日）'];
+  selectedOrganizerDate = this.organizerDates[0];
+  private readonly organizerSelectedCodes = ['A02', 'A03', 'A10', 'A12', 'B01', 'B03', 'B10', 'B13', 'C03'];
   private hoverPreviewTimer: ReturnType<typeof setTimeout> | null = null;
   private previewCloseTimer: ReturnType<typeof setTimeout> | null = null;
   private fullscreenCloseTimer: ReturnType<typeof setTimeout> | null = null;
@@ -257,7 +260,10 @@ export class MarketMap {
   }
 
   boothClass(booth: MarketMapBooth): string {
-    const classes = [`booth-${booth.status}`, `zone-${booth.code.charAt(0).toLowerCase()}`];
+    const visibleStatus = this.mode === 'organizer-view'
+      ? (this.isOrganizerBoothSelected(booth) ? 'selected' : 'available')
+      : booth.status;
+    const classes = [`booth-${visibleStatus}`, `zone-${booth.code.charAt(0).toLowerCase()}`];
 
     if (booth.id === 'service-booth') {
       classes.push('booth-service');
@@ -273,6 +279,10 @@ export class MarketMap {
     }
 
     return classes.join(' ');
+  }
+
+  isOrganizerBoothSelected(booth: MarketMapBooth): boolean {
+    return this.organizerSelectedCodes.includes(booth.code);
   }
 
   selectBooth(booth: MarketMapBooth): void {

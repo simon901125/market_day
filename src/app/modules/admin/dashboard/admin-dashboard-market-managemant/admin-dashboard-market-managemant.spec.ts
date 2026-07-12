@@ -104,23 +104,22 @@ describe('AdminDashboardMarketManagemant', () => {
     expect(navigateSpy).toHaveBeenCalledWith(['/admin/dash-board/activity/detail'], { state: { activity } });
   });
 
-  it('recalculatePageSize() 應依容器高度計算可顯示列數', () => {
+  it('recalculatePageSize() 應固定每頁顯示 6 筆', () => {
     const wrapperEl: HTMLElement = component.tableWrapperRef.nativeElement;
     Object.defineProperty(wrapperEl, 'clientHeight', { value: 280, configurable: true });
 
     (component as any).recalculatePageSize();
 
-    // (280 - 48) / 56 = 4.14 -> floor = 4
-    expect(component.pageSize).toBe(4);
+    expect(component.pageSize).toBe(6);
   });
 
-  it('recalculatePageSize() 算出的列數最少為 1', () => {
+  it('recalculatePageSize() 不受容器高度影響', () => {
     const wrapperEl: HTMLElement = component.tableWrapperRef.nativeElement;
     Object.defineProperty(wrapperEl, 'clientHeight', { value: 10, configurable: true });
 
     (component as any).recalculatePageSize();
 
-    expect(component.pageSize).toBe(1);
+    expect(component.pageSize).toBe(6);
   });
 
   it('應顯示頁面標題「活動管理」', () => {
@@ -130,8 +129,8 @@ describe('AdminDashboardMarketManagemant', () => {
 
   it('表格應依 activities 渲染對應列數，並顯示正確的狀態樣式與操作按鈕文字', () => {
     component.activities = [
-      { id: 1, image: 'assets/images/market/cards/market-card-01.png', name: '測試市集A', organizer: '森林生活市集', startDate: '2026-07-01', endDate: '2026-07-02', status: ActivityStatus.pendingReview, createdAt: '2026-05-28 14:30' },
-      { id: 2, image: 'assets/images/market/cards/market-card-02.png', name: '測試市集B', organizer: '日日好市', startDate: '2026-09-15', endDate: '2026-09-16', status: ActivityStatus.registrationOpen, createdAt: '2026-05-27 10:00' },
+      { id: 1, image: 'assets/images/market/cards/market-card-01.png', name: '測試市集A', organizer: '森林生活市集', startDate: '2026-07-01', endDate: '2026-07-02', status: ActivityStatus.pendingReview, submittedAt: '2026-05-28 14:30' },
+      { id: 2, image: 'assets/images/market/cards/market-card-02.png', name: '測試市集B', organizer: '日日好市', startDate: '2026-09-15', endDate: '2026-09-16', status: ActivityStatus.registrationOpen, submittedAt: '2026-05-27 10:00' },
     ];
     fixture.detectChanges();
 

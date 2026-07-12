@@ -1,5 +1,5 @@
-<main class="payment-page page-transition">
-  <nav class="breadcrumb-line" aria-label="breadcrumb">
+<main class="payment-page dashboard-detail-page page-transition">
+  <nav class="breadcrumb-line app-breadcrumb" aria-label="breadcrumb">
     <a routerLink="/vendor/dash-board/application-record">我的報名紀錄</a>
     <span>›</span>
     <a [routerLink]="['/vendor/dash-board/appliction-record/detail', record.applicationNo]">
@@ -9,14 +9,15 @@
     <strong>付款頁面</strong>
   </nav>
 
-  <header class="page-header">
+  <header class="page-header app-page-header">
     <a
       [routerLink]="['/vendor/dash-board/appliction-record/detail', record.applicationNo]"
+      class="app-back-link"
       aria-label="返回報名詳細"
     >
       <i class="bi bi-arrow-left"></i>
     </a>
-    <h1>付款頁面</h1>
+    <h1 class="app-page-title">付款頁面</h1>
   </header>
 
   <section class="application-summary">
@@ -97,7 +98,9 @@
         </div>
       </dl>
 
-      <button type="button" (click)="continueToCreditCard()">前往信用卡付款</button>
+      <button type="button" class="app-btn primary" (click)="continueToCreditCard()">
+        前往信用卡付款
+      </button>
 
       <p class="security-note">
         <i class="bi bi-lock"></i>

@@ -423,22 +423,34 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         );
         return;
       case 'unpublish':
-        if (!await this.alert.confirm(
-          '下架活動確認',
-          `確定要下架「${this.activity.name}」嗎？<br>下架後，活動將不再對外公開，參加者將無法瀏覽與報名。`,
-          '確定下架',
-        )) {
-          return;
-        }
+        const reason = await this.alert.requiredReason({
+          title: '申請下架活動',
+          description: `請填寫「${this.activity.name}」的下架原因，送出後將由管理員審核。`,
+          fieldLabel: '下架原因',
+          placeholder: '請說明申請下架活動的原因',
+          confirmButtonText: '下一步',
+        });
+        if (!reason) return;
+
+        const confirmed = await this.alert.confirmReason({
+          title: '確認送出下架申請',
+          description: '請確認活動與下架原因，送出後將進入管理員審核流程。',
+          subjectLabel: '活動名稱',
+          subject: this.activity.name,
+          reasonLabel: '下架原因',
+          reason,
+          confirmButtonText: '確認送出',
+        });
+        if (!confirmed) return;
+
         this.activity = {
           ...this.activity,
-          status: ActivityStatus.unpublished,
-          signupProgress: '-',
-          paidCount: '-',
+          status: ActivityStatus.unpublishRequested,
+          unpublishReason: reason,
         };
         await this.alert.success(
-          '下架活動成功',
-          `活動「${this.activity.name}」已成功下架。<br>活動現已不再對外公開，所有人皆不可瀏覽與報名。`,
+          '下架申請已送出',
+          `活動「${this.activity.name}」已進入下架審核流程。<br>審核完成前，活動狀態為「下架申請中」。`,
           '知道了',
         );
         return;

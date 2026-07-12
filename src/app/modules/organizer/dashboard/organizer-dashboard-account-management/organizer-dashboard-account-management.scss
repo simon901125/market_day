@@ -28,13 +28,8 @@
 }
 
 :host ::ng-deep .organizer-account-management {
-  .dashboard-table th,
-  .dashboard-table td {
-    padding-inline: 10px;
-  }
-
   .image-text-cell {
-    gap: 8px;
+    gap: 10px;
 
     img {
       width: 44px;

@@ -41,7 +41,7 @@ const MOCK_DETAIL: AdminMarketDetail = {
   activityInfo: {
     name: '夏日綠意市集',
     type: '生活文創・生活選物・綠市場',
-    time: '2026/07/01 ~ 2026/08/02 10:00 ~ 19:00',
+    time: '2026/07/01 - 2026/08/02 10:00 - 19:00',
     location: '台北市信義區君悅大道1號',
     locationName: '勤美綠原道',
     description: '夏天，是感受夏天好精選的季節。我們誠摯邀請一起品嚐這裡—在林蔭散策散步中，整城市到土地與人們的距離與共鳴。\n\n現場有豐富音樂現場演出和手作攤位，探索自然蔬食品和真實農夫，美食飲品音樂和演奏，適合全家人一起感受豐盛的美好時光。',
@@ -50,7 +50,7 @@ const MOCK_DETAIL: AdminMarketDetail = {
     registrationStartTime: '2026/05/01  10:00',
     registrationEndTime: '2026/05/15  23:59',
     finalListConfirmation: '2026/05/29  12:00',
-    activityTime: '2026/07/01 ~ 2026/07/02',
+    activityTime: '2026/07/01 - 2026/07/02',
   },
   organizerInfo: {
     organizerName: '森林生活市集',

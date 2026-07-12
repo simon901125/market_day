@@ -1,23 +1,25 @@
 :host {
   display: block;
-  background: var(--bg-primary);
+  background: var(--bg-white);
 }
 
 .market-search-section {
-  padding: 3px 0 26px;
+  padding: 0 0 30px;
   background: var(--bg-white);
   color: var(--text-dark);
 
   .container {
-    max-width: 1180px;
+    width: var(--user-content-width);
+    max-width: none;
+    padding: 0;
   }
 }
 
 .search-card {
-  padding: 24px 20px;
+  padding: 18px;
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-card);
-  background: var(--bg-white);
-  box-shadow: var(--shadow-soft);
+  background: var(--primary-soft);
 }
 
 .search-row {
@@ -33,7 +35,7 @@
   align-items: center;
   gap: 12px;
   padding: 0 12px;
-  border: 1px solid var(--bg-primary);
+  border: 1px solid var(--border-light);
   border-radius: 6px;
   background: var(--bg-white);
 
@@ -63,7 +65,7 @@
 .search-select {
   height: 46px;
   padding: 0 36px 0 14px;
-  border-color: var(--bg-primary);
+  border-color: var(--border-light);
   border-radius: 6px;
   color: var(--text-dark);
   font-size: 14px;
@@ -100,7 +102,7 @@
 
 @media (max-width: 1200px) {
   .market-search-section .container {
-    max-width: 960px;
+    width: var(--user-content-width);
   }
 
   .search-row {
@@ -118,7 +120,7 @@
 
 @media (max-width: 576px) {
   .market-search-section {
-    padding: 30px 0 24px;
+    padding: 0 0 24px;
 
     h1 {
       margin-bottom: 24px;
@@ -127,7 +129,7 @@
   }
 
   .search-card {
-    padding: 18px;
+    padding: 16px;
   }
 
   .search-row {

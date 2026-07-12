@@ -18,6 +18,8 @@ export interface OrganizerEventRow {
   paidCount: string;
   /** 草稿資料是否已完整，可送出審核。 */
   canSubmitReview?: boolean;
+  /** 主辦方提出下架申請時填寫的原因。 */
+  unpublishReason?: string;
   /** 主要操作按鈕文字。 */
   actionLabel: string;
   actions?: {

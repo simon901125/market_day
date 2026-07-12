@@ -22,6 +22,8 @@ interface InfoRow {
   label: string;
   value: string;
   accent?: boolean;
+  type?: 'status' | 'amount';
+  statusClass?: string;
 }
 
 interface SummaryRow extends InfoRow {
@@ -281,6 +283,7 @@ export class OrganizerDashboardCollectionDetail implements OnInit {
   get registrationSummaryRows(): InfoRow[] {
     return [
       { label: '報名編號', value: this.detail.registrationNo },
+      { label: '報名狀態', value: this.detail.registrationStatus, type: 'status', statusClass: this.registrationStatusClass },
       { label: '活動名稱', value: this.detail.activityName },
       { label: '報名日期', value: this.registrationDate },
       { label: '攤主姓名', value: this.getInfoValue(this.detail.vendor, '攤主姓名') },
@@ -440,7 +443,7 @@ export class OrganizerDashboardCollectionDetail implements OnInit {
       activityName: '夏日綠意市集',
       activityImage: `assets/images/market/cards/market-card-0${Math.min(id, 8)}.png`,
       activityStatus: '進行中',
-      activityDate: '2026/05/30（六）14:00 ~ 2026/05/31（日）20:00',
+      activityDate: '2026/05/30（六）14:00 - 2026/05/31（日）20:00',
       activityLocation: '宜蘭轉站前天天園森林廣場',
       activityAddress: '宜蘭縣宜蘭市中山路一段243號',
       registrationStatus: ApplicationStatus.pendingSelection,
