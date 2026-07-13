@@ -1,38 +1,34 @@
-<div class="layout-example-backdrop app-modal-backdrop" [class.is-closing]="closing" role="presentation" (click)="closeDialog.emit()">
-  <section
-    class="layout-example-dialog app-modal app-modal--lg"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="layout-example-title"
-    (click)="$event.stopPropagation()"
-  >
+<div class="event-config-dialog-backdrop app-modal-backdrop" [class.is-closing]="closing" role="presentation" (click)="closeDialog.emit()">
+  <section class="event-config-dialog layout-example-dialog app-modal app-modal--lg" role="dialog" aria-modal="true" aria-labelledby="layout-example-title" (click)="$event.stopPropagation()">
     <header class="app-modal-header">
       <h2 id="layout-example-title"><i class="bi bi-map"></i>攤位配置圖範例</h2>
-      <button type="button" aria-label="關閉範例" (click)="closeDialog.emit()">
-        <i class="bi bi-x-lg"></i>
-      </button>
+      <button type="button" aria-label="關閉配置圖範例" (click)="closeDialog.emit()"><i class="bi bi-x-lg"></i></button>
     </header>
 
-    <div class="sample-layout-map">
-      <img src="assets/images/organizer/booth/booth-layout-example.svg" alt="攤位配置圖範例" />
-    </div>
+    <div class="dialog-panel layout-example-panel app-modal-section">
+      <h3>配置圖說明</h3>
 
-    <div class="layout-example-copy">
-      <p>請上傳清楚的攤位配置圖，須和上方攤位分區一致，建議包含以下資訊：</p>
-      <ol>
-        <li>攤位配置與區域編號</li>
-        <li>入口、服務台、廁所、休息區等重要位置</li>
-        <li>若有不同類型攤位，請在圖上清楚標示</li>
-      </ol>
-    </div>
+      <div class="sample-layout-map">
+        <img src="assets/images/organizer/booth/booth-layout-example.svg" alt="攤位配置圖範例" />
+      </div>
 
-    <p class="layout-example-alert">
-      <i class="bi bi-exclamation-circle"></i>
-      <span><strong>注意：</strong>攤位配置圖中的分區名稱，須與上方設定的攤位分區一致。</span>
-    </p>
+      <div class="layout-example-copy">
+        <p>請上傳清楚的攤位配置圖，須和上方攤位分區一致，建議包含以下資訊：</p>
+        <ol>
+          <li>攤位配置與區域編號</li>
+          <li>入口、服務台、廁所、休息區等重要位置</li>
+          <li>若有不同類型攤位，請在圖上清楚標示</li>
+        </ol>
+      </div>
+
+      <p class="layout-example-alert section-note">
+        <i class="bi bi-exclamation-circle"></i>
+        <span><strong>注意：</strong>攤位配置圖中的分區名稱，須與上方設定的攤位分區一致。</span>
+      </p>
+    </div>
 
     <footer class="app-modal-actions">
-      <button type="button" class="layout-example-confirm app-btn primary" (click)="closeDialog.emit()">我知道了</button>
+      <button type="button" class="dialog-save-btn app-btn primary" (click)="closeDialog.emit()">我知道了</button>
     </footer>
   </section>
 </div>

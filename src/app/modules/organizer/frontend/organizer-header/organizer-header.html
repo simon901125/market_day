@@ -42,7 +42,7 @@
       @if (isLoggedIn && user) {
         <span class="account-name">
           <i class="bi bi-person-circle"></i>
-          {{ user.name }}
+          {{ displayName }}
         </span>
         <button type="button" class="logout-btn" [disabled]="isLoggingOut" (click)="logout()">
           <i class="bi bi-box-arrow-right"></i>
@@ -99,7 +99,7 @@
     @if (isLoggedIn && user) {
       <span class="account-name">
         <i class="bi bi-person-circle"></i>
-        {{ user.name }}
+        {{ displayName }}
       </span>
       <button type="button" class="logout-btn" [disabled]="isLoggingOut" (click)="logout()">
         <i class="bi bi-box-arrow-right"></i>

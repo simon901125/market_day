@@ -375,34 +375,7 @@
 }
 
 .ledger-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
   margin-bottom: 16px;
-
-  button {
-    min-width: 0;
-    height: 34px;
-    padding: 0 14px;
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-tag);
-    background: var(--bg-white);
-    color: var(--text-normal);
-    font-size: 13px;
-    font-weight: 900;
-    cursor: pointer;
-    transition:
-      background-color 0.2s ease,
-      border-color 0.2s ease,
-      color 0.2s ease;
-
-    &.active,
-    &:hover {
-      border-color: var(--primary-color);
-      color: var(--primary-color);
-      background: var(--primary-soft);
-    }
-  }
 }
 
 .table-wrap {

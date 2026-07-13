@@ -238,6 +238,24 @@
   .contact-card {
     margin-top: 0;
   }
+
+  .values-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .value-card,
+  .value-card + .value-card {
+    padding: 22px 10px;
+    border-left: 0;
+  }
+
+  .value-card:first-child {
+    padding-top: 8px;
+  }
+
+  .value-card + .value-card {
+    border-top: 1px solid var(--border-primary);
+  }
 }
 
 @media (max-width: 767px) {

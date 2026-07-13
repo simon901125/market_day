@@ -52,6 +52,7 @@
                         <button
                           type="button"
                           class="table-action"
+                          [class.long-label]="action.label.length > 4"
                           [class.primary]="action.variant === 'primary'"
                           [class.danger]="action.variant === 'danger'"
                           [class.success]="action.variant === 'success'"

@@ -1,0 +1,63 @@
+<div class="vendor-product-modal-backdrop app-modal-backdrop" (click)="closeDialog.emit()">
+  <section class="vendor-product-modal app-modal" role="dialog" aria-modal="true" aria-labelledby="vendor-product-modal-title" (click)="$event.stopPropagation()">
+    <header class="app-modal-header">
+      <h2 id="vendor-product-modal-title"><i class="bi bi-box-seam"></i>{{ editing ? '編輯商品' : '新增商品' }}</h2>
+      <button type="button" aria-label="關閉商品視窗" (click)="closeDialog.emit()"><i class="bi bi-x-lg"></i></button>
+    </header>
+
+    <section class="modal-panel app-modal-section">
+      <h3>商品基本資料</h3>
+      <div class="form-grid">
+        <label class="field">
+          <span>商品名稱</span>
+          <input type="text" maxlength="40" [(ngModel)]="draft.name" [class.invalid]="invalidFields.has('name')" (input)="clearInvalid('name')" placeholder="請輸入商品名稱" />
+        </label>
+        <label class="field">
+          <span>商品價格</span>
+          <span class="price-control" [class.invalid]="invalidFields.has('price')">
+            <input type="number" min="1" [(ngModel)]="draft.price" (input)="clearInvalid('price')" placeholder="請輸入價格" /><small>元</small>
+          </span>
+        </label>
+        <label class="field full">
+          <span>商品簡介</span>
+          <span class="textarea-control">
+            <textarea maxlength="120" [(ngModel)]="draft.description" [class.invalid]="invalidFields.has('description')" (input)="clearInvalid('description')" placeholder="請簡單介紹你的商品特色"></textarea>
+            <small>{{ draft.description.length }} / 120</small>
+          </span>
+        </label>
+      </div>
+    </section>
+
+    <section class="modal-panel app-modal-section">
+      <h3>商品圖片</h3>
+      <div class="upload-row">
+        @if (imagePreview) {
+          <div class="image-preview-wrap">
+            <label class="image-preview-select" aria-label="重新選擇商品圖片">
+              <img class="image-preview" [src]="imagePreview" [alt]="draft.name || '商品圖片預覽'" />
+              <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" (change)="selectImage($event)" />
+            </label>
+            <button type="button" class="remove-image" aria-label="移除商品圖片" (click)="removeImage()">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        } @else {
+          <label class="image-upload" [class.invalid]="invalidFields.has('image')">
+            <i class="bi bi-plus-circle"></i><strong>點擊上傳圖片</strong>
+            <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" (change)="selectImage($event)" />
+          </label>
+        }
+        <div class="upload-guide">
+          <strong>{{ imageName }}</strong>
+          <span>建議比例：4:3</span><span>檔案格式：JPG / PNG</span><span>檔案大小：最大 5MB</span>
+        </div>
+      </div>
+    </section>
+
+    <p class="form-error" role="alert">{{ errorMessage }}</p>
+    <footer class="app-modal-actions">
+      <button type="button" class="app-btn neutral" (click)="closeDialog.emit()">取消</button>
+      <button type="button" class="app-btn primary" (click)="save()">{{ editing ? '儲存變更' : '新增商品' }}</button>
+    </footer>
+  </section>
+</div>

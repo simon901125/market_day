@@ -1,0 +1,20 @@
+<div class="event-config-dialog-backdrop app-modal-backdrop" [class.is-closing]="closing" role="presentation" (click)="closeDialog.emit()">
+  <section class="event-config-dialog app-modal" role="dialog" aria-modal="true" aria-labelledby="extra-power-dialog-title" (click)="$event.stopPropagation()">
+    <header class="app-modal-header">
+      <h2 id="extra-power-dialog-title"><i class="bi bi-lightning-charge"></i>{{ editing ? '編輯用電方案' : '新增用電方案' }}</h2>
+      <button type="button" aria-label="關閉用電方案視窗" (click)="closeDialog.emit()"><i class="bi bi-x-lg"></i></button>
+    </header>
+    <div class="dialog-panel app-modal-section">
+      <h3>用電方案資訊</h3>
+      <label class="field"><span>電壓 <b>*</b></span><span class="unit-control"><input type="text" placeholder="請輸入電壓，例如：110V、220V" [(ngModel)]="draft.voltage" name="extraPowerVoltage" /><small>V</small></span></label>
+      <label class="field"><span>額外供電量 <b>*</b></span><span class="unit-control"><input type="number" min="1" [(ngModel)]="draft.wattage" name="extraPowerWattage" /><small>W</small></span></label>
+      <label class="field"><span>每日費用（元 / 天） <b>*</b></span><span class="unit-control"><input type="number" min="0" [(ngModel)]="draft.fee" name="extraPowerFee" /><small>元</small></span></label>
+      <label class="field full"><span>說明（選填）</span><span class="textarea-control"><textarea maxlength="100" placeholder="例如：一般文創攤位適用、小型設備、高功率設備適用等" [(ngModel)]="draft.description" name="extraPowerDescription"></textarea><small>{{ draft.description.length }} / 100</small></span></label>
+      <p class="section-note"><i class="bi bi-info-circle-fill"></i>實際供電能力將依現場電力配置與安全規範調整。</p>
+    </div>
+    <footer class="app-modal-actions">
+      <button type="button" class="dialog-cancel-btn app-btn neutral" (click)="closeDialog.emit()">取消</button>
+      <button type="button" class="dialog-save-btn app-btn primary" (click)="saveDialog.emit()">儲存</button>
+    </footer>
+  </section>
+</div>

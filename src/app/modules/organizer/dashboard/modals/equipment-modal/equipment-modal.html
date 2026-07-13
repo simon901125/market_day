@@ -1,0 +1,38 @@
+<div class="event-config-dialog-backdrop app-modal-backdrop" [class.is-closing]="closing" role="presentation" (click)="closeDialog.emit()">
+  <section class="event-config-dialog large app-modal app-modal--lg" role="dialog" aria-modal="true" aria-labelledby="equipment-dialog-title" (click)="$event.stopPropagation()">
+    <header class="app-modal-header">
+      <h2 id="equipment-dialog-title"><i class="bi bi-box-seam"></i>{{ editing ? '編輯設備' : '新增設備' }}</h2>
+      <button type="button" aria-label="關閉設備視窗" (click)="closeDialog.emit()"><i class="bi bi-x-lg"></i></button>
+    </header>
+    <div class="dialog-panel app-modal-section">
+      <h3>設備資訊</h3>
+      <div class="dialog-grid two">
+        <label class="field"><span>設備名稱 <b>*</b></span><span class="text-control"><input type="text" placeholder="請輸入設備名稱" [(ngModel)]="draft.name" name="equipmentName" /></span></label>
+        <label class="field"><span>單位 <b>*</b></span><span class="text-control"><input type="text" placeholder="例如：張、頂、條、組" [(ngModel)]="draft.unit" name="equipmentUnit" /></span></label>
+      </div>
+      <label class="field full"><span>設備規格 <b>*</b></span><span class="textarea-control"><textarea maxlength="100" placeholder="例如：180 x 60 x 75 cm、3 x 3 公尺、LED 投光燈 100W" [(ngModel)]="draft.specification" name="equipmentSpecification"></textarea><small>{{ draft.specification.length }} / 100</small></span></label>
+    </div>
+    <div class="dialog-panel app-modal-section">
+      <h3>設備規則</h3>
+      <div class="dialog-grid compact">
+        <label class="field"><span>每攤每日免費提供數量 <b>*</b></span><span class="unit-control"><input type="number" min="0" [(ngModel)]="draft.freeQuantity" name="equipmentFreeQuantity" /><small>單位</small></span></label>
+      </div>
+      <div class="radio-row">
+        <label><input type="radio" name="equipmentRentable" [(ngModel)]="draft.rentable" [value]="true" /> 開放租借</label>
+        <label><input type="radio" name="equipmentRentable" [(ngModel)]="draft.rentable" [value]="false" /> 不開放租借</label>
+      </div>
+      @if (draft.rentable) {
+        <div class="rental-rule-box">
+          <label class="field"><span>每日租借價格（元 / 天） <b>*</b></span><span class="unit-control"><input type="number" min="0" [(ngModel)]="draft.rentalPrice" name="equipmentRentalPrice" /><small>元 / 天</small></span></label>
+          <label class="field"><span>每攤每日最多租借數量 <b>*</b></span><span class="unit-control"><input type="number" min="1" [(ngModel)]="draft.rentalLimit" name="equipmentRentalLimit" /><small>單位</small></span></label>
+          <label class="field"><span>每日可租借總數 <b>*</b></span><span class="unit-control"><input type="number" min="1" [(ngModel)]="draft.dailyRentalQuantity" name="equipmentDailyRentalQuantity" /><small>單位</small></span></label>
+          <p class="section-note"><i class="bi bi-info-circle-fill"></i>租借設備依每日可租借數量控管，額滿後即不可租借。</p>
+        </div>
+      }
+    </div>
+    <footer class="app-modal-actions">
+      <button type="button" class="dialog-cancel-btn app-btn neutral" (click)="closeDialog.emit()">取消</button>
+      <button type="button" class="dialog-save-btn app-btn primary" (click)="saveDialog.emit()">{{ editing ? '儲存變更' : '確認新增' }}</button>
+    </footer>
+  </section>
+</div>

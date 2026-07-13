@@ -49,7 +49,7 @@ describe('VendorApplicationDetail', () => {
 
     const textContent: string = fixture.nativeElement.textContent;
 
-    expect(textContent).toContain('申請退款');
+    expect(textContent).toContain('退款申請');
     expect(textContent).toContain('待選位');
     expect(textContent).toContain('尚未選擇攤位');
   });

@@ -111,75 +111,14 @@
   }
 }
 
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 25px;
-  padding: 0 10px;
-  border-radius: var(--radius-tag);
-  font-size: 12px;
-  font-weight: 900;
-  white-space: nowrap;
-
-  &.completed,
-  &.deposit-refunded {
-    background: #ecfdf3;
-    color: #16a34a;
-  }
-
-  &.reviewing,
-  &.refund-applying {
-    background: var(--bg-primary);
-    color: var(--primary-color);
-  }
-
-  &.refunded {
-    background: #fef2f2;
-    color: #dc2626;
-  }
-
-  &.payment {
-    background: #fff4df;
-    color: var(--primary-color);
-  }
-
-  &.refund-processing {
-    background: #f4efff;
-    color: #6d28d9;
-  }
-
-  &.booth {
-    background: #eaf5ff;
-    color: #1680e5;
-  }
-
-  &.cancelled,
-  &.history {
-    background: #eee;
-    color: #888;
-  }
-}
-
 .summary-actions {
   align-self: end;
   padding-bottom: 2px;
 }
 
 .outline-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  height: 42px;
-  padding: 0 18px;
-  border: 1px solid var(--primary-color);
-  border-radius: var(--radius-tag);
-  color: var(--primary-color);
+  width: auto;
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 900;
-  white-space: nowrap;
 }
 
 .progress-card {
@@ -322,71 +261,12 @@
   border-bottom: 0;
 }
 
-.payment-list .status-value,
-.side-list .status-value {
-  width: fit-content;
-  padding: 3px 10px;
-  border-radius: 999px;
-}
-
 .highlight-text {
   color: var(--primary-color) !important;
 }
 
-.status-value {
-  &.completed,
-  &.deposit-refunded {
-    background: #ecfdf3;
-    color: #16a34a !important;
-  }
-
-  &.reviewing,
-  &.refund-applying {
-    background: var(--bg-primary);
-    color: var(--primary-color) !important;
-  }
-
-  &.refunded {
-    background: #fef2f2;
-    color: #dc2626 !important;
-  }
-
-  &.payment {
-    background: #fff4df;
-    color: var(--primary-color) !important;
-  }
-
-  &.refund-processing {
-    background: #f4efff;
-    color: #6d28d9 !important;
-  }
-
-  &.booth {
-    background: #eaf5ff;
-    color: #1680e5 !important;
-  }
-
-  &.cancelled,
-  &.history {
-    background: #eee;
-    color: #888 !important;
-  }
-}
-
 .pay-now-btn,
-.map-btn {
-  width: 100%;
-  height: 38px;
-  margin-top: auto;
-  border: 0;
-  border-radius: var(--radius-tag);
-  background: var(--primary-color);
-  color: var(--bg-white);
-  font-size: 15px;
-  font-weight: 900;
-  cursor: pointer;
-
-}
+.map-btn { margin-top: auto; }
 
 .payment-detail {
   margin-top: 10px;
@@ -467,51 +347,13 @@
   font-weight: 800;
 }
 
-.booth-table-wrap,
-.detail-table-wrap {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.booth-table,
-.resource-card table {
-  width: 100%;
-  border-collapse: collapse;
-  color: #1f2d70;
-  font-size: 12px;
-
-  th,
-  td {
-    padding: 7px 9px;
-    text-align: left;
-    white-space: nowrap;
-  }
-
-  th {
-    background: var(--primary-soft);
-    font-weight: 900;
-  }
-
-  td {
-    border-bottom: 1px solid var(--border-light);
-    font-weight: 800;
-  }
-}
-
-.booth-table td:last-child span {
-  display: inline-flex;
-  padding: 3px 7px;
-  border-radius: var(--radius-tag);
-  background: #ecfdf3;
-  color: #16a34a;
-  font-size: 11px;
-  font-weight: 900;
-}
-
 .map-btn {
   width: min(220px, 100%);
   margin: 14px auto 0;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .resource-card {
@@ -635,5 +477,621 @@
 
   .fee-breakdown-card {
     overflow-x: auto;
+  }
+}
+
+/* 對齊主辦方報名詳情的頁面節奏與資訊卡視覺層級。 */
+.application-detail-page {
+  --detail-section-gap: 12px;
+  width: min(100%, var(--dashboard-content-width));
+  height: calc(100dvh - 48px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.application-detail-page .app-page-header {
+  flex: 0 0 auto;
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+
+.application-detail-page .breadcrumb-line {
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--text-light);
+  font-size: 14px;
+
+  a { color: var(--text-normal); }
+  > i { font-size: 11px; }
+  span { color: var(--text-dark); }
+}
+
+.application-detail-page .app-page-title-wrap { gap: 12px; }
+.application-detail-page .app-page-title { font-size: 22px; line-height: 1.2; }
+
+.application-detail-page .detail-content {
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: 24px;
+}
+
+.application-detail-page .summary-card,
+.application-detail-page .progress-card,
+.application-detail-page .detail-card {
+  box-sizing: border-box;
+  border-radius: var(--radius-card);
+}
+
+.application-detail-page .summary-card {
+  grid-template-columns: 260px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 8px 22px;
+  min-height: 0;
+  margin-bottom: var(--detail-section-gap);
+  padding: 14px 18px 16px;
+}
+
+.application-detail-page .summary-heading { grid-column: 1 / -1; }
+
+.application-detail-page .card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 0;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 900;
+
+    i { color: var(--primary-color); }
+  }
+}
+
+.application-detail-page .summary-card > img {
+  height: 100%;
+  min-height: 168px;
+}
+
+.application-detail-page .summary-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 10px;
+
+  p,
+  .application-number {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 14px;
+  }
+}
+
+.application-detail-page .market-title-line {
+  margin-bottom: 2px;
+  h2 { font-size: 18px; }
+}
+
+.application-detail-page .outline-link {
+  min-width: 104px;
+  height: 34px;
+  padding: 0 14px;
+}
+
+.application-detail-page .progress-card {
+  margin-bottom: var(--detail-section-gap);
+  padding: 18px 22px 20px;
+}
+
+.application-detail-page .progress-card h2,
+.application-detail-page .detail-card h2 {
+  margin-bottom: 16px;
+  font-size: 16px;
+}
+
+/* 區塊標題與主辦方報名詳情一致：16px 標題搭配同尺寸圖示。 */
+.application-detail-page h2 > i.bi {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.application-detail-page .progress-steps { gap: 14px; }
+
+.application-detail-page .progress-step {
+  flex: 0 0 148px;
+  max-width: none;
+  min-height: 74px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  border: 1px solid rgba(245, 158, 11, 0.22);
+
+  span,
+  strong { font-size: 14px; }
+}
+
+.application-detail-page .detail-grid,
+.application-detail-page .resource-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--detail-section-gap);
+  margin-bottom: var(--detail-section-gap);
+}
+
+.application-detail-page .detail-grid > .detail-card:nth-child(1),
+.application-detail-page .resource-grid > .detail-card:nth-child(1) { grid-column: span 5; }
+
+.application-detail-page .detail-grid > .detail-card:nth-child(2),
+.application-detail-page .resource-grid > .detail-card:nth-child(2) { grid-column: span 7; }
+
+.application-detail-page .detail-grid > .side-card { grid-column: span 12; }
+
+.application-detail-page .detail-card { padding: 18px 22px 20px; }
+
+.application-detail-page .info-list > div {
+  min-height: 46px;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 0;
+  font-size: 14px;
+}
+
+@media (max-width: 992px) {
+  .application-detail-page { height: auto; overflow: visible; }
+  .application-detail-page .detail-content { overflow: visible; }
+
+  .application-detail-page .summary-card,
+  .application-detail-page .detail-grid,
+  .application-detail-page .resource-grid { grid-template-columns: 1fr; }
+
+  .application-detail-page .detail-grid > .detail-card,
+  .application-detail-page .resource-grid > .detail-card { grid-column: 1 !important; }
+}
+
+.application-detail-page .progress-step {
+  span { color: var(--primary-hover); }
+  strong { color: var(--text-dark); font-weight: 800; }
+}
+
+.application-detail-page .info-list {
+  > div { grid-template-columns: 108px minmax(0, 1fr); gap: 14px; }
+
+  span {
+    color: var(--text-normal);
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  strong {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.55;
+  }
+}
+
+.application-detail-page table.fee-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-tag);
+  overflow: hidden;
+  color: var(--text-dark);
+  font-size: 13px;
+
+  th,
+  td {
+    padding: 12px 10px;
+    border-right: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--text-dark);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th {
+    background: #fff7ed;
+    font-weight: 900;
+  }
+
+  td { background: var(--bg-white); font-weight: 700; }
+  th:last-child,
+  td:last-child { border-right: 0; text-align: right; }
+  tbody tr:last-child td { border-bottom: 0; }
+}
+
+.application-detail-page .detail-total {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 14px;
+  color: var(--text-dark);
+  font-size: 15px;
+  font-weight: 900;
+
+  strong {
+    color: var(--primary-color);
+    font-size: 20px;
+  }
+}
+
+/* 設備與用電拆成四張等寬資訊卡。 */
+.application-detail-page .resource-grid > .resource-card {
+  grid-column: span 6 !important;
+  min-width: 0;
+  min-height: 0;
+}
+
+.application-detail-page .resource-grid > .resource-card:nth-child(1) { order: 1; }
+.application-detail-page .resource-grid > .resource-card:nth-child(2) { order: 3; }
+.application-detail-page .resource-grid > .resource-card:nth-child(3) { order: 2; }
+.application-detail-page .resource-grid > .resource-card:nth-child(4) { order: 4; }
+
+@media (max-width: 992px) {
+  .application-detail-page .resource-grid > .resource-card {
+    grid-column: 1 !important;
+  }
+}
+
+.application-detail-page .status-value {
+  min-width: 0;
+  height: 32px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border-radius: var(--radius-tag);
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* 區塊內的付款／退款狀態，字體需與活動資訊的狀態標籤一致。 */
+.application-detail-page .info-list .status-value {
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+.application-detail-page .empty-state {
+  h3 { color: var(--text-dark); font-size: 16px; }
+  p { color: var(--text-normal); font-size: 14px; }
+}
+
+.application-detail-page .resource-card {
+  min-height: 0;
+
+  h2 { margin-bottom: 14px; }
+
+  .subsection-title {
+    margin-top: 20px;
+    margin-bottom: 14px;
+  }
+}
+
+.application-detail-page .section-subtotal {
+  margin: 14px 4px 0;
+  color: var(--text-dark);
+  font-size: 14px;
+  font-weight: 900;
+
+  strong {
+    margin-left: 10px;
+    color: var(--primary-color);
+    font-size: 18px;
+  }
+}
+
+.application-detail-page .fee-breakdown-card {
+  padding: 18px 22px 20px;
+}
+
+.application-detail-page .fee-table {
+  color: var(--text-dark);
+  font-size: 13px;
+
+  > div {
+    min-height: 42px;
+    box-sizing: border-box;
+    align-items: center;
+    gap: 16px;
+    padding: 9px 12px;
+    color: var(--text-dark);
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  .fee-table-head {
+    min-height: 40px;
+    padding: 9px 12px;
+    background: #fff7ed;
+    color: var(--text-dark);
+    font-weight: 900;
+  }
+
+  .fee-total {
+    min-height: 52px;
+    margin-top: 6px;
+    background: var(--primary-soft);
+    font-size: 15px;
+
+    b {
+      color: var(--primary-color);
+      font-size: 20px;
+    }
+  }
+}
+
+.application-detail-page .payment-detail {
+  margin-top: 14px;
+  padding-top: 14px;
+
+  .toggle-label { font-size: 14px; }
+  .payment-content > div { padding: 7px 0; color: var(--text-dark); font-size: 13px; }
+}
+
+/* 活動資訊直接沿用主辦方報名詳情的 label/value 排列。 */
+.application-detail-page .activity-info {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 10px;
+
+  h3 {
+    margin: 0 0 2px;
+    color: var(--text-dark);
+    font-size: 18px;
+    font-weight: 900;
+  }
+
+  p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  .info-label {
+    width: 72px;
+    flex: 0 0 72px;
+    color: var(--text-normal);
+    font-weight: 900;
+  }
+}
+
+/* 狀態紀錄與主辦方使用相同的流程卡尺寸、顏色及換行方式。 */
+.application-detail-page .status-flow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  min-height: 0;
+  overflow: visible;
+  flex-wrap: wrap;
+}
+
+.application-detail-page .status-step {
+  box-sizing: border-box;
+  width: 148px;
+  min-height: 74px;
+  flex: 0 0 148px;
+  padding: 12px;
+  border: 1px solid rgba(245, 158, 11, 0.22);
+  border-radius: var(--radius-tag);
+  background: var(--primary-soft);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--primary-hover);
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  strong {
+    display: block;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+}
+
+.application-detail-page .status-arrow {
+  flex: 0 0 24px;
+  color: var(--primary-color);
+  font-size: 18px;
+  text-align: center;
+}
+
+.application-detail-page .status-reason-box {
+  width: fit-content;
+  max-width: min(100%, 920px);
+  margin-top: 16px;
+  padding: 16px 22px;
+  border: 1px solid rgba(245, 158, 11, 0.22);
+  border-radius: var(--radius-tag);
+  background: var(--primary-soft);
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  box-sizing: border-box;
+
+  > strong {
+    color: var(--primary-hover);
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  > div {
+    min-width: 0;
+    padding-left: 18px;
+    border-left: 1px solid rgba(245, 158, 11, 0.24);
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.65;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* 區塊內表格沿用主辦方報名詳情的完整框線表格。 */
+.application-detail-page .fee-table {
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-tag);
+
+  > div {
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .fee-total { margin-top: 0; }
+}
+
+/* 第一行：活動資訊與報名內容；下一行：付款資訊與攤位資訊。 */
+.application-detail-page .detail-summary-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--detail-section-gap);
+  margin-bottom: var(--detail-section-gap);
+}
+
+.application-detail-page .detail-summary-grid .summary-card {
+  min-width: 0;
+  height: auto;
+  margin-bottom: 0;
+  align-content: start;
+  grid-template-rows: auto auto;
+}
+
+.application-detail-page .detail-summary-grid .registration-card {
+  min-width: 0;
+  height: auto;
+}
+
+.application-detail-page .registration-card .info-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 0;
+}
+
+.application-detail-page .registration-card > h2 {
+  margin-bottom: 4px;
+}
+
+.application-detail-page .registration-card .info-list > div {
+  grid-template-columns: 130px minmax(0, 1fr);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.application-detail-page .registration-card .info-list > div:nth-child(odd):not(.registration-note-row) {
+  padding-right: 28px;
+}
+
+.application-detail-page .registration-card .info-list > div:nth-child(even) {
+  padding-left: 28px;
+}
+
+.application-detail-page .registration-card .info-list > .registration-note-row {
+  grid-column: 1 / -1;
+  border-bottom: 0;
+}
+
+.application-detail-page .detail-summary-grid .summary-image {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  align-self: stretch;
+  overflow: hidden;
+  border-radius: var(--radius-tag);
+}
+
+.application-detail-page .detail-summary-grid .summary-image > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.application-detail-page .detail-grid > .payment-card,
+.application-detail-page .detail-grid > .side-card {
+  grid-column: span 6 !important;
+  min-height: 0;
+}
+
+/* 待付款資訊沿用本頁其他資訊卡的列高、分隔線與操作按鈕尺寸。 */
+.application-detail-page .pending-payment-card .payment-list > div {
+  grid-template-columns: 108px minmax(0, 1fr);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.application-detail-page .pending-payment-card .payment-list > div:last-child {
+  border-bottom: 0;
+}
+
+.application-detail-page .pending-payment-card .pay-now-btn {
+  width: auto;
+  min-width: 120px;
+  align-self: flex-end;
+  margin-top: 16px;
+}
+
+@media (max-width: 1200px) {
+  .application-detail-page .detail-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .application-detail-page .detail-summary-grid .summary-image {
+    height: 220px;
+  }
+
+  .application-detail-page .registration-card .info-list {
+    grid-template-columns: 1fr;
+  }
+
+  .application-detail-page .registration-card .info-list > div:nth-child(n) {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .application-detail-page .detail-grid > .payment-card,
+  .application-detail-page .detail-grid > .side-card {
+    grid-column: 1 !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .application-detail-page .detail-summary-grid .summary-image {
+    height: 180px;
   }
 }

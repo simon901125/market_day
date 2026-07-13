@@ -7,15 +7,19 @@
 .market-card {
   height: 100%;
   overflow: hidden;
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
+  border: 1px solid var(--border-primary);
+  border-radius: 10px;
   background: var(--bg-white);
-  box-shadow: 0 5px 18px rgba(47, 41, 36, 0.06);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
 
   &:hover {
+    border-color: color-mix(in srgb, var(--primary-color) 48%, var(--border-primary));
+    box-shadow: 0 8px 20px rgba(47, 41, 36, 0.1);
     transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(47, 41, 36, 0.1);
   }
 }
 
@@ -200,6 +204,10 @@
 }
 
 @media (max-width: 576px) {
+  .market-card {
+    border-radius: 14px;
+  }
+
   .market-img {
     height: 200px;
   }

@@ -1,4 +1,4 @@
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
@@ -7,7 +7,7 @@ import { VENDOR_APPLICATION_RECORDS } from '../vendor-application-record/vendor-
 
 @Component({
   selector: 'app-vendor-payment-page',
-  imports: [DecimalPipe, RouterLink],
+  imports: [DecimalPipe, NgClass, RouterLink],
   templateUrl: './vendor-payment-page.html',
   styleUrl: './vendor-payment-page.scss',
 })
@@ -18,7 +18,8 @@ export class VendorPaymentPage {
 
   readonly record;
   readonly boothFee: number;
-  readonly equipmentFee = 50;
+  readonly equipmentRentalFee = 0;
+  readonly extraPowerFee = 50;
   readonly deposit = 1000;
 
   constructor(
@@ -36,6 +37,14 @@ export class VendorPaymentPage {
     return this.record.detail;
   }
 
+  get market() {
+    return this.record.market;
+  }
+
+  get eventDateText(): string {
+    return `${this.market.start_date} - ${this.market.end_date}　${this.market.time}`;
+  }
+
   get paymentDeadline(): string {
     return (
       this.detail.paymentRows.find((row) => row.label === '付款期限')?.value ?? '2026/06/05 23:59'
@@ -43,7 +52,7 @@ export class VendorPaymentPage {
   }
 
   get total(): number {
-    return this.boothFee + this.equipmentFee + this.deposit;
+    return this.boothFee + this.equipmentRentalFee + this.extraPowerFee + this.deposit;
   }
 
   async continueToCreditCard(): Promise<void> {

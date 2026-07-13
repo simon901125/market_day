@@ -559,6 +559,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
       confirmButtonText: '送出結果',
       cancelButtonText: '取消',
       reverseButtons: true,
+      allowOutsideClick: true,
       customClass: {
         popup: 'registration-action-swal registration-reject-form-swal',
       },
@@ -576,9 +577,24 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
         dropdownRef.instance.options = this.rejectReasonOptions;
         dropdownRef.instance.optionSelected.subscribe((value) => {
           selectedReason = value;
+          dropdownRef!.instance.invalid = false;
+          dropdownRef!.changeDetectorRef.detectChanges();
+          const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
+          if (error) {
+            error.textContent = '';
+          }
         });
         this.appRef.attachView(dropdownRef.hostView);
         host.appendChild(dropdownRef.location.nativeElement);
+
+        const descriptionInput = document.getElementById('rejectDescription') as HTMLInputElement | null;
+        descriptionInput?.addEventListener('input', () => {
+          descriptionInput.classList.remove('is-invalid');
+          const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
+          if (error) {
+            error.textContent = '';
+          }
+        });
       },
       willClose: () => {
         if (dropdownRef) {
@@ -588,10 +604,16 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
         }
       },
       preConfirm: () => {
-        const description = (document.getElementById('rejectDescription') as HTMLInputElement | null)?.value.trim() ?? '';
+        const descriptionInput = document.getElementById('rejectDescription') as HTMLInputElement | null;
+        const description = descriptionInput?.value.trim() ?? '';
         const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
 
         if (!selectedReason) {
+          if (dropdownRef) {
+            dropdownRef.instance.invalid = true;
+            dropdownRef.changeDetectorRef.detectChanges();
+          }
+
           if (error) {
             error.textContent = '請選擇未通過原因';
           }
@@ -599,8 +621,25 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
           return false;
         }
 
+        if (!description) {
+          descriptionInput?.classList.add('is-invalid');
+          descriptionInput?.focus();
+          if (error) {
+            error.textContent = '請填寫原因說明';
+          }
+
+          return false;
+        }
+
         if (error) {
           error.textContent = '';
+        }
+
+        descriptionInput?.classList.remove('is-invalid');
+
+        if (dropdownRef) {
+          dropdownRef.instance.invalid = false;
+          dropdownRef.changeDetectorRef.detectChanges();
         }
 
         return {
@@ -654,7 +693,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
         </label>
 
         <label class="registration-swal-field">
-          <span>原因說明 <em>選填</em></span>
+          <span>原因說明 <b>*</b></span>
           <input id="rejectDescription" type="text" placeholder="請輸入原因說明" />
         </label>
 

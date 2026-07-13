@@ -39,12 +39,12 @@ export class OrganizerDashboardStallManagement implements OnInit {
   readonly columns: DashboardTableColumn[] = [
     { key: 'name', label: '活動名稱', type: 'imageText', width: '18%' },
     { key: 'date', label: '活動日期', nowrap: true, width: '16%' },
-    { key: 'location', label: '活動地點', width: '20%' },
+    { key: 'location', label: '活動地點', width: '18%' },
     { key: 'status', label: '活動狀態', type: 'status', align: 'center', width: '11%' },
     { key: 'boothCount', label: '攤位總數', align: 'center', nowrap: true, width: '9%' },
     { key: 'selectedBoothCount', label: '已選攤位數', align: 'center', nowrap: true, width: '9%' },
     { key: 'availableBoothCount', label: '可選攤位數', align: 'center', nowrap: true, width: '9%' },
-    { key: 'action', label: '', type: 'action', align: 'end', width: '8%', actionMinWidth: '56px' },
+    { key: 'action', label: '', type: 'action', align: 'center', width: '10%' },
   ];
 
   readonly statusOptions = ['全部狀態', '待發布', '報名中', '已額滿', '品牌已公開', '進行中', '已下架', '已結束'];

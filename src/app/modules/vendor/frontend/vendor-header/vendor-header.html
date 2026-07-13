@@ -29,7 +29,7 @@
         首頁
       </a>
 
-      <a routerLink="/vendor/sign-up" routerLinkActive="active" (click)="closeMenu()">
+      <a routerLink="/vendor/sign-up" [class.active]="isSignupSection" (click)="closeMenu()">
         市集報名
       </a>
 
@@ -93,7 +93,7 @@
   <nav aria-label="手機攤主導覽">
     <a routerLink="/user/home" routerLinkActive="active">回小集日首頁</a>
     <a routerLink="/vendor/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">首頁</a>
-    <a routerLink="/vendor/sign-up" routerLinkActive="active">市集報名</a>
+    <a routerLink="/vendor/sign-up" [class.active]="isSignupSection">市集報名</a>
     @if (isLoggedIn) {
     <a
       [href]="vendorDashboardUrl"

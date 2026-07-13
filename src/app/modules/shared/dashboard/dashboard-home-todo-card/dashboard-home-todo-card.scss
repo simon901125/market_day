@@ -101,7 +101,8 @@
   }
 }
 
-:host-context(.admin-home) {
+:host-context(.admin-home),
+:host-context(.vendor-home) {
   .todo-card {
     min-height: 96px;
     padding: 20px 18px;

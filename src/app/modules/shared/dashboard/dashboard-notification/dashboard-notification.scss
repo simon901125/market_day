@@ -13,6 +13,12 @@
 
 .notification-page.dashboard-list-page {
   min-height: calc(100dvh - 48px);
+  display: flex;
+  flex-direction: column;
+
+  app-dashboard-pagination {
+    margin-top: auto;
+  }
 }
 
 .page-header {

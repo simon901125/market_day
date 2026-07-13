@@ -1,0 +1,19 @@
+<div class="event-config-dialog-backdrop app-modal-backdrop" [class.is-closing]="closing" role="presentation" (click)="closeDialog.emit()">
+  <section class="event-config-dialog app-modal" role="dialog" aria-modal="true" aria-labelledby="basic-power-dialog-title" (click)="$event.stopPropagation()">
+    <header class="app-modal-header">
+      <h2 id="basic-power-dialog-title"><i class="bi bi-lightning-charge"></i>{{ editing ? '編輯基本用電' : '新增基本用電' }}</h2>
+      <button type="button" aria-label="關閉基本用電視窗" (click)="closeDialog.emit()"><i class="bi bi-x-lg"></i></button>
+    </header>
+    <div class="dialog-panel app-modal-section">
+      <h3>基本用電資訊</h3>
+      <label class="field"><span>電壓 <b>*</b></span><span class="unit-control"><input type="text" placeholder="請輸入電壓，例如：110V、220V" [(ngModel)]="draft.voltage" name="basicPowerVoltage" /><small>V</small></span></label>
+      <label class="field"><span>每攤每日免費供電量 <b>*</b></span><span class="unit-control"><input type="number" min="1" [(ngModel)]="draft.wattage" name="basicPowerWattage" /><small>W</small></span></label>
+      <label class="field full"><span>說明（選填）</span><span class="textarea-control"><textarea maxlength="100" placeholder="例如：一般文創攤位適用、小型設備、高功率設備適用等" [(ngModel)]="draft.description" name="basicPowerDescription"></textarea><small>{{ draft.description.length }} / 100</small></span></label>
+      <p class="section-note"><i class="bi bi-info-circle-fill"></i>基本用電將免費提供給每個攤位使用，不另收費。</p>
+    </div>
+    <footer class="app-modal-actions">
+      <button type="button" class="dialog-cancel-btn app-btn neutral" (click)="closeDialog.emit()">取消</button>
+      <button type="button" class="dialog-save-btn app-btn primary" (click)="saveDialog.emit()">儲存</button>
+    </footer>
+  </section>
+</div>

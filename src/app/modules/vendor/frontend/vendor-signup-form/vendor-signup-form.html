@@ -1,11 +1,11 @@
 <app-vendor-header></app-vendor-header>
 
-<main class="signup-form-page page-transition">
+<main class="signup-form-page page-transition frontend-page vendor-frontend-page">
   <div class="signup-shell">
     <div class="top-row">
-      <button type="button" class="back-link" (click)="backToDetail()">
+      <button type="button" class="back-link" aria-label="返回市集詳細資訊" (click)="backToDetail()">
         <i class="bi bi-arrow-left"></i>
-        返回市集詳細資訊
+        <span class="back-label">返回市集詳細資訊</span>
       </button>
 
       <div class="stepper" aria-label="報名進度">
@@ -30,7 +30,6 @@
       <section class="market-overview">
         <div class="market-heading">
           <h1>{{ market.title }}</h1>
-          <span class="status-tag tag-green">{{ signupStatusText }}</span>
         </div>
 
         <div class="market-meta-grid">
@@ -38,15 +37,14 @@
             <i class="bi bi-calendar-check"></i>
             <div>
               <strong>活動日期</strong>
-              <p>{{ formatEventDate(market.start_date) }}　{{ market.time }}</p>
-              <p>{{ formatEventDate(market.end_date) }}　{{ market.time }}</p>
+              <p>{{ market.start_date }} - {{ market.end_date }}　{{ market.time }}</p>
             </div>
           </div>
 
           <div class="meta-block">
             <i class="bi bi-calendar2-check"></i>
             <div>
-              <strong>報名日期</strong>
+              <strong>報名期間</strong>
               <p>{{ registrationPeriod }}</p>
             </div>
           </div>
@@ -57,9 +55,17 @@
               <strong>招商類別</strong>
               <div class="category-tags">
                 @for (category of categoryOptions; track category) {
-                  <span>{{ category }}</span>
+                  <span class="app-tag">{{ category }}</span>
                 }
               </div>
+            </div>
+          </div>
+
+          <div class="meta-block status-meta">
+            <i class="bi bi-flag"></i>
+            <div>
+              <strong>活動狀態</strong>
+              <span class="status-badge active market-status-overlay">{{ signupStatusText }}</span>
             </div>
           </div>
 
@@ -88,16 +94,16 @@
 
             <div class="signup-facts">
               <div>
-                <span>攤位尺寸</span>
-                <strong>{{ boothSpec }}</strong>
-              </div>
-              <div>
                 <span>報名費</span>
                 <strong>${{ boothFeePerDay | number }} / 天</strong>
               </div>
               <div>
                 <span>保證金</span>
                 <strong>${{ boothDeposit | number }} / 攤</strong>
+              </div>
+              <div>
+                <span>攤位尺寸</span>
+                <strong>{{ boothSpec }}</strong>
               </div>
             </div>
           </section>
@@ -109,10 +115,15 @@
             </h2>
             <p class="section-help">請選擇您要參加的活動日期（可複選）</p>
 
-            <div class="date-grid">
+            <div
+              class="date-grid"
+              [class.is-invalid]="showDateError"
+              [attr.data-validation-error]="showDateError ? 'true' : null"
+            >
               @for (slot of slots; track slot.date) {
                 <label class="date-option" [class.selected]="selectedDates[slot.date]">
                   <input
+                    class="app-checkbox"
                     type="checkbox"
                     [checked]="selectedDates[slot.date]"
                     (change)="toggleDate(slot)"
@@ -128,13 +139,29 @@
 
           <section class="form-card">
             <h2><i class="bi bi-gift"></i>設備租借</h2>
-            <p class="section-help">租借設備數量有限，報名送出時會保留數量，額滿後即不可租借。</p>
+
+            <div class="included-provision-box">
+              <strong><i class="bi bi-gift"></i>免費提供設備</strong>
+              <ul>
+                <li>帳篷（3 × 3 公尺）</li>
+                <li>桌子（180 × 60 公分）</li>
+                <li>延長線（5 公尺）</li>
+                <li>椅子（一般塑膠椅）</li>
+                <li>照明設備（投光燈 100W）</li>
+              </ul>
+            </div>
+            @if (showDateError) {
+              <p class="validation-error">請至少選擇一個活動日期。</p>
+            }
+
+            <p class="section-help rental-help">以下為額外租借設備，數量有限，額滿後即不可租借。</p>
 
             <div class="equipment-list">
               @for (item of equipment; track item.id) {
                 <div class="equipment-row">
                   <label>
                     <input
+                      class="app-checkbox"
                       type="checkbox"
                       [checked]="item.selected"
                       (change)="toggleEquipment(item)"
@@ -162,9 +189,15 @@
           <section class="form-card">
             <h2><i class="bi bi-lightning-charge"></i>用電需求 <b>*</b></h2>
 
+            <div class="included-provision-box">
+              <strong><i class="bi bi-plug"></i>基本用電（免費提供）</strong>
+              <p>110V ｜ 500W</p>
+            </div>
+
             <div class="radio-stack">
               <label>
                 <input
+                  class="app-radio"
                   type="radio"
                   name="powerRequirement"
                   [checked]="!requiresExtraPower"
@@ -174,6 +207,7 @@
               </label>
               <label>
                 <input
+                  class="app-radio"
                   type="radio"
                   name="powerRequirement"
                   [checked]="requiresExtraPower"
@@ -185,18 +219,24 @@
 
             @if (requiresExtraPower) {
               <p class="section-help power-help">請選擇需要的電壓與所需功率（可複選）</p>
-              <div class="power-options">
+              <div
+                class="power-options"
+                [class.is-invalid]="showPowerError"
+                [attr.data-validation-error]="showPowerError ? 'true' : null"
+              >
                 @for (option of powerOptions; track option.id) {
                   <label>
-                    <input type="checkbox" [(ngModel)]="option.selected" />
+                    <input class="app-checkbox" type="checkbox" [(ngModel)]="option.selected" />
                     <span>{{ option.label }}</span>
                     <strong>${{ option.price | number }} / 天</strong>
                   </label>
                 }
               </div>
+              @if (showPowerError) {
+                <p class="validation-error">請至少選擇一個額外用電規格。</p>
+              }
             }
 
-            <p class="base-power-note">．基本用電（110V / 500W）免費提供</p>
           </section>
 
           <section class="form-card vehicle-card">
@@ -206,6 +246,7 @@
               <div class="vehicle-radios">
                 <label>
                   <input
+                    class="app-radio"
                     type="radio"
                     name="hasVehicle"
                     [checked]="!formData.hasVehicle"
@@ -215,6 +256,7 @@
                 </label>
                 <label>
                   <input
+                    class="app-radio"
                     type="radio"
                     name="hasVehicle"
                     [checked]="formData.hasVehicle"
@@ -230,9 +272,15 @@
               <input
                 type="text"
                 [disabled]="!formData.hasVehicle"
+                [class.is-invalid]="showVehicleNumberError"
+                [attr.aria-invalid]="showVehicleNumberError"
+                [attr.data-validation-error]="showVehicleNumberError ? 'true' : null"
                 [(ngModel)]="formData.vehicleNumber"
                 placeholder="請輸入車牌號碼（範例：ABC-1234）"
               />
+              @if (showVehicleNumberError) {
+                <span class="validation-error">有車輛進場時，請填寫車牌號碼。</span>
+              }
             </label>
           </section>
 
@@ -306,8 +354,9 @@
 
           <section class="cost-breakdown">
             <div>
-              <span>報名費（${{ boothFeePerDay | number }} / 天）　× {{ selectedDays }} 天</span>
+              <span>報名費</span>
               <strong>${{ boothSubtotal | number }}</strong>
+              <small>（${{ boothFeePerDay | number }} / 天 × {{ selectedDays }} 天）</small>
             </div>
             <div>
               <span>租借設備小計</span>
@@ -336,7 +385,7 @@
             <i class="bi bi-shield-check"></i>
             <div>
               <strong>保證金說明</strong>
-              <p>活動結束後，若無違規或設備損壞，保證金將於 14 個工作天內全額退還。</p>
+              <p>活動結束後，若無違規或設備損壞，保證金將於現場全額退還。</p>
             </div>
           </div>
 

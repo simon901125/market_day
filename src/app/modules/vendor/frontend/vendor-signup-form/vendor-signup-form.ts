@@ -3,7 +3,6 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
-import { AlertService } from '../../../../core/services/alert.service';
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { MarketSlot } from '../../../../models/interface/shared/MarketSlot';
 import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
@@ -98,6 +97,7 @@ export class VendorSignupForm {
   ];
 
   requiresExtraPower = true;
+  validationAttempted = false;
 
   /** 車輛與備註欄位使用雙向綁定，之後可直接轉為 API payload。 */
   formData = {
@@ -111,10 +111,7 @@ export class VendorSignupForm {
   readonly capacityPerDate = 200;
   readonly noteMaxLength = 200;
 
-  constructor(
-    private readonly router: Router,
-    private readonly alert: AlertService,
-  ) {
+  constructor(private readonly router: Router) {
     const navigation = this.router.currentNavigation();
     this.market = navigation?.extras.state?.['market'] || history.state?.['market'] || null;
     const stateSlots = navigation?.extras.state?.['slots'] ?? history.state?.['slots'];
@@ -192,6 +189,18 @@ export class VendorSignupForm {
     return this.boothSubtotal + this.equipmentSubtotal + this.powerSubtotal + this.boothDeposit;
   }
 
+  get showDateError(): boolean {
+    return this.validationAttempted && !this.selectedDays;
+  }
+
+  get showPowerError(): boolean {
+    return this.validationAttempted && this.requiresExtraPower && !this.selectedPowerOptions.length;
+  }
+
+  get showVehicleNumberError(): boolean {
+    return this.validationAttempted && this.formData.hasVehicle && !this.formData.vehicleNumber.trim();
+  }
+
   get registrationPeriod(): string {
     if (!this.market) {
       return '-';
@@ -207,7 +216,7 @@ export class VendorSignupForm {
     const registrationEnd = new Date(start);
     registrationEnd.setDate(registrationEnd.getDate() - 22);
 
-    return `${this.formatFullDate(registrationStart)} 12:00－${this.formatFullDate(registrationEnd)} 23:59`;
+    return `${this.formatFullDate(registrationStart)} 12:00 - ${this.formatFullDate(registrationEnd)} 23:59`;
   }
 
   get signupStatusText(): string {
@@ -260,13 +269,10 @@ export class VendorSignupForm {
 
   /** 驗證必填資料後，帶著完整報名 payload 前往確認頁。 */
   goToConfirm(): void {
-    if (!this.selectedDays) {
-      this.alert.warning('請選擇報名日期', '至少選擇一個欲參加的活動日期。');
-      return;
-    }
+    this.validationAttempted = true;
 
-    if (this.formData.hasVehicle && !this.formData.vehicleNumber.trim()) {
-      this.alert.warning('請填寫車牌號碼', '有車輛進場時，車牌號碼為必填資料。');
+    if (this.showDateError || this.showPowerError || this.showVehicleNumberError) {
+      this.scrollToFirstError();
       return;
     }
 
@@ -295,6 +301,19 @@ export class VendorSignupForm {
           totalFee: this.totalFee,
         },
       },
+    });
+  }
+
+  private scrollToFirstError(): void {
+    setTimeout(() => {
+      const firstError = document.querySelector<HTMLElement>('[data-validation-error="true"]');
+      if (!firstError) return;
+
+      firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const focusTarget = firstError.matches('input, button, select, textarea')
+        ? firstError
+        : firstError.querySelector<HTMLElement>('input, button, select, textarea');
+      focusTarget?.focus({ preventScroll: true });
     });
   }
 
@@ -352,7 +371,7 @@ export class VendorSignupForm {
   }
 
   private formatFullDate(date: Date): string {
-    return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}（${this.weekday(date)}）`;
+    return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
   }
 
   private weekday(date: Date): string {

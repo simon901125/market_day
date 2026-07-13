@@ -14,6 +14,7 @@ export interface AlertHtmlConfirmOptions {
   cancelButtonText?: string;
   popupClass?: string;
   showCloseButton?: boolean;
+  allowOutsideClick?: boolean;
 }
 
 export interface AlertHtmlOptions {
@@ -21,6 +22,13 @@ export interface AlertHtmlOptions {
   confirmButtonText?: string;
   popupClass?: string;
   showCloseButton?: boolean;
+}
+
+export interface AlertSummaryItem {
+  label: string;
+  value: string;
+  note?: string;
+  highlight?: boolean;
 }
 
 export interface AlertRequiredReasonOptions {
@@ -31,6 +39,7 @@ export interface AlertRequiredReasonOptions {
   confirmButtonText?: string;
   cancelButtonText?: string;
   maxLength?: number;
+  summaryItems?: AlertSummaryItem[];
 }
 
 export interface AlertReasonConfirmationOptions {
@@ -40,8 +49,23 @@ export interface AlertReasonConfirmationOptions {
   subject: string;
   reasonLabel: string;
   reason: string;
+  noticeTitle?: string;
+  noticeItems?: string[];
+  summaryItems?: AlertSummaryItem[];
+  allowOutsideClick?: boolean;
   confirmButtonText?: string;
   cancelButtonText?: string;
+}
+
+export interface AlertNoticeConfirmationOptions {
+  title: string;
+  description: string;
+  noticeTitle?: string;
+  noticeItems: string[];
+  icon?: string;
+  confirmButtonText?: string;
+  cancelButtonText?: string;
+  allowOutsideClick?: boolean;
 }
 
 @Injectable({
@@ -90,12 +114,12 @@ export class AlertService {
       html: this.getHtml('warning', title, text),
       showCancelButton: true,
       showCloseButton: true,
-      allowOutsideClick: false,
+      allowOutsideClick: true,
       confirmButtonText,
       cancelButtonText,
       reverseButtons: true,
       buttonsStyling: false,
-      customClass: this.getCustomClass(),
+      customClass: this.getCustomClass('', 'double'),
     }).then((result) => result.isConfirmed);
   }
 
@@ -104,23 +128,23 @@ export class AlertService {
       html: options.html,
       showCancelButton: true,
       showCloseButton: options.showCloseButton ?? true,
-      allowOutsideClick: false,
+      allowOutsideClick: options.allowOutsideClick ?? true,
       confirmButtonText: options.confirmButtonText ?? EnumSwalButton.Confirm,
       cancelButtonText: options.cancelButtonText ?? EnumSwalButton.Cancel,
       reverseButtons: true,
       buttonsStyling: false,
-      customClass: this.getCustomClass(options.popupClass),
+      customClass: this.getCustomClass(options.popupClass, 'double'),
     }).then((result) => result.isConfirmed);
   }
 
   successHtml(options: AlertHtmlOptions): Promise<SweetAlertResult> {
     return Swal.fire({
       html: options.html,
-      showCloseButton: options.showCloseButton ?? false,
-      allowOutsideClick: false,
+      showCloseButton: options.showCloseButton ?? true,
+      allowOutsideClick: true,
       confirmButtonText: options.confirmButtonText ?? EnumSwalButton.Confirm,
       buttonsStyling: false,
-      customClass: this.getCustomClass(options.popupClass),
+      customClass: this.getCustomClass(options.popupClass, 'single'),
     });
   }
 
@@ -133,33 +157,37 @@ export class AlertService {
       typeof extraClass['popup'] === 'string'
         ? extraClass['popup']
         : '';
+    const actionLayout = options.showCancelButton === true ? 'double' : 'single';
+    const baseClass = this.getCustomClass(popupClass, actionLayout);
 
     return Swal.fire({
       showCloseButton: true,
-      allowOutsideClick: false,
       buttonsStyling: false,
       ...options,
+      allowOutsideClick: true,
       customClass: {
-        ...this.getCustomClass(popupClass),
+        ...baseClass,
         ...extraClass,
-        popup: ['custom-swal-popup', popupClass].filter(Boolean).join(' '),
+        popup: baseClass.popup,
       },
     }) as Promise<SweetAlertResult<T>>;
   }
 
   requiredReason(options: AlertRequiredReasonOptions): Promise<string | null> {
     const maxLength = options.maxLength ?? 300;
+    const summaryHtml = this.getSummarySectionHtml(options.summaryItems);
 
     return this.custom<string>({
       html: `
         <div class="registration-swal-content">
           <div class="supplement-swal-header">
-            <div class="restore-confirm-icon">
-              <i class="bi bi-exclamation-circle"></i>
+            <div class="registration-swal-icon warning">
+              <i class="bi bi-exclamation-lg"></i>
             </div>
             <h3>${this.escapeHtml(options.title)}</h3>
             <p class="registration-swal-main">${this.escapeHtml(options.description)}</p>
           </div>
+          ${summaryHtml}
           <label class="registration-swal-field required-reason-field">
             <span>${this.escapeHtml(options.fieldLabel)} <b>*</b></span>
             <span class="required-reason-control">
@@ -210,17 +238,30 @@ export class AlertService {
   }
 
   confirmReason(options: AlertReasonConfirmationOptions): Promise<boolean> {
+    const summaryRowsHtml = this.getSummaryRowsHtml(options.summaryItems);
+    const noticeHtml = options.noticeItems?.length
+      ? `
+          <section class="refund-confirm-notice">
+            <h4><i class="bi bi-info-circle"></i>${this.escapeHtml(options.noticeTitle ?? '注意事項')}</h4>
+            <ul>
+              ${options.noticeItems.map((item) => `<li>${this.escapeHtml(item)}</li>`).join('')}
+            </ul>
+          </section>
+        `
+      : '';
+
     return this.confirmHtml({
       html: `
         <div class="registration-swal-content">
           <div class="supplement-swal-header">
-            <div class="restore-confirm-icon">
-              <i class="bi bi-exclamation-circle"></i>
+            <div class="registration-swal-icon warning">
+              <i class="bi bi-exclamation-lg"></i>
             </div>
             <h3>${this.escapeHtml(options.title)}</h3>
             <p class="registration-swal-main">${this.escapeHtml(options.description)}</p>
           </div>
           <div class="admin-swal-unpublish-form-data-section">
+            ${summaryRowsHtml}
             <div class="admin-swal-unpublish-form-data">
               <span>${this.escapeHtml(options.subjectLabel)}</span>
               <span>${this.escapeHtml(options.subject)}</span>
@@ -230,11 +271,38 @@ export class AlertService {
               <div>${this.escapeHtml(options.reason)}</div>
             </div>
           </div>
+          ${noticeHtml}
         </div>
       `,
       confirmButtonText: options.confirmButtonText ?? '確認送出',
       cancelButtonText: options.cancelButtonText ?? '取消',
       popupClass: 'require-supplement-swal unpublish-request-swal',
+      allowOutsideClick: options.allowOutsideClick,
+    });
+  }
+
+  /** 共用的「警示說明＋注意事項清單」確認視窗。 */
+  confirmNotice(options: AlertNoticeConfirmationOptions): Promise<boolean> {
+    return this.confirmHtml({
+      html: `
+        <div class="registration-swal-content">
+          <div class="supplement-swal-header">
+            <div class="registration-swal-icon warning">
+              <i class="bi ${this.escapeHtml(options.icon ?? 'bi-exclamation-lg')}"></i>
+            </div>
+            <h3>${this.escapeHtml(options.title)}</h3>
+            <p class="registration-swal-main">${this.escapeHtml(options.description)}</p>
+          </div>
+          <section class="refund-confirm-notice">
+            <h4><i class="bi bi-exclamation-circle"></i>${this.escapeHtml(options.noticeTitle ?? '注意事項')}</h4>
+            <ul>${options.noticeItems.map((item) => `<li>${this.escapeHtml(item)}</li>`).join('')}</ul>
+          </section>
+        </div>
+      `,
+      confirmButtonText: options.confirmButtonText ?? '確認',
+      cancelButtonText: options.cancelButtonText ?? '取消',
+      popupClass: 'require-supplement-swal unpublish-request-swal',
+      allowOutsideClick: options.allowOutsideClick,
     });
   }
 
@@ -247,35 +315,57 @@ export class AlertService {
     return Swal.fire({
       html: this.getHtml(status, title, text),
       showCloseButton: true,
-      allowOutsideClick: false,
+      allowOutsideClick: true,
       confirmButtonText,
       buttonsStyling: false,
-      customClass: this.getCustomClass(),
+      customClass: this.getCustomClass('', 'single'),
     });
   }
 
   private getHtml(status: AlertStatus, title: string, text = ''): string {
     return `
-      <div class="custom-swal-icon ${status}">
-        <i class="bi ${this.getIconClass(status)}"></i>
+      <div class="registration-swal-content">
+        <div class="supplement-swal-header">
+          <div class="registration-swal-icon ${status}">
+            <i class="bi ${this.getIconClass(status)}"></i>
+          </div>
+          <h3>${this.escapeHtml(title)}</h3>
+          ${text ? `<p class="registration-swal-main">${this.formatMessageText(text)}</p>` : ''}
+        </div>
       </div>
-
-      <h4 class="custom-swal-title">${title}</h4>
-
-      ${text ? `<p class="custom-swal-text">${text}</p>` : ''}
     `;
   }
 
   private getIconClass(status: AlertStatus): string {
     const iconMap: Record<AlertStatus, string> = {
-      success: 'bi-check-circle',
-      error: 'bi-x-circle',
-      warning: 'bi-exclamation-circle',
-      info: 'bi-info-circle',
-      question: 'bi-question-circle',
+      success: 'bi-check-lg',
+      error: 'bi-x-lg',
+      warning: 'bi-exclamation-lg',
+      info: 'bi-info-lg',
+      question: 'bi-question-lg',
     };
 
     return iconMap[status];
+  }
+
+  private getSummarySectionHtml(items?: AlertSummaryItem[]): string {
+    if (!items?.length) {
+      return '';
+    }
+
+    return `<div class="admin-swal-unpublish-form-data-section alert-summary-section">${this.getSummaryRowsHtml(items)}</div>`;
+  }
+
+  private getSummaryRowsHtml(items?: AlertSummaryItem[]): string {
+    return (items ?? []).map((item) => `
+      <div class="admin-swal-unpublish-form-data alert-summary-row">
+        <span>${this.escapeHtml(item.label)}</span>
+        <span class="alert-summary-value${item.highlight ? ' highlight' : ''}">
+          <strong>${this.escapeHtml(item.value)}</strong>
+          ${item.note ? `<small>${this.escapeHtml(item.note)}</small>` : ''}
+        </span>
+      </div>
+    `).join('');
   }
 
   private escapeHtml(value: string): string {
@@ -288,9 +378,18 @@ export class AlertService {
     })[character] ?? character);
   }
 
-  private getCustomClass(popupClass = '') {
+  /** 一般訊息只允許既有的換行標記，其餘 HTML 一律跳脫。 */
+  private formatMessageText(value: string): string {
+    return this.escapeHtml(value).replace(/&lt;br\s*\/?&gt;/gi, '<br>');
+  }
+
+  private getCustomClass(popupClass = '', actionLayout: 'single' | 'double' = 'single') {
     return {
-      popup: ['custom-swal-popup', popupClass].filter(Boolean).join(' '),
+      popup: [
+        'custom-swal-popup',
+        `${actionLayout}-action-swal`,
+        popupClass,
+      ].filter(Boolean).join(' '),
       htmlContainer: 'custom-swal-html',
       actions: 'custom-swal-actions',
       closeButton: 'custom-swal-close',

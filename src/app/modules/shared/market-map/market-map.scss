@@ -26,9 +26,21 @@
 .organizer-detail-title,
 .organizer-brand-info h2 {
   margin: 0 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   color: var(--text-dark);
   font-size: 17px;
   font-weight: 900;
+}
+
+.organizer-detail-title i,
+.organizer-brand-info h2 i {
+  flex: 0 0 auto;
+  color: var(--primary-color);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1;
 }
 
 .organizer-booth-info,
@@ -105,9 +117,13 @@
 .organizer-empty-selection p { margin: 0; font-size: 14px; font-weight: 800; }
 
 .organizer-brand-info {
-  margin-top: 18px;
-  padding-top: 20px;
+  margin-top: 20px;
+  padding-top: 0;
   border-top: 1px solid var(--border-light);
+}
+
+.organizer-brand-info > h2 {
+  margin: 16px 0 18px;
 }
 
 .organizer-registration-link {
@@ -119,6 +135,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 7px;
   color: var(--primary-color);
   font-size: 14px;
   font-weight: 900;
@@ -244,10 +261,21 @@
   overflow: hidden;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-card);
+}
+
+.market-map.is-organizer .map-viewport {
+  padding: 0;
+  background: var(--map-paper);
+}
+
+.market-map.is-organizer .map-detail {
   background: var(--bg-white);
 }
 
-.market-map.is-organizer .map-viewport { padding: 0; }
+.market-map.is-organizer .map-detail {
+  display: flex;
+  flex-direction: column;
+}
 
 .organizer-map-toolbar {
   min-height: 64px;
@@ -258,18 +286,19 @@
   justify-content: space-between;
   gap: 20px;
   border-bottom: 1px solid var(--border-light);
+  background: var(--bg-white);
 }
 
 .organizer-map-toolbar app-dropdown {
-  width: 320px;
-  flex: 0 0 320px;
+  width: 292px;
+  flex: 0 0 292px;
 }
 
 :host ::ng-deep .organizer-map-toolbar app-dropdown .select-wrapper {
   display: grid;
-  grid-template-columns: 76px 220px;
+  grid-template-columns: 64px 220px;
   align-items: center;
-  gap: 14px;
+  gap: 8px;
 }
 
 :host ::ng-deep .organizer-map-toolbar app-dropdown .select-title {
@@ -281,7 +310,7 @@
 }
 
 :host ::ng-deep .organizer-map-toolbar app-dropdown .dropdown-list {
-  left: 90px;
+  left: 72px;
   width: 220px;
 }
 
@@ -306,7 +335,7 @@
 }
 
 .organizer-swatch.available { border: 1px solid #d1d5db; background: #f3f4f6; box-sizing: border-box; }
-.organizer-swatch.selected { border: 1px solid #d8cbb8; background: #fff7e8; box-sizing: border-box; }
+.organizer-swatch.selected { border: 1px solid #d9a441; background: #fde7b2; box-sizing: border-box; }
 .organizer-swatch.active { border: 2px solid var(--primary-hover); background: var(--primary-color); box-sizing: border-box; }
 
 .market-map.is-organizer .booth.booth-available rect {
@@ -316,8 +345,8 @@
 }
 
 .market-map.is-organizer .booth.booth-selected rect {
-  fill: #fff7e8 !important;
-  stroke: #d8cbb8 !important;
+  fill: #fde7b2 !important;
+  stroke: #d9a441 !important;
   stroke-width: 1 !important;
 }
 
@@ -329,8 +358,119 @@
 }
 
 .market-map.is-organizer .booth.booth-available text { fill: #374151 !important; }
-.market-map.is-organizer .booth.booth-selected text { fill: #7a5a2f !important; }
+.market-map.is-organizer .booth.booth-selected text { fill: #6b4f1d !important; }
 .market-map.is-organizer .booth.is-active text { fill: #fff !important; font-weight: 900; }
+
+/* 後台地圖的 hover 同時改變底色、文字與立體感，不只顯示外框。 */
+.market-map.is-organizer .booth:not(.booth-service) {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.market-map.is-organizer .booth.booth-available:not(.is-active):hover rect,
+.market-map.is-organizer .booth.booth-available:not(.is-active):focus-visible rect {
+  fill: #fff3d6 !important;
+  stroke: var(--primary-color) !important;
+  stroke-width: 2 !important;
+  filter: drop-shadow(0 4px 7px rgba(245, 158, 11, 0.24)) !important;
+}
+
+.market-map.is-organizer .booth.booth-selected:not(.is-active):hover rect,
+.market-map.is-organizer .booth.booth-selected:not(.is-active):focus-visible rect {
+  fill: #f8d58c !important;
+  stroke: #d99a24 !important;
+  stroke-width: 2 !important;
+  filter: drop-shadow(0 4px 7px rgba(190, 126, 17, 0.24)) !important;
+}
+
+.market-map.is-organizer .booth.booth-available:not(.is-active):hover text,
+.market-map.is-organizer .booth.booth-available:not(.is-active):focus-visible text {
+  fill: #b45309 !important;
+}
+
+.market-map.is-organizer .booth.booth-selected:not(.is-active):hover text,
+.market-map.is-organizer .booth.booth-selected:not(.is-active):focus-visible text {
+  fill: #7c4a03 !important;
+}
+
+/* 攤主後台沿用主辦方攤位地圖的狀態配色。 */
+.market-map.is-vendor-dashboard .booth.booth-available rect {
+  fill: #f3f4f6 !important;
+  stroke: #d1d5db !important;
+  stroke-width: 1 !important;
+  filter: none;
+}
+
+.market-map.is-vendor-dashboard .booth.booth-occupied:not(.booth-service) rect {
+  fill: #fde7b2 !important;
+  stroke: #d9a441 !important;
+  stroke-width: 1 !important;
+  filter: none;
+}
+
+.market-map.is-vendor-dashboard .booth.booth-selected rect,
+.market-map.is-vendor-dashboard .booth.is-active:not(.booth-service) rect {
+  fill: var(--primary-color) !important;
+  stroke: var(--primary-hover) !important;
+  stroke-width: 2 !important;
+  filter: drop-shadow(0 2px 3px rgba(245, 158, 11, 0.18));
+}
+
+.market-map.is-vendor-dashboard .booth.booth-available text { fill: #374151 !important; }
+.market-map.is-vendor-dashboard .booth.booth-occupied text { fill: #6b4f1d !important; }
+.market-map.is-vendor-dashboard .booth.booth-selected text,
+.market-map.is-vendor-dashboard .booth.is-active text { fill: #fff !important; font-weight: 900; }
+
+.market-map.is-vendor-dashboard .booth:not(.booth-service) {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.market-map.is-vendor-dashboard .booth.booth-available:not(.is-active):hover rect,
+.market-map.is-vendor-dashboard .booth.booth-available:not(.is-active):focus-visible rect {
+  fill: #fff3d6 !important;
+  stroke: var(--primary-color) !important;
+  stroke-width: 2 !important;
+  filter: drop-shadow(0 4px 7px rgba(245, 158, 11, 0.24)) !important;
+}
+
+.market-map.is-vendor-dashboard .booth.booth-occupied:not(.booth-service):not(.is-active):hover rect,
+.market-map.is-vendor-dashboard .booth.booth-occupied:not(.booth-service):not(.is-active):focus-visible rect {
+  fill: #f8d58c !important;
+  stroke: #d99a24 !important;
+  stroke-width: 2 !important;
+  filter: drop-shadow(0 4px 7px rgba(190, 126, 17, 0.24)) !important;
+}
+
+.market-map.is-vendor-dashboard .booth.booth-available:not(.is-active):hover text,
+.market-map.is-vendor-dashboard .booth.booth-available:not(.is-active):focus-visible text {
+  fill: #b45309 !important;
+}
+
+.market-map.is-vendor-dashboard .booth.booth-occupied:not(.is-active):hover text,
+.market-map.is-vendor-dashboard .booth.booth-occupied:not(.is-active):focus-visible text {
+  fill: #7c4a03 !important;
+}
+
+.market-map.is-organizer .booth:not(.booth-service):hover,
+.market-map.is-organizer .booth:not(.booth-service):focus-visible,
+.market-map.is-vendor-dashboard .booth:not(.booth-service):hover,
+.market-map.is-vendor-dashboard .booth:not(.booth-service):focus-visible {
+  transform: translateY(-2px);
+}
+
+.market-map.is-organizer .booth.is-active:hover rect,
+.market-map.is-organizer .booth.is-active:focus-visible rect,
+.market-map.is-vendor-dashboard .booth.is-active:not(.booth-service):hover rect,
+.market-map.is-vendor-dashboard .booth.is-active:not(.booth-service):focus-visible rect {
+  fill: var(--primary-hover) !important;
+  filter: drop-shadow(0 5px 8px rgba(217, 119, 6, 0.3)) !important;
+}
+
+/* 唯讀模式保留滑過回饋，但點擊與鍵盤操作仍由元件邏輯停用。 */
+.market-map.is-vendor-view .booth {
+  cursor: default;
+}
 
 @media (max-width: 900px) {
   .market-map.is-organizer .map-layout { grid-template-columns: 1fr; }
@@ -727,7 +867,9 @@
 
 .booth {
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .booth rect {
@@ -735,7 +877,11 @@
   stroke: transparent;
   stroke-width: 1.7;
   filter: drop-shadow(0 1px 2px rgba(91, 75, 52, 0.08));
-  transition: fill 0.2s ease, stroke 0.2s ease, filter 0.2s ease, transform 0.2s ease;
+  transition:
+    fill 0.22s ease,
+    stroke 0.22s ease,
+    stroke-width 0.22s ease,
+    filter 0.22s ease;
 }
 
 .booth text {
@@ -743,6 +889,7 @@
   fill: #111827;
   font-size: 10.8px;
   font-weight: 900;
+  transition: fill 0.22s ease;
 }
 
 .booth.zone-a rect {
@@ -884,7 +1031,7 @@
   color: var(--text-dark);
   font-family: inherit;
   transform-origin: 24px 40px;
-  animation: booth-preview-in 0.52s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+  animation: booth-preview-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .booth-preview-fo.is-closing .booth-preview-card {
@@ -1419,6 +1566,40 @@
 .directory-empty {
   color: var(--text-light);
   text-align: center;
+}
+
+.market-map.is-organizer .map-detail > .empty-detail {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+
+  i {
+    margin-bottom: 2px;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  h3 {
+    margin: 0;
+    color: var(--text-light);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-light);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
 }
 
 @media (max-width: 992px) {

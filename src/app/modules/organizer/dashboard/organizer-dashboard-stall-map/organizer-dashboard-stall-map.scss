@@ -15,8 +15,14 @@
 .booth-stat { flex: 0 0 auto; }
 .activity-place { overflow: hidden; text-overflow: ellipsis; }
 .booth-stat { gap: 5px; }
-.booth-stat > span { color: var(--text-normal); font-size: 13px; font-weight: 800; }
-.booth-stat > strong { color: var(--text-dark); font-weight: 900; }
+.booth-stat,
+.booth-stat > span,
+.booth-stat > strong,
+.booth-stat > i {
+  color: #000;
+  font-size: 14px;
+  font-weight: 900;
+}
 .map-card { min-height: 0; flex: 1 1 auto; background: transparent; }
 :host ::ng-deep app-market-map,
 :host ::ng-deep app-market-map .market-map { display: block; height: 100%; }

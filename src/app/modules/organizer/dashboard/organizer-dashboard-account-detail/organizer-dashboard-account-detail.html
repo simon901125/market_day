@@ -123,11 +123,14 @@
 
     <section class="detail-card ledger-card">
       <h2><i class="bi bi-list-ul"></i>帳務明細</h2>
-      <div class="ledger-tabs" role="tablist" aria-label="帳務狀態篩選">
+      <div class="ledger-tabs app-tab-list" role="tablist" aria-label="帳務狀態篩選">
         @for (tab of tabLabels; track tab.label) {
           <button
             type="button"
+            class="app-tab-btn"
+            role="tab"
             [class.active]="selectedTab === tab.label"
+            [attr.aria-selected]="selectedTab === tab.label"
             (click)="selectTab(tab.label)"
           >
             {{ tab.label }}（{{ tab.count }}）

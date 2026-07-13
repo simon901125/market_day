@@ -63,7 +63,7 @@
 }
 
 // 藍色：資訊、選位、建圖
-:is(.status-badge, .status-tag):is(.blue, .tag-blue, .booth) {
+:is(.status-badge, .status-tag):is(.blue, .tag-blue, .booth, .incomplete) {
   background: var(--status-blue-bg) !important;
   color: var(--status-blue-text) !important;
 }
@@ -136,4 +136,29 @@
 :is(.status-badge, .status-tag):is(.ended, .status-ended) {
   background: var(--status-grey-bg) !important;
   color: var(--status-grey-text) !important;
+}
+
+// 一般使用者／前台市集狀態標籤：半透明語意色搭配白字。
+:is(.status-badge, .status-tag).market-status-overlay {
+  color: #fff !important;
+
+  &.active,
+  &.status-active {
+    background: var(--market-status-active-overlay-bg) !important;
+  }
+
+  &.upcoming,
+  &.status-upcoming {
+    background: var(--market-status-upcoming-overlay-bg) !important;
+  }
+
+  &.preview,
+  &.status-preview {
+    background: var(--market-status-preview-overlay-bg) !important;
+  }
+
+  &.ended,
+  &.status-ended {
+    background: var(--market-status-ended-overlay-bg) !important;
+  }
 }

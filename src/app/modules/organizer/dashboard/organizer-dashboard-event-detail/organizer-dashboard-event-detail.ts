@@ -5,6 +5,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { BoothLayoutExampleModal } from '../modals/booth-layout-example-modal/booth-layout-example-modal';
 import { BoothZoneModal } from '../modals/booth-zone-modal/booth-zone-modal';
+import { EquipmentModal } from '../modals/equipment-modal/equipment-modal';
+import { BasicPowerModal } from '../modals/basic-power-modal/basic-power-modal';
+import { ExtraPowerModal } from '../modals/extra-power-modal/extra-power-modal';
 import { OrganizerEventRow } from '../../../../models/interface/organizer/OrganizerEventRow';
 import { BoothZoneDraft } from '../../../../models/interface/organizer/BoothZoneDraft';
 import {
@@ -25,7 +28,16 @@ import { TAIWAN_ADMINISTRATIVE_DIVISIONS, TAIWAN_CITY_OPTIONS } from '../../../.
 
 @Component({
   selector: 'app-organizer-dashboard-event-detail',
-  imports: [FormsModule, RouterLink, Dropdown, BoothZoneModal, BoothLayoutExampleModal],
+  imports: [
+    FormsModule,
+    RouterLink,
+    Dropdown,
+    BoothZoneModal,
+    BoothLayoutExampleModal,
+    EquipmentModal,
+    BasicPowerModal,
+    ExtraPowerModal,
+  ],
   templateUrl: './organizer-dashboard-event-detail.html',
   styleUrl: './organizer-dashboard-event-detail.scss',
 })

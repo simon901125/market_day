@@ -109,8 +109,20 @@
   h3 {
     margin: 0 0 14px;
     color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 9px;
     font-size: 15px;
     font-weight: 900;
+
+    &::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      flex: 0 0 8px;
+      border-radius: 50%;
+      background: var(--primary-color);
+    }
   }
 }
 

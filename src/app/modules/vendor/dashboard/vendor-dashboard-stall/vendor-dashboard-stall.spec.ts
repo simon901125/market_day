@@ -32,21 +32,20 @@ describe('VendorDashboardStall', () => {
     expect(textContent).toContain(component.products[0].name);
   });
 
-  it('should append a product returned from the shared alert form', async () => {
+  it('should open the product modal and append the saved product', async () => {
     const newProduct = {
       name: '新商品',
       description: '商品介紹',
       price: 180,
       image: 'blob:new-product',
     };
-    spyOn(alert, 'custom').and.resolveTo({
-      isConfirmed: true,
-      value: newProduct,
-    } as never);
-
     await component.openAddProduct();
+    expect(component.isProductModalOpen).toBeTrue();
+
+    component.handleProductSave(newProduct);
 
     expect(component.products.at(-1)).toEqual(newProduct);
+    expect(component.isProductModalOpen).toBeFalse();
   });
 
   it('should show warning instead of form when product limit is reached', async () => {
@@ -60,26 +59,23 @@ describe('VendorDashboardStall', () => {
       },
     ];
     const warningSpy = spyOn(alert, 'warning').and.resolveTo({} as never);
-    const customSpy = spyOn(alert, 'custom');
 
     await component.openAddProduct();
 
     expect(warningSpy).toHaveBeenCalled();
-    expect(customSpy).not.toHaveBeenCalled();
+    expect(component.isProductModalOpen).toBeFalse();
   });
 
-  it('should update the selected product returned from edit form', async () => {
+  it('should update the selected product returned from the product modal', async () => {
     const editedProduct = {
       ...component.products[0],
       name: '編輯後商品',
       price: 320,
     };
-    spyOn(alert, 'custom').and.resolveTo({
-      isConfirmed: true,
-      value: editedProduct,
-    } as never);
+    component.openEditProduct(0);
+    expect(component.editingProduct).toEqual(component.products[0]);
 
-    await component.openEditProduct(0);
+    component.handleProductSave(editedProduct);
 
     expect(component.products[0]).toEqual(editedProduct);
   });

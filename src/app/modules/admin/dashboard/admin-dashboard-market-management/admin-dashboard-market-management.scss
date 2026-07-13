@@ -76,12 +76,17 @@
 }
 
 .activity-btn .app-btn {
-  width: auto;
-  min-width: 0;
+  width: 76px;
+  min-width: 76px;
   height: 34px;
-  padding: 0 12px;
+  padding: 0 8px;
   font-size: 13px;
   font-weight: 800;
+
+  &.long-label {
+    width: 104px;
+    min-width: 104px;
+  }
 }
 
 .activity-actions {

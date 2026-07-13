@@ -67,6 +67,7 @@
                         <a
                           [routerLink]="[action.link, item.applicationNo]"
                           class="app-btn"
+                          [class.long-label]="action.label.length > 4"
                           [class.primary]="action.style === 'primary'"
                           [class.secondary]="action.style === 'outline'"
                         >
@@ -76,6 +77,7 @@
                         <button
                           type="button"
                           class="app-btn"
+                          [class.long-label]="action.label.length > 4"
                           [class.primary]="action.style === 'primary'"
                           [class.secondary]="action.style === 'outline'"
                           (click)="handleRecordAction(action, item)"

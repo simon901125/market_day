@@ -3,160 +3,207 @@
 }
 
 .payment-page {
-  width: min(100%, var(--dashboard-wide-content-width));
+  width: min(100%, var(--dashboard-content-width));
   margin: 0 auto;
-  padding: 0 0 32px;
+  padding: 0 0 24px;
   color: var(--text-dark);
 }
 
-.breadcrumb-line {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
+.payment-page .app-page-header {
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+
+.payment-page .breadcrumb-line {
+  gap: 8px;
+  margin-bottom: 10px;
   color: var(--text-light);
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
 
   a {
-    color: inherit;
+    color: var(--text-normal);
     text-decoration: none;
-
-    &:hover {
-      color: var(--primary-color);
-    }
   }
 
-  strong {
-    color: var(--text-dark);
-  }
+  > i { font-size: 11px; }
+  span { color: var(--text-dark); }
 }
 
-.page-header {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  margin-bottom: 14px;
+.payment-page .app-page-title-wrap { gap: 12px; }
+.payment-page .app-page-title { font-size: 22px; line-height: 1.2; }
 
-  justify-content: flex-start;
-}
-
-.application-summary,
+.activity-summary,
+.registration-summary,
 .payment-card {
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-section);
+  border-radius: var(--radius-card);
   background: var(--bg-white);
 }
 
 .application-summary {
   display: grid;
-  grid-template-columns: minmax(240px, 330px) minmax(300px, 1fr) 280px;
-  gap: 34px;
+  grid-template-columns: minmax(0, 1fr) 440px;
+  gap: 12px;
+  align-items: stretch;
+  margin-bottom: 12px;
+}
+
+.activity-summary {
+  min-width: 0;
+  padding: 14px 18px 16px;
+}
+
+.activity-summary-title,
+.section-heading,
+.payment-card > h2 {
+  display: flex;
   align-items: center;
-  padding: 14px 18px;
-  margin-bottom: 18px;
+  gap: 10px;
+  margin: 0 0 16px;
+  color: var(--text-dark);
+  font-size: 16px;
+  font-weight: 900;
+
+  i {
+    color: var(--primary-color);
+    font-size: 16px;
+  }
+}
+
+.activity-summary-content {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  align-items: center;
+  gap: 22px;
 
   > img {
     width: 100%;
-    height: 176px;
-    border-radius: var(--radius-card);
+    height: 168px;
+    border-radius: var(--radius-tag);
     object-fit: cover;
   }
 }
 
 .application-info {
-  h2 {
-    margin: 0 0 10px;
-    font-size: 1.55rem;
-    font-weight: 800;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  h3 {
+    margin: 0 0 2px;
+    font-size: 18px;
+    font-weight: 900;
   }
 
   p {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 8px 0;
-    color: var(--text-normal);
-    font-size: 0.92rem;
-    font-weight: 600;
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.35;
   }
 
-  i {
-    width: 18px;
-    color: var(--text-dark);
-    text-align: center;
+  .info-label {
+    width: 72px;
+    flex: 0 0 72px;
+    color: var(--text-normal);
+    font-weight: 900;
   }
 }
 
-.payment-status {
-  min-height: 138px;
+.registration-summary {
+  min-width: 0;
   display: flex;
-  align-items: flex-start;
   flex-direction: column;
-  justify-content: center;
-  padding-left: 68px;
-  border-left: 1px solid var(--border-light);
+  justify-content: flex-start;
+  padding: 14px 18px 16px;
+}
 
-  > span {
-    min-width: 88px;
-    padding: 7px 16px;
-    border-radius: var(--radius-tag);
-    color: var(--primary-color);
-    background: var(--primary-soft);
-    font-size: 0.82rem;
-    font-weight: 800;
-    text-align: center;
+.payment-status {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+  padding: 0;
+
+  > div {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    border-bottom: 1px solid var(--border-light);
   }
 
-  p {
-    margin: 28px 0 6px;
-    color: var(--text-light);
-    font-size: 0.82rem;
+  > div:last-child {
+    border-bottom: 0;
   }
 
-  strong {
-    color: var(--primary-color);
-    font-size: 1.4rem;
+  dt,
+  dd {
+    margin: 0;
+  }
+
+  dt {
+    color: var(--text-normal);
+    font-size: 14px;
     font-weight: 800;
+  }
+
+  dd {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .application-number {
+    white-space: nowrap;
+  }
+
+  .payment-deadline {
+    color: var(--primary-color);
+    font-size: 18px;
+    font-weight: 800;
+    white-space: nowrap;
   }
 }
 
 .payment-layout {
   display: grid;
   grid-template-columns: minmax(330px, 0.82fr) minmax(480px, 1.18fr);
-  gap: 18px;
+  gap: 12px;
 }
 
 .payment-card {
-  min-height: 420px;
-  padding: 26px 30px;
-
-  > h2 {
-    margin: 0 0 26px;
-    font-size: 1.18rem;
-    font-weight: 800;
-  }
+  min-height: 0;
+  padding: 18px 22px 20px;
 }
 
 .fee-list {
   display: grid;
-  gap: 20px;
+  gap: 0;
   margin: 0;
-  padding: 0 0 22px;
-  border-bottom: 1px solid var(--border-light);
+  padding: 0;
 
   > div {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
+    min-height: 46px;
+    border-bottom: 1px solid var(--border-light);
   }
 
   dt,
   dd {
     margin: 0;
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 800;
   }
 }
 
@@ -164,7 +211,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 0;
+  min-height: 52px;
+  padding: 8px 0;
 
   span {
     font-weight: 800;
@@ -176,83 +224,121 @@
   }
 }
 
-.deposit-note {
-  display: grid;
-  grid-template-columns: 24px 1fr;
-  gap: 12px;
-  padding: 18px;
+.credit-intro {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding: 18px 16px;
   border-radius: var(--radius-card);
   background: var(--primary-soft);
 
-  > i {
+  > span {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
     color: var(--primary-color);
-    font-size: 1.2rem;
+    background: var(--bg-white);
+    font-size: 21px;
+  }
+
+  .credit-intro-copy {
+    min-width: 0;
   }
 
   strong {
-    font-size: 0.86rem;
+    display: block;
+    margin-bottom: 3px;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 900;
   }
 
   p {
-    margin: 10px 0 0;
+    margin: 1px 0;
     color: var(--text-normal);
-    font-size: 0.76rem;
-    font-weight: 600;
-    line-height: 1.7;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.45;
   }
 }
 
-.credit-intro {
-  display: grid;
-  justify-items: center;
-  margin-bottom: 18px;
-  text-align: center;
+.deposit-inline-note {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  padding: 9px 12px;
+  border-radius: var(--radius-card);
+  background: var(--primary-soft);
+  color: var(--text-dark);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  white-space: nowrap;
 
-  > span {
-    width: 68px;
-    height: 68px;
-    display: grid;
-    place-items: center;
-    margin-bottom: 14px;
-    border-radius: 50%;
+  i {
+    flex: 0 0 auto;
     color: var(--primary-color);
-    background: var(--primary-soft);
-    font-size: 1.8rem;
-  }
-
-  p {
-    margin: 3px 0;
-    color: var(--text-normal);
-    font-size: 0.82rem;
-    font-weight: 600;
+    font-size: 16px;
   }
 }
 
 .credit-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0 0 12px;
-  padding: 14px 20px;
+  padding: 0;
+  overflow: hidden;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-card);
 
   > div {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    padding: 4px 0;
+    min-width: 0;
+    min-height: 76px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 16px;
+    border-right: 1px solid var(--border-light);
+  }
+
+  > div:last-child {
+    border-right: 0;
   }
 
   dt,
   dd {
     margin: 0;
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-weight: 800;
+  }
+
+  dt {
+    color: var(--text-normal);
+    font-size: 12px;
+  }
+
+  dd {
+    color: var(--text-dark);
+    font-size: 14px;
+  }
+
+  > div:nth-child(2) dd {
+    color: var(--primary-color);
+    font-size: 18px;
+    font-weight: 900;
   }
 }
 
 .credit-card > .app-btn {
   width: 100%;
   height: 52px;
-  font-size: 1rem;
+  font-size: 14px;
 }
 
 .security-note {
@@ -262,31 +348,207 @@
   gap: 8px;
   margin: 12px 0 0;
   color: var(--text-light);
-  font-size: 0.72rem;
+  font-size: 12px;
 
   i {
     color: var(--text-normal);
   }
 }
 
-@media (max-width: 1100px) {
+/* 125% 縮放的桌面畫面：將付款流程完整收在單一可視高度內。 */
+@media (min-width: 1101px) and (max-height: 760px) {
+  .payment-page {
+    height: calc(100dvh - 48px);
+    max-height: calc(100dvh - 48px);
+    padding-bottom: 0;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    align-content: stretch;
+    overflow: hidden;
+  }
+
+  .detail-header {
+    margin-bottom: 12px;
+  }
+
   .application-summary {
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: minmax(0, 1fr) 420px;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .activity-summary-title {
+    margin-bottom: 16px;
+    font-size: 16px;
+
+    i { font-size: 16px; }
+  }
+
+  .section-heading,
+  .payment-card > h2 {
+    margin-bottom: 14px;
+    font-size: 16px;
+
+    i { font-size: 16px; }
+  }
+
+  .activity-summary-content {
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 22px;
+
+    > img {
+      height: 146px;
+    }
+  }
+
+  .application-info {
+    gap: 10px;
+
+    h3 {
+      margin: 0 0 2px;
+      font-size: 18px;
+    }
+
+    p {
+      gap: 10px;
+      font-size: 14px;
+    }
+
+    .info-label {
+      width: 72px;
+      flex-basis: 72px;
+    }
+  }
+
+  .registration-summary {
+    padding: 14px 18px 16px;
   }
 
   .payment-status {
-    grid-column: 1 / -1;
-    min-height: auto;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 16px;
-    align-items: center;
-    padding: 16px 0 0;
-    border-top: 1px solid var(--border-light);
-    border-left: 0;
+    gap: 9px;
+
+    > div {
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 10px;
+      min-height: 46px;
+    }
+
+    dt {
+      font-size: 14px;
+    }
+
+    .payment-deadline {
+      font-size: 18px;
+    }
+  }
+
+  .payment-layout {
+    min-height: 0;
+    height: auto;
+    align-self: start;
+    gap: 12px;
+  }
+
+  .payment-card {
+    height: auto;
+    min-height: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 18px 22px 20px;
+  }
+
+  .fee-list {
+    gap: 0;
+    padding-bottom: 0;
+
+    dt,
+    dd {
+      font-size: 14px;
+    }
+
+    > div {
+      min-height: 44px;
+    }
+  }
+
+  .total-row {
+    min-height: 48px;
+    padding: 5px 0;
+
+    strong {
+      font-size: 20px;
+    }
+  }
+
+  .credit-intro {
+    margin-bottom: 14px;
+    padding: 15px 16px;
+
+    > span {
+      width: 44px;
+      height: 44px;
+      flex-basis: 44px;
+      margin-bottom: 0;
+      font-size: 20px;
+    }
 
     p {
-      margin: 0;
+      margin: 1px 0;
+      font-size: 13px;
+      line-height: 1.3;
+    }
+  }
+
+  .credit-summary {
+    margin-bottom: 12px;
+    padding: 0;
+
+    > div {
+      min-height: 66px;
+      padding: 10px 14px;
+    }
+
+    dt { font-size: 12px; }
+    dd { font-size: 14px; }
+  }
+
+  .credit-card > .app-btn {
+    height: 42px;
+    font-size: 14px;
+  }
+
+  .security-note {
+    margin-top: 10px;
+    font-size: 12px;
+  }
+
+  .deposit-inline-note {
+    min-height: 40px;
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .application-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-summary-content {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+
+  .registration-summary {
+    grid-column: 1 / -1;
+    padding: 14px 18px 16px;
+  }
+
+  .payment-status {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    align-items: center;
+
+    > div {
+      grid-template-columns: auto minmax(0, 1fr);
     }
   }
 }
@@ -312,13 +574,37 @@
     padding: 16px;
   }
 
+  .activity-summary-content {
+    grid-template-columns: 1fr;
+  }
+
   .payment-status {
-    grid-column: auto;
     grid-template-columns: 1fr;
   }
 
   .payment-card {
     min-height: 0;
-    padding: 22px 18px;
+    padding: 18px;
+  }
+
+  .credit-intro {
+    align-items: flex-start;
+  }
+
+  .credit-summary {
+    grid-template-columns: 1fr;
+
+    > div {
+      border-right: 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    > div:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  .deposit-inline-note {
+    white-space: normal;
   }
 }

@@ -20,10 +20,10 @@ import type { MarketCardItem } from '../../../../models/interface/shared/MarketC
 import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 
-const DETAIL_LINK = '/vendor/dash-board/appliction-record/detail';
+const DETAIL_LINK = '/vendor/dash-board/application-record/detail';
 
 type MarketKey = string;
-type RecordActionType = 'view' | 'payment' | 'booth' | 'refund' | 'review' | 'cancel';
+type RecordActionType = 'view' | 'payment' | 'booth' | 'refund' | 'cancel';
 
 interface ApplicationRecordJson {
   id: number;
@@ -41,11 +41,10 @@ interface ApplicationRecordJson {
 
 const RECORD_ACTION_MAP: Record<RecordActionType, RecordAction> = {
   view: { label: '查看', style: 'outline', link: DETAIL_LINK },
-  payment: { label: '付款', style: 'primary', link: DETAIL_LINK },
+  payment: { label: '前往付款', style: 'primary', link: DETAIL_LINK },
   booth: { label: '選擇攤位', style: 'primary', link: DETAIL_LINK },
-  refund: { label: '退款', style: 'primary',link: DETAIL_LINK },
-  review: { label: '審核', style: 'primary',link: DETAIL_LINK },
-  cancel: { label: '取消報名', style: 'primary', link: DETAIL_LINK },
+  refund: { label: '退款申請', style: 'outline', link: DETAIL_LINK },
+  cancel: { label: '取消報名', style: 'outline', link: DETAIL_LINK },
 };
 
 const DETAIL_FACTORY_MAP: Record<ApplicationStatus, () => ApplicationDetail> = {
@@ -275,7 +274,7 @@ export const VENDOR_APPLICATION_RECORD_JSON: ApplicationRecordJson[] = [
     status: 'reviewing',
     statusText: '待審核',
     statusClass: 'reviewing',
-    actionTypes: ['review', 'cancel'],
+    actionTypes: ['cancel', 'view'],
     detailType: 'reviewing',
   },
   {
@@ -348,8 +347,8 @@ export class VendorApplicationRecord {
   /** 目前頁碼，會傳給共用 app-dashboard-pagination。 */
   currentPage = 1;
 
-  /** 每頁顯示筆數，依設計稿頁尾顯示 1 - 8 筆設定。 */
-  pageSize = 6;
+  /** 我的報名紀錄固定每頁顯示 6 筆。 */
+  readonly pageSize = 6;
 
   /** 報名狀態下拉選單選項，對齊 OrganizerDashboardEventManagement 的活動篩選使用方式。 */
   readonly statusOptions = [
@@ -435,28 +434,28 @@ export class VendorApplicationRecord {
     this.currentPage = page;
   }
 
-  /** 處理列表操作按鈕；退款需先經過確認視窗。 */
+  /** 處理列表操作按鈕；退款申請需先經過確認視窗。 */
   async handleRecordAction(action: RecordAction, record: ApplicationRecord): Promise<void> {
-    if (action.label !== '退款') {
+    if (action.label !== '退款申請') {
       return;
     }
 
-    const confirmed = await this.alert.confirmHtml({
-      html: this.getRefundConfirmHtml(record),
-      confirmButtonText: '確認申請退款',
-      cancelButtonText: '取消',
-      popupClass: 'refund-confirm-swal',
-    });
+    const confirmed = await this.alert.confirm(
+      '確認申請退款？',
+      `${record.marketName} 申請退款後，主辦單位將進行審核與處理，款項將退回信用卡。送出申請後將無法撤回。`,
+      '確認申請退款',
+      '取消',
+    );
 
     if (!confirmed) {
       return;
     }
 
-    await this.alert.successHtml({
-      html: this.getRefundSuccessHtml(),
-      confirmButtonText: '確認',
-      popupClass: 'refund-success-swal',
-    });
+    await this.alert.success(
+      '退款申請已送出！',
+      '主辦單位將進行審核與處理，退款進度可於「我的報名紀錄」中查看。',
+      '確認',
+    );
   }
 
   /** 組合列表退款確認內容，金額與付款方式未來可由 API 回傳資料取代。 */
@@ -565,10 +564,10 @@ function createMarket(market: Omit<MarketCardItem, 'time' | 'description' | 'ima
 function createRefundApplyingDetail(): ApplicationDetail {
   return {
     ...baseDetail('refundApplying', '退款申請中', 'refund-applying'),
-    progress: refundProgress('尚未完成', '尚未完成'),
+    progress: refundProgress('2026/06/06 10:30', '尚未完成'),
     paymentRows: paidRows(),
     paymentLines: [],
-    sideCard: refundCard('退款申請中', '2026/06/06 10:30'),
+    sideCard: refundCard('退款申請中'),
     booth: emptyBooth('退款申請中，暫停攤位操作。'),
   };
 }
@@ -576,10 +575,10 @@ function createRefundApplyingDetail(): ApplicationDetail {
 function createRefundProcessingDetail(): ApplicationDetail {
   return {
     ...baseDetail('refundProcessing', '退款處理中', 'refund-processing'),
-    progress: refundProgress('2026/06/10 10:55', '尚未完成'),
+    progress: refundProgress('2026/06/06 10:30', '尚未完成'),
     paymentRows: paidRows(),
     paymentLines: [],
-    sideCard: refundCard('退款處理中', '2026/06/06 10:30'),
+    sideCard: refundCard('退款處理中'),
     booth: emptyBooth('退款處理中，暫停攤位操作。'),
   };
 }
@@ -593,7 +592,7 @@ function createRefundSuccessDetail(): ApplicationDetail {
       { label: '付款時間', value: '2026/06/03 16:45' },
     ],
     paymentLines: [],
-    actionButton: { label: '申請退款', action: 'requestRefund' },
+    actionButton: { label: '退款申請', action: 'requestRefund' },
     sideCard: {
       type: 'booth',
       title: '攤位資訊',
@@ -718,7 +717,6 @@ function createDepositRefundedDetail(): ApplicationDetail {
       { label: '報名日期', value: '2026/06/01 14:30' },
       { label: '審核時間', value: '2026/06/02 15:30' },
       { label: '付款時間', value: '2026/06/03 16:45' },
-      { label: '退款申請時間', value: '2026/06/04 11:20' },
       { label: '取消時間', value: '2026/06/04 11:20' },
       { label: '最終確認時間', value: '2026/06/10 14:30' },
       { label: '保證金完成時間', value: '2026/06/15 10:00' },
@@ -806,20 +804,19 @@ function baseDetail(status: ApplicationStatus, statusText: string, statusClass: 
   };
 }
 
-function refundProgress(reviewTime: string, refundTime: string): ProgressStep[] {
+function refundProgress(requestTime: string, refundTime: string): ProgressStep[] {
   return [
     { label: '報名時間', value: '2026/06/01 14:30' },
     { label: '審核時間', value: '2026/06/02 15:30' },
     { label: '付款時間', value: '2026/06/03 16:45' },
-    { label: '退款申請時間', value: '2026/06/04 11:20' },
-    { label: '退款審核時間', value: reviewTime },
+    { label: '退款申請時間', value: requestTime },
     { label: '退款時間', value: refundTime },
   ];
 }
 
 function applicationRows(): DetailRow[] {
   return [
-    { label: '參加場次', value: '05/30（六）　10:00 - 18:00\n05/31（日）　10:00 - 18:00' },
+    { label: '參加場次', value: '2026/05/30 10:00 - 18:00、2026/05/31 10:00 - 18:00' },
     { label: '攤位尺寸', value: '3 × 3 公尺' },
     { label: '攤位類別', value: '寵物生活' },
     { label: '車牌登記', value: 'ABC-1234' },
@@ -853,17 +850,16 @@ function boothRows(): DetailRow[] {
   ];
 }
 
-function refundCard(refundStatus: string, requestTime: string) {
+function refundCard(refundStatus: string) {
   return {
     type: 'refund' as const,
     title: '退款資訊',
-    icon: 'bi-currency-dollar',
+    icon: 'bi-bank',
     rows: [
       { label: '退款狀態', value: refundStatus, highlight: true },
-      { label: '退款金額', value: 'NT$3,800', highlight: true },
-      { label: '申請時間', value: requestTime },
-      { label: '預計退款', value: '7 - 14 個工作天' },
-      { label: '退款方式', value: '原付款方式退回' },
+      { label: '退款方式', value: '信用卡' },
+      { label: '退款編號', value: '-' },
+      { label: '退款總金額', value: 'NT$3,800', highlight: true },
     ],
     notice: '主辦單位已收到您的退款申請，正在進行審核與處理，款項將依原付款方式退回。若有疑問，請聯繫主辦單位。',
   };

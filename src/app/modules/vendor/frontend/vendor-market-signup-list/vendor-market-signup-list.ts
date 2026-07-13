@@ -5,12 +5,12 @@ import { VendorMarketCard } from '../vendor-market-card/vendor-market-card';
 import { BrandType } from '../../../../models/type/BrandType ';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
-import { VendorMarketSearchPanel } from "../vendor-market-search-panel/vendor-market-search-panel";
+import { UserMarketSearchPanel } from '../../../user/frontend/shared/user-market-search-panel/user-market-search-panel';
 import { Router } from '@angular/router';
 import { Pagination } from '../../../shared/pagination/pagination';
 @Component({
   selector: 'app-vendor-market-signup-list',
-  imports: [VendorHeader, UserFooter, VendorMarketCard, VendorMarketSearchPanel, Pagination],
+  imports: [VendorHeader, UserFooter, VendorMarketCard, UserMarketSearchPanel, Pagination],
   templateUrl: './vendor-market-signup-list.html',
   styleUrl: './vendor-market-signup-list.scss',
 })
@@ -85,7 +85,7 @@ export class VendorMarketSignupList {
       tags: [BrandType.handmade, BrandType.fashion, BrandType.toy],
       category: '手作設計',
       organizer: '台南市政府',
-      transportation: ['公車：綠幹線、藍幹線', '計程車：台南火車站搭乘約10分鐘'],
+      transportation: ['捷運：台南火車站步行約 10 分鐘', '公車：綠幹線、藍幹線'],
       price: 600,
       slots: [
         { date: '08/31', remaining: 6 },

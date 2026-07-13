@@ -7,6 +7,7 @@ import type {
 } from '../../../../models/interface/vendor/VendorApplicationDetail';
 import type { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { AlertService } from '../../../../core/services/alert.service';
+import { VendorStatus } from '../../../../models/status/VendorStatus';
 import { VENDOR_APPLICATION_RECORDS } from '../vendor-application-record/vendor-application-record';
 
 @Component({
@@ -16,14 +17,14 @@ import { VENDOR_APPLICATION_RECORDS } from '../vendor-application-record/vendor-
   styleUrl: './vendor-application-detail.scss',
 })
 export class VendorApplicationDetail {
+  readonly vendorStatus = VendorStatus;
   /** 目前報名編號，由 application-record 點擊查看時透過 route param 帶入。 */
   currentApplicationNo = VENDOR_APPLICATION_RECORDS[0].applicationNo;
   /** 是否顯示頁內彈窗；退款成功提示改由共用 SweetAlert 顯示。 */
   showDialog = false;
-  /** 付款明細是否收合 */
-  isPaymentDetailOpen = false;
   /** 付款結果假資料；之後串接金流 API 時可由後端回傳決定 success 或 failed。 */
   mockPaymentResult: 'success' | 'failed' = 'success';
+  refundReason = '';
 
   readonly basicEquipment = [
     { name: '桌子（基本）', spec: '180 × 60 公分', quantity: 1, unit: '張' },
@@ -53,8 +54,8 @@ export class VendorApplicationDetail {
   ];
 
   readonly boothAssignments = [
-    { date: '2026/05/30', number: 'A12', zone: 'A 區' },
-    { date: '2026/05/31', number: 'A12', zone: 'A 區' },
+    { date: '2026/05/30', number: 'A12', zone: 'A 區', selectedAt: '2026/05/28 14:30' },
+    { date: '2026/05/31', number: 'A12', zone: 'A 區', selectedAt: '2026/05/28 14:30' },
   ];
 
   readonly feeBreakdown = [
@@ -109,12 +110,28 @@ export class VendorApplicationDetail {
   }
 
   get eventDateText(): string {
-    return `${this.formatMarketDate(this.market.start_date)} ${this.market.time}－${this.formatMarketDate(this.market.end_date)} ${this.market.time}`;
+    return `${this.market.start_date} - ${this.market.end_date}　${this.market.time}`;
   }
 
-  /** 付款總金額。 */
-  get paymentTotal(): number {
-    return this.detail.paymentLines.reduce((total, item) => total + item.amount, 0);
+  /** 取消原因使用獨立區塊呈現，不與固定寬度的狀態流程卡混排。 */
+  get statusProgress() {
+    return this.detail.progress.filter((step) => step.label !== '取消原因');
+  }
+
+  get cancellationReason(): string | null {
+    return this.detail.progress.find((step) => step.label === '取消原因')?.value ?? null;
+  }
+
+  getHeaderActionIcon(action: string): string {
+    const iconMap: Record<string, string> = {
+      requestRefund: 'bi-arrow-counterclockwise',
+      payment: 'bi-credit-card',
+      pay: 'bi-credit-card',
+      selectBooth: 'bi-geo-alt',
+      booth: 'bi-geo-alt',
+    };
+
+    return iconMap[action] ?? 'bi-check-circle';
   }
 
   getStatusValueClass(statusText: string): string | null {
@@ -159,34 +176,76 @@ export class VendorApplicationDetail {
   /** 執行頁面主要操作。 */
   async handleAction(action: string): Promise<void> {
     if (action === 'requestRefund') {
-      const confirmed = await this.openRefundConfirm();
+      const reason = await this.requestRefundReason();
+
+      if (!reason) {
+        return;
+      }
+
+      const confirmed = await this.openRefundConfirm(reason);
 
       if (!confirmed) {
         return;
       }
 
-      this.setStatus('refundSuccess');
+      this.refundReason = reason;
+      this.setStatus('refundApplying');
       await this.openRefundSuccess();
     }
   }
 
   /** 待審核、待付款狀態取消報名前的二次確認。 */
   async cancelRegistration(): Promise<void> {
-    await this.alert.confirmHtml({
-      html: this.getCancelRegistrationConfirmHtml(),
+    const confirmed = await this.alert.confirmNotice({
+      title: '確認取消報名？',
+      description: '取消報名後，將失去本次活動報名資格。請確認是否要取消報名。',
+      noticeItems: [
+        '取消報名後將無法恢復。',
+        '若要再次參加活動，需重新報名。',
+        '請確認後再送出申請。',
+      ],
       confirmButtonText: '確認取消報名',
       cancelButtonText: '取消',
-      popupClass: 'cancel-registration-swal',
     });
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.setStatus('cancelled');
+    await this.alert.success(
+      '取消報名成功',
+      '本次活動報名已取消，您可於「我的報名紀錄」中查看紀錄。',
+      '確認',
+    );
   }
 
   /** 進入獨立付款頁，並以報名編號載入對應的付款資料。 */
   payNow(): void {
     this.router.navigate([
-      '/vendor/dash-board/appliction-record/detail',
+      '/vendor/dash-board/application-record/detail',
       this.currentApplicationNo,
       'payment',
     ]);
+  }
+
+  openBoothPage(): void {
+    const viewOnly = this.detail.booth.selected || this.detail.booth.actionLabel === '查看攤位地圖';
+
+    this.router.navigate([
+      '/vendor/dash-board/application-record/detail',
+      this.currentApplicationNo,
+      'booth',
+    ], {
+      queryParams: viewOnly
+        ? {
+            mode: 'view',
+            dates: this.boothAssignments.map((booth) => booth.date).join(','),
+            booths: this.boothAssignments.map((booth) => booth.number).join(','),
+            selectedAt: this.boothAssignments.map((booth) => booth.selectedAt).join(','),
+          }
+        : undefined,
+    });
   }
 
   /** 顯示付款成功確認畫面。 */
@@ -209,23 +268,66 @@ export class VendorApplicationDetail {
     });
   }
 
-  /** 顯示退款確認視窗，確認後才送出退款申請。 */
-  private openRefundConfirm(): Promise<boolean> {
-    return this.alert.confirmHtml({
-      html: this.getRefundConfirmHtml(),
-      confirmButtonText: '確認申請退款',
+  /** 先要求填寫退款原因，未填寫不可進入確認步驟。 */
+  private requestRefundReason(): Promise<string | null> {
+    return this.alert.requiredReason({
+      title: '填寫退款原因',
+      description: '請說明本次申請退款的原因，送出前仍可於下一步再次確認。',
+      fieldLabel: '退款原因',
+      placeholder: '請輸入退款原因',
+      confirmButtonText: '下一步',
       cancelButtonText: '取消',
-      popupClass: 'refund-confirm-swal',
+      maxLength: 300,
+      summaryItems: [
+        {
+          label: '退款金額',
+          value: 'NT$1,700',
+          note: '（保證金不退還）',
+          highlight: true,
+        },
+        {
+          label: '退款方式',
+          value: '信用卡',
+        },
+      ],
+    });
+  }
+
+  /** 顯示第二次確認，確認原因與退款方式後才送出申請。 */
+  private openRefundConfirm(reason: string): Promise<boolean> {
+    return this.alert.confirmReason({
+      title: '確認申請退款？',
+      description: '申請退款後，主辦單位將進行審核與處理；送出申請後將無法撤回。',
+      subjectLabel: '退款方式',
+      subject: '信用卡',
+      summaryItems: [
+        {
+          label: '退款金額',
+          value: 'NT$1,700',
+          note: '（保證金不退還）',
+          highlight: true,
+        },
+      ],
+      reasonLabel: '退款原因',
+      reason,
+      noticeItems: [
+        '保證金不退還。',
+        '退款完成時間依您的發卡銀行或付款平台作業時間為準。',
+        '退款審核結果與退款完成後，將於「通知中心」中通知您。',
+      ],
+      allowOutsideClick: true,
+      confirmButtonText: '確認申請退款',
+      cancelButtonText: '返回修改',
     });
   }
 
   /** 顯示退款申請送出成功視窗。 */
   private openRefundSuccess(): Promise<unknown> {
-    return this.alert.successHtml({
-      html: this.getRefundSuccessHtml(),
-      confirmButtonText: '確認',
-      popupClass: 'refund-success-swal',
-    });
+    return this.alert.success(
+      '退款申請已送出！',
+      '主辦單位將進行審核與處理，退款進度可於「我的報名紀錄」中查看。',
+      '確認',
+    );
   }
 
   /** 組合退款確認視窗內容，金額與方式未來可改由 API 帶入。 */
@@ -292,8 +394,8 @@ export class VendorApplicationDetail {
   /** 組合付款成功視窗內容，符合 swal.md 的共用 SweetAlert 使用規範。 */
   private getPaymentSuccessHtml(): string {
     return `
-      <div class="payment-result-content">
-        <div class="payment-result-icon success">
+      <div class="registration-swal-content">
+        <div class="registration-swal-icon success">
           <i class="bi bi-check-lg"></i>
         </div>
 
@@ -306,8 +408,8 @@ export class VendorApplicationDetail {
   /** 組合付款失敗視窗內容，金流失敗時可直接重試付款。 */
   private getPaymentFailedHtml(): string {
     return `
-      <div class="payment-result-content">
-        <div class="payment-result-icon failed">
+      <div class="registration-swal-content">
+        <div class="registration-swal-icon error">
           <i class="bi bi-x-lg"></i>
         </div>
 
@@ -322,41 +424,4 @@ export class VendorApplicationDetail {
     this.showDialog = false;
   }
 
-  /** 金額格式化。 */
-  formatCurrency(amount: number): string {
-    return `NT$${amount.toLocaleString()}`;
-  }
-
-  /** 組合取消報名確認內容。 */
-  private getCancelRegistrationConfirmHtml(): string {
-    return `
-      <div class="cancel-registration-content">
-        <div class="cancel-registration-icon">
-          <i class="bi bi-exclamation-triangle"></i>
-        </div>
-
-        <h3>確認取消報名？</h3>
-        <p class="cancel-registration-lead">
-          取消報名後，將失去本次活動報名資格。<br>
-          請確認是否要取消報名。
-        </p>
-
-        <section class="cancel-registration-notice">
-          <h4><i class="bi bi-exclamation-circle"></i>注意事項</h4>
-          <ul>
-            <li>取消報名後將無法恢復。</li>
-            <li>若要再次參加活動，需重新報名。</li>
-            <li>請確認後再送出申請。</li>
-          </ul>
-        </section>
-      </div>
-    `;
-  }
-
-  private formatMarketDate(value: string): string {
-    const parsed = new Date(`${value.replaceAll('/', '-')}T00:00:00`);
-    if (Number.isNaN(parsed.getTime())) return value;
-    const weekday = ['日', '一', '二', '三', '四', '五', '六'][parsed.getDay()];
-    return `${value}（${weekday}）`;
-  }
 }

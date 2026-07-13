@@ -81,7 +81,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.78fr);
   gap: 22px;
-  align-items: start;
+  align-items: stretch;
   margin-bottom: 22px;
 }
 
@@ -89,11 +89,13 @@
   position: relative;
   overflow: hidden;
   border-radius: 14px;
-  height: 360px;
+  height: auto;
   min-height: 0;
   box-shadow: var(--shadow-soft);
 
   img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -149,7 +151,7 @@
   margin-bottom: 16px;
   color: var(--text-dark);
   font-size: 0.98rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.65;
   min-height: calc(0.98rem * 1.55 * 2);
   display: -webkit-box;
@@ -198,7 +200,7 @@
   span {
     display: block;
     margin-bottom: 5px;
-    color: var(--text-dark);
+    color: var(--text-normal);
     font-size: 0.9rem;
     font-weight: 800;
   }
@@ -210,12 +212,6 @@
     line-height: 1.6;
   }
 
-  .location-lines {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
   p {
     margin: 6px 0 0;
     color: var(--text-normal);
@@ -224,6 +220,43 @@
 
   .primary-text {
     color: var(--primary-color);
+  }
+
+  .schedule-inline {
+    display: flex;
+    gap: 4px 18px;
+    white-space: nowrap;
+  }
+
+  .activity-status-tag {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    min-width: 72px;
+    min-height: 26px;
+    padding: 4px 10px;
+    border-radius: var(--radius-tag);
+    background: var(--market-status-upcoming-overlay-bg);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 800;
+    line-height: 1;
+
+    &.active {
+      background: var(--market-status-active-overlay-bg);
+      color: #fff;
+    }
+
+    &.preview,
+    &.preparing {
+      background: var(--market-status-preview-overlay-bg);
+      color: #fff;
+    }
+
+    &.ended {
+      background: var(--market-status-ended-overlay-bg);
+      color: #fff;
+    }
   }
 
   .countdown-info {
@@ -517,7 +550,7 @@
   }
 
   span {
-    color: var(--text-dark);
+    color: var(--text-normal);
     font-weight: 800;
   }
 
@@ -546,7 +579,7 @@
 
   strong {
     flex-shrink: 0;
-    color: var(--text-dark);
+    color: var(--text-normal);
     font-weight: 800;
   }
 
@@ -625,7 +658,7 @@
   }
 
   .market-image-wrap {
-    height: 340px;
+    height: auto;
   }
 
   .booth-detail-card {

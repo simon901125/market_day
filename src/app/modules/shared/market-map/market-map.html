@@ -2,6 +2,8 @@
   class="market-map"
   [class.is-public]="mode === 'public'"
   [class.is-organizer]="mode === 'organizer-view'"
+  [class.is-vendor-dashboard]="mode === 'select' || mode === 'vendor-view'"
+  [class.is-vendor-view]="mode === 'vendor-view'"
   [class.is-map-fullscreen]="isFullscreenMap"
 >
   @if (mode !== 'public' && mode !== 'organizer-view') {
@@ -71,7 +73,7 @@
         [attr.viewBox]="viewBox"
         role="img"
         aria-label="小集日攤位地圖"
-        [attr.preserveAspectRatio]="mode === 'organizer-view' ? 'xMidYMid meet' : 'xMidYMin meet'"
+        preserveAspectRatio="xMidYMin meet"
         (click)="clearPublicBoothSelection()"
       >
         <rect
@@ -131,8 +133,8 @@
             [attr.id]="'market-booth-' + booth.id"
             class="booth"
             [ngClass]="boothClass(booth)"
-            [attr.role]="booth.brand || mode !== 'public' ? 'button' : 'img'"
-            [attr.tabindex]="booth.brand || mode !== 'public' ? 0 : -1"
+            [attr.role]="mode === 'vendor-view' ? 'img' : booth.brand || mode !== 'public' ? 'button' : 'img'"
+            [attr.tabindex]="mode === 'vendor-view' ? -1 : booth.brand || mode !== 'public' ? 0 : -1"
             [attr.aria-label]="booth.brand ? booth.code + ' ' + booth.brand.name : booth.code + ' 尚未配置品牌'"
             (mouseenter)="showBoothPreview(booth)"
             (mouseleave)="clearBoothPreview(booth)"
@@ -381,7 +383,10 @@
     } @else {
       <aside class="map-detail" aria-live="polite">
         @if (mode === 'organizer-view' && selectedBooth; as booth) {
-          <h2 class="organizer-detail-title">攤位資訊</h2>
+          <h2 class="organizer-detail-title">
+            <i class="bi bi-shop" aria-hidden="true"></i>
+            <span>攤位資訊</span>
+          </h2>
           <dl class="organizer-booth-info">
             <div><dt>攤位編號</dt><dd class="organizer-booth-code">{{ booth.code }}</dd></div>
             <div><dt>區域</dt><dd>{{ booth.zone }}</dd></div>
@@ -393,13 +398,19 @@
           </dl>
           @if (isOrganizerBoothSelected(booth) && booth.brand; as brand) {
             <div class="organizer-brand-info">
-              <h2>品牌資訊</h2>
+              <h2>
+                <i class="bi bi-tag" aria-hidden="true"></i>
+                <span>品牌資訊</span>
+              </h2>
               <dl>
                 <div><dt>品牌名稱</dt><dd>{{ brand.name }}</dd></div>
                 <div><dt>品牌類型</dt><dd>{{ brand.category }}</dd></div>
                 <div><dt>攤主姓名</dt><dd>林小森</dd></div>
               </dl>
-              <a class="organizer-registration-link" routerLink="/organizer/dash-board/register/detail">查看報名詳情</a>
+              <a class="organizer-registration-link" routerLink="/organizer/dash-board/register/detail">
+                <i class="bi bi-eye" aria-hidden="true"></i>
+                查看報名詳情
+              </a>
             </div>
           } @else {
             <div class="organizer-empty-selection">

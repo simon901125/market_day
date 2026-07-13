@@ -86,7 +86,7 @@ export class VendorHome {
       statusClass: MarketStatus.getClass(MarketStatus.active),
       tags: [BrandType.handmade, BrandType.fashion, BrandType.toy],
       organizer: '台南市政府',
-      transportation: ['公車：綠幹線、藍幹線', '計程車：台南火車站搭乘約10分鐘'],
+      transportation: ['捷運：台南火車站步行約 10 分鐘', '公車：綠幹線、藍幹線'],
       price: 600,
       slots: [
         { date: '08/31', remaining: 6 },

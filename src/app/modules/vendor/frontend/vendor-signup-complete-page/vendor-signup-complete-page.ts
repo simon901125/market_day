@@ -66,7 +66,7 @@ export class VendorSignupCompletePage {
       description: '付款完成後，將開放攤位地圖供您選擇。',
     },
     {
-      icon: 'bi-party-popper',
+      icon: 'bi-check-circle',
       title: '報名完成',
       description: '完成選位後，您的報名才算正式完成。',
     },
@@ -165,8 +165,7 @@ export class VendorSignupCompletePage {
     const parsed = this.parseDate(normalized);
     if (!parsed) return value;
 
-    const weekday = ['日', '一', '二', '三', '四', '五', '六'][parsed.getDay()];
-    return `${parsed.getFullYear()}/${String(parsed.getMonth() + 1).padStart(2, '0')}/${String(parsed.getDate()).padStart(2, '0')}（${weekday}）`;
+    return `${parsed.getFullYear()}/${String(parsed.getMonth() + 1).padStart(2, '0')}/${String(parsed.getDate()).padStart(2, '0')}`;
   }
 
   private parseDate(value: string): Date | null {

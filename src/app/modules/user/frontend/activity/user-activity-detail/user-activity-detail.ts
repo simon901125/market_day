@@ -70,7 +70,11 @@ export class UserActivityDetail {
       image: 'assets/images/market/cards/market-card-02.png',
       tags: [BrandType.food, BrandType.handmade],
       organizer: '咖啡日和企劃',
-      transportation: ['捷運忠孝新生站步行約 5 分鐘', '公車華山文創園區站下車'],
+      transportation: [
+        '捷運忠孝新生站步行約 5 分鐘',
+        '公車華山文創園區站下車',
+        '可停華山文創園區停車場',
+      ],
     }),
     withStatus({
       id: 'market-2026-food-picnic',
@@ -308,10 +312,17 @@ export class UserActivityDetail {
 
   /** 將活動交通資訊轉成畫面可迭代的 icon/label/text 結構。 */
   get trafficItems(): TrafficItem[] {
-    return (this.market?.transportation ?? []).map((text, index) => ({
-      icon: ['bi bi-train-front', 'bi bi-bus-front', 'bi bi-car-front-fill'][index] ?? 'bi bi-geo-alt',
-      label: ['捷運', '公車', '開車'][index] ?? '交通',
-      text,
+    const transportation = this.market?.transportation ?? [];
+    const defaults = [
+      '請參考活動地點附近的大眾運輸資訊',
+      '請參考活動地點附近的公車路線',
+      '周邊設有收費停車場',
+    ];
+
+    return ['捷運', '公車', '開車'].map((label, index) => ({
+      icon: ['bi bi-train-front', 'bi bi-bus-front', 'bi bi-car-front-fill'][index],
+      label,
+      text: transportation[index] || defaults[index],
     }));
   }
 

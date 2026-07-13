@@ -36,7 +36,10 @@ export class OrganizerHeader {
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(() => this.closeMenu());
+      .subscribe(() => {
+        this.loadOrganizerUser();
+        this.closeMenu();
+      });
   }
 
   get isLoggedIn(): boolean {
@@ -45,6 +48,16 @@ export class OrganizerHeader {
 
   get managementUrl(): string {
     return this.authService.getDashboardPath('organizer');
+  }
+
+  /** 舊登入資料若沒有 name，至少顯示 Email 帳號，避免帳號按鈕只剩圖示。 */
+  get displayName(): string {
+    const name = this.user?.name?.trim();
+    if (name) {
+      return name;
+    }
+
+    return this.user?.email?.split('@')[0]?.trim() || '主辦方';
   }
 
   /** 切換手機版選單開合狀態。 */
