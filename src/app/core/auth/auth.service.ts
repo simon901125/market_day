@@ -76,6 +76,15 @@ export class AuthService {
     );
   }
 
+  resendRegistrationVerificationCode(
+    payload: PasswordResetCodeRequest
+  ): Observable<ApiResult<null>> {
+    return this.httpService.post<null>(
+      'api/auth/createAccount/resend',
+      payload
+    );
+  }
+
   login(
     role: AuthPortalRole,
     payload: LoginRequest

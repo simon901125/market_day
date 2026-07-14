@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { MarketCardItem } from '../../../../../models/interface/shared/MarketCardItem';
+import { MarketMapData } from '../../../../../models/interface/shared/MarketMap';
 import { TrafficItem } from '../../../../../models/interface/user/TrafficItem';
 import { MarketStatus } from '../../../../../models/status/MarketStatus';
 import { BrandType } from '../../../../../models/type/BrandType ';
-import { MarketMap } from '../../../../shared/market-map/market-map';
+import { Dropdown } from '../../../../shared/dropdown/dropdown';
+import { DEFAULT_MARKET_MAP_DATA, MarketMap } from '../../../../shared/market-map/market-map';
 
 const DAY_MS = 1000 * 60 * 60 * 24;
 type MarketDetailSample = Omit<MarketCardItem, 'status' | 'statusClass'> &
@@ -25,14 +27,21 @@ const withStatus = (market: MarketDetailSample): MarketCardItem => {
 
 @Component({
   selector: 'app-user-activity-detail',
-  imports: [CommonModule, RouterLink, MarketMap],
+  imports: [CommonModule, RouterLink, MarketMap, Dropdown],
   templateUrl: './user-activity-detail.html',
   styleUrl: './user-activity-detail.scss',
 })
 /** 一般使用者活動詳情頁，依 marketId 或導頁 state 顯示活動完整內容。 */
 export class UserActivityDetail {
+  @ViewChild('marketMap') private marketMapComponent?: MarketMap;
+
   /** 目前顯示的活動資料。 */
   market: MarketCardItem | null = null;
+
+  activityDateOptions: string[] = [];
+  selectedActivityDate = '';
+  selectedMarketMap: MarketMapData = DEFAULT_MARKET_MAP_DATA;
+  private marketMapsByDate: Record<string, MarketMapData> = {};
 
   /** 詳情頁 fallback 資料；API 串接前用於支援重新整理還原內容。 */
   readonly fallbackMarkets: MarketCardItem[] = [
@@ -308,6 +317,94 @@ export class UserActivityDetail {
     const marketId = this.route.snapshot.queryParamMap.get('marketId') ?? stateMarket?.id;
 
     this.market = stateMarket ?? this.fallbackMarkets.find((market) => market.id === marketId) ?? this.fallbackMarkets[0];
+    this.initializeActivityMaps();
+  }
+
+  selectActivityDate(date: string): void {
+    const mapData = this.marketMapsByDate[date];
+    if (!mapData || date === this.selectedActivityDate) {
+      return;
+    }
+
+    this.selectedActivityDate = date;
+    this.selectedMarketMap = mapData;
+    this.marketMapComponent?.resetPublicMapState();
+  }
+
+  private initializeActivityMaps(): void {
+    if (!this.market) {
+      return;
+    }
+
+    this.activityDateOptions = this.createActivityDateOptions(
+      this.market.start_date,
+      this.market.end_date,
+    );
+
+    if (!this.activityDateOptions.length) {
+      return;
+    }
+
+    this.marketMapsByDate = Object.fromEntries(
+      this.activityDateOptions.map((date, index) => [date, this.createMapForDate(date, index)]),
+    );
+    this.selectedActivityDate = this.activityDateOptions[0];
+    this.selectedMarketMap = this.marketMapsByDate[this.selectedActivityDate];
+  }
+
+  private createActivityDateOptions(startDate: string, endDate: string): string[] {
+    const start = this.parseLocalDate(startDate);
+    const end = this.parseLocalDate(endDate);
+    if (!start || !end || start > end) {
+      return [];
+    }
+
+    const options: string[] = [];
+    for (const date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
+      options.push(this.formatActivityDate(date));
+    }
+    return options;
+  }
+
+  /** 暫以日期建立展示資料；接上 API 後可直接替換成各日期回傳的 mapData。 */
+  private createMapForDate(date: string, dayIndex: number): MarketMapData {
+    const boothsWithBrands = DEFAULT_MARKET_MAP_DATA.booths.filter((booth) => booth.brand);
+    const brandOffset = dayIndex * 7;
+    let boothIndex = 0;
+
+    return {
+      ...DEFAULT_MARKET_MAP_DATA,
+      name: `${this.market?.title ?? DEFAULT_MARKET_MAP_DATA.name} ${date}`,
+      booths: DEFAULT_MARKET_MAP_DATA.booths.map((booth) => {
+        if (!booth.brand) {
+          return { ...booth };
+        }
+
+        const sourceBooth = boothsWithBrands[(boothIndex + brandOffset) % boothsWithBrands.length];
+        boothIndex += 1;
+        return {
+          ...booth,
+          brand: sourceBooth.brand ? { ...sourceBooth.brand } : undefined,
+        };
+      }),
+      facilities: DEFAULT_MARKET_MAP_DATA.facilities.map((facility) => ({ ...facility })),
+    };
+  }
+
+  private parseLocalDate(value: string): Date | null {
+    const match = /^(\d{4})[/-](\d{1,2})[/-](\d{1,2})$/.exec(value.trim());
+    if (!match) {
+      return null;
+    }
+
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  }
+
+  private formatActivityDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}/${month}/${day}`;
   }
 
   /** 將活動交通資訊轉成畫面可迭代的 icon/label/text 結構。 */

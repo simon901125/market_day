@@ -290,13 +290,13 @@
 }
 
 .organizer-map-toolbar app-dropdown {
-  width: 292px;
-  flex: 0 0 292px;
+  width: 228px;
+  flex: 0 0 228px;
 }
 
 :host ::ng-deep .organizer-map-toolbar app-dropdown .select-wrapper {
   display: grid;
-  grid-template-columns: 64px 220px;
+  grid-template-columns: 64px 156px;
   align-items: center;
   gap: 8px;
 }
@@ -311,7 +311,7 @@
 
 :host ::ng-deep .organizer-map-toolbar app-dropdown .dropdown-list {
   left: 72px;
-  width: 220px;
+  width: 156px;
 }
 
 .organizer-map-legend {

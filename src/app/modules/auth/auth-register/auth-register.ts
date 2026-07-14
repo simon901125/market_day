@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -19,7 +19,7 @@ type RegisterRole = 'vendor' | 'organizer';
   templateUrl: './auth-register.html',
   styleUrl: './auth-register.scss',
 })
-export class AuthRegister {
+export class AuthRegister implements OnInit {
   @Input() formTitle = '';
   @Input() vertifyLink = '';
   @Input() role: RegisterRole = 'vendor';
@@ -44,6 +44,16 @@ export class AuthRegister {
     private readonly googleAuthService: GoogleAuthService,
     private readonly router: Router
   ) {}
+
+  ngOnInit(): void {
+    const pendingEmail = sessionStorage
+      .getItem(getPendingRegistrationEmailKey(this.role))
+      ?.trim();
+
+    if (pendingEmail && this.isValidEmail(pendingEmail)) {
+      this.email = pendingEmail;
+    }
+  }
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
@@ -101,6 +111,9 @@ export class AuthRegister {
       return;
     }
 
+    // Preserve the recovery target before the request. The backend may have
+    // created the pending account even if the response or page later fails.
+    this.savePendingRegistrationEmail(email);
     this.isSubmitting = true;
 
     try {
@@ -111,6 +124,13 @@ export class AuthRegister {
           password: this.password,
         })
       );
+
+      // The API may return a duplicate Email as a business result even when
+      // the HTTP request itself succeeds, so inspect the message first.
+      if (this.isEmailAlreadyRegisteredMessage(response.message)) {
+        await this.offerPendingEmailVerification(email);
+        return;
+      }
 
       if (!isApiSuccessStatus(response.statusCode)) {
         await this.alert.error(
@@ -123,6 +143,11 @@ export class AuthRegister {
 
       await this.goVerifyEmail(email);
     } catch (error: unknown) {
+      if (this.isEmailAlreadyRegisteredError(error)) {
+        await this.offerPendingEmailVerification(email);
+        return;
+      }
+
       await this.alert.error(
         '註冊失敗',
         this.getRegisterErrorMessage(error),
@@ -170,7 +195,7 @@ export class AuthRegister {
 
   private async goVerifyEmail(email: string | null): Promise<void> {
     if (email) {
-      sessionStorage.setItem(getPendingRegistrationEmailKey(this.role), email);
+      this.savePendingRegistrationEmail(email);
     }
 
     await this.alert.success(
@@ -182,10 +207,7 @@ export class AuthRegister {
     );
 
     if (email) {
-      await this.router.navigate(
-        [this.vertifyLink || `/${this.role}/verify-email`],
-        { queryParams: { email } }
-      );
+      await this.navigateToEmailVerification(email);
       return;
     }
 
@@ -198,9 +220,90 @@ export class AuthRegister {
     return this.emailPattern.test(email);
   }
 
+  private savePendingRegistrationEmail(email: string): void {
+    sessionStorage.setItem(
+      getPendingRegistrationEmailKey(this.role),
+      email.trim()
+    );
+  }
+
+  private navigateToEmailVerification(email: string): Promise<boolean> {
+    return this.router.navigate(
+      [this.vertifyLink || `/${this.role}/verify-email`],
+      { queryParams: { email } }
+    );
+  }
+
+  private async offerPendingEmailVerification(email: string): Promise<void> {
+    this.savePendingRegistrationEmail(email);
+    const shouldVerify = await this.alert.confirm(
+      '此 Email 尚未完成驗證',
+      `驗證碼已寄送至<br>${email}<br>請前往驗證頁完成註冊。`,
+      '前往驗證',
+      '取消'
+    );
+
+    if (shouldVerify) {
+      try {
+        const response = await firstValueFrom(
+          this.authService.resendRegistrationVerificationCode({ email })
+        );
+
+        if (!isApiSuccessStatus(response.statusCode)) {
+          await this.alert.error(
+            '驗證碼寄送失敗',
+            this.getVerificationResendMessage(response.message),
+            '重新嘗試'
+          );
+          return;
+        }
+
+        await this.navigateToEmailVerification(email);
+      } catch (error: unknown) {
+        await this.alert.error(
+          '驗證碼寄送失敗',
+          this.getVerificationResendErrorMessage(error),
+          '重新嘗試'
+        );
+      }
+    }
+  }
+
+  private isEmailAlreadyRegisteredError(error: unknown): boolean {
+    return this.isEmailAlreadyRegisteredMessage(
+      this.getHttpErrorMessage(error)
+    );
+  }
+
+  private isEmailAlreadyRegisteredMessage(message: unknown): boolean {
+    if (typeof message !== 'string') {
+      return false;
+    }
+
+    const normalizedMessage = message.trim().toLowerCase();
+    return (
+      normalizedMessage.includes('email already registered') ||
+      normalizedMessage.includes('email has already register') ||
+      /email.*(?:已|被).*註冊/i.test(message)
+    );
+  }
+
+  private getHttpErrorMessage(error: unknown): string | undefined {
+    if (!(error instanceof HttpErrorResponse)) {
+      return undefined;
+    }
+
+    if (typeof error.error === 'string') {
+      return error.error;
+    }
+
+    return error.error?.message ?? error.error?.error?.message ?? error.message;
+  }
+
   private getRegisterErrorMessage(error: unknown): string {
-    if (error instanceof HttpErrorResponse) {
-      return this.getRegisterApiMessage(error.error?.message);
+    const message = this.getHttpErrorMessage(error);
+    if (message) {
+      return this.getRegisterApiMessage(message);
     }
 
     return '註冊時發生錯誤，請稍後再試。';
@@ -219,14 +322,43 @@ export class AuthRegister {
   }
 
   private getRegisterApiMessage(message?: string): string {
+    if (this.isEmailAlreadyRegisteredMessage(message)) {
+      return '此 Email 已經註冊，請直接前往驗證或登入。';
+    }
+
     switch (message) {
-      case 'Email already registered':
-        return '此 Email 已經註冊，請改用登入或使用其他 Email。';
       case 'Validation failed: password: Password must be at least 8 characters and contain letters and numbers':
         return '密碼需至少 8 碼，並同時包含英文字母與數字。';
       default:
         return message || '註冊失敗，請確認資料後再試。';
     }
+  }
+
+  private getVerificationResendMessage(message?: string): string {
+    switch (message) {
+      case 'Email already verified':
+      case '此 Email 已完成驗證':
+        return '此 Email 已完成驗證，請直接登入。';
+      case 'Local account not found':
+      case '找不到此本地帳號':
+        return '找不到此待驗證帳號，請重新註冊。';
+      default:
+        return message || '無法重新寄送驗證碼，請稍後再試。';
+    }
+  }
+
+  private getVerificationResendErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 404) {
+        return '後端尚未載入驗證碼重寄功能，請重新啟動後端後再試。';
+      }
+
+      if (error.status === 0) {
+        return '無法連線至後端服務，請確認後端已啟動。';
+      }
+    }
+
+    return this.getVerificationResendMessage(this.getHttpErrorMessage(error));
   }
 
   private getGoogleRegisterApiMessage(message?: string): string {

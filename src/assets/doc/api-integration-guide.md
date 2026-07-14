@@ -688,6 +688,12 @@ this.authService.verifyRegistrationEmail({
 });
 ```
 
+### 重新寄送註冊驗證碼
+
+```ts
+this.authService.resendRegistrationVerificationCode({ email });
+```
+
 ### 一般登入
 
 ```ts
