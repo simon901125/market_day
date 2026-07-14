@@ -3,7 +3,10 @@ import { config as loadEnv } from 'dotenv';
 
 loadEnv({ path: '.env.e2e.local', quiet: true });
 
-const slowMo = Number(process.env['PW_SLOW_MO'] ?? 0);
+const isUiMode = process.argv.includes('--ui');
+const slowMo = Number(
+  process.env[isUiMode ? 'PW_UI_SLOW_MO' : 'PW_SLOW_MO'] ?? 0,
+);
 
 export default defineConfig({
   testDir: './e2e',

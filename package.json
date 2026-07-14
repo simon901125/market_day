@@ -9,7 +9,7 @@
     "test": "ng test",
     "e2e": "playwright test",
     "e2e:headed": "playwright test --headed",
-    "e2e:ui": "playwright test --ui",
+    "e2e:ui": "playwright test --ui --ui-port=0",
     "e2e:report": "playwright show-report"
   },
   "prettier": {
