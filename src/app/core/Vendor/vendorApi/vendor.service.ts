@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { EventSearch } from '../../../models/interface/shared/EventSearch';
 import { ApiResult } from '../../../models/interface/shared/ApiResult';
 import { environment } from '../../../../environments/environment';
+import { VendorMarketDetail } from '../../../models/interface/vendor/VendorMarketDetail';
+import { VendorMarketSearchResponse } from '../../../models/interface/vendor/VendorMarketSearch';
 
 @Injectable({
   providedIn: 'root',
@@ -16,13 +18,11 @@ export class VendorService {
    * @param data
    * @returns
    */
-  searchMarkets(data: EventSearch = {}): Observable<ApiResult<unknown>> {
+  searchMarkets(data: EventSearch = {}): Observable<ApiResult<VendorMarketSearchResponse>> {
     // 建立基本查詢參數
     let params = new HttpParams()
       .set('page', String(data.page ?? 1)) //page 是 null 或 undefined 時使用 1
       .set('pageSize', String(data.pageSize ?? 6));
-
-    params = this.setOptionalParam(params, 'keyword', data.keyword);
 
     //加入非必要條件
     params = this.setOptionalParam(params, 'keyword', data.keyword);
@@ -32,9 +32,8 @@ export class VendorService {
     params = this.setOptionalParam(params, 'event_start_at', this.formatDate(data.eventStartAt));
     params = this.setOptionalParam(params, 'event_end_at', this.formatDate(data.eventEndAt));
 
-    // 這裡要加回傳出來的格式 (intereface)
     const url = `${environment.apiBaseUrl}api/vendor/markets/search`;
-    return this.http.post<ApiResult<unknown>>(url, null, { params });
+    return this.http.post<ApiResult<VendorMarketSearchResponse>>(url, null, { params });
   }
 
   /**
@@ -47,7 +46,7 @@ export class VendorService {
   private setOptionalParam(
     params: HttpParams,
     name: string,
-    value: string | String | undefined,
+    value: string | undefined,
   ): HttpParams {
     const normalizedValue = value?.toString().trim();
     return normalizedValue ? params.set(name, normalizedValue) : params;
@@ -65,5 +64,11 @@ export class VendorService {
     const month = String(value.getMonth() + 1).padStart(2, '0');
     const day = String(value.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  /** GET 取得攤主報名前的公開活動詳細資料。 */
+  getMarketDetail(id: number | string): Observable<ApiResult<VendorMarketDetail>> {
+    const url = `${environment.apiBaseUrl}api/vendor/markets/${id}`;
+    return this.http.get<ApiResult<VendorMarketDetail>>(url);
   }
 }

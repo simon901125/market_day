@@ -1,6 +1,6 @@
 import { MarketSlot } from "./MarketSlot";
 
-/** 市集卡片項目 */
+/** 前端 市集卡片項目 */
 export interface MarketCardItem {
   id?: string;
   /** 市集標題 */
@@ -40,8 +40,13 @@ export interface MarketCardItem {
   /** 各場次剩餘攤位 */
   slots?: MarketSlot[];
   price?: number;
+  /** 後端回傳的攤位總數 */
+  maxBooths?: number;
+  /** 後端回傳的報名起訖時間 */
+  registrationStartAt?: string;
+  registrationEndAt?: string;
+  /** 交通資訊標題與內容 */
+  trafficTitle?: string;
+  trafficDetail?: string;
 
 }
-
-//dateEnd
-//dateStart

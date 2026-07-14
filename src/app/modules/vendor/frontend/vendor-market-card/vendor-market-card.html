@@ -44,7 +44,10 @@
         </span>
       }
 
-      <a class="more-link" [routerLink]="['/vendor/market']">
+      <a
+        class="more-link"
+        [routerLink]="market.id ? ['/vendor/sign-up-detail', market.id] : ['/vendor/sign-up-detail']"
+      >
         查看更多
         <i class="bi bi-chevron-right"></i>
       </a>

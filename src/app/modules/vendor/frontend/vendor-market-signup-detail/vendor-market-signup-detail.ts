@@ -1,7 +1,13 @@
-import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { VendorService } from '../../../../core/Vendor/vendorApi/vendor.service';
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { MarketSlot } from '../../../../models/interface/shared/MarketSlot';
+import {
+  VendorMarketDetail,
+  VendorMarketEquipment,
+} from '../../../../models/interface/vendor/VendorMarketDetail';
+import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
 import { VendorHeader } from '../vendor-header/vendor-header';
 
@@ -11,14 +17,21 @@ import { VendorHeader } from '../vendor-header/vendor-header';
   templateUrl: './vendor-market-signup-detail.html',
   styleUrl: './vendor-market-signup-detail.scss',
 })
-export class VendorMarketSignupDetail {
+export class VendorMarketSignupDetail implements OnInit {
   /** 從列表頁帶入的市集資料，detail 與後續報名流程共用。 */
   market: MarketCardItem | null = null;
+  detail: VendorMarketDetail | null = null;
+  isLoading = false;
+  loadError = '';
 
   /** 「每日剩餘名額」目前選取的 index。 */
   selectedSlotIndex = 0;
 
-  readonly boothTotal = 200;
+  /** 取得總攤位數 */
+  get boothTotal(): number {
+    return this.detail?.dailyAvailability[0]?.totalStalls ?? this.market?.maxBooths ?? 0;
+  }
+  /** 攤主報名流程 */
   readonly signupSteps = [
     {
       icon: 'bi-pencil',
@@ -83,7 +96,11 @@ export class VendorMarketSignupDetail {
     },
   ];
 
-  constructor(private router: Router) {
+  constructor(
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
+    private readonly vendorService: VendorService,
+  ) {
     const navigation = this.router.currentNavigation();
     this.market = navigation?.extras.state?.['market'] || history.state?.['market'] || null;
 
@@ -94,6 +111,86 @@ export class VendorMarketSignupDetail {
     }
   }
 
+  ngOnInit(): void {
+    const routeId = this.route.snapshot.paramMap.get('id');
+    const eventId = routeId ?? this.market?.id;
+
+    if (eventId) {
+      this.loadMarketDetail(eventId);
+    }
+  }
+
+  /**
+   * 
+   * @param eventId 
+   */
+  private loadMarketDetail(eventId: number | string): void {
+    this.isLoading = true;
+    this.loadError = '';
+
+    this.vendorService.getMarketDetail(eventId).subscribe({
+      next: (response) => {
+        if (!response.data) {
+          this.market = null;
+          this.loadError = response.message || '找不到市集資料。';
+        } else {
+          this.detail = response.data;
+          this.market = this.toMarketCard(response.data);
+          this.selectedSlotIndex = Math.min(
+            this.selectedSlotIndex,
+            Math.max(this.market.slots!.length - 1, 0),
+          );
+        }
+        this.isLoading = false;
+      },
+      error: () => {
+        this.market = null;
+        this.loadError = '市集詳細資料載入失敗，請稍後再試。';
+        this.isLoading = false;
+      },
+    });
+  }
+
+  private toMarketCard(detail: VendorMarketDetail): MarketCardItem {
+    const statusMap: Record<VendorMarketDetail['registrationStatus'], string> = {
+      OPEN: MarketStatus.active,
+      UPCOMING: MarketStatus.preview,
+      CLOSED: MarketStatus.ended,
+    };
+    const status = statusMap[detail.registrationStatus];
+
+    return {
+      id: String(detail.eventId),
+      title: detail.eventTitle,
+      time: `${this.formatTime(detail.startAt)} - ${this.formatTime(detail.endAt)}`,
+      start_date: this.formatApiDate(detail.startAt),
+      end_date: this.formatApiDate(detail.endAt),
+      description: detail.summary,
+      location: detail.locationName,
+      address: [detail.city, detail.district, detail.address].filter(Boolean).join(''),
+      city: detail.city,
+      area: detail.district,
+      image: detail.coverImageUrl || 'assets/images/market/cards/market-card-01.png',
+      status,
+      statusClass: MarketStatus.getClass(status),
+      tags: detail.categoryName ? [detail.categoryName] : [],
+      category: detail.categoryName,
+      organizer: detail.organizerName || detail.companyName || '',
+      transportation: detail.trafficInfos.flatMap((item) =>
+        [item.trafficTitle, item.trafficDetails].filter(Boolean),
+      ),
+      price: detail.baseFee,
+      maxBooths: detail.maxBooths,
+      registrationStartAt: detail.registrationStartAt ?? undefined,
+      registrationEndAt: detail.registrationEndAt ?? undefined,
+      slots: detail.dailyAvailability.map((slot) => ({
+        date: this.formatMonthDay(slot.applyDate),
+        remaining: slot.remainingStalls,
+        isFull: slot.remainingStalls <= 0,
+      })),
+    };
+  }
+
   get dateRangeText(): string {
     if (!this.market) return '-';
     return `${this.market.start_date} - ${this.market.end_date}`;
@@ -101,6 +198,10 @@ export class VendorMarketSignupDetail {
 
   get signupDeadline(): string {
     if (!this.market) return '-';
+
+    if (this.market.registrationEndAt) {
+      return this.formatDateTime(this.market.registrationEndAt);
+    }
 
     const start = new Date(this.market.start_date);
     if (Number.isNaN(start.getTime())) return this.market.end_date;
@@ -112,6 +213,12 @@ export class VendorMarketSignupDetail {
   get signupRangeText(): string {
     if (!this.market) return '-';
 
+    if (this.market.registrationStartAt && this.market.registrationEndAt) {
+      return `${this.formatDateTime(this.market.registrationStartAt)} - ${this.formatDateTime(
+        this.market.registrationEndAt,
+      )}`;
+    }
+
     const start = new Date(this.market.start_date);
     if (Number.isNaN(start.getTime())) return `即日起 - ${this.signupDeadline}`;
 
@@ -121,7 +228,76 @@ export class VendorMarketSignupDetail {
   }
 
   get priceText(): string {
-    return this.market?.price ? `$${this.market.price} / 攤` : '依主辦單位公告';
+    return this.market?.price != null ? `$${this.market.price} / 天 / 攤` : '依主辦單位公告';
+  }
+
+  get marketDescription(): string {
+    return this.detail?.description || this.market?.description || '';
+  }
+
+  get freeEquipments(): VendorMarketEquipment[] {
+    return (
+      this.detail?.equipments.filter(
+        (item) => item.itemType === 'EQUIPMENT' && item.chargeType === 'FREE',
+      ) ?? []
+    );
+  }
+
+  get rentalEquipments(): VendorMarketEquipment[] {
+    return (
+      this.detail?.equipments.filter(
+        (item) => item.itemType === 'EQUIPMENT' && item.chargeType === 'PAID',
+      ) ?? []
+    );
+  }
+
+  get freePowerOptions(): VendorMarketEquipment[] {
+    return (
+      this.detail?.equipments.filter(
+        (item) => item.itemType === 'POWER' && item.chargeType === 'FREE',
+      ) ?? []
+    );
+  }
+
+  get paidPowerOptions(): VendorMarketEquipment[] {
+    return (
+      this.detail?.equipments.filter(
+        (item) => item.itemType === 'POWER' && item.chargeType === 'PAID',
+      ) ?? []
+    );
+  }
+
+  get stallSizeText(): string {
+    const { stallWidth, stallLength } = this.detail ?? {};
+    return stallWidth && stallLength ? `${stallWidth} × ${stallLength} 公尺` : '依主辦單位公告';
+  }
+
+  get serviceTimeText(): string {
+    if (!this.detail) return '-';
+    const time = [this.detail.serviceStartTime, this.detail.serviceEndTime]
+      .filter(Boolean)
+      .join(' - ');
+    return [this.detail.serviceDays, time].filter(Boolean).join(' ') || '-';
+  }
+
+  equipmentDescription(item: VendorMarketEquipment): string {
+    return [item.name, item.description].filter(Boolean).join('（') + (item.description ? '）' : '');
+  }
+
+  equipmentPrice(item: VendorMarketEquipment): string {
+    const unitMap: Record<string, string> = {
+      DAY: '天',
+      EVENT: '場',
+      UNIT: '份',
+    };
+    const rawUnit = item.pricingUnit || item.unit || '份';
+    const unit = unitMap[rawUnit.toUpperCase()] ?? rawUnit;
+    return `$${item.rentalFee} / ${unit}`;
+  }
+
+  powerDescription(item: VendorMarketEquipment): string {
+    const wattage = item.wattageLimit ? `${item.wattageLimit}W` : '';
+    return [item.name, wattage, item.description].filter(Boolean).join(' ｜ ');
   }
 
   get slots(): MarketSlot[] {
@@ -197,6 +373,32 @@ export class VendorMarketSignupDetail {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}/${month}/${day}`;
+  }
+
+  private formatApiDate(value: string): string {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? value : this.formatDate(date);
+  }
+
+  private formatMonthDay(value: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+  }
+
+  private formatTime(value: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  }
+
+  private formatDateTime(value: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${this.formatDate(date)} ${hours}:${minutes}`;
   }
 
   private parseDate(value: string): Date | null {

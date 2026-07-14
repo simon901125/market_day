@@ -37,17 +37,25 @@
       </a>
     </div>
 
-    <div class="market-grid">
-      <div class="row g-4">
-        @for (market of recentMarkets; track market.title) {
-          <div class="col-12 col-md-6 col-lg-4">
-            <app-vendor-market-card
-              [market]="market"
-              (click)="goToSignUpDetail(market)"
-            ></app-vendor-market-card>
-          </div>
-        }
-      </div>
+    <div class="market-grid" aria-live="polite">
+      @if (isLoadingMarkets) {
+        <p class="market-message">近期市集載入中…</p>
+      } @else if (marketLoadError) {
+        <p class="market-message market-message-error">{{ marketLoadError }}</p>
+      } @else if (markets.length === 0) {
+        <p class="market-message">目前沒有開放報名的近期市集。</p>
+      } @else {
+        <div class="row g-4">
+          @for (market of markets; track market.id) {
+            <div class="col-12 col-md-6 col-lg-4">
+              <app-vendor-market-card
+                [market]="market"
+                (click)="goToSignUpDetail(market)"
+              ></app-vendor-market-card>
+            </div>
+          }
+        </div>
+      }
     </div>
   </section>
 
