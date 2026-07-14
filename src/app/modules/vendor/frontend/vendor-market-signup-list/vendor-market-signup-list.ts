@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { VendorHeader } from '../vendor-header/vendor-header';
-import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
-import { VendorMarketCard } from '../vendor-market-card/vendor-market-card';
-import { MarketStatus } from '../../../../models/status/MarketStatus';
-import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
-import {
-  VendorMarketSearchCriteria,
-  VendorMarketSearchPanel,
-} from '../vendor-market-search-panel/vendor-market-search-panel';
 import { Router } from '@angular/router';
-import { Pagination } from '../../../shared/pagination/pagination';
 import { VendorService } from '../../../../core/Vendor/vendorApi/vendor.service';
 import { EventSearch } from '../../../../models/interface/shared/EventSearch';
+import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
+import {
+  MarketRegistrationStatus,
+  VendorMarketSearchItem,
+} from '../../../../models/interface/vendor/VendorMarketSearch';
+import { MarketStatus } from '../../../../models/status/MarketStatus';
+import { Pagination } from '../../../shared/pagination/pagination';
+import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
+import { VendorHeader } from '../vendor-header/vendor-header';
+import { VendorMarketCard } from '../vendor-market-card/vendor-market-card';
+import { VendorMarketSearchPanel } from '../vendor-market-search-panel/vendor-market-search-panel';
+
 @Component({
   selector: 'app-vendor-market-signup-list',
   imports: [VendorHeader, UserFooter, VendorMarketCard, VendorMarketSearchPanel, Pagination],
@@ -19,76 +21,47 @@ import { EventSearch } from '../../../../models/interface/shared/EventSearch';
   styleUrl: './vendor-market-signup-list.scss',
 })
 export class VendorMarketSignupList implements OnInit {
+  /**目前頁面 */
+  currentPage = 1;
+  /** 預設每頁6筆資料 */
+  readonly pageSize = 6;
+  /** 總筆數 */
+  totalItems = 0;
+  /** 是否載入中 */
+  isLoading = false;
+  /** 載入失敗 */
+  loadError = '';
+  markets: MarketCardItem[] = [];
+
+  /** 保留目前搜尋條件，換頁時會使用相同條件重新查詢後端。 */
+  private searchCriteria: EventSearch = {};
+
   constructor(
     private readonly router: Router,
-    private readonly vendorService: VendorService
+    private readonly vendorService: VendorService,
   ) {}
-  keyword = '';
-  selectedCity = '';
-  selectedStatus = '';
-  currentPage = 1;
-  pageSize = 6;
-  totalItems = 0;
-  isLoading = false;
-  loadError = '';
-  private searchCriteria: EventSearch = {};
-  markets: MarketCardItem[] = [];
 
   ngOnInit(): void {
     this.loadMarkets();
+    
   }
 
-  get filteredMarkets(): MarketCardItem[] {
-    return this.markets;
-  }
-
-  //page應該會傳到後端做計算
-  get totalPages(): number {
-    return Math.ceil(this.totalItems / this.pageSize);
-  }
-  get pages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
-  }
-  get pagedMarkets(): MarketCardItem[] {
-    return this.markets;
-  }
-
+  /** 接收分頁元件的新頁碼，並向後端取得該頁資料。 */
   setPage(page: number): void {
-    if (page < 1 || page > this.totalPages) return;
+    if (page < 1 || page === this.currentPage) return;
     this.currentPage = page;
     this.loadMarkets();
+    
   }
 
-  prevPage(): void {
-    this.setPage(this.currentPage - 1);
-  }
-
-  nextPage(): void {
-    this.setPage(this.currentPage + 1);
-  }
-
-  resetPage(): void {
-    this.currentPage = 1;
-  }
-
-
-  //地區抓不到
+  /** 接收搜尋面板已整理完成的 API 查詢條件。 */
   onSearch(criteria: EventSearch): void {
-    this.searchCriteria = {
-      keyword: criteria.keyword,
-      city: criteria.city,
-      district: criteria.district,
-      status: criteria.status,
-      eventStartAt: criteria.eventStartAt,
-      eventEndAt: criteria.eventEndAt,
-    };
+    this.searchCriteria = criteria;
     this.currentPage = 1;
     this.loadMarkets();
   }
 
-  /**
-   * 抓所有活動
-   */
+  /** 依目前搜尋條件與頁碼，取得後端已發布的市集活動。 */
   private loadMarkets(): void {
     this.isLoading = true;
     this.loadError = '';
@@ -101,9 +74,9 @@ export class VendorMarketSignupList implements OnInit {
       })
       .subscribe({
         next: (response) => {
-          const result = this.readSearchResult(response.data);
-          this.markets = result.items.map((item) => this.toMarketCard(item));
-          this.totalItems = result.totalItems;
+          const marketPage = response.data.markets;
+          this.markets = marketPage.items.map((item) => this.toMarketCard(item));
+          this.totalItems = marketPage.totalItems;
           this.isLoading = false;
         },
         error: () => {
@@ -115,21 +88,11 @@ export class VendorMarketSignupList implements OnInit {
       });
   }
 
-  private readSearchResult(data: unknown): {
-    items: MarketSearchItem[];
-    totalItems: number;
-  } {
-    const response = data as Partial<MarketSearchResponse> | null;
-    const marketPage = response?.markets;
-
-    return {
-      items: marketPage?.items ?? [],
-      totalItems: marketPage?.totalItems ?? 0,
-    };
-  }
-
-  private toMarketCard(item: MarketSearchItem): MarketCardItem {
+  /** 將搜尋 API DTO 轉成共用的市集卡片模型。 */
+  private toMarketCard(item: VendorMarketSearchItem): MarketCardItem {
+    /** 開始日期 原 >> yyyy-MM-dd hh:mm */
     const startAt = new Date(item.startAt);
+    /** 結束日期 原 >> yyyy-MM-dd hh:mm */
     const endAt = new Date(item.endAt);
     const status = this.toMarketStatus(item.registrationStatus);
 
@@ -163,15 +126,21 @@ export class VendorMarketSignupList implements OnInit {
     };
   }
 
+  /** 將後端狀態轉成卡片元件使用的中文狀態。 */
   private toMarketStatus(status: MarketRegistrationStatus): string {
     const statusMap: Record<MarketRegistrationStatus, string> = {
       OPEN: MarketStatus.active,
       UPCOMING: MarketStatus.preview,
       CLOSED: MarketStatus.ended,
     };
-    return statusMap[status] ?? status;
+    return statusMap[status];
   }
 
+  /**
+   * 處理日期格式
+   * @param value 開始日期 or 結束日期
+   * @returns yyyy/MM/dd
+   */
   private formatDate(value: Date): string {
     const year = value.getFullYear();
     const month = String(value.getMonth() + 1).padStart(2, '0');
@@ -179,66 +148,20 @@ export class VendorMarketSignupList implements OnInit {
     return `${year}/${month}/${day}`;
   }
 
+  /**
+   * 處理時間格式
+   * @param value 開始日期 or 結束日期
+   * @returns hh:mm
+   */
   private formatTime(value: Date): string {
     const hours = String(value.getHours()).padStart(2, '0');
     const minutes = String(value.getMinutes()).padStart(2, '0');
     return `${hours}:${minutes}`;
   }
 
-  private parseDate(value: string): Date | undefined {
-    if (!value) return undefined;
-    const [year, month, day] = value.split('-').map(Number);
-    return new Date(year, month - 1, day);
-  }
-
-  /**
-   * 導航到市集報名詳情頁
-   * @param market 選擇的市集
-   */
+  /** 只帶活動 ID 前往詳細頁，詳細頁會重新向後端取得最新資料。 */
   goToSignUpDetail(market: MarketCardItem): void {
-    this.router.navigate(['/vendor/sign-up-detail'], {
-      state: { market },
-    });
-
-    console.log(market);
+    if (!market.id) return;
+    this.router.navigate(['/vendor/sign-up-detail', market.id]);
   }
 }
-
-// intereface不該在這裡
-interface MarketSearchResponse {
-  markets: MarketSearchPage;
-}
-
-interface MarketSearchPage {
-  items: MarketSearchItem[];
-  page: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
-  hasPrevious: boolean;
-  hasNext: boolean;
-}
-
-interface MarketSearchItem {
-  eventId: number;
-  eventTitle: string;
-  summary: string;
-  locationName: string;
-  city: string;
-  district: string;
-  address: string;
-  maxBooths: number;
-  startAt: string;
-  endAt: string;
-  registrationStartAt: string | null;
-  registrationEndAt: string | null;
-  baseFee: number;
-  trafficTitle: string | null;
-  trafficDetail: string | null;
-  categoryName: string | null;
-  organizerName: string | null;
-  imageUrl: string | null;
-  registrationStatus: MarketRegistrationStatus;
-}
-
-type MarketRegistrationStatus = 'OPEN' | 'UPCOMING' | 'CLOSED';
