@@ -41,6 +41,16 @@
   padding: 0;
 }
 
+.market-message {
+  margin: 32px 0;
+  color: var(--text-normal);
+  text-align: center;
+}
+
+.market-message-error {
+  color: var(--bs-danger);
+}
+
 .pagination-section {
   width: var(--user-content-width);
   margin: 34px auto 32px;

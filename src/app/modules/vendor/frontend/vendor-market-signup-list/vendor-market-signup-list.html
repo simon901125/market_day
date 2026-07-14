@@ -6,9 +6,19 @@
     <p>瀏覽近期開放報名的市集，依照品牌類型、活動日期與地區找到適合的場次。</p>
   </section>
 
-  <app-vendor-market-search-panel></app-vendor-market-search-panel>
+  <app-vendor-market-search-panel
+    (search)="onSearch($event)"
+  ></app-vendor-market-search-panel>
 
   <section class="market-grid">
+    @if (isLoading) {
+      <p class="market-message">活動載入中...</p>
+    } @else if (loadError) {
+      <p class="market-message market-message-error">{{ loadError }}</p>
+    } @else if (markets.length === 0) {
+      <p class="market-message">查無符合條件的活動。</p>
+    }
+
     <div class="row g-4">
       @for (market of pagedMarkets; track market.title) {
         <div class="col-12 col-md-6 col-lg-4">
@@ -25,7 +35,7 @@
     <app-pagination
       [currentPage]="currentPage"
       [pageSize]="pageSize"
-      [totalItems]="filteredMarkets.length"
+      [totalItems]="totalItems"
       (pageChange)="setPage($event)"
     ></app-pagination>
   </div>
