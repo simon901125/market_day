@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
-import { finalize, Observable } from 'rxjs';
+import { finalize, firstValueFrom, Observable } from 'rxjs';
 
 import {
   getAuthTokenKey,
   getAuthUserKey,
 } from './auth-storage.constants';
-import { ApiResult } from '../../models/interface/shared/ApiResult';
+import {
+  ApiResult,
+  isApiSuccessStatus,
+} from '../../models/interface/shared/ApiResult';
 import {
   AuthPortalRole,
   ChangePasswordRequest,
@@ -39,6 +42,9 @@ const LOGIN_PATH: Record<AuthPortalRole, string> = {
   providedIn: 'root',
 })
 export class AuthService {
+  private readonly validatedSessions = new Set<AuthPortalRole>();
+  private readonly validationRequests = new Map<AuthPortalRole, Promise<boolean>>();
+
   constructor(private readonly httpService: HttpService) {}
 
   register(
@@ -96,7 +102,7 @@ export class AuthService {
     return this.httpService.post<null>('api/auth/google-bind', payload);
   }
 
-  me(options: HttpRequestOptions = {}): Observable<ApiResult<UserProfileResponse>> {
+  getAuthMe(options: HttpRequestOptions = {}): Observable<ApiResult<UserProfileResponse>> {
     return this.httpService.get<UserProfileResponse>('api/auth/me', options);
   }
 
@@ -153,6 +159,7 @@ export class AuthService {
   ): void {
     localStorage.setItem(getAuthTokenKey(role), token);
     localStorage.setItem(getAuthUserKey(role), JSON.stringify(user));
+    this.validatedSessions.add(role);
   }
 
   saveUser(role: AuthPortalRole, user: MarketDayUser): void {
@@ -196,6 +203,8 @@ export class AuthService {
   clearSession(role: AuthPortalRole): void {
     localStorage.removeItem(getAuthTokenKey(role));
     localStorage.removeItem(getAuthUserKey(role));
+    this.validatedSessions.delete(role);
+    this.validationRequests.delete(role);
 
     // 清除舊版登入資料，避免舊狀態影響角色判斷。
     sessionStorage.removeItem('isLogin');
@@ -217,6 +226,27 @@ export class AuthService {
     }
 
     return true;
+  }
+
+  validateSession(role: AuthPortalRole): Promise<boolean> {
+    if (!this.isLoggedIn(role)) {
+      return Promise.resolve(false);
+    }
+
+    if (this.validatedSessions.has(role)) {
+      return Promise.resolve(true);
+    }
+
+    const pendingRequest = this.validationRequests.get(role);
+    if (pendingRequest) {
+      return pendingRequest;
+    }
+
+    const validationRequest = this.validateStoredSession(role).finally(() => {
+      this.validationRequests.delete(role);
+    });
+    this.validationRequests.set(role, validationRequest);
+    return validationRequest;
   }
 
   getPortalRole(role?: MarketDayRole): AuthPortalRole | null {
@@ -243,6 +273,31 @@ export class AuthService {
   getRoleFromUrl(url: string): AuthPortalRole | null {
     const role = url.split('?')[0].split('/').filter(Boolean)[0];
     return this.isPortalRole(role) ? role : null;
+  }
+
+  private async validateStoredSession(role: AuthPortalRole): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.getAuthMe({ skipLoading: true })
+      );
+      const user = response.data?.user;
+      const isValid =
+        isApiSuccessStatus(response.statusCode) &&
+        !!user &&
+        this.getPortalRole(user.role) === role;
+
+      if (!isValid) {
+        this.clearSession(role);
+        return false;
+      }
+
+      this.saveUser(role, user);
+      this.validatedSessions.add(role);
+      return true;
+    } catch {
+      this.clearSession(role);
+      return false;
+    }
   }
 
   private getTokenExpiresAt(token: string): number | null {

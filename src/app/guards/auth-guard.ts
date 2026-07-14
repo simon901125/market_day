@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 
 import { AuthService } from '../core/auth/auth.service';
 
-export const authGuard: CanActivateFn = (route) => {
+export const authGuard: CanActivateFn = async (route) => {
   const router = inject(Router);
   const authService = inject(AuthService);
   const requiredRole = route.data?.['role'];
@@ -12,7 +12,7 @@ export const authGuard: CanActivateFn = (route) => {
     return true;
   }
 
-  if (authService.isLoggedIn(requiredRole)) {
+  if (await authService.validateSession(requiredRole)) {
     return true;
   }
 

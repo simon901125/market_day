@@ -2,21 +2,65 @@
   <header class="setup-page-header">
     <div>
       <h1>歡迎使用小集日主辦方後台 <span aria-hidden="true">👋</span></h1>
-      <p>先完成主辦方資料設定，就可以開始建立第一場市集活動。</p>
+      <p>完成首次設定後，即可開始建立與管理市集活動。</p>
     </div>
-    <a class="setup-action-btn" routerLink="/organizer/dash-board/account-settings">
-      <i class="bi bi-person-gear" aria-hidden="true"></i>
-      前往設定
-    </a>
   </header>
 
-  <section class="setup-card setup-section">
+  <section class="profile-onboarding-card" aria-labelledby="profile-setup-title">
+    <header class="profile-task-header">
+      <div class="profile-task-summary">
+        <div class="profile-task-heading">
+          <h2 id="profile-setup-title">
+            <i class="bi bi-person-badge" aria-hidden="true"></i>
+            設定主辦方資料
+          </h2>
+        </div>
+        <p class="profile-task-description">完成主辦方資料並儲存後，才能開始設定第一場活動。</p>
+      </div>
+
+      <div class="profile-task-actions">
+        <button type="button" class="setup-action-btn" (click)="openOrganizerProfile()">
+          <i class="bi bi-person-gear" aria-hidden="true"></i>
+          前往設定
+        </button>
+      </div>
+    </header>
+
+    <div class="profile-requirements-panel">
+      <h3>設定內容</h3>
+      <div class="profile-requirement-list">
+        <article class="profile-requirement-item">
+          <div class="requirement-icon"><i class="bi bi-building"></i></div>
+          <div>
+            <h4>主辦方基本資料</h4>
+            <p>主辦方名稱、公司／團體資訊與聯絡地址</p>
+          </div>
+        </article>
+        <article class="profile-requirement-item">
+          <div class="requirement-icon"><i class="bi bi-telephone"></i></div>
+          <div>
+            <h4>聯絡資訊</h4>
+            <p>聯絡人、電話與電子郵件</p>
+          </div>
+        </article>
+        <article class="profile-requirement-item">
+          <div class="requirement-icon"><i class="bi bi-clock"></i></div>
+          <div>
+            <h4>服務時間</h4>
+            <p>可聯繫的服務星期與服務時段</p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="setup-card setup-section next-step-section">
     <div class="setup-card-heading">
       <div>
-        <h2><i class="bi bi-stars"></i>開始建立第一場活動</h2>
-        <p>依照以下步驟完成資料與活動設定。</p>
+        <h2><i class="bi bi-stars"></i>完成後，接著建立第一場活動</h2>
+        <p>依序完成以下四個活動設定步驟。</p>
       </div>
-      <span class="step-count">共 4 個步驟</span>
     </div>
 
     <div class="setup-steps">
@@ -27,29 +71,6 @@
             <i class="bi {{ item.icon }}"></i>
           </div>
           <div class="step-copy">
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.description }}</p>
-          </div>
-        </article>
-      }
-    </div>
-  </section>
-
-  <section class="setup-card manage-section">
-    <div class="setup-card-heading">
-      <div>
-        <h2><i class="bi bi-grid"></i>審核通過後可使用的管理功能</h2>
-        <p>活動通過審核後，即可從側邊選單進入各項管理功能。</p>
-      </div>
-    </div>
-
-    <div class="manage-grid">
-      @for (item of manageFeatures; track item.title) {
-        <article class="manage-card">
-          <div class="manage-icon">
-            <i class="bi {{ item.icon }}"></i>
-          </div>
-          <div>
             <h3>{{ item.title }}</h3>
             <p>{{ item.description }}</p>
           </div>

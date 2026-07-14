@@ -1,6 +1,8 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { MenuItem } from '../../../../models/interface/shared/MenuItem';
+import { UserMenuItem } from '../../../../models/interface/shared/UserMenuItem';
 
 @Component({
   selector: 'app-dashboard-sidebar',
@@ -17,10 +19,13 @@ export class DashboardSidebar {
   @Input() homePath = '/';
 
   /** 側邊欄選單 */
-  @Input() menuItems: any[] = [];
+  @Input() menuItems: MenuItem[] = [];
 
   /** 使用者功能選單 */
-  @Input() userMenuItems: any[] = [];
+  @Input() userMenuItems: UserMenuItem[] = [];
+
+  /** 是否尚未完成主辦方資料。 */
+  @Input() organizerProfileRequired = false;
 
   /** 使用者頭像文字 */
   @Input() userInitial = '';
@@ -36,6 +41,7 @@ export class DashboardSidebar {
   @Output() logoutRequested = new EventEmitter<void>();
   @Output() accountSettingsRequested = new EventEmitter<void>();
   @Output() organizerProfileRequested = new EventEmitter<void>();
+  @Output() lockedMenuItemRequested = new EventEmitter<MenuItem>();
 
   /** 使用者選單是否展開 */
   isUserMenuOpen = false;
@@ -69,6 +75,14 @@ export class DashboardSidebar {
   openOrganizerProfile(): void {
     this.isUserMenuOpen = false;
     this.organizerProfileRequested.emit();
+  }
+
+  isMenuItemLocked(item: MenuItem): boolean {
+    return this.organizerProfileRequired && item.requiresOrganizerProfile === true;
+  }
+
+  requestLockedMenuItem(item: MenuItem): void {
+    this.lockedMenuItemRequested.emit(item);
   }
 
   /** 點擊頁面其他區域時關閉使用者選單 */

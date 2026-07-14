@@ -12,7 +12,9 @@ import { AuthService } from '../auth/auth.service';
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  const role = authService.getRoleFromUrl(router.url);
+  const role =
+    authService.getRoleFromUrl(router.url) ??
+    authService.getRoleFromUrl(globalThis.location?.pathname ?? '');
   const token = role ? authService.getToken(role) : null;
   const isBackendRequest = request.url.startsWith(environment.apiBaseUrl);
 

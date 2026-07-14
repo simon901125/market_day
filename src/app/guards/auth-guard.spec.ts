@@ -6,12 +6,14 @@ import {
   getAuthTokenKey,
   getAuthUserKey,
 } from '../core/auth/auth-storage.constants';
+import { AuthService } from '../core/auth/auth.service';
 import { authGuard } from './auth-guard';
 
 describe('authGuard', () => {
   const executeGuard: CanActivateFn = (...guardParameters) => 
       TestBed.runInInjectionContext(() => authGuard(...guardParameters));
   let router: Router;
+  let authService: AuthService;
 
   beforeEach(() => {
     localStorage.clear();
@@ -21,49 +23,72 @@ describe('authGuard', () => {
     });
 
     router = TestBed.inject(Router);
+    authService = TestBed.inject(AuthService);
   });
 
   it('should be created', () => {
     expect(executeGuard).toBeTruthy();
   });
 
-  it('should redirect unauthenticated vendor users to vendor login', () => {
-    const result = executeGuard({ data: { role: 'vendor' } } as any, {} as any) as UrlTree;
+  it('should redirect unauthenticated vendor users to vendor login', async () => {
+    const result = await executeGuard(
+      { data: { role: 'vendor' } } as any,
+      {} as any
+    ) as UrlTree;
 
     expect(router.serializeUrl(result)).toBe('/vendor/login');
   });
 
-  it('should allow users with matched role', () => {
+  it('should allow users with matched role', async () => {
     setLoginSession('ORGANIZER');
+    spyOn(authService, 'validateSession').and.resolveTo(true);
 
-    const result = executeGuard({ data: { role: 'organizer' } } as any, {} as any);
+    const result = await executeGuard(
+      { data: { role: 'organizer' } } as any,
+      {} as any
+    );
 
     expect(result).toBeTrue();
   });
 
-  it('should redirect to the requested role login when only another role is logged in', () => {
+  it('should redirect to the requested role login when only another role is logged in', async () => {
     setLoginSession('VENDOR');
 
-    const result = executeGuard({ data: { role: 'admin' } } as any, {} as any) as UrlTree;
+    const result = await executeGuard(
+      { data: { role: 'admin' } } as any,
+      {} as any
+    ) as UrlTree;
 
     expect(router.serializeUrl(result)).toBe('/admin/login');
   });
 
-  it('should keep role sessions independent', () => {
+  it('should keep role sessions independent', async () => {
     setLoginSession('VENDOR');
     setLoginSession('ADMIN');
+    spyOn(authService, 'validateSession').and.callFake(
+      async (role) => authService.isLoggedIn(role)
+    );
 
-    const vendorResult = executeGuard({ data: { role: 'vendor' } } as any, {} as any);
-    const adminResult = executeGuard({ data: { role: 'admin' } } as any, {} as any);
+    const vendorResult = await executeGuard(
+      { data: { role: 'vendor' } } as any,
+      {} as any
+    );
+    const adminResult = await executeGuard(
+      { data: { role: 'admin' } } as any,
+      {} as any
+    );
 
     expect(vendorResult).toBeTrue();
     expect(adminResult).toBeTrue();
   });
 
-  it('should clear expired sessions and redirect to login', () => {
+  it('should clear expired sessions and redirect to login', async () => {
     setLoginSession('VENDOR', -60);
 
-    const result = executeGuard({ data: { role: 'vendor' } } as any, {} as any) as UrlTree;
+    const result = await executeGuard(
+      { data: { role: 'vendor' } } as any,
+      {} as any
+    ) as UrlTree;
 
     expect(router.serializeUrl(result)).toBe('/vendor/login');
     expect(localStorage.getItem(getAuthTokenKey('vendor'))).toBeNull();

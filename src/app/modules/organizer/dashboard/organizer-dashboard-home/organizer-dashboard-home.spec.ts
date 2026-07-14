@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 
+import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
 import { OrganizerDashboardHome } from './organizer-dashboard-home';
 
 describe('OrganizerDashboardHome', () => {
@@ -10,7 +12,20 @@ describe('OrganizerDashboardHome', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [OrganizerDashboardHome],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        {
+          provide: OrganizerApiService,
+          useValue: {
+            getOrganizerDashboardInit: () => of({
+              statusCode: 200,
+              message: 'OK',
+              messageDetails: null,
+              data: { needsProfile: false },
+            }),
+          },
+        },
+      ],
     })
     .compileComponents();
 

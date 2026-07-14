@@ -17,26 +17,38 @@
         <div class="profile-section app-modal-section">
           <h3>基本資料</h3>
 
-          <label class="field full">
-            <span>主辦方名稱</span>
-            <input type="text" name="organizerName" [(ngModel)]="form.organizerName" />
+          <label class="field full" [class.has-error]="validationErrors.organizerName">
+            <span>主辦方名稱 <b class="required-mark">*</b></span>
+            <input type="text" name="organizerName" [(ngModel)]="form.organizerName" (ngModelChange)="clearValidationError('organizerName')" [attr.aria-invalid]="!!validationErrors.organizerName" maxlength="100" />
+            @if (validationErrors.organizerName) {
+              <small class="field-error">{{ validationErrors.organizerName }}</small>
+            }
           </label>
 
           <div class="field-grid two">
-            <label class="field">
-              <span>聯絡人</span>
-              <input type="text" name="contactName" [(ngModel)]="form.contactName" />
+            <label class="field" [class.has-error]="validationErrors.contactName">
+              <span>聯絡人 <b class="required-mark">*</b></span>
+              <input type="text" name="contactName" [(ngModel)]="form.contactName" (ngModelChange)="clearValidationError('contactName')" [attr.aria-invalid]="!!validationErrors.contactName" maxlength="50" />
+              @if (validationErrors.contactName) {
+                <small class="field-error">{{ validationErrors.contactName }}</small>
+              }
             </label>
 
-            <label class="field">
-              <span>聯絡電話</span>
-              <input type="tel" name="phone" [(ngModel)]="form.phone" />
+            <label class="field" [class.has-error]="validationErrors.contactPhone">
+              <span>聯絡電話 <b class="required-mark">*</b></span>
+              <input type="tel" name="contactPhone" [(ngModel)]="form.contactPhone" (ngModelChange)="clearValidationError('contactPhone')" [attr.aria-invalid]="!!validationErrors.contactPhone" maxlength="20" />
+              @if (validationErrors.contactPhone) {
+                <small class="field-error">{{ validationErrors.contactPhone }}</small>
+              }
             </label>
           </div>
 
-          <label class="field full">
-            <span>聯絡電子郵件</span>
-            <input type="email" name="email" [(ngModel)]="form.email" />
+          <label class="field full" [class.has-error]="validationErrors.contactEmail">
+            <span>聯絡電子郵件 <b class="required-mark">*</b></span>
+            <input type="email" name="contactEmail" [(ngModel)]="form.contactEmail" (ngModelChange)="clearValidationError('contactEmail')" [attr.aria-invalid]="!!validationErrors.contactEmail" maxlength="100" />
+            @if (validationErrors.contactEmail) {
+              <small class="field-error">{{ validationErrors.contactEmail }}</small>
+            }
           </label>
 
           <label class="field full">
@@ -44,41 +56,53 @@
             <input type="text" name="companyName" [(ngModel)]="form.companyName" />
           </label>
 
-          <label class="field full">
+          <label class="field full" [class.has-error]="validationErrors.taxId">
             <span>統一編號<small>（選填）</small></span>
-            <input type="text" name="taxId" [(ngModel)]="form.taxId" />
+            <input type="text" name="taxId" [(ngModel)]="form.taxId" (ngModelChange)="clearValidationError('taxId')" [attr.aria-invalid]="!!validationErrors.taxId" inputmode="numeric" maxlength="8" />
+            @if (validationErrors.taxId) {
+              <small class="field-error">{{ validationErrors.taxId }}</small>
+            }
           </label>
 
           <div class="field-grid location">
-            <label class="field">
-              <span>縣市</span>
-              <select name="city" [ngModel]="form.city" (ngModelChange)="onCityChange($event)">
+            <label class="field" [class.has-error]="validationErrors.city">
+              <span>縣市 <b class="required-mark">*</b></span>
+              <select name="city" [ngModel]="form.city" (ngModelChange)="onCityChange($event)" [attr.aria-invalid]="!!validationErrors.city">
                 @for (city of cityOptions; track city) {
                   <option [value]="city">{{ city }}</option>
                 }
               </select>
+              @if (validationErrors.city) {
+                <small class="field-error">{{ validationErrors.city }}</small>
+              }
             </label>
 
-            <label class="field">
-              <span>區</span>
-              <select name="district" [(ngModel)]="form.district">
+            <label class="field" [class.has-error]="validationErrors.district">
+              <span>區 <b class="required-mark">*</b></span>
+              <select name="district" [(ngModel)]="form.district" (ngModelChange)="clearValidationError('district')" [attr.aria-invalid]="!!validationErrors.district">
                 @for (district of districtOptions; track district) {
                   <option [value]="district">{{ district }}</option>
                 }
               </select>
+              @if (validationErrors.district) {
+                <small class="field-error">{{ validationErrors.district }}</small>
+              }
             </label>
 
-            <label class="field">
-              <span>地址</span>
-              <input type="text" name="address" [(ngModel)]="form.address" />
+            <label class="field" [class.has-error]="validationErrors.address">
+              <span>地址 <b class="required-mark">*</b></span>
+              <input type="text" name="address" [(ngModel)]="form.address" (ngModelChange)="clearValidationError('address')" [attr.aria-invalid]="!!validationErrors.address" maxlength="150" />
+              @if (validationErrors.address) {
+                <small class="field-error">{{ validationErrors.address }}</small>
+              }
             </label>
           </div>
         </div>
 
         <div class="profile-section app-modal-section">
           <h3>服務時間</h3>
-          <span class="weekday-label">星期</span>
-          <div class="weekday-grid" aria-label="服務星期">
+          <span class="weekday-label">星期 <b class="required-mark">*</b></span>
+          <div class="weekday-grid" [class.has-error]="validationErrors.serviceDays" aria-label="服務星期">
             @for (day of weekdayOptions; track day) {
               <label class="weekday-option" [class.selected]="isWeekdaySelected(day)">
                 <input
@@ -91,23 +115,35 @@
               </label>
             }
           </div>
+          @if (validationErrors.serviceDays) {
+            <small class="field-error group-error">{{ validationErrors.serviceDays }}</small>
+          }
 
-          <div class="time-row">
+          <div class="time-row" [class.has-error]="validationErrors.serviceTime">
             <label class="field">
-              <span>服務時間</span>
-              <input type="time" name="startTime" [(ngModel)]="form.startTime" />
+              <span>服務時間 <b class="required-mark">*</b></span>
+              <input type="time" name="serviceStartTime" [(ngModel)]="form.serviceStartTime" (ngModelChange)="clearServiceTimeError()" [attr.aria-invalid]="!!validationErrors.serviceTime" />
             </label>
             <span class="time-separator">~</span>
             <label class="field time-end">
               <span aria-hidden="true">&nbsp;</span>
-              <input type="time" name="endTime" [(ngModel)]="form.endTime" />
+              <input type="time" name="serviceEndTime" [(ngModel)]="form.serviceEndTime" (ngModelChange)="clearServiceTimeError()" [attr.aria-invalid]="!!validationErrors.serviceTime" />
             </label>
           </div>
+          @if (validationErrors.serviceTime) {
+            <small class="field-error group-error">{{ validationErrors.serviceTime }}</small>
+          }
         </div>
 
         <footer class="app-modal-actions">
           <button type="button" class="profile-cancel-btn app-btn neutral" (click)="close()">取消</button>
-          <button type="submit" class="profile-save-btn app-btn primary">儲存</button>
+          <button
+            type="submit"
+            class="profile-save-btn app-btn primary"
+            [disabled]="isLoadingProfile || isSavingProfile"
+          >
+            {{ isSavingProfile ? '儲存中...' : '儲存' }}
+          </button>
         </footer>
       </form>
     </section>
