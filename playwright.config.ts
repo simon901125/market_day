@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 import { config as loadEnv } from 'dotenv';
 
 loadEnv({ path: '.env.e2e.local', quiet: true });
@@ -10,21 +10,30 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: Boolean(process.env['CI']),
   retries: process.env['CI'] ? 2 : 0,
-  workers: process.env['CI'] ? 1 : undefined,
+  workers: 1,
   reporter: 'html',
   use: {
     baseURL: 'http://localhost:4200',
+    locale: 'zh-TW',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     launchOptions: {
       slowMo,
+      args: [
+        '--start-maximized',
+        '--disable-features=Translate,TranslateUI',
+        '--disable-translate',
+      ],
     },
   },
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        browserName: 'chromium',
+        viewport: null,
+      },
     },
   ],
   webServer: {
