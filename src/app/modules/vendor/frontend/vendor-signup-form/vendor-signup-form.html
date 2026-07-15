@@ -180,7 +180,9 @@
                     <button type="button" (click)="changeEquipmentQuantity(item, 1)">＋</button>
                   </div>
 
-                  <strong class="row-price">${{ item.price | number }} / 天</strong>
+                  <strong class="row-price">
+                    ${{ item.price | number }} / {{ rentalUnitLabel(item.pricingUnit) }}
+                  </strong>
                 </div>
               }
             </div>
@@ -228,7 +230,9 @@
                   <label>
                     <input class="app-checkbox" type="checkbox" [(ngModel)]="option.selected" />
                     <span>{{ option.label }}</span>
-                    <strong>${{ option.price | number }} / 天</strong>
+                    <strong>
+                      ${{ option.price | number }} / {{ rentalUnitLabel(option.pricingUnit) }}
+                    </strong>
                   </label>
                 }
               </div>
@@ -361,14 +365,12 @@
             <div>
               <span>租借設備小計</span>
               <strong>${{ equipmentSubtotal | number }}</strong>
-              <small>
-                （${{ equipmentDailySubtotal | number }} / 天 × {{ selectedDays }} 天）
-              </small>
+              <small>（依各設備計價單位計算）</small>
             </div>
             <div>
               <span>額外用電小計</span>
               <strong>${{ powerSubtotal | number }}</strong>
-              <small>（${{ powerDailySubtotal | number }} / 天 × {{ selectedDays }} 天）</small>
+              <small>（依各用電方案計價單位計算）</small>
             </div>
             <div>
               <span>保證金</span>
@@ -388,6 +390,10 @@
               <p>活動結束後，若無違規或設備損壞，保證金將於現場全額退還。</p>
             </div>
           </div>
+
+          @if (applicationError) {
+            <p class="validation-error" role="alert">{{ applicationError }}</p>
+          }
 
           <button type="button" class="next-button" (click)="goToConfirm()">
             下一步，確認資料

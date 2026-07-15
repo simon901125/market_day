@@ -186,6 +186,7 @@ export class VendorMarketSignupDetail implements OnInit {
       slots: detail.dailyAvailability.map((slot) => ({
         date: this.formatMonthDay(slot.applyDate),
         remaining: slot.remainingStalls,
+        total: slot.totalStalls,
         isFull: slot.remainingStalls <= 0,
       })),
     };
@@ -317,6 +318,7 @@ export class VendorMarketSignupDetail implements OnInit {
       slots.push({
         date: `${String(cursor.getMonth() + 1).padStart(2, '0')}/${String(cursor.getDate()).padStart(2, '0')}`,
         remaining: this.boothTotal,
+        total: this.boothTotal,
       });
       cursor.setDate(cursor.getDate() + 1);
     }
@@ -375,6 +377,7 @@ export class VendorMarketSignupDetail implements OnInit {
     this.router.navigate(['/vendor/sign-up-form'], {
       state: {
         market: this.market,
+        detail: this.detail,
         slots: this.slots,
         selectedSlotIndex: this.selectedSlotIndex,
       },

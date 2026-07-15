@@ -28,12 +28,12 @@
 
         <div class="hero-info-card">
           <dl class="hero-meta">
-          <div>
+            <div>
             <dt><i class="bi bi-flag"></i>活動狀態</dt>
             <dd>
               <span class="status-text" [class]="market.statusClass">{{ market.status }}</span>
             </dd>
-          </div>
+            </div>
           <div>
             <dt><i class="bi bi-calendar-event"></i>活動時間</dt>
             <dd>{{ dateRangeText }}</dd>
@@ -60,16 +60,17 @@
           </div>
           </dl>
 
-        <button
-          type="button"
-          class="signup-button"
-          [disabled]="detail?.registrationStatus !== 'OPEN'"
-          (click)="goToSignUpForm()"
-        >
-          立即報名
-          <i class="bi bi-arrow-right-circle-fill"></i>
-        </button>
-        <p class="signup-hint">報名資料約需 3–5 分鐘完成，送出後將進入主辦方審核流程。</p>
+          <button
+            type="button"
+            class="signup-button"
+            [disabled]="detail?.registrationStatus !== 'OPEN'"
+            (click)="goToSignUpForm()"
+          >
+            立即報名
+            <i class="bi bi-arrow-right-circle-fill"></i>
+          </button>
+          <p class="signup-hint">報名資料約需 3–5 分鐘完成，送出後將進入主辦方審核流程。</p>
+        </div>
       </div>
     </section>
 
@@ -85,7 +86,7 @@
           >
             <span>{{ slotDateLabel(slot.date) }}</span>
             <strong
-              >剩 <em>{{ slot.remaining }}</em> / {{ boothTotal }} 攤</strong
+              >剩 <em>{{ slot.remaining }}</em> / {{ slot.total ?? boothTotal }} 攤</strong
             >
           </div>
         }

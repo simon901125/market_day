@@ -6,6 +6,9 @@ export interface MarketSlot {
   /** 剩餘攤位數 */
   remaining: number;
 
+  /** 當日攤位總數 */
+  total?: number;
+
   /** 是否額滿 */
   isFull?: boolean;
 }

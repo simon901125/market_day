@@ -6,6 +6,14 @@ import { ApiResult } from '../../../models/interface/shared/ApiResult';
 import { environment } from '../../../../environments/environment';
 import { VendorMarketDetail } from '../../../models/interface/vendor/VendorMarketDetail';
 import { VendorMarketSearchResponse } from '../../../models/interface/vendor/VendorMarketSearch';
+import {
+  VendorApplicationSubmitRequest,
+  VendorApplicationSubmitResponse,
+} from '../../../models/interface/vendor/VendorApplicationSubmit';
+import {
+  VendorStallInfo,
+  VendorStallSaveRequest,
+} from '../../../models/interface/vendor/VendorStallInfo';
 
 @Injectable({
   providedIn: 'root',
@@ -70,5 +78,27 @@ export class VendorService {
   getMarketDetail(id: number | string): Observable<ApiResult<VendorMarketDetail>> {
     const url = `${environment.apiBaseUrl}api/vendor/markets/${id}`;
     return this.http.get<ApiResult<VendorMarketDetail>>(url);
+  }
+
+  /** 送出攤主市集報名申請。Authorization 由 authInterceptor 自動附加。 */
+  submitVendorApplication(
+    data: VendorApplicationSubmitRequest,
+  ): Observable<ApiResult<VendorApplicationSubmitResponse>> {
+    const url = `${environment.apiBaseUrl}api/vendor/applications`;
+    return this.http.post<ApiResult<VendorApplicationSubmitResponse>>(url, data);
+  }
+
+  /** 取得目前登入攤主的攤位資料。Authorization 由 authInterceptor 自動附加。 */
+  getVendorStallInfo(): Observable<ApiResult<VendorStallInfo>> {
+    const url = `${environment.apiBaseUrl}api/vendor/stall/load`;
+    return this.http.get<ApiResult<VendorStallInfo>>(url);
+  }
+
+  /** 儲存目前登入攤主的攤位資料。Authorization 由 authInterceptor 自動附加。 */
+  saveVendorStallInfo(
+    data: VendorStallSaveRequest,
+  ): Observable<ApiResult<VendorStallInfo>> {
+    const url = `${environment.apiBaseUrl}api/vendor/stall/save`;
+    return this.http.post<ApiResult<VendorStallInfo>>(url, data);
   }
 }

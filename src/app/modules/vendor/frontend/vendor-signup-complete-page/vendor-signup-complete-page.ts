@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { MarketSlot } from '../../../../models/interface/shared/MarketSlot';
+import { VendorApplicationSubmitResponse } from '../../../../models/interface/vendor/VendorApplicationSubmit';
 import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
 import { VendorHeader } from '../vendor-header/vendor-header';
 
@@ -77,6 +78,7 @@ export class VendorSignupCompletePage {
 
   /** 從確認頁帶入的報名資料，用來顯示場次、攤位與總金額。 */
   signup: SignupCompleteData | null = null;
+  application: VendorApplicationSubmitResponse | null = null;
 
   /** 送出時間由確認頁建立；若直接進入此頁，會以目前時間作為備援。 */
   submittedAt = new Date().toISOString();
@@ -85,6 +87,8 @@ export class VendorSignupCompletePage {
     const navigation = this.router.currentNavigation();
     this.market = navigation?.extras.state?.['market'] || history.state?.['market'] || null;
     this.signup = navigation?.extras.state?.['signup'] || history.state?.['signup'] || null;
+    this.application =
+      navigation?.extras.state?.['application'] || history.state?.['application'] || null;
     this.submittedAt =
       navigation?.extras.state?.['submittedAt'] ||
       history.state?.['submittedAt'] ||
@@ -93,6 +97,8 @@ export class VendorSignupCompletePage {
 
   /** 報名編號先以前端產生，未來可改成後端 API 回傳的正式編號。 */
   get applicationNo(): string {
+    if (this.application?.applicationNo) return this.application.applicationNo;
+
     const submittedDate = new Date(this.submittedAt);
     const dateText = Number.isNaN(submittedDate.getTime())
       ? this.selectedSlotDate.replace(/\D/g, '').padEnd(8, '0').slice(0, 8)

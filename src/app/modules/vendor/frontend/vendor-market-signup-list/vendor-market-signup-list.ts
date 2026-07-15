@@ -10,15 +10,15 @@ import { Pagination } from '../../../shared/pagination/pagination';
 import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
 import { VendorHeader } from '../vendor-header/vendor-header';
 import { VendorMarketCard } from '../vendor-market-card/vendor-market-card';
-import { BrandType } from '../../../../models/type/BrandType ';
+// import { BrandType } from '../../../../models/type/BrandType ';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
-import { UserMarketSearchPanel } from '../../../user/frontend/shared/user-market-search-panel/user-market-search-panel';
+// import { UserMarketSearchPanel } from '../../../user/frontend/shared/user-market-search-panel/user-market-search-panel';
 import { VendorMarketSearchPanel } from '../vendor-market-search-panel/vendor-market-search-panel';
 
 @Component({
   selector: 'app-vendor-market-signup-list',
-  imports: [VendorHeader, UserFooter, VendorMarketCard, UserMarketSearchPanel, Pagination],
+  imports: [VendorHeader, UserFooter, VendorMarketCard,  Pagination, VendorMarketSearchPanel],
   templateUrl: './vendor-market-signup-list.html',
   styleUrl: './vendor-market-signup-list.scss',
 })
