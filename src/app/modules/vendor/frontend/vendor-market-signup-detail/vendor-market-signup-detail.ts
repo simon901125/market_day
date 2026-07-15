@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AlertService } from '../../../../core/services/alert.service';
+import { VendorAccessService } from '../../../../core/services/vendor-access.service';
 import { VendorService } from '../../../../core/Vendor/vendorApi/vendor.service';
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { MarketSlot } from '../../../../models/interface/shared/MarketSlot';
@@ -100,6 +102,8 @@ export class VendorMarketSignupDetail implements OnInit {
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     private readonly vendorService: VendorService,
+    private readonly alert: AlertService,
+    private readonly vendorAccess: VendorAccessService,
   ) {
     const navigation = this.router.currentNavigation();
     this.market = navigation?.extras.state?.['market'] || history.state?.['market'] || null;
@@ -112,6 +116,7 @@ export class VendorMarketSignupDetail implements OnInit {
   }
 
   ngOnInit(): void {
+    void this.vendorAccess.initialize(true);
     const routeId = this.route.snapshot.paramMap.get('id');
     const eventId = routeId ?? this.market?.id;
 
@@ -372,9 +377,27 @@ export class VendorMarketSignupDetail implements OnInit {
     return content;
   }
 
-  /** 前往報名資料填寫頁，並帶入目前市集與已選擇場次。 */
-  goToSignUpForm(): void {
-    this.router.navigate(['/vendor/sign-up-form'], {
+  get vendorProfileRequired(): boolean {
+    return this.vendorAccess.needsProfile() === true;
+  }
+
+  /** 前往報名資料填寫頁；首次登入尚未建立攤位資料時先引導完成設定。 */
+  async goToSignUpForm(): Promise<void> {
+    const needsProfile = await this.vendorAccess.initialize();
+    if (needsProfile) {
+      const openStallProfile = await this.alert.confirm(
+        '請先完成攤位資料',
+        '完成「我的攤位」資料並儲存後，才能報名市集。',
+        '立即設定',
+        '稍後再說',
+      );
+      if (openStallProfile) {
+        await this.router.navigate(['/vendor/dash-board/myStall']);
+      }
+      return;
+    }
+
+    await this.router.navigate(['/vendor/sign-up-form'], {
       state: {
         market: this.market,
         detail: this.detail,

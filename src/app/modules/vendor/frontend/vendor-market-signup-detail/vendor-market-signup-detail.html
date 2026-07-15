@@ -63,7 +63,10 @@
           <button
             type="button"
             class="signup-button"
+            [class.profile-required]="vendorProfileRequired"
             [disabled]="detail?.registrationStatus !== 'OPEN'"
+            [attr.aria-disabled]="vendorProfileRequired || detail?.registrationStatus !== 'OPEN'"
+            [attr.title]="vendorProfileRequired ? '請先完成攤位資料設定' : null"
             (click)="goToSignUpForm()"
           >
             立即報名

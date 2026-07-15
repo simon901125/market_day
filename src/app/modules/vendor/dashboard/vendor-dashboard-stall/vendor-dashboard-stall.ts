@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
+import { VendorAccessService } from '../../../../core/services/vendor-access.service';
 import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
 import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 import {
@@ -120,6 +121,7 @@ export class VendorDashboardStall implements OnInit {
     private readonly vendorDashboardService: VendorDashboardService,
     private readonly authService: AuthService,
     private readonly router: Router,
+    private readonly vendorAccess: VendorAccessService,
   ) {}
 
   ngOnInit(): void {
@@ -386,7 +388,7 @@ export class VendorDashboardStall implements OnInit {
     this.isSaving = true;
     const shouldReturnToDashboard = this.isFirstLogin;
     this.vendorDashboardService.saveVendorStallInfo(this.createSaveRequest()).subscribe({
-      next: (response) => {
+      next: async (response) => {
         this.isSaving = false;
         if (!isApiSuccessStatus(response.statusCode) || !response.data) {
           void this.alert.error('攤位資料儲存失敗', response.message);
@@ -395,7 +397,8 @@ export class VendorDashboardStall implements OnInit {
 
         this.applyVendorStallInfo(response.data);
         this.isFirstLogin = false;
-        void this.alert.success('儲存成功', response.message);
+        await this.vendorAccess.refresh();
+        await this.alert.success('儲存成功', response.message);
         if (shouldReturnToDashboard) {
           void this.router.navigate(['/vendor/dash-board/home']);
         }

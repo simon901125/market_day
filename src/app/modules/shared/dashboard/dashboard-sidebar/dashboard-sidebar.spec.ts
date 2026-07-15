@@ -20,4 +20,17 @@ describe('DashboardSidebar', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should lock vendor application records until the stall profile is complete', () => {
+    const item = {
+      label: '我的報名紀錄',
+      icon: 'bi-clipboard-check',
+      path: '/vendor/dash-board/application-record',
+      requiresVendorProfile: true,
+    };
+    component.vendorProfileRequired = true;
+
+    expect(component.isMenuItemLocked(item)).toBeTrue();
+    expect(component.lockedMenuItemTitle(item)).toContain('攤位資料');
+  });
 });

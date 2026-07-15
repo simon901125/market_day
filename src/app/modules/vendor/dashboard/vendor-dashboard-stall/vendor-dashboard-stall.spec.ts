@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
+import { VendorAccessService } from '../../../../core/services/vendor-access.service';
 import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
 import { VendorStallInfo } from '../../../../models/interface/vendor/VendorStallInfo';
 import { VendorDashboardStall } from './vendor-dashboard-stall';
@@ -14,6 +15,7 @@ describe('VendorDashboardStall', () => {
   let alert: AlertService;
   let vendorDashboardService: jasmine.SpyObj<VendorDashboardService>;
   let authService: jasmine.SpyObj<AuthService>;
+  let vendorAccess: jasmine.SpyObj<VendorAccessService>;
 
   const stallInfo: VendorStallInfo = {
     brandName: '小集日工作室',
@@ -51,6 +53,8 @@ describe('VendorDashboardStall', () => {
       status: 'ACTIVE',
       isLogin: true,
     });
+    vendorAccess = jasmine.createSpyObj<VendorAccessService>('VendorAccessService', ['refresh']);
+    vendorAccess.refresh.and.resolveTo(false);
     vendorDashboardService = jasmine.createSpyObj<VendorDashboardService>('VendorDashboardService', [
       'getVendorFirstLogin',
       'getVendorStallInfo',
@@ -75,6 +79,7 @@ describe('VendorDashboardStall', () => {
         provideRouter([]),
         { provide: VendorDashboardService, useValue: vendorDashboardService },
         { provide: AuthService, useValue: authService },
+        { provide: VendorAccessService, useValue: vendorAccess },
       ],
     }).compileComponents();
 

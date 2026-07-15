@@ -10,4 +10,6 @@ export interface MenuItem {
   badge?: number;
   /** 主辦方資料完成後才能使用 */
   requiresOrganizerProfile?: boolean;
+  /** 攤位資料完成後才能使用 */
+  requiresVendorProfile?: boolean;
 }

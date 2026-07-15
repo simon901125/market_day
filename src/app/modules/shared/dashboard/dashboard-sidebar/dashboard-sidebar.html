@@ -22,7 +22,7 @@
           type="button"
           class="menu-item locked"
           aria-disabled="true"
-          title="請先完成主辦方資料設定，才能使用此功能"
+          [attr.title]="lockedMenuItemTitle(item)"
           (click)="requestLockedMenuItem(item)"
         >
           <i class="bi" [ngClass]="item.icon"></i>

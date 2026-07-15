@@ -7,6 +7,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrganizerAccessService } from '../../../../core/services/organizer-access.service';
 import { OrganizerProfileDialogService } from '../../../../core/services/organizer-profile-dialog.service';
+import { VendorAccessService } from '../../../../core/services/vendor-access.service';
 import { AuthPortalRole } from '../../../../models/interface/shared/Auth';
 import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 import { MenuItem } from '../../../../models/interface/shared/MenuItem';
@@ -45,6 +46,7 @@ export class DashboardLayout {
     private readonly alert: AlertService,
     private readonly organizerProfileDialog: OrganizerProfileDialogService,
     private readonly organizerAccess: OrganizerAccessService,
+    private readonly vendorAccess: VendorAccessService,
   ) {
     const routeRole = this.route.snapshot.data['role'];
     if (this.authService.isPortalRole(routeRole)) {
@@ -60,11 +62,17 @@ export class DashboardLayout {
 
     if (this.role === 'organizer') {
       void this.organizerAccess.initialize(true);
+    } else if (this.role === 'vendor') {
+      void this.vendorAccess.initialize(true);
     }
   }
 
   get organizerProfileRequired(): boolean {
     return this.role === 'organizer' && this.organizerAccess.needsProfile() !== false;
+  }
+
+  get vendorProfileRequired(): boolean {
+    return this.role === 'vendor' && this.vendorAccess.needsProfile() !== false;
   }
 
   toggleSidebar(): void {
@@ -135,6 +143,20 @@ export class DashboardLayout {
   }
 
   async handleLockedMenuItem(item: MenuItem): Promise<void> {
+    if (item.requiresVendorProfile) {
+      const openStallProfile = await this.alert.confirm(
+        '請先完成攤位資料',
+        `完成「我的攤位」資料並儲存後，才能使用「${item.label}」。`,
+        '立即設定',
+        '稍後再說',
+      );
+
+      if (openStallProfile) {
+        await this.router.navigate(['/vendor/dash-board/myStall']);
+      }
+      return;
+    }
+
     const openProfile = await this.alert.confirm(
       '請先完成主辦方資料',
       `完成主辦方資料並儲存後，才能使用「${item.label}」。`,
@@ -207,6 +229,7 @@ export class DashboardLayout {
         label: '我的報名紀錄',
         icon: 'bi-clipboard-check',
         path: '/vendor/dash-board/application-record',
+        requiresVendorProfile: true,
       },
     ];
 

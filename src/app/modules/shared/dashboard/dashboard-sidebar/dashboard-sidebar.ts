@@ -27,6 +27,9 @@ export class DashboardSidebar {
   /** 是否尚未完成主辦方資料。 */
   @Input() organizerProfileRequired = false;
 
+  /** 是否尚未完成攤位資料。 */
+  @Input() vendorProfileRequired = false;
+
   /** 使用者頭像文字 */
   @Input() userInitial = '';
 
@@ -78,7 +81,14 @@ export class DashboardSidebar {
   }
 
   isMenuItemLocked(item: MenuItem): boolean {
-    return this.organizerProfileRequired && item.requiresOrganizerProfile === true;
+    return (this.organizerProfileRequired && item.requiresOrganizerProfile === true)
+      || (this.vendorProfileRequired && item.requiresVendorProfile === true);
+  }
+
+  lockedMenuItemTitle(item: MenuItem): string {
+    return item.requiresVendorProfile
+      ? '請先完成攤位資料設定，才能使用此功能'
+      : '請先完成主辦方資料設定，才能使用此功能';
   }
 
   requestLockedMenuItem(item: MenuItem): void {

@@ -925,6 +925,11 @@
   margin-top: 16px;
 }
 
+.signup-button.profile-required {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .content-card {
   margin-top: 20px;
   padding: 20px 24px;
