@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 export interface VendorProduct {
+  id?: number;
   name: string;
   description: string;
   price: number;

@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
 import { DashboardHomeTodoCard } from '../../../shared/dashboard/dashboard-home-todo-card/dashboard-home-todo-card';
 import {
   DashboardNotification,
@@ -23,13 +24,26 @@ interface VendorHomeCard {
   templateUrl: './vendor-dashboard-home.html',
   styleUrl: './vendor-dashboard-home.scss',
 })
-export class VendorDashboardHome {
+export class VendorDashboardHome implements OnInit {
   /** 是否有紀錄 */
   hasRecords = false;
 
   readonly homeNotificationMaxItems = 6;
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly vendorDashboardService: VendorDashboardService,
+  ) {}
+
+  ngOnInit(): void {
+    this.vendorDashboardService.getVendorFirstLogin().subscribe({
+      next: (response) => {
+        if (response.data && typeof response.data.needsProfileSetup === 'boolean') {
+          this.hasRecords = !response.data.needsProfileSetup;
+        }
+      },
+    });
+  }
 
   get vendorName(): string {
     return this.authService.getUser('vendor')?.name?.trim() || '攤主';

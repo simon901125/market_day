@@ -198,7 +198,9 @@
     </section>
 
     <div class="save-row">
-      <button type="submit" class="app-btn primary save-btn">儲存變更</button>
+      <button type="submit" class="app-btn primary save-btn" [disabled]="isSaving">
+        {{ isSaving ? '儲存中...' : '儲存變更' }}
+      </button>
     </div>
   </form>
 </main>
