@@ -7,36 +7,19 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
-export interface AccountDeletionBlocker {
-  /** 阻擋註銷的原因代碼，方便未來與後端狀態對應。 */
-  type: string;
-
-  /** 顯示於提示訊息中的中文原因。 */
-  text: string;
-}
-
 @Component({
   selector: 'app-account-deletion',
   templateUrl: './account-deletion.html',
 })
 export class AccountDeletion {
-  /** 是否符合註銷條件，之後可直接綁定 API 回傳結果。 */
-  @Input() canDelete = false;
-
   /** 註銷完成後導向的登入頁。 */
   @Input() loginPath = '/vendor/login';
 
   /** 帳號角色名稱，用於成功訊息。 */
   @Input() accountRoleLabel = '攤主';
 
-  /** 無法註銷時的原因清單。 */
-  @Input() blockers: AccountDeletionBlocker[] = [];
-
-  /** 註銷完成事件，供外層元件串接 API 或清除其他狀態。 */
+  /** 註銷完成事件，供外層元件清除其他狀態。 */
   @Output() deleted = new EventEmitter<void>();
-
-  /** 註銷受阻事件，供外層元件記錄或處理原因。 */
-  @Output() blocked = new EventEmitter<AccountDeletionBlocker[]>();
 
   private isDeleting = false;
 
@@ -69,7 +52,6 @@ export class AccountDeletion {
       const response = await firstValueFrom(this.authService.deactivateAccount());
 
       if (!isApiSuccessStatus(response.statusCode)) {
-        this.blocked.emit(this.blockers);
         await this.alert.warning(
           '目前無法註銷帳號',
           this.getApiMessage(response.message),
@@ -89,7 +71,6 @@ export class AccountDeletion {
         '返回登入頁'
       );
     } catch (error: unknown) {
-      this.blocked.emit(this.blockers);
       await this.alert.error(
         '註銷帳號失敗',
         this.getErrorMessage(error),
@@ -100,17 +81,8 @@ export class AccountDeletion {
     }
   }
 
-  /** 將後端回傳的阻擋原因整理成標準 Alert 可顯示的訊息。 */
-  private getBlockedMessage(): string {
-    const reasons = this.blockers.length
-      ? this.blockers.map((blocker) => blocker.text).join('、')
-      : '進行中的報名、待付款或未完成活動';
-
-    return `您的帳號仍有${reasons}，<br>請完成相關事項後，再重新申請註銷帳號。`;
-  }
-
   private getApiMessage(message?: string): string {
-    return message || this.getBlockedMessage();
+    return message || '目前無法註銷帳號，請完成進行中的事項後再試。';
   }
 
   private getErrorMessage(error: unknown): string {

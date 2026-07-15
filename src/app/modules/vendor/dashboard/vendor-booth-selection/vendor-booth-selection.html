@@ -29,21 +29,12 @@
     <section class="map-card">
       <div class="vendor-map-toolbar">
         <div class="date-filter">
-          <strong>活動日期</strong>
-          <div class="date-tabs app-tab-list" role="tablist" aria-label="活動日期">
-            @for (day of days; track day.date; let dayIndex = $index) {
-              <button
-                type="button"
-                class="app-tab-btn"
-                role="tab"
-                [class.active]="activeDayIndex === dayIndex"
-                [attr.aria-selected]="activeDayIndex === dayIndex"
-                (click)="selectDay(dayIndex)"
-              >
-                {{ day.date }}（{{ day.weekday }}）
-              </button>
-            }
-          </div>
+          <app-dropdown
+            title="活動日期"
+            [options]="dateOptions"
+            [selectedValue]="activeDay.date"
+            (optionSelected)="selectDayByDate($event)"
+          ></app-dropdown>
         </div>
         <div class="map-legend">
           <span><i class="available"></i>{{ viewMode ? '其他攤位' : '可選擇攤位' }}</span>
@@ -64,7 +55,7 @@
       }
       @for (day of days; track day.date) {
         <article class="day-result">
-          <strong>{{ day.date }}（{{ day.weekday }}）</strong>
+          <strong>{{ day.date }}</strong>
           @if (day.booth; as booth) {
             <div><span class="chosen status-tag completed">{{ vendorStatus.completed }}</span><b>{{ booth.code }}</b></div>
             <p>{{ booth.zone }}｜3m × 3m</p>
@@ -84,29 +75,12 @@
 </main>
 
 @if (dialog) {
-  <div class="booth-modal-backdrop app-modal-backdrop" (click)="closeDialog()">
-    <section class="booth-dialog app-modal" (click)="$event.stopPropagation()">
-      <button type="button" class="dialog-close" aria-label="關閉" (click)="closeDialog()"><i class="bi bi-x-lg"></i></button>
-      @if (dialog === 'confirm') {
-        <i class="dialog-icon warning bi bi-exclamation-lg"></i>
-        <h2>確認完成攤位選擇</h2>
-        <p>確認後將完成本次活動所有日期的攤位選擇。<br>送出後將無法再次修改，請確認所有日期的攤位資訊。</p>
-        <div class="confirm-list">@for (day of days; track day.date) { <article><strong>{{ day.date }}（{{ day.weekday }}）</strong><div><b>{{ day.booth?.code }}</b><span>{{ day.booth?.zone }}　3m × 3m</span></div></article> }</div>
-        <div class="dialog-actions app-modal-actions"><button type="button" class="app-btn neutral" (click)="closeDialog()">取消</button><button type="button" class="app-btn primary" (click)="confirmComplete()">確認完成選位</button></div>
-      } @else if (dialog === 'success') {
-        <i class="dialog-icon success bi bi-check-lg"></i>
-        <h2>已完成攤位選擇</h2>
-        <p class="green">本次活動所有日期的攤位選擇已確認完成。</p>
-        <div class="confirm-list">@for (day of days; track day.date) { <article><strong>{{ day.date }}（{{ day.weekday }}）</strong><div><b>{{ day.booth?.code }}</b><span>{{ day.booth?.zone }}　3m × 3m</span></div></article> }</div>
-        <button type="button" class="wide app-btn primary" (click)="backToDetail()">返回報名詳情</button>
-      } @else {
-        <i class="dialog-icon warning bi bi-exclamation-lg"></i>
-        <h2>您選擇的攤位已被選走</h2>
-        <p>您所選擇的部分攤位已被其他攤主完成選位。<br>請重新選擇所有活動日期的攤位。</p>
-        <div class="conflict-row"><div><strong>2026/07/18（六）</strong><b>A03</b><span>已被其他攤主選擇</span></div><em>已被選走</em></div>
-        <div class="retry-note"><i class="bi bi-info-circle-fill"></i>請重新完成本次活動所有日期的攤位選擇，完成後再重新確認。</div>
-        <button class="wide app-btn primary" (click)="retrySelection()">重新選擇攤位</button>
-      }
-    </section>
-  </div>
+  <app-vendor-booth-selection-modal
+    [dialog]="dialog"
+    [days]="days"
+    (closeDialog)="closeDialog()"
+    (confirmSelection)="confirmComplete()"
+    (retrySelection)="retrySelection()"
+    (returnToDetail)="backToDetail()"
+  ></app-vendor-booth-selection-modal>
 }

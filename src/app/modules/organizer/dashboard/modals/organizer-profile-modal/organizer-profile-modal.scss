@@ -93,7 +93,7 @@
 }
 
 .profile-form {
-  padding: 0 28px 28px;
+  padding: 0 28px 20px;
 }
 
 .profile-section {
@@ -141,7 +141,7 @@
 
   &.location {
     grid-template-columns: 112px 112px minmax(0, 1fr);
-    align-items: end;
+    align-items: start;
   }
 }
 
@@ -193,6 +193,31 @@
   select {
     cursor: pointer;
   }
+
+  &.has-error {
+    input,
+    select {
+      border-color: #ef4444;
+      box-shadow: none;
+    }
+  }
+}
+
+.required-mark {
+  color: #ef4444;
+  font: inherit;
+}
+
+.field-error {
+  color: #ef4444;
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.group-error {
+  margin-top: 7px;
 }
 
 .weekday-label {
@@ -207,6 +232,10 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px 14px;
+
+  &.has-error .weekday-option {
+    border-color: #ef4444;
+  }
 }
 
 .weekday-option {
@@ -287,6 +316,11 @@
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: end;
   gap: 14px;
+
+  &.has-error input {
+    border-color: #ef4444;
+    box-shadow: none;
+  }
 }
 
 .time-separator {
@@ -297,8 +331,8 @@
   font-weight: 900;
 }
 
-footer {
-  margin-top: 22px;
+.profile-form > footer.app-modal-actions {
+  margin: 20px 0 0;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -363,7 +397,7 @@ footer {
     display: none;
   }
 
-  footer {
+  .profile-form > footer.app-modal-actions {
     flex-direction: column-reverse;
   }
 

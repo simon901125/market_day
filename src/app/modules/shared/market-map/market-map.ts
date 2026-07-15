@@ -48,7 +48,7 @@ const boothCoordinates: Record<string, Point[]> = {
   C: [
     [368, 316], [368, 354], [368, 392], [368, 430], [368, 468], [368, 506],
     [174, 316],
-    [136, 392], [174, 354],
+    [174, 354], [136, 392],
   ],
 };
 
@@ -178,7 +178,7 @@ export class MarketMap {
   searchText = '';
   selectedZone = 'all';
   zoom = 1;
-  readonly organizerDates = ['2026/07/18（六）', '2026/07/19（日）'];
+  readonly organizerDates = ['2026/07/18', '2026/07/19'];
   selectedOrganizerDate = this.organizerDates[0];
   private readonly organizerSelectedCodes = ['A02', 'A03', 'A10', 'A12', 'B01', 'B03', 'B10', 'B13', 'C03'];
   private hoverPreviewTimer: ReturnType<typeof setTimeout> | null = null;
@@ -371,6 +371,13 @@ export class MarketMap {
       this.isPreviewClosing = false;
       this.previewCloseTimer = null;
     }, 180);
+  }
+
+  /** 切換活動日期／地圖資料時，清除前一張地圖留下的攤位預覽與搜尋。 */
+  resetPublicMapState(): void {
+    this.clearPreviewState();
+    this.searchText = '';
+    this.selectedZone = 'all';
   }
 
   previewX(booth: MarketMapBooth): number {

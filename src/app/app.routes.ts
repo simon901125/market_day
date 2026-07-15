@@ -55,6 +55,7 @@ import { VendorBoothSelection } from './modules/vendor/dashboard/vendor-booth-se
 
 //登入驗證，先寫假的session
 import { authGuard } from './guards/auth-guard';
+import { organizerProfileGuard } from './guards/organizer-profile-guard';
 
 /** 頁面設定檔 */
 import { AUTH_ROUTE_DATA } from './models/config/auth-route-data';
@@ -230,63 +231,78 @@ export const routes: Routes = [
       {
         path: 'activity',
         component: OrganizerDashboardEventManagement,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'register',
         component: OrganizerDashboardRegistrationManagement,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'register/detail',
         component: OrganizerDashboardRegistrationDetail,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'register/detail/:id',
         component: OrganizerDashboardRegistrationDetail,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'collection',
         component: OrganizerDashboardCollectionManagement,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'collection/detail/:id',
         component: OrganizerDashboardCollectionDetail,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'equipment',
         component: OrganizerDashboardEquipmentManagement,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'stall',
         component: OrganizerDashboardStallManagement,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'stall/detail/:id',
         component: OrganizerDashboardStallDetail,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'stall/detail/:id/map',
         component: OrganizerDashboardStallMap,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'equipment/detail/:id',
         component: OrganizerDashboardEquipmentDetail,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'account',
         component: OrganizerDashboardAccountManagement,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'account/detail/:id',
         component: OrganizerDashboardAccountDetail,
+        canActivate: [organizerProfileGuard],
       },
       {
         path: 'activity/detail',
         component: OrganizerDashboardEventDetail,
+        canActivate: [organizerProfileGuard],
         canDeactivate: [(component: OrganizerDashboardEventDetail) => component.canDeactivate()],
       },
       {
         path: 'activity/detail/:id',
         component: OrganizerDashboardEventDetail,
+        canActivate: [organizerProfileGuard],
         canDeactivate: [(component: OrganizerDashboardEventDetail) => component.canDeactivate()],
       },
       {

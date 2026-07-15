@@ -87,14 +87,26 @@
 
   <section class="booth-section" [hidden]="openMarketInfo()">
     <div class="booth-title">
-      <div>
+      <div class="booth-heading">
         <i class="bi bi-map"></i>
         <h2>攤位地圖</h2>
       </div>
-      <span class="booth-map-hint">
-        <i class="bi bi-hand-index-thumb" aria-hidden="true"></i>
-        <span>點擊攤位，看看有哪些小店</span>
-      </span>
+      <div class="booth-title-actions">
+        @if (activityDateOptions.length) {
+          <div class="booth-date-filter">
+            <app-dropdown
+              title="活動日期"
+              [options]="activityDateOptions"
+              [selectedValue]="selectedActivityDate"
+              (optionSelected)="selectActivityDate($event)"
+            ></app-dropdown>
+          </div>
+        }
+        <span class="booth-title-hint">
+          <i class="bi bi-hand-index-thumb" aria-hidden="true"></i>
+          <span>可點擊攤位查看小店</span>
+        </span>
+      </div>
     </div>
     <p class="booth-orientation-note">
       <i class="bi bi-phone-landscape" aria-hidden="true"></i>
@@ -105,7 +117,7 @@
       </button>
     </p>
 
-    <app-market-map #marketMap mode="public"></app-market-map>
+    <app-market-map #marketMap mode="public" [mapData]="selectedMarketMap"></app-market-map>
   </section>
 
   <section class="bottom-info-grid">

@@ -17,10 +17,24 @@
 
   <nav class="menu">
     @for (item of menuItems; track item.path) {
-      <a class="menu-item" [routerLink]="item.path" routerLinkActive="active" [attr.title]="isCollapsed ? item.label : null">
-        <i class="bi" [ngClass]="item.icon"></i>
-        <span>{{ item.label }}</span>
-      </a>
+      @if (isMenuItemLocked(item)) {
+        <button
+          type="button"
+          class="menu-item locked"
+          aria-disabled="true"
+          title="請先完成主辦方資料設定，才能使用此功能"
+          (click)="requestLockedMenuItem(item)"
+        >
+          <i class="bi" [ngClass]="item.icon"></i>
+          <span>{{ item.label }}</span>
+          <i class="bi bi-lock-fill menu-lock" aria-hidden="true"></i>
+        </button>
+      } @else {
+        <a class="menu-item" [routerLink]="item.path" routerLinkActive="active" [attr.title]="isCollapsed ? item.label : null">
+          <i class="bi" [ngClass]="item.icon"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      }
     }
   </nav>
 

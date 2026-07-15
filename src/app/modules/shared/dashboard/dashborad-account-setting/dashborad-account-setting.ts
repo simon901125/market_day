@@ -6,10 +6,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
-import {
-  AccountDeletion,
-  AccountDeletionBlocker,
-} from '../account-deletion/account-deletion';
+import { AccountDeletion } from '../account-deletion/account-deletion';
 import {
   DashboardPasswordPayload,
   DashboardPasswordSetting,
@@ -45,12 +42,6 @@ export class DashboradAccountSetting implements OnDestroy {
 
   /** 帳號角色名稱，顯示於註銷成功訊息。 */
   @Input() accountRoleLabel = '使用者';
-
-  /** 註銷條件由各角色頁面或 API 回傳資料決定。 */
-  @Input() accountDeletion: DashboardAccountDeletionConfig = {
-    canDelete: false,
-    blockers: [],
-  };
 
   @Input() passwordRule = '至少 8 個字元，並包含英文字母與數字。';
   @Input() cancellationWarning = '若有活動正在進行中，將無法註銷帳號。';
@@ -147,14 +138,4 @@ export class DashboradAccountSetting implements OnDestroy {
   }
 }
 
-// export interface DashboardAccountData {
-//   name: string;
-//   email: string;
-//   googleBound: boolean;
-// }
-
-export interface DashboardAccountDeletionConfig {
-  canDelete: boolean;
-  blockers: AccountDeletionBlocker[];
-}
 

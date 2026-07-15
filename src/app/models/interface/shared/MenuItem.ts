@@ -8,4 +8,6 @@ export interface MenuItem {
   path: string;
   /** 訊息數 */
   badge?: number;
+  /** 主辦方資料完成後才能使用 */
+  requiresOrganizerProfile?: boolean;
 }

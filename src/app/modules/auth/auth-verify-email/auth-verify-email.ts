@@ -219,10 +219,10 @@ export class AuthVerifyEmail implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.purpose !== 'reset' || !this.email) {
-      await this.alert.info(
-        '暫時無法重寄',
-        '註冊流程尚未提供重寄驗證碼 API，請先使用原信件中的驗證碼。',
+    if (!this.email) {
+      await this.alert.error(
+        '找不到 Email',
+        '找不到待驗證的 Email，請重新執行註冊流程。',
         '知道了'
       );
       return;
@@ -231,7 +231,9 @@ export class AuthVerifyEmail implements OnInit, OnDestroy {
     this.isSubmitting = true;
     try {
       const response = await firstValueFrom(
-        this.authService.requestPasswordReset({ email: this.email })
+        this.purpose === 'reset'
+          ? this.authService.requestPasswordReset({ email: this.email })
+          : this.authService.resendRegistrationVerificationCode({ email: this.email })
       );
       if (!isApiSuccessStatus(response.statusCode)) {
         await this.alert.error(
@@ -252,7 +254,7 @@ export class AuthVerifyEmail implements OnInit, OnDestroy {
     } catch (error: unknown) {
       await this.alert.error(
         '寄送失敗',
-        this.getErrorMessage(error),
+        this.getResendErrorMessage(error),
         '知道了'
       );
     } finally {
@@ -285,6 +287,20 @@ export class AuthVerifyEmail implements OnInit, OnDestroy {
     }
 
     return '驗證時發生錯誤，請稍後再試。';
+  }
+
+  private getResendErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 404) {
+        return '後端尚未載入驗證碼重寄功能，請重新啟動後端後再試。';
+      }
+
+      if (error.status === 0) {
+        return '無法連線至後端服務，請確認後端已啟動。';
+      }
+    }
+
+    return this.getErrorMessage(error);
   }
 
   private focusCodeInput(index: number): void {

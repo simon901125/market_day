@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, Signal, ViewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import {
   BarController,
@@ -11,12 +11,15 @@ import {
   Plugin,
   ScriptableContext,
   Tooltip,
+  TooltipModel,
 } from 'chart.js';
 import type { ActiveElement, ChartEvent, TooltipItem } from 'chart.js';
 import { OrganizerDashboardNotification } from '../organizer-dashboard-notification/organizer-dashboard-notification';
 import { DashboardHomeTodoCard } from '../../../shared/dashboard/dashboard-home-todo-card/dashboard-home-todo-card';
 import { DashboardNotification } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
 import { TodoItem } from '../../../../models/interface/organizer/OrganizerDashboardHomeTodo';
+import { OrganizerAccessService } from '../../../../core/services/organizer-access.service';
+import { OrganizerDashboardSetupGuide } from '../organizer-dashboard-setup-guide/organizer-dashboard-setup-guide';
 
 interface ActivityRegistrationOverview {
   id: number;
@@ -31,17 +34,33 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Legend, To
 
 @Component({
   selector: 'app-organizer-dashboard-home',
-  imports: [DashboardHomeTodoCard, DashboardNotification, RouterLink],
+  imports: [DashboardHomeTodoCard, DashboardNotification, RouterLink, OrganizerDashboardSetupGuide],
   templateUrl: './organizer-dashboard-home.html',
   styleUrl: './organizer-dashboard-home.scss',
 })
-export class OrganizerDashboardHome extends OrganizerDashboardNotification implements AfterViewInit, OnDestroy {
-  @ViewChild('registrationChart') private registrationChartRef?: ElementRef<HTMLCanvasElement>;
+export class OrganizerDashboardHome extends OrganizerDashboardNotification implements OnInit, OnDestroy {
+  @ViewChild('registrationChart')
+  private set registrationChartRef(ref: ElementRef<HTMLCanvasElement> | undefined) {
+    if (!ref) return;
+
+    this.removeRegistrationTooltip();
+    this.registrationChart?.destroy();
+    this.registrationChart = new Chart(ref.nativeElement, this.createRegistrationChartConfig());
+  }
 
   private registrationChart?: Chart<'bar'>;
+  readonly needsProfile: Signal<boolean | null>;
 
-  constructor(private readonly router: Router) {
+  constructor(
+    private readonly router: Router,
+    private readonly organizerAccess: OrganizerAccessService,
+  ) {
     super();
+    this.needsProfile = this.organizerAccess.needsProfile;
+  }
+
+  ngOnInit(): void {
+    void this.organizerAccess.initialize();
   }
 
   /** 主辦方後台首頁待辦統計卡片資料。 */
@@ -79,14 +98,8 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
     { id: 3, name: '衣著選物週末', capacity: 100, registeredCount: 100, paidCount: 96, selectedCount: 88 },
   ];
 
-  ngAfterViewInit(): void {
-    const canvas = this.registrationChartRef?.nativeElement;
-    if (!canvas) return;
-
-    this.registrationChart = new Chart(canvas, this.createRegistrationChartConfig());
-  }
-
   ngOnDestroy(): void {
+    this.removeRegistrationTooltip();
     this.registrationChart?.destroy();
   }
 
@@ -174,7 +187,10 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
-        animation: { duration: 500 },
+        animation: {
+          duration: 800,
+          easing: 'easeOutQuart',
+        },
         interaction: { mode: 'nearest', axis: 'y', intersect: true },
         onHover: (event: ChartEvent, elements: ActiveElement[]) => {
           const target = event.native?.target as HTMLElement | null;
@@ -200,31 +216,17 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
             },
           },
           tooltip: {
-            displayColors: true,
-            padding: 12,
-            callbacks: {
-              title: (items: TooltipItem<'bar'>[]) => rows[items[0].dataIndex].name,
-              label: (item: TooltipItem<'bar'>) => `${item.dataset.label}：${item.formattedValue} 人`,
-              afterBody: (items: TooltipItem<'bar'>[]) => {
-                const row = rows[items[0].dataIndex];
-                return [
-                  `活動名額：${row.capacity} 人`,
-                  `報名人數：${row.registeredCount} 人`,
-                  `已付款：${row.paidCount} 人`,
-                  `已選位：${row.selectedCount} 人`,
-                  `尚未付款：${Math.max(row.registeredCount - row.paidCount, 0)} 人`,
-                  `尚未選位：${Math.max(row.paidCount - row.selectedCount, 0)} 人`,
-                  `剩餘名額：${Math.max(row.capacity - row.registeredCount, 0)} 人`,
-                ];
-              },
-            },
+            enabled: false,
+            external: ({ chart, tooltip }) => this.renderRegistrationTooltip(chart, tooltip, rows),
           },
         },
         scales: {
           x: {
             stacked: true,
             beginAtZero: true,
-            suggestedMax: Math.max(...rows.map((row) => row.capacity)) * 1.12,
+            // Reserve space at the end of each bar so the external tooltip can
+            // remain on the right while its caret still points at the hovered item.
+            suggestedMax: Math.max(...rows.map((row) => row.capacity)) * 1.25,
             grid: { color: '#ece9e4' },
             border: { display: false },
             ticks: { display: false },
@@ -253,6 +255,85 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
     ];
     const destination = destinations[datasetIndex];
     if (destination) void this.router.navigate([destination.path], { queryParams: destination.queryParams });
+  }
+
+  private renderRegistrationTooltip(
+    chart: Chart,
+    tooltip: TooltipModel<'bar'>,
+    rows: ActivityRegistrationOverview[],
+  ): void {
+    const chartContainer = chart.canvas.parentElement;
+    if (!chartContainer) return;
+    const tooltipHost = chart.canvas.closest<HTMLElement>('.registration-overview-card') ?? chartContainer;
+
+    let tooltipElement = tooltipHost.querySelector<HTMLElement>('.registration-chart-tooltip');
+    if (!tooltipElement) {
+      tooltipElement = document.createElement('div');
+      tooltipElement.className = 'registration-chart-tooltip';
+      tooltipHost.appendChild(tooltipElement);
+    }
+
+    if (tooltip.opacity === 0 || !tooltip.dataPoints.length) {
+      tooltipElement.style.opacity = '0';
+      return;
+    }
+
+    const selectedPoint = tooltip.dataPoints[0];
+    const row = rows[selectedPoint.dataIndex];
+    if (!row) return;
+
+    const title = document.createElement('strong');
+    title.textContent = row.name;
+
+    const selectedSummary = document.createElement('div');
+    selectedSummary.className = 'registration-chart-tooltip-selected';
+    const colorSwatch = document.createElement('span');
+    colorSwatch.className = 'registration-chart-tooltip-swatch';
+    colorSwatch.style.backgroundColor = String(selectedPoint.element.options['backgroundColor']);
+    const selectedLabel = document.createElement('span');
+    selectedLabel.textContent = `${selectedPoint.dataset.label}：${selectedPoint.formattedValue} 人`;
+    selectedSummary.append(colorSwatch, selectedLabel);
+
+    const detailList = document.createElement('div');
+    detailList.className = 'registration-chart-tooltip-details';
+    [
+      `活動名額：${row.capacity} 人`,
+      `報名人數：${row.registeredCount} 人`,
+      `已付款：${row.paidCount} 人`,
+      `已選位：${row.selectedCount} 人`,
+      `尚未付款：${Math.max(row.registeredCount - row.paidCount, 0)} 人`,
+      `尚未選位：${Math.max(row.paidCount - row.selectedCount, 0)} 人`,
+      `剩餘名額：${Math.max(row.capacity - row.registeredCount, 0)} 人`,
+    ].forEach((detail) => {
+      const line = document.createElement('span');
+      line.textContent = detail;
+      detailList.appendChild(line);
+    });
+    tooltipElement.replaceChildren(title, selectedSummary, detailList);
+    tooltipElement.style.opacity = '1';
+
+    const canvasRect = chart.canvas.getBoundingClientRect();
+    const hostRect = tooltipHost.getBoundingClientRect();
+    const pointX = canvasRect.left - hostRect.left + tooltip.caretX;
+    const pointY = canvasRect.top - hostRect.top + tooltip.caretY;
+    const tooltipWidth = tooltipElement.offsetWidth;
+    const tooltipHeight = tooltipElement.offsetHeight;
+    const maxTop = Math.max(8, tooltipHost.clientHeight - tooltipHeight - 8);
+    const top = Math.min(Math.max(pointY - tooltipHeight / 2, 8), maxTop);
+    const caretTop = Math.min(Math.max(pointY - top, 12), tooltipHeight - 12);
+
+    tooltipElement.style.left = `${Math.max(
+      8,
+      Math.min(pointX + 9, tooltipHost.clientWidth - tooltipWidth - 8),
+    )}px`;
+    tooltipElement.style.top = `${top}px`;
+    tooltipElement.style.setProperty('--tooltip-caret-top', `${caretTop}px`);
+  }
+
+  private removeRegistrationTooltip(): void {
+    this.registrationChart?.canvas.closest('.registration-overview-card')
+      ?.querySelector('.registration-chart-tooltip')
+      ?.remove();
   }
 
   private getCssColor(variableName: string, fallback: string): string {

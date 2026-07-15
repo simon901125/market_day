@@ -11,7 +11,6 @@ import {
   MarketDayUser,
 } from '../../../../models/interface/shared/Auth';
 import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
-import { AccountDeletionBlocker } from '../../../shared/dashboard/account-deletion/account-deletion';
 import { DashboradAccountSetting } from '../../../shared/dashboard/dashborad-account-setting/dashborad-account-setting';
 
 @Component({
@@ -34,15 +33,6 @@ export class OrganizerAccountSettings {
 
   readonly passwordRule = '至少 8 碼，並建議包含英文與數字。';
   readonly cancellationWarning = '帳號註銷後將無法復原，請確認沒有進行中的活動或報名審核。';
-
-  readonly accountDeletion = {
-    canDelete: false,
-    blockers: [
-      { type: 'active-registration', text: '仍有進行中的活動' },
-      { type: 'pending-payment', text: '仍有待處理帳務' },
-      { type: 'unfinished-event', text: '仍有未完成的報名審核' },
-    ] satisfies AccountDeletionBlocker[],
-  };
 
   constructor(
     private router: Router,
@@ -111,7 +101,7 @@ export class OrganizerAccountSettings {
   private async loadCurrentUser(): Promise<void> {
     try {
       const response = await firstValueFrom(
-        this.authService.me({ skipLoading: true })
+        this.authService.getAuthMe({ skipLoading: true })
       );
       const user = response.data?.user;
 

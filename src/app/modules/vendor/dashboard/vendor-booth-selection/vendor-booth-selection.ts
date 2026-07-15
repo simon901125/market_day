@@ -4,18 +4,22 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import type { MarketMapBooth, MarketMapData } from '../../../../models/interface/shared/MarketMap';
 import { VendorStatus } from '../../../../models/status/VendorStatus';
+import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { DEFAULT_MARKET_MAP_DATA, MarketMap } from '../../../shared/market-map/market-map';
+import {
+  VendorBoothSelectionDialog,
+  VendorBoothSelectionModal,
+} from '../modals/vendor-booth-selection-modal/vendor-booth-selection-modal';
 
 interface DaySelection {
   date: string;
-  weekday: string;
   booth: MarketMapBooth | null;
   selectedAt: string | null;
 }
 
 @Component({
   selector: 'app-vendor-booth-selection',
-  imports: [CommonModule, RouterLink, MarketMap],
+  imports: [CommonModule, RouterLink, MarketMap, Dropdown, VendorBoothSelectionModal],
   templateUrl: './vendor-booth-selection.html',
   styleUrl: './vendor-booth-selection.scss',
 })
@@ -23,13 +27,13 @@ export class VendorBoothSelection {
   readonly vendorStatus = VendorStatus;
   readonly applicationNo: string;
   readonly days: DaySelection[] = [
-    { date: '2026/07/18', weekday: '六', booth: null, selectedAt: null },
-    { date: '2026/07/19', weekday: '日', booth: null, selectedAt: null },
+    { date: '2026/07/18', booth: null, selectedAt: null },
+    { date: '2026/07/19', booth: null, selectedAt: null },
   ];
 
   activeDayIndex = 0;
   viewMode = false;
-  dialog: 'confirm' | 'success' | 'conflict' | null = null;
+  dialog: VendorBoothSelectionDialog | null = null;
 
   constructor(private readonly route: ActivatedRoute, private readonly router: Router) {
     this.applicationNo = this.route.snapshot.paramMap.get('applicationNo') ?? 'MD20260601001';
@@ -43,7 +47,6 @@ export class VendorBoothSelection {
 
       this.days.splice(0, this.days.length, ...viewDates.map((date, index) => ({
         date,
-        weekday: this.getWeekday(date),
         booth: DEFAULT_MARKET_MAP_DATA.booths.find((booth) => booth.code === viewBooths[index]) ?? null,
         selectedAt: selectedTimes[index] ?? '2026/05/28 14:30',
       })));
@@ -52,6 +55,7 @@ export class VendorBoothSelection {
 
   get activeDay(): DaySelection { return this.days[this.activeDayIndex]; }
   get allSelected(): boolean { return this.days.every((day) => day.booth); }
+  get dateOptions(): string[] { return this.days.map((day) => day.date); }
 
   get mapData(): MarketMapData {
     const selectedCode = this.activeDay?.booth?.code;
@@ -72,6 +76,11 @@ export class VendorBoothSelection {
   }
 
   selectDay(index: number): void { this.activeDayIndex = index; }
+
+  selectDayByDate(date: string): void {
+    const index = this.days.findIndex((day) => day.date === date);
+    if (index >= 0) this.selectDay(index);
+  }
 
   selectBooth(booth: MarketMapBooth): void {
     if (this.viewMode || booth.status === 'occupied') return;
@@ -97,11 +106,6 @@ export class VendorBoothSelection {
   }
 
   closeDialog(): void { this.dialog = null; }
-
-  private getWeekday(date: string): string {
-    const weekdayNames = ['日', '一', '二', '三', '四', '五', '六'];
-    return weekdayNames[new Date(`${date.replaceAll('/', '-')}T00:00:00`).getDay()];
-  }
 
   backToDetail(): void {
     this.router.navigate(['/vendor/dash-board/application-record/detail', this.applicationNo]);
