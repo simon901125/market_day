@@ -1,0 +1,112 @@
+<main class="booth-page vendor-detail-page page-transition">
+  <header class="detail-header vendor-detail-header">
+    <div>
+      <nav class="app-breadcrumb" aria-label="麵包屑">
+        <a routerLink="/vendor/dash-board/application-record">我的報名紀錄</a>
+        <i class="bi bi-chevron-right"></i>
+        <a (click)="backToDetail()">報名詳情</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>{{ viewMode ? '攤位瀏覽' : '攤位選擇' }}</span>
+      </nav>
+      <div class="title-row">
+        <button type="button" class="app-back-link" aria-label="返回報名詳情" (click)="backToDetail()"><i class="bi bi-arrow-left"></i></button>
+        <h1 class="app-page-title">{{ viewMode ? '攤位瀏覽' : '攤位選擇' }}</h1>
+      </div>
+    </div>
+    @if (!viewMode) {
+      <button type="button" class="app-btn primary header-complete-btn" [disabled]="!allSelected" (click)="requestComplete()">完成攤位選擇</button>
+    }
+  </header>
+
+  <section class="activity-summary" aria-label="活動資訊">
+    <strong class="activity-name">夏日綠意市集</strong>
+    <span class="summary-item activity-time"><i class="bi bi-calendar3"></i>2026/07/18 - 2026/07/19　14:00 - 18:00</span>
+    <span class="summary-item activity-place"><i class="bi bi-geo-alt"></i>宜蘭天天園森林廣場</span>
+    <span class="summary-item booth-stat"><i class="bi bi-shop"></i><span>攤位總數</span><strong>150</strong> 攤</span>
+  </section>
+
+  <div class="content-grid">
+    <section class="map-card">
+      <div class="vendor-map-toolbar">
+        <div class="date-filter">
+          <strong>活動日期</strong>
+          <div class="date-tabs app-tab-list" role="tablist" aria-label="活動日期">
+            @for (day of days; track day.date; let dayIndex = $index) {
+              <button
+                type="button"
+                class="app-tab-btn"
+                role="tab"
+                [class.active]="activeDayIndex === dayIndex"
+                [attr.aria-selected]="activeDayIndex === dayIndex"
+                (click)="selectDay(dayIndex)"
+              >
+                {{ day.date }}（{{ day.weekday }}）
+              </button>
+            }
+          </div>
+        </div>
+        <div class="map-legend">
+          <span><i class="available"></i>{{ viewMode ? '其他攤位' : '可選擇攤位' }}</span>
+          <span><i class="occupied"></i>{{ viewMode ? '已被選擇' : '已選擇攤位' }}</span>
+          <span><i class="selected"></i>{{ viewMode ? '我的攤位' : '目前選取' }}</span>
+        </div>
+      </div>
+      <div class="vendor-map-body">
+        <app-market-map [mode]="viewMode ? 'vendor-view' : 'select'" [mapData]="mapData" (boothSelected)="selectBooth($event)"></app-market-map>
+      </div>
+    </section>
+    <aside class="selection-card">
+      <h2><i class="bi bi-pin-map"></i><span>{{ viewMode ? '攤位資訊' : '選位資訊' }}</span></h2>
+      @if (allSelected) {
+        <p class="status success"><i class="bi bi-check-circle"></i>已完成所有活動日期的攤位選擇</p>
+      } @else if (!viewMode) {
+        <p class="status"><i class="bi bi-info-circle"></i>請完成所有活動日期的選位</p>
+      }
+      @for (day of days; track day.date) {
+        <article class="day-result">
+          <strong>{{ day.date }}（{{ day.weekday }}）</strong>
+          @if (day.booth; as booth) {
+            <div><span class="chosen status-tag completed">{{ vendorStatus.completed }}</span><b>{{ booth.code }}</b></div>
+            <p>{{ booth.zone }}｜3m × 3m</p>
+            @if (day.selectedAt) {
+              <p class="selection-time"><span>選位時間</span><strong>{{ day.selectedAt }}</strong></p>
+            }
+          } @else {
+            <p class="empty"><span class="status-tag incomplete">{{ vendorStatus.incomplete }}</span></p>
+          }
+        </article>
+      }
+      @if (!viewMode) {
+        <div class="notice"><i class="bi bi-exclamation-circle-fill"></i><div><strong>選擇後將無法更換攤位</strong><p>確認選擇後，將無法再次變更，請確認後再進行選擇。</p></div></div>
+      }
+    </aside>
+  </div>
+</main>
+
+@if (dialog) {
+  <div class="booth-modal-backdrop app-modal-backdrop" (click)="closeDialog()">
+    <section class="booth-dialog app-modal" (click)="$event.stopPropagation()">
+      <button type="button" class="dialog-close" aria-label="關閉" (click)="closeDialog()"><i class="bi bi-x-lg"></i></button>
+      @if (dialog === 'confirm') {
+        <i class="dialog-icon warning bi bi-exclamation-lg"></i>
+        <h2>確認完成攤位選擇</h2>
+        <p>確認後將完成本次活動所有日期的攤位選擇。<br>送出後將無法再次修改，請確認所有日期的攤位資訊。</p>
+        <div class="confirm-list">@for (day of days; track day.date) { <article><strong>{{ day.date }}（{{ day.weekday }}）</strong><div><b>{{ day.booth?.code }}</b><span>{{ day.booth?.zone }}　3m × 3m</span></div></article> }</div>
+        <div class="dialog-actions app-modal-actions"><button type="button" class="app-btn neutral" (click)="closeDialog()">取消</button><button type="button" class="app-btn primary" (click)="confirmComplete()">確認完成選位</button></div>
+      } @else if (dialog === 'success') {
+        <i class="dialog-icon success bi bi-check-lg"></i>
+        <h2>已完成攤位選擇</h2>
+        <p class="green">本次活動所有日期的攤位選擇已確認完成。</p>
+        <div class="confirm-list">@for (day of days; track day.date) { <article><strong>{{ day.date }}（{{ day.weekday }}）</strong><div><b>{{ day.booth?.code }}</b><span>{{ day.booth?.zone }}　3m × 3m</span></div></article> }</div>
+        <button type="button" class="wide app-btn primary" (click)="backToDetail()">返回報名詳情</button>
+      } @else {
+        <i class="dialog-icon warning bi bi-exclamation-lg"></i>
+        <h2>您選擇的攤位已被選走</h2>
+        <p>您所選擇的部分攤位已被其他攤主完成選位。<br>請重新選擇所有活動日期的攤位。</p>
+        <div class="conflict-row"><div><strong>2026/07/18（六）</strong><b>A03</b><span>已被其他攤主選擇</span></div><em>已被選走</em></div>
+        <div class="retry-note"><i class="bi bi-info-circle-fill"></i>請重新完成本次活動所有日期的攤位選擇，完成後再重新確認。</div>
+        <button class="wide app-btn primary" (click)="retrySelection()">重新選擇攤位</button>
+      }
+    </section>
+  </div>
+}

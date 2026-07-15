@@ -1,0 +1,126 @@
+/* 攤主後台多頁共用骨架；單頁資料排列仍留在各元件 SCSS。 */
+
+.vendor-detail-page {
+  width: 100%;
+  min-width: 0;
+
+  .vendor-detail-header,
+  > .detail-header,
+  > .event-detail-header {
+    min-height: 52px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .app-breadcrumb {
+    margin-bottom: 8px;
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .title-row {
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .app-page-title { font-size: 22px; }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+
+    .app-btn {
+      width: auto;
+      min-width: 112px;
+      height: 36px;
+      padding: 0 16px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+  }
+
+  .detail-card,
+  .info-card {
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 18px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-card);
+    background: var(--bg-white);
+  }
+
+  .detail-card > h2,
+  .detail-card .card-heading h2,
+  .info-card > .card-title {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1.35;
+
+    i {
+      color: var(--primary-color);
+      font-size: 19px;
+      line-height: 1;
+    }
+  }
+
+  .detail-table-wrap,
+  .booth-table-wrap {
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+  }
+
+  table.detail-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-tag);
+    color: var(--text-dark);
+    font-size: 14px;
+
+    th,
+    td {
+      padding: 12px 10px;
+      border-right: 1px solid var(--border-soft);
+      border-bottom: 1px solid var(--border-soft);
+      color: var(--text-dark);
+      font-size: 14px;
+      line-height: 1.45;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    thead th { background: #fff7ed; font-weight: 900; }
+    tbody td { background: var(--bg-white); font-weight: 700; }
+    tr:last-child td { border-bottom: 0; }
+    th:last-child,
+    td:last-child { border-right: 0; }
+  }
+}
+
+@media (max-width: 720px) {
+  .vendor-detail-page {
+    .vendor-detail-header,
+    > .detail-header,
+    > .event-detail-header {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .header-actions { width: 100%; }
+  }
+}

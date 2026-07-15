@@ -1,6 +1,6 @@
 <app-vendor-header></app-vendor-header>
 
-<main class="market-detail-page page-transition">
+<main class="market-detail-page page-transition frontend-page vendor-frontend-page">
   @if (isLoading && !market) {
     <section class="content-card empty-state" aria-live="polite">
       <i class="bi bi-hourglass-split"></i>
@@ -8,19 +8,34 @@
       <p>正在取得最新的報名資訊與剩餘攤位。</p>
     </section>
   } @else if (market; as market) {
+    <nav class="detail-breadcrumb" aria-label="breadcrumb">
+      <ol>
+        <li>
+          <a routerLink="/vendor/sign-up">市集報名</a>
+        </li>
+        <li class="active" aria-current="page">{{ market.title }}</li>
+      </ol>
+    </nav>
+
     <section class="detail-hero">
       <div class="hero-image">
         <img [src]="market.image" [alt]="market.title" />
       </div>
 
       <div class="hero-content">
-        <span class="status-badge" [class]="market.statusClass">{{ market.status }}</span>
         <h1>{{ market.title }}</h1>
         <p class="hero-description">{{ market.description }}</p>
 
-        <dl class="hero-meta">
+        <div class="hero-info-card">
+          <dl class="hero-meta">
           <div>
-            <dt><i class="bi bi-calendar-event"></i>活動日期</dt>
+            <dt><i class="bi bi-flag"></i>活動狀態</dt>
+            <dd>
+              <span class="status-text" [class]="market.statusClass">{{ market.status }}</span>
+            </dd>
+          </div>
+          <div>
+            <dt><i class="bi bi-calendar-event"></i>活動時間</dt>
             <dd>{{ dateRangeText }}</dd>
           </div>
           <div>
@@ -32,18 +47,18 @@
             <dd>{{ market.location }}</dd>
           </div>
           <div>
-            <dt><i class="bi bi-geo-alt"></i>活動地址</dt>
+            <dt><i class="bi bi-map"></i>活動地址</dt>
             <dd>{{ market.address }}</dd>
           </div>
-          <div>
+          <div class="category-row">
             <dt><i class="bi bi-people"></i>招商類別</dt>
             <dd class="tag-list">
               @for (tag of market.tags; track tag) {
-                <span>{{ tag }}</span>
+                <span class="app-tag">{{ tag }}</span>
               }
             </dd>
           </div>
-        </dl>
+          </dl>
 
         <button
           type="button"
@@ -61,22 +76,18 @@
     <section class="content-card signup-info-card">
       <h2><i class="bi bi-person"></i>報名資訊</h2>
       <h3>每日剩餘名額</h3>
-      <p class="section-note">各場每日更新，額滿即止</p>
 
       <div class="slot-grid">
-        @for (slot of slots; track slot.date; let index = $index) {
-          <button
-            type="button"
+        @for (slot of slots; track slot.date) {
+          <div
             class="slot-card"
-            [class.active]="isSelectedSlot(index)"
-            [disabled]="slot.isFull"
-            (click)="selectSlot(index)"
+            [class.full]="slot.isFull"
           >
             <span>{{ slotDateLabel(slot.date) }}</span>
             <strong
               >剩 <em>{{ slot.remaining }}</em> / {{ boothTotal }} 攤</strong
             >
-          </button>
+          </div>
         }
       </div>
 
@@ -91,7 +102,7 @@
           <i class="bi bi-patch-check"></i>
           <span>保證金</span>
           <strong>$1,000 / 攤</strong>
-          <small>活動結束後檢查無損即退還</small>
+          <small>活動結束檢查無損後現場退還</small>
         </div>
         <div>
           <i class="bi bi-pencil"></i>
@@ -117,7 +128,6 @@
             <li>本活動未提供免費設備</li>
           }
         </ul>
-        <p class="card-footnote">* 提供設備數量有限，報名送出時會保留數量，額滿後即不可選用。</p>
       </section>
 
       <section class="content-card compact-card">
@@ -166,7 +176,7 @@
         <h2><i class="bi bi-person"></i>主辦方資訊</h2>
         <dl class="detail-list">
           <div>
-            <dt>主辦單位：</dt>
+            <dt>主辦單位</dt>
             <dd>{{ market.organizer }}</dd>
           </div>
           <div>
@@ -186,15 +196,15 @@
 
       <section class="content-card compact-card">
         <h2><i class="bi bi-bus-front"></i>交通方式</h2>
-        <dl class="detail-list">
-          @for (transport of market.transportation; track transport; let index = $index) {
+        <dl class="detail-list transportation-list">
+          @for (transport of market.transportation; track transport) {
             <div>
-              <dt>{{ index === 0 ? '建議：' : '交通：' }}</dt>
-              <dd>{{ transport }}</dd>
+              <dt>{{ transportationLabel(transport) }}</dt>
+              <dd>{{ transportationContent(transport) }}</dd>
             </div>
           }
           <div>
-            <dt>開車：</dt>
+            <dt>開車</dt>
             <dd>可使用鄰近付費停車場</dd>
           </div>
         </dl>

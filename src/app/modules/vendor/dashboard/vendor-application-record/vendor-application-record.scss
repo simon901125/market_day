@@ -15,6 +15,7 @@
   app-dashboard-pagination {
     flex: 0 0 40px;
     display: block;
+    margin-top: auto;
   }
 }
 
@@ -105,9 +106,7 @@ table {
   th:nth-child(6),
   td:nth-child(6) {
     width: 210px;
-    display: flex;
-    justify-content: center; /* 水平置中 */
-    align-items: center;
+    text-align: right;
   }
 }
 
@@ -133,65 +132,28 @@ table {
   }
 }
 
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 74px;
-  height: 26px;
-  padding: 0 10px;
-  border-radius: var(--radius-tag);
-  font-size: 13px;
-  font-weight: 900;
-  white-space: nowrap;
-
-  &.reviewing,
-  &.payment,
-  &.refund-applying {
-    background: var(--bg-primary);
-    color: var(--primary-color);
-  }
-
-  &.booth {
-    background: #eaf5ff;
-    color: #1680e5;
-  }
-
-  &.completed,
-  &.deposit-refunded {
-    background: #ecfdf3;
-    color: #16a34a;
-  }
-
-  &.refund-processing {
-    background: #f5f3ff;
-    color: #7c3aed;
-  }
-
-  &.refunded {
-    background: #fef2f2;
-    color: #dc2626;
-  }
-
-  &.history {
-    background: #eee;
-    color: #888;
-  }
-}
-
 .action-group {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
   flex-wrap: nowrap;
+
   .app-btn {
-    width: auto;
+    width: 76px;
     min-width: 76px;
+    flex: 0 0 76px;
     height: 34px;
-    padding-inline: 14px;
+    padding-inline: 8px;
     font-size: 13px;
     text-decoration: none;
+
+    &.long-label {
+      width: 104px;
+      min-width: 104px;
+      flex-basis: 104px;
+    }
   }
 }
 

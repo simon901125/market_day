@@ -6,42 +6,61 @@
   <form class="stall-form" (ngSubmit)="saveChanges()">
     <section class="stall-card">
       <h2 class="card-title">
-        <span></span>
+        <i class="bi bi-shop"></i>
         基本資料
       </h2>
 
       <div class="form-grid">
         @for (field of basicFields; track field.name) {
-          <label class="form-group">
-            <span>{{ field.label }}</span>
-
-            @if (field.type === 'select') {
-              <select [(ngModel)]="field.value" [name]="field.name">
-                @for (option of field.options; track option) {
-                  <option [value]="option">{{ option }}</option>
-                }
-              </select>
-            } @else {
-              <input [type]="field.type" [(ngModel)]="field.value" [name]="field.name" />
-            }
-          </label>
+          @if (field.type === 'select') {
+            <div class="form-group dropdown-field" [class.invalid-field]="invalidFields.has(field.name)" [attr.data-invalid]="invalidFields.has(field.name)">
+              <span>{{ field.label }} <b class="required-mark">*</b></span>
+              <app-dropdown
+                [options]="field.options ?? []"
+                [selectedValue]="field.value"
+                (optionSelected)="updateBasicField(field, $event)"
+              ></app-dropdown>
+              @if (invalidFields.has(field.name)) {
+                <small class="field-error">此欄位為必填</small>
+              }
+            </div>
+          } @else {
+            <label class="form-group" [class.invalid-field]="invalidFields.has(field.name)" [attr.data-invalid]="invalidFields.has(field.name)">
+              <span>{{ field.label }} <b class="required-mark">*</b></span>
+              <input [type]="field.type" [(ngModel)]="field.value" (ngModelChange)="clearInvalid(field.name)" [name]="field.name" />
+              @if (invalidFields.has(field.name)) {
+                <small class="field-error">此欄位為必填</small>
+              }
+            </label>
+          }
         }
       </div>
     </section>
 
     <section class="stall-card">
-      <div class="card-head">
+      <div class="card-head required-card-head">
         <h2 class="card-title">
-          <span></span>
+          <i class="bi bi-image"></i>
           品牌大頭貼
         </h2>
       </div>
 
       <div class="avatar-row">
-        <label class="avatar-upload" aria-label="上傳品牌大頭貼">
-          <input type="file" hidden />
-          <i class="bi bi-camera"></i>
-        </label>
+        <div class="brand-image-wrap avatar-image-wrap" [class.invalid-upload]="invalidFields.has('avatar')" [attr.data-invalid]="invalidFields.has('avatar')">
+          @if (avatarPreview) {
+            <label class="brand-image-select" aria-label="重新選擇品牌大頭貼">
+              <img class="brand-image avatar-image" [src]="avatarPreview" alt="品牌大頭貼" />
+              <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" (change)="selectBrandImage($event, 'avatar')" />
+            </label>
+            <button type="button" class="remove-brand-image" aria-label="移除品牌大頭貼" (click)="removeBrandImage('avatar')"><i class="bi bi-trash"></i></button>
+          } @else {
+            <label class="avatar-upload" aria-label="上傳品牌大頭貼">
+              <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" (change)="selectBrandImage($event, 'avatar')" />
+              <i class="bi bi-camera"></i>
+              <strong>上傳大頭貼圖片</strong>
+            </label>
+          }
+        </div>
 
         <div class="upload-note">
           @for (guide of avatarGuides; track guide.text) {
@@ -49,23 +68,35 @@
           }
         </div>
       </div>
+      @if (invalidFields.has('avatar')) {
+        <p class="upload-error">請上傳品牌大頭貼</p>
+      }
     </section>
 
     <section class="stall-card">
-      <div class="card-head">
+      <div class="card-head required-card-head">
         <h2 class="card-title">
-          <span></span>
+          <i class="bi bi-card-image"></i>
           品牌封面
-          <small>（限制 1 個）</small>
         </h2>
       </div>
 
       <div class="cover-row">
-        <label class="cover-upload" aria-label="上傳品牌封面">
-          <input type="file" hidden />
-          <i class="bi bi-image"></i>
-          <strong>上傳封面圖片（僅限 1 個）</strong>
-        </label>
+        <div class="brand-image-wrap cover-image-wrap" [class.invalid-upload]="invalidFields.has('cover')" [attr.data-invalid]="invalidFields.has('cover')">
+          @if (coverPreview) {
+            <label class="brand-image-select" aria-label="重新選擇品牌封面">
+              <img class="brand-image cover-image" [src]="coverPreview" alt="品牌封面" />
+              <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" (change)="selectBrandImage($event, 'cover')" />
+            </label>
+            <button type="button" class="remove-brand-image" aria-label="移除品牌封面" (click)="removeBrandImage('cover')"><i class="bi bi-trash"></i></button>
+          } @else {
+            <label class="cover-upload" aria-label="上傳品牌封面">
+              <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" (change)="selectBrandImage($event, 'cover')" />
+              <i class="bi bi-image"></i>
+              <strong>上傳封面圖片</strong>
+            </label>
+          }
+        </div>
 
         <div class="upload-note">
           @for (guide of coverGuides; track guide.text) {
@@ -73,43 +104,53 @@
           }
         </div>
       </div>
+      @if (invalidFields.has('cover')) {
+        <p class="upload-error">請上傳品牌封面</p>
+      }
     </section>
 
     <section class="stall-card">
       <h2 class="card-title">
-        <span></span>
+        <i class="bi bi-clipboard-check"></i>
         品牌資訊
       </h2>
 
       <div class="brand-grid">
-        <label class="form-group">
+        <label class="form-group" [class.invalid-field]="invalidFields.has('description')" [attr.data-invalid]="invalidFields.has('description')">
           <span>品牌簡介</span>
           <div class="textarea-box">
             <textarea
               name="brandDescription"
               [(ngModel)]="brandInfo.description"
+              (ngModelChange)="clearInvalid('description')"
               [attr.maxlength]="brandInfo.maxDescriptionLength"
               placeholder="介紹你的品牌理念、商品特色與故事..."
             ></textarea>
             <small>{{ brandInfo.description.length }} / {{ brandInfo.maxDescriptionLength }}</small>
           </div>
+          @if (invalidFields.has('description')) {
+            <small class="field-error">此欄位為必填</small>
+          }
         </label>
 
-        <label class="form-group">
+        <div class="form-group dropdown-field" [class.invalid-field]="invalidFields.has('category')" [attr.data-invalid]="invalidFields.has('category')">
           <span>品牌類型</span>
-          <select name="brandCategory" [(ngModel)]="brandInfo.category">
-            @for (category of brandInfo.categories; track category) {
-              <option [value]="category">{{ category }}</option>
-            }
-          </select>
-        </label>
+          <app-dropdown
+            [options]="brandInfo.categories"
+            [selectedValue]="brandInfo.category"
+            (optionSelected)="updateCategory($event)"
+          ></app-dropdown>
+          @if (invalidFields.has('category')) {
+            <small class="field-error">此欄位為必填</small>
+          }
+        </div>
       </div>
     </section>
 
     <section class="stall-card product-card">
       <div class="card-head">
         <h2 class="card-title">
-          <span></span>
+          <i class="bi bi-box-seam"></i>
           品牌商品
           <small>（最多 {{ maxProducts }} 個）</small>
         </h2>
@@ -135,6 +176,7 @@
             <div class="product-actions">
               <button
                 type="button"
+                class="app-icon-btn"
                 [attr.aria-label]="'編輯 ' + product.name"
                 (click)="openEditProduct(productIndex)"
               >
@@ -142,6 +184,7 @@
               </button>
               <button
                 type="button"
+                class="app-icon-btn"
                 [attr.aria-label]="'刪除 ' + product.name"
                 (click)="deleteProduct(productIndex)"
               >
@@ -152,9 +195,18 @@
         }
       </div>
 
-      <div class="save-row">
-        <button type="submit" class="app-btn primary save-btn">儲存變更</button>
-      </div>
     </section>
+
+    <div class="save-row">
+      <button type="submit" class="app-btn primary save-btn">儲存變更</button>
+    </div>
   </form>
 </main>
+
+@if (isProductModalOpen) {
+  <app-vendor-product-modal
+    [product]="editingProduct"
+    (closeDialog)="closeProductModal()"
+    (saveProduct)="handleProductSave($event)"
+  ></app-vendor-product-modal>
+}

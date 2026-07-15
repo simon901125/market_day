@@ -10,6 +10,12 @@
   color: var(--text-dark);
 }
 
+@media (min-width: 641px) and (max-width: 992px) {
+  .vendor-home {
+    --user-content-width: min(100% - 64px, 900px);
+  }
+}
+
 .primary-btn,
 .outline-btn {
   min-width: 180px;
@@ -157,7 +163,7 @@
   justify-content: space-between;
 
   a {
-    color: var(--primary-color);
+    color: var(--text-dark);
     font-size: 15px;
     font-weight: 900;
     text-decoration: none;
@@ -167,7 +173,7 @@
     }
 
     &:hover {
-      color: var(--primary-hover);
+      color: var(--primary-color);
     }
   }
 }

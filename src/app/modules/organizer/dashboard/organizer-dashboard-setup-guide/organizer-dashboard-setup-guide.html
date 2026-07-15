@@ -1,28 +1,23 @@
-<section class="organizer-dashboard-setup-guide">
-  <section class="setup-hero">
-    <div class="setup-hero-copy">
+<section class="organizer-dashboard-setup-guide page-transition">
+  <header class="setup-page-header">
+    <div>
       <h1>歡迎使用小集日主辦方後台 <span aria-hidden="true">👋</span></h1>
-      <p>完成主辦方資料設定後，就可以開始建立第一場市集。</p>
-
-      <button type="button" class="setup-action-btn">
-        <i class="bi bi-stars"></i>
-        前往設定
-      </button>
+      <p>先完成主辦方資料設定，就可以開始建立第一場市集活動。</p>
     </div>
+    <a class="setup-action-btn" routerLink="/organizer/dash-board/account-settings">
+      <i class="bi bi-person-gear" aria-hidden="true"></i>
+      前往設定
+    </a>
+  </header>
 
-    <div class="setup-hero-visual" aria-hidden="true">
-      <span class="dot-grid"></span>
-      <div class="tent-mark">
-        <img src="assets/images/dashboard/dashboard-tent.png" alt="" />
+  <section class="setup-card setup-section">
+    <div class="setup-card-heading">
+      <div>
+        <h2><i class="bi bi-stars"></i>開始建立第一場活動</h2>
+        <p>依照以下步驟完成資料與活動設定。</p>
       </div>
+      <span class="step-count">共 4 個步驟</span>
     </div>
-  </section>
-
-  <section class="setup-section">
-    <h2 class="setup-section-title">
-      <i class="bi bi-stars"></i>
-      開始前，你可以先了解 4 件事
-    </h2>
 
     <div class="setup-steps">
       @for (item of setupSteps; track item.step) {
@@ -40,11 +35,13 @@
     </div>
   </section>
 
-  <section class="manage-section">
-    <h2 class="setup-section-title">
-      <i class="bi bi-megaphone-fill"></i>
-      審核通過後，你可以在後台管理
-    </h2>
+  <section class="setup-card manage-section">
+    <div class="setup-card-heading">
+      <div>
+        <h2><i class="bi bi-grid"></i>審核通過後可使用的管理功能</h2>
+        <p>活動通過審核後，即可從側邊選單進入各項管理功能。</p>
+      </div>
+    </div>
 
     <div class="manage-grid">
       @for (item of manageFeatures; track item.title) {

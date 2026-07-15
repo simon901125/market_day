@@ -74,7 +74,12 @@
               <td class="activity-btn">
                 <div class="activity-actions">
                   @if (isReviewNeeded(activity.status)) {
-                    <button type="button" class="app-btn primary" (click)="getDetailHandler(activity)()">
+                    <button
+                      type="button"
+                      class="app-btn primary"
+                      [class.long-label]="getReviewButtonLabel(activity.status).length > 4"
+                      (click)="getDetailHandler(activity)()"
+                    >
                       {{ getReviewButtonLabel(activity.status) }}
                     </button>
                   }

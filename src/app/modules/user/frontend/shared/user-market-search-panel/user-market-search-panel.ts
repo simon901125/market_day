@@ -30,6 +30,12 @@ export interface UserMarketSearchParams {
 })
 /** 一般使用者市集活動搜尋區塊，負責蒐集篩選條件並同步到 query params。 */
 export class UserMarketSearchPanel {
+  /** 搜尋送出後前往的頁面，讓前台不同入口共用同一套搜尋面板。 */
+  @Input() searchRoute = '/user/activity-list';
+
+  /** 是否顯示分類快捷標籤。 */
+  @Input() showCategories = true;
+
   /** 日期區間元件的標題。 */
   @Input() dateRangeTitle = '';
 
@@ -104,7 +110,7 @@ export class UserMarketSearchPanel {
     const params = this.getSearchParams();
     this.searchSubmit.emit(params);
 
-    void this.router.navigate(['/user/activity-list'], {
+    void this.router.navigate([this.searchRoute], {
       queryParams: this.toQueryParams(params),
     });
   }

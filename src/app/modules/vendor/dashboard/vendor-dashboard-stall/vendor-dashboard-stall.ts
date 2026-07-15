@@ -2,6 +2,11 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AlertService } from '../../../../core/services/alert.service';
+import { Dropdown } from '../../../shared/dropdown/dropdown';
+import {
+  VendorProduct,
+  VendorProductModal,
+} from '../modals/vendor-product-modal/vendor-product-modal';
 
 interface StallField {
   label: string;
@@ -15,21 +20,17 @@ interface UploadGuide {
   text: string;
 }
 
-interface StallProduct {
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-}
-
 @Component({
   selector: 'app-vendor-dashboard-stall',
-  imports: [FormsModule],
+  imports: [FormsModule, Dropdown, VendorProductModal],
   templateUrl: './vendor-dashboard-stall.html',
   styleUrl: './vendor-dashboard-stall.scss',
 })
 export class VendorDashboardStall {
   readonly maxProducts = 3;
+  readonly invalidFields = new Set<string>();
+  avatarPreview = '';
+  coverPreview = '';
 
   /** 基本資料先使用假資料綁定，之後串接 API 時可直接替換欄位 value。 */
   basicFields: StallField[] = [
@@ -59,9 +60,10 @@ export class VendorDashboardStall {
 
   /** 大頭貼上傳規格說明，讓 template 以資料綁定方式渲染。 */
   avatarGuides: UploadGuide[] = [
-    { text: '建議尺寸 1:1' },
+    { text: '建議比例：1:1' },
     { text: '檔案格式：JPG / PNG' },
     { text: '檔案大小：最大 5MB' },
+    { text: '上傳數量：僅限 1 個' },
     { text: '可上傳品牌或 LOGO 作為大頭貼' },
   ];
 
@@ -70,6 +72,7 @@ export class VendorDashboardStall {
     { text: '建議尺寸 1200 x 600 像素' },
     { text: '檔案格式：JPG / PNG' },
     { text: '檔案大小：最大 5MB' },
+    { text: '上傳數量：僅限 1 個' },
     { text: '封面將顯示於你的攤位頁面' },
   ];
 
@@ -82,7 +85,7 @@ export class VendorDashboardStall {
   };
 
   /** 品牌商品先以假資料呈現，之後可替換為攤主商品 API 回傳。 */
-  products: StallProduct[] = [
+  products: VendorProduct[] = [
     {
       name: '小白狗尿尿',
       description: '可愛造型',
@@ -97,9 +100,70 @@ export class VendorDashboardStall {
     },
   ];
 
+  isProductModalOpen = false;
+  editingProductIndex: number | null = null;
+
   constructor(private readonly alert: AlertService) {}
 
-  /** 開啟共用 SweetAlert 商品表單，確認後將新商品加入資料綁定陣列。 */
+  async selectBrandImage(event: Event, type: 'avatar' | 'cover'): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    if (!['image/jpeg', 'image/png'].includes(file.type)) {
+      input.value = '';
+      await this.alert.warning('圖片格式不符', '請上傳 JPG 或 PNG 格式的圖片。');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      input.value = '';
+      await this.alert.warning('圖片檔案過大', '圖片大小不可超過 5MB。');
+      return;
+    }
+
+    const preview = await this.readFileAsDataUrl(file);
+
+    if (type === 'avatar') {
+      this.avatarPreview = preview;
+      this.clearInvalid('avatar');
+      return;
+    }
+
+    this.coverPreview = preview;
+    this.clearInvalid('cover');
+  }
+
+  private readFileAsDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => resolve(String(reader.result ?? '')));
+      reader.addEventListener('error', () => reject(reader.error));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  removeBrandImage(type: 'avatar' | 'cover'): void {
+    if (type === 'avatar') this.avatarPreview = '';
+    else this.coverPreview = '';
+    this.invalidFields.add(type);
+  }
+
+  updateBasicField(field: StallField, value: string): void {
+    field.value = value;
+    this.clearInvalid(field.name);
+  }
+
+  updateCategory(value: string): void {
+    this.brandInfo.category = value;
+    this.clearInvalid('category');
+  }
+
+  clearInvalid(field: string): void {
+    this.invalidFields.delete(field);
+  }
+
+  /** 開啟攤主後台專用商品 Modal。 */
   async openAddProduct(): Promise<void> {
     if (this.products.length >= this.maxProducts) {
       await this.alert.warning(
@@ -109,36 +173,44 @@ export class VendorDashboardStall {
       return;
     }
 
-    const result = await this.openProductForm();
-
-    if (!result.isConfirmed || !result.value) {
-      return;
-    }
-
-    this.products = [...this.products, result.value];
+    this.editingProductIndex = null;
+    this.isProductModalOpen = true;
   }
 
   /** 開啟編輯商品彈窗，帶入原資料並更新指定商品。 */
-  async openEditProduct(index: number): Promise<void> {
+  openEditProduct(index: number): void {
     const currentProduct = this.products[index];
 
     if (!currentProduct) {
       return;
     }
 
-    const result = await this.openProductForm(currentProduct);
+    this.editingProductIndex = index;
+    this.isProductModalOpen = true;
+  }
 
-    if (!result.isConfirmed || !result.value) {
-      return;
+  get editingProduct(): VendorProduct | null {
+    return this.editingProductIndex === null ? null : this.products[this.editingProductIndex] ?? null;
+  }
+
+  closeProductModal(): void {
+    this.isProductModalOpen = false;
+    this.editingProductIndex = null;
+  }
+
+  handleProductSave(product: VendorProduct): void {
+    if (this.editingProductIndex === null) {
+      this.products = [...this.products, product];
+    } else {
+      const currentProduct = this.products[this.editingProductIndex];
+      if (currentProduct && currentProduct.image !== product.image) {
+        this.revokeObjectUrl(currentProduct.image);
+      }
+      this.products = this.products.map((item, index) =>
+        index === this.editingProductIndex ? product : item,
+      );
     }
-
-    if (result.value.image !== currentProduct.image) {
-      this.revokeObjectUrl(currentProduct.image);
-    }
-
-    this.products = this.products.map((product, productIndex) =>
-      productIndex === index ? result.value! : product,
-    );
+    this.closeProductModal();
   }
 
   /** 刪除前使用共用確認視窗，確認後才移除對應商品。 */
@@ -166,198 +238,30 @@ export class VendorDashboardStall {
 
   /** 儲存目前表單資料；串接 API 時可在此送出攤位資料。 */
   saveChanges(): void {
+    this.invalidFields.clear();
+
+    for (const field of this.basicFields) {
+      if (!field.value.trim()) this.invalidFields.add(field.name);
+    }
+
+    if (!this.avatarPreview) this.invalidFields.add('avatar');
+    if (!this.coverPreview) this.invalidFields.add('cover');
+    if (!this.brandInfo.description.trim()) this.invalidFields.add('description');
+    if (!this.brandInfo.category.trim()) this.invalidFields.add('category');
+
+    if (this.invalidFields.size > 0) {
+      document.querySelector<HTMLElement>('[data-invalid="true"]')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+
     console.log('stall form saved', {
       basicFields: this.basicFields,
       brandInfo: this.brandInfo,
       products: this.products,
     });
-  }
-
-  /** 以同一個共用 Alert 表單處理新增與編輯商品。 */
-  private openProductForm(product?: StallProduct) {
-    return this.alert.custom<StallProduct>({
-      html: this.getProductFormHtml(product),
-      showCancelButton: true,
-      confirmButtonText: product ? '儲存變更' : '新增商品',
-      cancelButtonText: '取消',
-      reverseButtons: true,
-      focusConfirm: false,
-      customClass: {
-        popup: 'product-form-swal',
-      },
-      didOpen: () => this.bindProductImageName(),
-      preConfirm: () => this.readProductForm(product?.image),
-    });
-  }
-
-  /** 建立商品表單，編輯模式會預先帶入原商品資料與圖片。 */
-  private getProductFormHtml(product?: StallProduct): string {
-    const name = this.escapeHtml(product?.name ?? '');
-    const description = this.escapeHtml(product?.description ?? '');
-    const price = product?.price ?? '';
-    const imageControl = product
-      ? `
-        <div class="product-edit-image">
-          <img id="stallProductPreview" src="${this.escapeHtml(product.image)}" alt="${name}">
-         
-        </div>
-      `
-      : `
-        <label class="product-image-upload" for="stallProductImage">
-          <i class="bi bi-plus-circle"></i>
-          <strong>點擊上傳圖片</strong>
-          <input id="stallProductImage" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
-        </label>
-      `;
-
-    return `
-      <div class="product-form-content">
-        <h3>${product ? '編輯商品' : '新增商品'}</h3>
-
-        <section class="product-form-section">
-          <h4><span></span>商品基本資料</h4>
-
-          <div class="product-form-grid">
-            <label>
-              <span>商品名稱</span>
-              <input
-                id="stallProductName"
-                type="text"
-                maxlength="40"
-                value="${name}"
-                placeholder="請輸入商品名稱"
-              >
-            </label>
-
-            <label>
-              <span>商品價格</span>
-              <div class="product-price-input">
-                <input
-                  id="stallProductPrice"
-                  type="number"
-                  min="1"
-                  step="1"
-                  value="${price}"
-                  placeholder="請輸入價格"
-                >
-                <span>元</span>
-              </div>
-            </label>
-
-            <label class="product-description-field">
-              <span>商品簡介</span>
-              <textarea
-                id="stallProductDescription"
-                maxlength="120"
-                placeholder="請簡單介紹你的商品特色"
-              >${description}</textarea>
-            </label>
-          </div>
-        </section>
-
-        <section class="product-form-section">
-          <h4><span></span>商品圖片</h4>
-
-          <div class="product-upload-row">
-            ${imageControl}
-
-            <div class="product-upload-guide">
-              <strong id="stallProductImageName">
-                ${product ? '目前使用原商品圖片' : '每個商品限上傳 1 張圖片'}
-              </strong>
-              <span>建議比例：4:3</span>
-              <span>檔案格式：JPG / PNG</span>
-              <span>檔案大小：最大 5MB</span>
-               <label class="product-change-image" for="stallProductImage">
-            更換圖片
-            <input id="stallProductImage" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
-          </label>
-            </div>
-          </div>
-        </section>
-
-        <p id="stallProductError" class="product-form-error" role="alert"></p>
-      </div>
-    `;
-  }
-
-  /** 綁定檔案名稱提示，讓使用者確認目前選取的圖片。 */
-  private bindProductImageName(): void {
-    const imageInput = document.getElementById('stallProductImage') as HTMLInputElement | null;
-    const imageName = document.getElementById('stallProductImageName');
-    const imagePreview = document.getElementById('stallProductPreview') as HTMLImageElement | null;
-
-    imageInput?.addEventListener('change', () => {
-      const imageFile = imageInput.files?.[0];
-
-      if (imageName) {
-        imageName.textContent = imageFile?.name ?? '每個商品限上傳 1 張圖片';
-      }
-
-      if (imageFile && imagePreview) {
-        const reader = new FileReader();
-        reader.addEventListener('load', () => {
-          imagePreview.src = String(reader.result ?? '');
-        });
-        reader.readAsDataURL(imageFile);
-      }
-
-      this.showProductFormError('');
-    });
-  }
-
-  /** 讀取並驗證彈窗欄位；回傳 false 時 SweetAlert 保持開啟。 */
-  private readProductForm(existingImage = ''): StallProduct | false {
-    const name = this.getProductInputValue('stallProductName');
-    const description = this.getProductInputValue('stallProductDescription');
-    const price = Number(this.getProductInputValue('stallProductPrice'));
-    const imageInput = document.getElementById('stallProductImage') as HTMLInputElement | null;
-    const imageFile = imageInput?.files?.[0];
-
-    if (!name || !description || !price) {
-      this.showProductFormError('請完整填寫商品名稱、價格與商品簡介。');
-      return false;
-    }
-
-    if (price <= 0) {
-      this.showProductFormError('商品價格必須大於 0 元。');
-      return false;
-    }
-
-    if (!imageFile && !existingImage) {
-      this.showProductFormError('請上傳 1 張商品圖片。');
-      return false;
-    }
-
-    if (imageFile && !['image/jpeg', 'image/png'].includes(imageFile.type)) {
-      this.showProductFormError('商品圖片僅支援 JPG 或 PNG 格式。');
-      return false;
-    }
-
-    if (imageFile && imageFile.size > 5 * 1024 * 1024) {
-      this.showProductFormError('商品圖片大小不可超過 5MB。');
-      return false;
-    }
-
-    return {
-      name,
-      description,
-      price,
-      image: imageFile ? URL.createObjectURL(imageFile) : existingImage,
-    };
-  }
-
-  private getProductInputValue(id: string): string {
-    const field = document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | null;
-    return field?.value.trim() ?? '';
-  }
-
-  private showProductFormError(message: string): void {
-    const errorElement = document.getElementById('stallProductError');
-
-    if (errorElement) {
-      errorElement.textContent = message;
-    }
   }
 
   /** 避免編輯或刪除瀏覽器暫存圖片時留下 object URL。 */
@@ -367,13 +271,4 @@ export class VendorDashboardStall {
     }
   }
 
-  /** 將既有商品資料安全放入 SweetAlert HTML。 */
-  private escapeHtml(value: string): string {
-    return value
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
-  }
 }

@@ -6,16 +6,38 @@
 }
 
 .market-signup-page {
-  padding: 28px 0 0;
+  padding: 0;
+}
+
+@media (min-width: 641px) and (max-width: 992px) {
+  .market-signup-page {
+    --user-content-width: min(100% - 64px, 900px);
+  }
 }
 
 .page-heading {
-  width: var(--user-content-width);
-  margin: 0 auto 22px;
-  padding: 22px 26px;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-section);
-  background: var(--bg-soft);
+  width: 100%;
+  min-height: 170px;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background-image: url('/assets/images/vendor/frontend/vendor-signup-hero-v2.png');
+  background-position: center 52%;
+  background-size: cover;
+
+  .page-heading-content {
+    width: var(--user-content-width);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px 0;
+    background: transparent;
+  }
 
   h1 {
     margin: 0 0 6px;
@@ -37,7 +59,7 @@
 
 .market-grid {
   width: var(--user-content-width);
-  margin: 0 auto;
+  margin: 28px auto 0;
   padding: 0;
 }
 
@@ -58,7 +80,13 @@
 
 @media (max-width: 768px) {
   .page-heading {
-    padding: 20px 22px;
+    min-height: 160px;
+    background-position: 62% 50%;
+
+    .page-heading-content {
+      width: var(--user-content-width);
+      padding: 22px 0;
+    }
 
     h1 {
       font-size: 1.45rem;
@@ -68,23 +96,33 @@
 
 @media (max-width: 576px) {
   .market-signup-page {
-    padding-top: 20px;
+    padding-top: 0;
   }
 
   .page-heading {
-    margin-bottom: 18px;
-    padding: 18px;
+    min-height: 150px;
+    margin-bottom: 0;
+    background-position: 68% center;
+
+    .page-heading-content {
+      width: var(--user-content-width);
+      padding: 20px 0;
+      background: transparent;
+    }
 
     h1 {
+      color: var(--text-dark);
       font-size: 1.35rem;
     }
 
     p {
+      color: var(--text-dark);
       font-size: 0.84rem;
     }
   }
 
   .market-grid {
+    margin-top: 22px;
     padding-top: 0;
   }
 

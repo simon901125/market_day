@@ -5,17 +5,19 @@
     <div class="search-card">
       <div class="search-row">
         <div class="search-col search-keyword">
+          <span class="field-label">活動名稱</span>
           <div class="search-field">
             <i class="bi bi-search"></i>
-            <input type="text" placeholder="搜尋" [(ngModel)]="keyword" />
+            <input type="text" placeholder="請輸入活動名稱或關鍵字" [(ngModel)]="keyword" />
           </div>
         </div>
 
         <div class="search-col search-area">
+          <span class="field-label">區域</span>
           <div class="search-field">
             <i class="bi bi-geo-alt"></i>
             <select [(ngModel)]="selectedArea">
-              <option value="">地區</option>
+              <option value="">選擇區域</option>
               @for (area of areas; track area) {
                 <option [value]="area">{{ area }}</option>
               }
@@ -24,24 +26,27 @@
         </div>
 
         <div class="search-col search-date">
+          <span class="field-label">活動日期</span>
           <div class="search-field">
             <i class="bi bi-calendar4"></i>
-            <input type="text" placeholder="起始日" [(ngModel)]="startDate" />
+            <input type="text" placeholder="開始日期" [(ngModel)]="startDate" />
           </div>
         </div>
 
         <span class="dash">-</span>
 
         <div class="search-col search-date">
+          <span class="field-label field-label-spacer" aria-hidden="true">活動日期</span>
           <div class="search-field">
             <i class="bi bi-calendar4"></i>
-            <input type="text" placeholder="截止日" [(ngModel)]="endDate" />
+            <input type="text" placeholder="結束日期" [(ngModel)]="endDate" />
           </div>
         </div>
 
         <div class="search-col search-select-col">
+          <span class="field-label">縣市</span>
           <select class="form-select search-select" [(ngModel)]="selectedCity">
-            <option value="">全部地區</option>
+            <option value="">全部縣市</option>
             @for (city of cities; track city) {
               <option [value]="city">{{ city }}</option>
             }
@@ -49,6 +54,7 @@
         </div>
 
         <div class="search-col search-select-col">
+          <span class="field-label">活動狀態</span>
           <select class="form-select search-select" [(ngModel)]="selectedStatus">
             <option value="">全部狀態</option>
             @for (status of statuses; track status) {

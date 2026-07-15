@@ -47,6 +47,11 @@ export class VendorHeader {
     return this.authService.getDashboardPath('vendor');
   }
 
+  /** 市集列表與後續報名流程都維持「市集報名」導覽選取狀態。 */
+  get isSignupSection(): boolean {
+    return this.router.url.startsWith('/vendor/sign-up');
+  }
+
   async logout(): Promise<void> {
     if (this.isLoggingOut) {
       return;

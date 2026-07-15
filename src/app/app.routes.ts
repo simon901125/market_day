@@ -51,6 +51,7 @@ import { VendorDashboardStall } from './modules/vendor/dashboard/vendor-dashboar
 import { VendorApplicationRecord } from './modules/vendor/dashboard/vendor-application-record/vendor-application-record';
 import { VendorApplicationDetail } from './modules/vendor/dashboard/vendor-application-detail/vendor-application-detail';
 import { VendorPaymentPage } from './modules/vendor/dashboard/vendor-payment-page/vendor-payment-page';
+import { VendorBoothSelection } from './modules/vendor/dashboard/vendor-booth-selection/vendor-booth-selection';
 
 //登入驗證，先寫假的session
 import { authGuard } from './guards/auth-guard';
@@ -178,6 +179,10 @@ export const routes: Routes = [
       {
         path: 'application-record/detail/:applicationNo/payment',
         component: VendorPaymentPage,
+      },
+      {
+        path: 'application-record/detail/:applicationNo/booth',
+        component: VendorBoothSelection,
       },
       {
         path: 'application-record/detail/:applicationNo',

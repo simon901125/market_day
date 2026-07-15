@@ -2,21 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { VendorService } from '../../../../core/Vendor/vendorApi/vendor.service';
 import { EventSearch } from '../../../../models/interface/shared/EventSearch';
-import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import {
   MarketRegistrationStatus,
   VendorMarketSearchItem,
 } from '../../../../models/interface/vendor/VendorMarketSearch';
-import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { Pagination } from '../../../shared/pagination/pagination';
 import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
 import { VendorHeader } from '../vendor-header/vendor-header';
 import { VendorMarketCard } from '../vendor-market-card/vendor-market-card';
+import { BrandType } from '../../../../models/type/BrandType ';
+import { MarketStatus } from '../../../../models/status/MarketStatus';
+import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
+import { UserMarketSearchPanel } from '../../../user/frontend/shared/user-market-search-panel/user-market-search-panel';
 import { VendorMarketSearchPanel } from '../vendor-market-search-panel/vendor-market-search-panel';
 
 @Component({
   selector: 'app-vendor-market-signup-list',
-  imports: [VendorHeader, UserFooter, VendorMarketCard, VendorMarketSearchPanel, Pagination],
+  imports: [VendorHeader, UserFooter, VendorMarketCard, UserMarketSearchPanel, Pagination],
   templateUrl: './vendor-market-signup-list.html',
   styleUrl: './vendor-market-signup-list.scss',
 })

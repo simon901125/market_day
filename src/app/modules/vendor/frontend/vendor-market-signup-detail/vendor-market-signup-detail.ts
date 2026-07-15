@@ -89,7 +89,7 @@ export class VendorMarketSignupDetail implements OnInit {
       icon: 'bi-shield-check',
       title: '保證金退還',
       items: [
-        '活動結束且設備確認無損後退還。',
+        '活動結束且設備確認無損後，於現場全額退還。',
         '現場清潔與垃圾請自行處理。',
         '違反活動規範者得酌收保證金。',
       ],
@@ -193,7 +193,8 @@ export class VendorMarketSignupDetail implements OnInit {
 
   get dateRangeText(): string {
     if (!this.market) return '-';
-    return `${this.market.start_date} - ${this.market.end_date}`;
+    const activityTime = this.market.time?.trim();
+    return `${this.market.start_date} - ${this.market.end_date}${activityTime ? ` ${activityTime}` : ''}`;
   }
 
   get signupDeadline(): string {
@@ -224,7 +225,7 @@ export class VendorMarketSignupDetail implements OnInit {
 
     const openDate = new Date(start);
     openDate.setDate(openDate.getDate() - 60);
-    return `${this.formatDate(openDate)} - ${this.signupDeadline} 23:59`;
+    return `${this.formatDate(openDate)} 00:00 - ${this.signupDeadline} 23:59`;
   }
 
   get priceText(): string {
@@ -335,16 +336,6 @@ export class VendorMarketSignupDetail implements OnInit {
     return this.slots.reduce((total, slot) => total + slot.remaining, 0);
   }
 
-  /** 判斷指定場次是否為目前選取狀態，供 template 切換 active 樣式。 */
-  isSelectedSlot(index: number): boolean {
-    return this.selectedSlotIndex === index;
-  }
-
-  /** 點選 radio 時更新目前場次，讓畫面與後續報名資料同步。 */
-  selectSlot(index: number): void {
-    this.selectedSlotIndex = index;
-  }
-
   slotDateLabel(date: string): string {
     const normalizedDate =
       date.includes('/') && date.split('/').length === 2 && this.market
@@ -355,6 +346,28 @@ export class VendorMarketSignupDetail implements OnInit {
 
     const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
     return `${date}（${weekdays[parsedDate.getDay()]}）`;
+  }
+
+  transportationLabel(transportation: string): string {
+    const [rawLabel] = transportation.split(/[：:]/, 1);
+    const label = rawLabel.trim();
+
+    if (label.startsWith('捷運')) return '捷運';
+    return label || '交通方式';
+  }
+
+  transportationContent(transportation: string): string {
+    const [rawLabel, ...contentParts] = transportation.split(/[：:]/);
+    const content = contentParts.join('：').trim();
+    const label = rawLabel.trim();
+
+    if (!content) return transportation;
+    if (label.startsWith('捷運')) {
+      const line = label.replace(/^捷運/, '').trim();
+      return line ? `${line} ${content}` : content;
+    }
+
+    return content;
   }
 
   /** 前往報名資料填寫頁，並帶入目前市集與已選擇場次。 */

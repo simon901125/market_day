@@ -1,0 +1,328 @@
+@mixin styles {
+  :host {
+    display: contents;
+  }
+
+  .event-config-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    padding: 32px;
+    background: transparent;
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--alert-backdrop-bg, rgba(0, 0, 0, 0.4));
+    }
+
+    &.is-closing {
+      &::before {
+        animation: market-modal-backdrop-out var(--modal-motion-out, 180ms) ease-in both;
+      }
+
+      .event-config-dialog {
+        animation: market-modal-out var(--modal-motion-out, 180ms) var(--modal-motion-ease-in, ease-in) both;
+      }
+    }
+  }
+
+  .event-config-dialog {
+    position: relative;
+    z-index: 1;
+    width: min(560px, 100%);
+    max-height: calc(100dvh - 48px);
+    border-radius: 10px;
+    background: var(--bg-white);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    animation: market-modal-in var(--modal-motion-in, 220ms) var(--modal-motion-ease-out, ease-out) both;
+
+    &.large {
+      width: min(680px, calc(100vw - 48px));
+    }
+
+    > header {
+      flex: 0 0 auto;
+      padding: 28px 28px 0;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+
+      h2 {
+        margin: 0;
+        color: var(--text-dark);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 20px;
+        font-weight: 900;
+
+        i {
+          color: var(--primary-color);
+          font-size: 22px;
+        }
+      }
+
+      button {
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: var(--text-dark);
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+        cursor: pointer;
+
+        &:hover {
+          background: var(--bg-primary);
+          color: var(--primary-color);
+        }
+      }
+    }
+
+    footer {
+      flex: 0 0 auto;
+      margin: 24px 28px 28px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+  }
+
+  .dialog-panel {
+    margin: 0 28px;
+    padding: 18px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-tag);
+    background: var(--bg-white);
+
+    + .dialog-panel {
+      margin-top: 16px;
+    }
+
+    h3 {
+      margin: 0 0 14px;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 16px;
+      font-weight: 900;
+
+      &::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        flex: 0 0 8px;
+        border-radius: 50%;
+        background: var(--primary-color);
+      }
+    }
+  }
+
+  .field {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 900;
+
+    b {
+      color: #ef4444;
+    }
+
+    &.full {
+      margin-top: 14px;
+    }
+  }
+
+  .dialog-panel > .field + .field {
+    margin-top: 14px;
+  }
+
+  .text-control,
+  .textarea-control,
+  .unit-control {
+    min-width: 0;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-tag);
+    background: var(--bg-white);
+    display: flex;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover,
+    &:focus-within {
+      border-color: var(--primary-color);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+    }
+  }
+
+  .text-control,
+  .unit-control {
+    height: 40px;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .textarea-control {
+    position: relative;
+    min-height: 78px;
+    padding: 10px 12px;
+
+    small {
+      position: absolute;
+      right: 12px;
+      bottom: 8px;
+      color: var(--text-light);
+      font-size: 11px;
+    }
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text-dark);
+    font-size: 13px;
+  }
+
+  input {
+    height: 100%;
+    padding: 0 14px;
+  }
+
+  textarea {
+    min-height: 58px;
+    padding: 0 30px 0 0;
+    resize: none;
+  }
+
+  .unit-control small {
+    height: 100%;
+    padding: 0 18px;
+    border-left: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .dialog-grid {
+    display: grid;
+    gap: 14px;
+
+    &.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &.compact {
+      grid-template-columns: minmax(0, 260px);
+    }
+  }
+
+  .radio-row {
+    margin: 12px 0 14px;
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+    font-weight: 800;
+
+    label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    input {
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      appearance: none;
+      border: 2px solid var(--border-soft);
+      border-radius: 50%;
+
+      &:checked {
+        border: 5px solid var(--primary-color);
+      }
+    }
+  }
+
+  .rental-rule-box {
+    padding: 14px;
+    border: 1px solid rgba(245, 158, 11, 0.24);
+    border-radius: var(--radius-tag);
+    background: #fff7ed;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .section-note {
+    margin: 16px 0 0;
+    color: var(--text-normal);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+
+    i {
+      color: var(--primary-color);
+    }
+  }
+
+  .rental-rule-box .section-note {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+
+  .dialog-cancel-btn,
+  .dialog-save-btn {
+    min-width: 112px;
+    height: 40px;
+    padding: 0 22px;
+    border-radius: var(--radius-tag);
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .dialog-cancel-btn {
+    border: 1px solid var(--border-soft);
+    background: var(--bg-white);
+    color: var(--text-dark);
+  }
+
+  .dialog-save-btn {
+    border: 1px solid var(--primary-color);
+    background: var(--primary-color);
+    color: #fff;
+  }
+
+  @media (max-width: 700px) {
+    .event-config-dialog-backdrop {
+      padding: 16px;
+    }
+
+    .dialog-grid.two,
+    .rental-rule-box {
+      grid-template-columns: 1fr;
+    }
+  }
+}

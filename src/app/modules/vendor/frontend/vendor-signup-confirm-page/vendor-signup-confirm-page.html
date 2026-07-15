@@ -1,14 +1,14 @@
 <app-vendor-header></app-vendor-header>
 
-<main class="confirm-page page-transition">
+<main class="confirm-page page-transition frontend-page vendor-frontend-page">
   <div class="page-toolbar">
-    <button type="button" class="back-link" (click)="backToForm()">
+    <button type="button" class="back-link" aria-label="返回報名資料填寫" (click)="backToForm()">
       <i class="bi bi-arrow-left"></i>
-      返回報名資料填寫
+      <span class="back-label">返回報名資料填寫</span>
     </button>
 
     <ol class="stepper" aria-label="報名進度">
-      <li class="done"><span>1</span><strong>填寫資料</strong></li>
+      <li class="done"><span><i class="bi bi-check-lg"></i></span><strong>填寫資料</strong></li>
       <li class="active"><span>2</span><strong>確認資料</strong></li>
       <li><span>3</span><strong>完成報名</strong></li>
     </ol>
@@ -18,7 +18,6 @@
     <section class="market-summary">
       <div class="market-title">
         <h1>{{ market.title }}</h1>
-        <span>{{ market.status || '報名中' }}</span>
       </div>
 
       <div class="market-meta">
@@ -26,22 +25,14 @@
           <i class="bi bi-calendar-event"></i>
           <dl>
             <dt>活動日期</dt>
-            <dd class="date-lines">
-              @for (date of eventDates; track date) {
-                <span>{{ date }}</span>
-              }
-            </dd>
+            <dd>{{ eventPeriodText }}</dd>
           </dl>
         </div>
         <div>
           <i class="bi bi-calendar2-check"></i>
           <dl>
-            <dt>報名日期</dt>
-            <dd class="date-lines">
-              @for (date of registrationDates; track date) {
-                <span>{{ date }}</span>
-              }
-            </dd>
+            <dt>報名期間</dt>
+            <dd>{{ registrationPeriodText }}</dd>
           </dl>
         </div>
         <div>
@@ -50,9 +41,16 @@
             <dt>招商類別</dt>
             <dd class="category-tags">
               @for (category of categories; track category) {
-                <span>{{ category }}</span>
+                <span class="app-tag">{{ category }}</span>
               }
             </dd>
+          </dl>
+        </div>
+        <div>
+          <i class="bi bi-flag"></i>
+          <dl>
+            <dt>活動狀態</dt>
+            <dd><span class="status-badge active market-status-overlay">{{ signupStatusText }}</span></dd>
           </dl>
         </div>
         <div>
@@ -63,7 +61,7 @@
           </dl>
         </div>
         <div>
-          <i class="bi bi-geo-alt"></i>
+          <i class="bi bi-map"></i>
           <dl>
             <dt>活動地址</dt>
             <dd>{{ market.address }}</dd>
@@ -75,12 +73,8 @@
     <div class="confirm-layout">
       <div class="confirm-content">
         <section class="detail-card registration-card">
-          <h2><i class="bi bi-receipt"></i>報名資訊</h2>
+          <h2><i class="bi bi-calendar2-week"></i>報名資訊</h2>
           <div class="registration-grid">
-            <div>
-              <span>攤位尺寸</span>
-              <strong>{{ boothSpec }}</strong>
-            </div>
             <div>
               <span>報名費</span>
               <strong>${{ boothFeePerDay | number }} / 天</strong>
@@ -88,40 +82,48 @@
             <div>
               <span>保證金</span>
               <strong>${{ boothDeposit | number }} / 攤</strong>
-              <small>（活動結束後退還）</small>
+            </div>
+            <div>
+              <span>攤位尺寸</span>
+              <strong>{{ boothSpec }}</strong>
             </div>
           </div>
         </section>
 
         <section class="detail-card dates-card">
-          <h2><i class="bi bi-calendar2-week"></i>報名日期</h2>
-          <div class="dates-summary">
-            <div class="days-count">
-              <i class="bi bi-calendar2-check"></i>
-              <div>
-                <span>共報名</span><strong>{{ selectedDays }} 天</strong>
+          <div class="date-section-heading">
+            <h2><i class="bi bi-calendar2-week"></i>報名日期</h2>
+            <span>共 {{ selectedDays }} 天</span>
+          </div>
+          <div class="confirmed-date-grid">
+            @for (slot of selectedSlots; track slot.date) {
+              <div class="confirmed-date-card">
+                <strong>{{ formatSlotDate(slot.date) }}</strong>
+                <span>{{ market.time }}</span>
               </div>
-            </div>
-            <ul>
-              @for (slot of selectedSlots; track slot.date) {
-                <li>
-                  <strong>{{ formatSlotDate(slot.date) }}</strong>
-                  <span>{{ market.time }}</span>
-                </li>
-              } @empty {
-                <li>
-                  <strong>{{ formatSlotDate(selectedSlotDate) }}</strong>
-                  <span>{{ market.time }}</span>
-                </li>
-              }
-            </ul>
+            } @empty {
+              <div class="confirmed-date-card">
+                <strong>{{ formatSlotDate(selectedSlotDate) }}</strong>
+                <span>{{ market.time }}</span>
+              </div>
+            }
           </div>
         </section>
 
         <section class="detail-card">
           <h2><i class="bi bi-gift"></i>設備租借</h2>
+          <div class="included-provision-box">
+            <strong><i class="bi bi-gift"></i>免費提供設備</strong>
+            <ul>
+              <li>帳篷（3 × 3 公尺）</li>
+              <li>桌子（180 × 60 公分）</li>
+              <li>延長線（5 公尺）</li>
+              <li>椅子（一般塑膠椅）</li>
+              <li>照明設備（投光燈 100W）</li>
+            </ul>
+          </div>
           <div class="table-wrap">
-            <table>
+            <table class="confirmation-table equipment-table">
               <caption>設備租借明細</caption>
               <thead>
                 <tr>
@@ -135,12 +137,12 @@
               <tbody>
                 @for (item of selectedEquipment; track item.id) {
                   <tr>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.detail || '－' }}</td>
-                    <td>× {{ item.quantity }}</td>
-                    <td>${{ item.price | number }} / 天</td>
-                    <td>
-                      ${{ equipmentItemTotal(item) | number }} / {{ selectedDays }} 天
+                    <td data-label="設備項目">{{ item.name }}</td>
+                    <td data-label="規格">{{ item.detail || '－' }}</td>
+                    <td data-label="數量">{{ item.quantity }}</td>
+                    <td data-label="每日單價">${{ item.price | number }} / 天</td>
+                    <td data-label="小計" class="subtotal-cell">
+                      <strong>${{ equipmentItemTotal(item) | number }}</strong>
                     </td>
                   </tr>
                 } @empty {
@@ -155,8 +157,12 @@
 
         <section class="detail-card">
           <h2><i class="bi bi-lightning-charge"></i>額外用電需求</h2>
+          <div class="included-provision-box">
+            <strong><i class="bi bi-plug"></i>基本用電（免費提供）</strong>
+            <p>110V ｜ 500W</p>
+          </div>
           <div class="table-wrap">
-            <table>
+            <table class="confirmation-table power-table">
               <caption>額外用電明細</caption>
               <thead>
                 <tr>
@@ -169,10 +175,12 @@
               <tbody>
                 @for (option of selectedPowerOptions; track option.id) {
                   <tr>
-                    <td>{{ powerVoltage(option.label) }}</td>
-                    <td>{{ powerWattage(option.label) }}</td>
-                    <td>${{ option.price | number }} / 天</td>
-                    <td>${{ powerItemTotal(option) | number }} / {{ selectedDays }} 天</td>
+                    <td data-label="電壓">{{ powerVoltage(option.label) }}</td>
+                    <td data-label="功率">{{ powerWattage(option.label) }}</td>
+                    <td data-label="每日費用">${{ option.price | number }} / 天</td>
+                    <td data-label="小計" class="subtotal-cell">
+                      <strong>${{ powerItemTotal(option) | number }}</strong>
+                    </td>
                   </tr>
                 } @empty {
                   <tr>
@@ -182,7 +190,6 @@
               </tbody>
             </table>
           </div>
-          <p class="base-power-note">* 基本用電（110V / 500W）免費提供</p>
         </section>
 
         <section class="detail-card vehicle-card">
@@ -201,7 +208,7 @@
         </section>
 
         <label class="agreement">
-          <input type="checkbox" [(ngModel)]="agreed" />
+          <input class="app-checkbox" type="checkbox" [(ngModel)]="agreed" />
           <span>
             我已詳細並同意遵守
             <a routerLink="/vendor/about">活動規範</a>
@@ -217,11 +224,8 @@
 
         <div class="fee-main">
           <span>報名費</span>
-          <div>
-            <strong>${{ boothFeePerDay | number }} / 天</strong>
-            <b>× {{ selectedDays }} 天</b>
-            <em>${{ boothFee | number }}</em>
-          </div>
+          <strong>${{ boothFee | number }}</strong>
+          <small>（${{ boothFeePerDay | number }} / 天 × {{ selectedDays }} 天）</small>
         </div>
 
         <dl class="fee-list">
@@ -234,7 +238,7 @@
             <dd>${{ powerRentalFee | number }}</dd>
           </div>
           <div>
-            <dt>保證金<small>（活動結束後退還）</small></dt>
+            <dt>保證金</dt>
             <dd>${{ boothDeposit | number }}</dd>
           </div>
         </dl>
@@ -248,7 +252,7 @@
           <i class="bi bi-shield-check"></i>
           <div>
             <strong>保證金說明</strong>
-            <p>活動結束後，若無違規或設備損壞，保證金將於 14 個工作天內全額退還。</p>
+            <p>活動結束後，若無違規或設備損壞，保證金將於現場全額退還。</p>
           </div>
         </div>
 

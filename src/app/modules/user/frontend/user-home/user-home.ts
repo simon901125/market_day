@@ -103,7 +103,11 @@ export class UserHome implements OnInit, OnDestroy {
       statusClass: MarketStatus.getClass(MarketStatus.preview),
       tags: [BrandType.handmade, BrandType.fashion],
       organizer: '城市手作企劃',
-      transportation: ['捷運忠孝新生站步行約 5 分鐘', '公車華山文創園區站下車'],
+      transportation: [
+        '捷運忠孝新生站步行約 5 分鐘',
+        '公車華山文創園區站下車',
+        '可停華山文創園區停車場',
+      ],
     },
     {
       id: 'market-2026-food-picnic',

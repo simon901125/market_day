@@ -1,11 +1,13 @@
 <app-vendor-header></app-vendor-header>
 
-<main class="complete-page page-transition">
-  <ol class="stepper" aria-label="報名進度">
-    <li class="done"><span>1</span><strong>填寫資料</strong></li>
-    <li class="done"><span>2</span><strong>確認資料</strong></li>
-    <li class="active"><span>3</span><strong>完成報名</strong></li>
-  </ol>
+<main class="complete-page page-transition frontend-page vendor-frontend-page">
+  <div class="page-toolbar">
+    <ol class="stepper" aria-label="報名進度">
+      <li class="done"><span><i class="bi bi-check-lg"></i></span><strong>填寫資料</strong></li>
+      <li class="done"><span><i class="bi bi-check-lg"></i></span><strong>確認資料</strong></li>
+      <li class="active"><span>3</span><strong>完成報名</strong></li>
+    </ol>
+  </div>
 
   @if (market; as market) {
     <section class="success-hero">
@@ -26,7 +28,7 @@
       <div class="application-meta">
         <div>
           <i class="bi bi-shield-check"></i>
-          <span>您的申請編號</span>
+          <span>報名編號</span>
           <strong>{{ applicationNo }}</strong>
         </div>
         <div>
@@ -63,7 +65,7 @@
           <dt>設備租借</dt>
           <dd>
             @for (item of equipment; track item.id) {
-              <span>・{{ item.name }} × {{ item.quantity }}</span>
+              <span>・{{ item.name }}（{{ item.quantity }} 件）</span>
             } @empty {
               <span>無</span>
             }
@@ -95,7 +97,10 @@
         <ol class="next-steps">
           @for (step of nextSteps; track step.title; let index = $index) {
             <li>
-              <div class="step-icon"><i class="bi" [class]="step.icon"></i></div>
+              <div class="step-icon">
+                <span class="step-number">{{ index + 1 }}</span>
+                <i class="bi" [class]="step.icon"></i>
+              </div>
               <strong>{{ step.title }}</strong>
               <p>{{ step.description }}</p>
             </li>

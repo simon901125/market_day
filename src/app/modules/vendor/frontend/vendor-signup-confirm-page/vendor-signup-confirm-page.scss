@@ -1,7 +1,7 @@
 :host {
   display: block;
   color: var(--text-dark);
-  background: var(--bg-white);
+  background: var(--primary-soft);
 }
 
 .confirm-page {
@@ -186,15 +186,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
-
-  span {
-    padding: 4px 10px;
-    border: 1px solid var(--primary-color);
-    border-radius: 999px;
-    color: var(--primary-color);
-    background: var(--primary-soft);
-    font-size: 0.72rem;
-  }
 }
 
 .confirm-layout {
@@ -428,11 +419,7 @@ table {
   line-height: 1.6;
 
   input {
-    width: 17px;
-    height: 17px;
-    flex: 0 0 auto;
     margin-top: 2px;
-    accent-color: var(--primary-color);
   }
 
   a {
@@ -452,6 +439,7 @@ table {
     gap: 10px;
     margin: 0 0 22px;
     font-size: 1.05rem;
+    font-weight: 900;
 
     i {
       color: var(--primary-color);
@@ -753,13 +741,443 @@ table {
   background: var(--primary-soft);
 }
 
+/* Keep the confirmation page aligned with the sign-up form page. */
+.confirm-page {
+  padding-top: 28px;
+}
+
 .page-toolbar {
-  min-height: 60px;
-  margin-bottom: 20px;
-  padding: 12px 18px;
+  min-height: 36px;
+  margin-bottom: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.stepper {
+  li {
+    color: var(--text-normal);
+    font-size: 13px;
+    font-weight: 800;
+
+    &:not(:last-child)::after {
+      height: 1px;
+      background: rgba(95, 90, 84, 0.28);
+    }
+  }
+
+  span {
+    width: 28px;
+    height: 28px;
+    color: var(--text-normal);
+    background: var(--bg-white);
+  }
+
+  .done span {
+    border-color: var(--primary-color);
+    color: var(--bg-white);
+    background: var(--primary-color);
+  }
+}
+
+.market-summary {
+  padding: 28px 34px;
+}
+
+.market-title {
+  margin-bottom: 28px;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 900;
+  }
+}
+
+.market-meta {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px 34px;
+
+  dt {
+    margin-bottom: 7px;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  dd {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.6;
+  }
+}
+
+.registration-grid {
+  background: var(--bg-soft);
+
+  > div {
+    gap: 0;
+    padding: 12px 20px;
+  }
+
+  span {
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  strong {
+    font-size: 16px;
+    font-weight: 900;
+  }
+}
+
+.included-provision-box {
+  margin-bottom: 18px;
+  padding: 14px 16px;
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-card);
-  background: var(--bg-white);
+  background: var(--bg-soft);
+
+  > strong {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 900;
+
+    i {
+      color: var(--primary-color);
+    }
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin: 10px 0 0;
+    padding-left: 20px;
+  }
+
+  li,
+  p {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 10px 0 0;
+  }
+}
+
+.dates-summary {
+  strong,
+  span {
+    font-size: 14px;
+  }
+}
+
+.date-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  h2 {
+    margin-bottom: 0;
+  }
+
+  > span {
+    min-height: 28px;
+    padding: 5px 10px;
+    border-radius: var(--radius-tag);
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-primary);
+    color: var(--text-dark);
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+}
+
+.confirmed-date-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.confirmed-date-card {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  background: var(--bg-soft);
+
+  strong,
+  span {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 700;
+  }
+}
+
+table {
+  th,
+  td {
+    font-size: 14px;
+  }
+}
+
+.confirmation-table {
+  th,
+  td {
+    padding: 9px 16px;
+    vertical-align: middle;
+  }
+
+  th {
+    color: var(--text-dark);
+    font-weight: 900;
+  }
+
+  td {
+    color: var(--text-dark);
+    font-weight: 600;
+  }
+
+  th:nth-last-child(-n + 2),
+  td:nth-last-child(-n + 2) {
+    text-align: right;
+  }
+}
+
+.equipment-table {
+  th:nth-child(3),
+  td:nth-child(3) {
+    text-align: center;
+  }
+}
+
+.subtotal-cell {
+  strong,
+  small {
+    display: block;
+  }
+
+  strong {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  small {
+    margin-top: 3px;
+    color: var(--text-normal);
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+
+.vehicle-card > div {
+  span,
+  strong {
+    font-size: 14px;
+  }
+}
+
+.note-card p,
+.agreement {
+  font-size: 14px;
+}
+
+.fee-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 7px 12px;
+
+  > span,
+  > strong {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  > small {
+    grid-column: 1 / -1;
+    color: var(--text-light);
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+
+.fee-list {
+  dt,
+  dd {
+    font-size: 14px;
+  }
+
+  small {
+    font-size: 12px;
+  }
+}
+
+.deposit-notice {
+  grid-template-columns: 22px 1fr;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-card);
+  background: var(--primary-soft);
+
+  > i {
+    color: var(--text-normal);
+    font-size: 20px;
+  }
+
+  strong,
+  p {
+    font-size: 14px;
+  }
+
+  p {
+    color: var(--text-normal);
+  }
+}
+
+.total-row {
+  min-height: 76px;
+  padding: 0;
+
+  span {
+    font-size: 16px;
+    font-weight: 900;
+  }
+
+  small {
+    color: var(--text-normal);
+    font-size: 12px;
+  }
+
+  strong {
+    font-size: 30px;
+    font-weight: 900;
+  }
+}
+
+.fee-card > button {
+  height: 56px;
+  min-height: 56px;
+  gap: 14px;
+  margin-top: 18px;
+  border-radius: var(--radius-tag);
+  font-size: 17px;
+  font-weight: 900;
+}
+
+@media (max-width: 992px) {
+  .market-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .page-toolbar {
+    padding: 0;
+  }
+
+  .market-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .confirmed-date-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .table-wrap {
+    overflow: visible;
+    border: 0;
+  }
+
+  .confirmation-table,
+  .confirmation-table tbody,
+  .confirmation-table tr,
+  .confirmation-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .confirmation-table thead {
+    display: none;
+  }
+
+  .confirmation-table tr {
+    margin-bottom: 12px;
+    padding: 8px 14px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-card);
+    background: var(--bg-soft);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .confirmation-table td {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-light);
+    text-align: right !important;
+    white-space: normal;
+
+    &::before {
+      content: attr(data-label);
+      color: var(--text-normal);
+      font-size: 13px;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  .confirmation-table .empty-row {
+    display: block;
+    text-align: center !important;
+
+    &::before {
+      display: none;
+    }
+  }
+
+  .confirmation-table .subtotal-cell {
+    > strong,
+    > small {
+      grid-column: 2;
+    }
+  }
+}
+
+.page-toolbar {
+  min-height: 36px;
+  margin-bottom: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .stepper {
@@ -791,7 +1209,7 @@ table {
 }
 
 .market-summary {
-  background: var(--bg-soft);
+  background: var(--bg-white);
 }
 
 .detail-card h2 i,
@@ -806,6 +1224,113 @@ table {
 
   .page-toolbar {
     gap: 14px;
-    padding: 14px;
+    padding: 0;
+  }
+}
+
+/* Keep the confirmation toolbar horizontal on tablets. */
+@media (min-width: 641px) and (max-width: 992px) {
+  .confirm-page {
+    width: min(100% - 64px, 1100px);
+  }
+
+  .page-toolbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .back-link {
+    flex: 0 0 auto;
+  }
+
+  .stepper {
+    flex: 0 1 auto;
+    align-self: center;
+    justify-content: flex-end;
+
+    li:not(:last-child) {
+      margin-right: 38px;
+    }
+
+    li:not(:last-child)::after {
+      width: 18px;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .confirm-page {
+    width: min(100% - 48px, 640px);
+  }
+
+  .page-toolbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 40px;
+  }
+
+  .back-link {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    align-self: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text-normal);
+    box-shadow: 0 2px 8px rgb(58 45 30 / 5%);
+
+    i {
+      display: grid;
+      width: 100%;
+      height: 100%;
+      place-items: center;
+      font-size: 15px;
+      line-height: 1;
+      -webkit-text-stroke: 0.25px currentColor;
+    }
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--primary-color);
+      background: var(--bg-primary);
+      color: var(--primary-color);
+      outline: none;
+    }
+
+    .back-label {
+      display: none;
+    }
+  }
+
+  .stepper {
+    width: auto;
+    min-width: 0;
+    flex: 1;
+    justify-content: flex-end;
+    align-self: center;
+    align-items: center;
+    overflow: visible;
+
+    li {
+      gap: 5px;
+      font-size: 11px;
+
+      &:not(:last-child) {
+        margin-right: 26px;
+      }
+
+      &:not(:last-child)::after {
+        display: block;
+        left: calc(100% + 7px);
+        width: 12px;
+      }
+    }
   }
 }

@@ -16,17 +16,34 @@
 }
 
 .search-card {
-  padding: 18px;
-  border: 1px solid var(--border-light);
+  padding: 18px 18px 20px;
+  border: 1px solid var(--border-primary);
   border-radius: var(--radius-card);
-  background: var(--primary-soft);
+  background: var(--bg-soft);
 }
 
 .search-row {
   display: grid;
   grid-template-columns: 220px 150px 140px 12px 140px 120px 120px 86px;
-  align-items: center;
+  align-items: end;
   gap: 13px;
+}
+
+.search-col {
+  min-width: 0;
+}
+
+.field-label {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--text-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.field-label-spacer {
+  visibility: hidden;
 }
 
 .search-field {
@@ -96,6 +113,7 @@
 .dash {
   display: flex;
   justify-content: center;
+  padding-bottom: 14px;
   color: var(--text-dark);
   font-weight: 900;
 }
@@ -107,6 +125,10 @@
 
   .search-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .field-label-spacer {
+    visibility: visible;
   }
 
   .dash {

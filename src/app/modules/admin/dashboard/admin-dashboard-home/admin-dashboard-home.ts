@@ -39,7 +39,7 @@ export class AdminDashboardHome extends AdminDashboardNotification implements On
    * 小畫面：顯示 3 筆
    * 大畫面：顯示 4 筆
    */
-  homeNotificationMaxItems = 3;
+  homeNotificationMaxItems = 4;
 
   /**
    * 元件初始化時，先依照目前畫面高度決定最新通知顯示筆數
@@ -73,7 +73,7 @@ export class AdminDashboardHome extends AdminDashboardNotification implements On
     const availableHeight = height - usedHeight;
     const count = Math.floor(availableHeight / notificationItemHeight);
 
-    this.homeNotificationMaxItems = Math.min(8, Math.max(3, count));
+    this.homeNotificationMaxItems = Math.min(8, Math.max(4, count));
   }
 
   /**

@@ -1,140 +1,63 @@
-<section class="vendor-home">
+<section class="vendor-home page-transition">
   @if (!hasRecords) {
-    <!-- 首次登入引導 -->
-    <div class="title-row app-page-header">
-      <h1 class="app-page-title">歡迎加入小集日！</h1>
-    </div>
+    <div class="empty-home">
+      <header class="empty-home-header">
+        <h1>歡迎加入小集日！</h1>
+        <p>讓我們一步步完成設定，開啟你的市集之旅吧！</p>
+      </header>
 
-    <p class="subtitle">讓我們一步步完成設定，開啟你的市集之旅吧！</p>
+      <div class="empty-home-grid">
+        <section class="setup-card">
+          <h2>完成以下設定，讓你的攤位更吸引人</h2>
 
-    <div class="home-grid">
-      <div class="setup-card">
-        <h2>完成以下設定，讓你的攤位更吸引人</h2>
+          <article class="setup-step"><span>1</span><i class="bi bi-person"></i><div><h3>基本資料</h3><p>填寫品牌名稱、負責人姓名、聯絡電話與 Email。</p></div></article>
+          <article class="setup-step"><span>2</span><i class="bi bi-image"></i><div><h3>攤位形象照片</h3><p>上傳品牌大頭貼與封面，讓主辦方了解你的品牌風格。</p></div></article>
+          <article class="setup-step"><span>3</span><i class="bi bi-clipboard-check"></i><div><h3>品牌介紹與分類</h3><p>撰寫品牌介紹，並選擇適合的攤商分類。</p></div></article>
+          <article class="setup-step"><span>4</span><i class="bi bi-bag"></i><div><h3>商品管理</h3><p>新增販售商品、價格與商品圖片，作為報名審核參考。</p></div></article>
+          <article class="setup-step"><span>5</span><i class="bi bi-shop"></i><div><h3>建立攤位</h3><p>確認資料完整後即可開始報名市集活動。</p></div></article>
+        </section>
 
-        <div class="step">
-          <span>1</span>
-          <i class="bi bi-person"></i>
-          <div>
-            <h3>基本資料</h3>
-            <p>填寫品牌名稱、負責人姓名、聯絡電話與 Email。</p>
-          </div>
-        </div>
-
-        <div class="step">
-          <span>2</span>
-          <i class="bi bi-image"></i>
-          <div>
-            <h3>攤位形象照片</h3>
-            <p>上傳攤位大頭貼與攤位照片，讓主辦方了解你的攤位風格。</p>
-          </div>
-        </div>
-
-        <div class="step">
-          <span>3</span>
-          <i class="bi bi-clipboard-check"></i>
-          <div>
-            <h3>品牌介紹與分類</h3>
-            <p>撰寫品牌介紹，並選擇適合的攤商分類。</p>
-          </div>
-        </div>
-
-        <div class="step">
-          <span>4</span>
-          <i class="bi bi-bag"></i>
-          <div>
-            <h3>商品管理</h3>
-            <p>新增販售商品、價格與商品圖片，作為報名審核參考。</p>
-          </div>
-        </div>
-
-        <div class="step">
-          <span>5</span>
-          <i class="bi bi-shop"></i>
-          <div>
-            <h3>建立攤位</h3>
-            <p>確認資料完整後建立攤位，建立完成後即可報名市集活動。</p>
-          </div>
-        </div>
+        <aside class="empty-notice-card">
+          <div class="tent-icon"><img src="/assets/images/vendor/dashboard/dashboard-tent.png" alt="" /></div>
+          <h2>完成攤位資料後，<br />你就可以開始<span>報名市集活動</span>。</h2>
+          <p>我們會用心審核每一個攤位，<br />期待在市集與你相見！</p>
+        </aside>
       </div>
 
-      <div class="notice-card">
-        <div class="tent-icon">
-          <img src="/assets/images/dashboard/dashboard-tent.png" alt="tent" />
-        </div>
-
-        <h2>
-          完成攤位資料後，<br />
-          你就可以開始<span>報名市集活動</span>。
-        </h2>
-
-        <p>
-          我們會用心審核每一個攤位，<br />
-          期待在市集與你相見！
-        </p>
-        <div class="plant-icon">
-          <img src="/assets/images/dashboard/dashboard-plant.png" alt="plant" />
-        </div>
+      <div class="empty-home-action">
+        <p><i class="bi bi-info-circle"></i>未完成攤位資料前，無法報名市集活動。</p>
+        <a class="app-btn primary" routerLink="/vendor/dash-board/myStall"><i class="bi bi-pencil"></i>開始填寫資料</a>
       </div>
-    </div>
-
-    <div class="bottom-alert">
-      <div>
-        <i class="bi bi-info-circle"></i>
-        未完成攤位資料前，無法報名市集活動。
-      </div>
-
-      <button type="button" class="app-btn primary" routerLink="/vendor/dash-board/myStall">
-        <i class="bi bi-pencil"></i>
-        開始填寫資料
-      </button>
     </div>
   } @else {
-    <!-- 有紀錄儀錶板 -->
-    <h1 class="app-page-title">歡迎回來，董映彤！</h1>
-    <p class="subtitle">這裡幫你整理近期需要處理的報名與通知。</p>
+  <header class="welcome-header">
+    <h1 class="welcome-title">歡迎回來，{{ vendorName }}！</h1>
+    <p class="welcome-subtitle">快速掌握報名進度、攤位選擇與最新通知。</p>
+  </header>
 
-    <div class="dashboard-summary">
-      @for (card of summaryCards; track card.title) {
-        <article class="summary-card">
-          <div class="summary-icon" [class]="card.iconClass">
-            <i class="bi" [class]="card.icon"></i>
-          </div>
-
-          <div class="summary-content">
-            <h3>{{ card.title }}</h3>
-            <strong>{{ card.count }}</strong>
-            <span>{{ card.unit }}</span>
-          </div>
-
-          <a [routerLink]="card.link">
-            前往查看
-            <i class="bi bi-chevron-right"></i>
-          </a>
-        </article>
+  <section class="todo-section">
+    <div class="todo-cards">
+      @for (item of todoItems; track item.label) {
+        <app-dashboard-home-todo-card
+          [icon]="item.icon"
+          [count]="item.count"
+          [unit]="item.unit"
+          [label]="item.label"
+          [path]="item.path"
+          [iconColor]="item.iconColor ?? 'orange'"
+        />
       }
     </div>
+  </section>
 
-    <section class="latest-card">
-      <div class="latest-header">
-        <h2>最新通知</h2>
-        <button type="button" class="app-btn secondary">查看全部通知</button>
-      </div>
-
-      <div class="notice-list">
-        @for (notice of notices; track notice.text) {
-          <article class="notice-row" [class.unread]="notice.unread">
-            <span class="dot"></span>
-
-            <i class="notice-icon bi" [class]="getNoticeIcon(notice.type)"></i>
-
-            <strong>【{{ notice.status }}】</strong>
-
-            <p>{{ notice.text }}</p>
-
-            <time>{{ notice.date }}&nbsp;&nbsp;</time>
-          </article>
-        }
-      </div>
-    </section>
+  <app-dashboard-notification
+    title="最新通知"
+    [notifications]="notifications"
+    [maxItems]="homeNotificationMaxItems"
+    [limitItems]="true"
+    [showTabs]="false"
+    [showPagination]="false"
+    viewAllLink="/vendor/dash-board/notification"
+  />
   }
 </section>

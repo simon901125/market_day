@@ -201,8 +201,8 @@ export class AdminDashboardMarketDetail implements OnInit {
       html: `
         <div class="registration-swal-content">
           <div class="supplement-swal-header">
-            <div class="restore-confirm-icon">
-              <i class="bi bi-exclamation-circle"></i>
+            <div class="registration-swal-icon warning">
+              <i class="bi bi-exclamation-lg"></i>
             </div>
             <h3>要求補件</h3>
             <p class="registration-swal-main">此活動申請資料需補件，<br>請填寫補件原因後送出通知。</p>
@@ -233,6 +233,7 @@ export class AdminDashboardMarketDetail implements OnInit {
         textarea?.addEventListener('input', () => {
           if (counter) counter.textContent = `${textarea.value.length}/200`;
           if (error) error.textContent = '';
+          textarea.classList.remove('is-invalid');
         });
       },
       preConfirm: () => {
@@ -241,8 +242,11 @@ export class AdminDashboardMarketDetail implements OnInit {
         const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
         if (!value) {
           if (error) error.textContent = '請填寫補件原因';
+          textarea?.classList.add('is-invalid');
+          textarea?.focus();
           return false;
         }
+        textarea?.classList.remove('is-invalid');
         if (error) error.textContent = '';
         return value;
       },
@@ -262,8 +266,8 @@ export class AdminDashboardMarketDetail implements OnInit {
       html: `
         <div class="registration-swal-content">
           <div class="supplement-swal-header">
-            <div class="restore-confirm-icon">
-              <i class="bi bi-exclamation-circle"></i>
+            <div class="registration-swal-icon warning">
+              <i class="bi bi-exclamation-lg"></i>
             </div>
             <h3>要求補件確認</h3>
             <p class="registration-swal-main">確定要求此活動申請補件嗎？<br>送出後，主辦方將收到補件通知，<br>活動狀態將變更為「補件中」。</p>
@@ -343,8 +347,8 @@ export class AdminDashboardMarketDetail implements OnInit {
       html: `
       <div class="registration-swal-content">
         <div class="supplement-swal-header">
-            <div class="restore-confirm-icon">
-                <i class="bi bi-exclamation-circle"></i>
+            <div class="registration-swal-icon warning">
+                <i class="bi bi-exclamation-lg"></i>
             </div>
             <h3>審核下架活動</h3>
             <p class="registration-swal-main">是否同意主辦方提出的活動下架申請，<br>審核結果將影響活動狀態並通知相關人員。</p>

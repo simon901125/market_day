@@ -70,6 +70,12 @@
   }
 }
 
+.stepper .done span {
+  border-color: var(--primary-color);
+  color: var(--bg-white);
+  background: var(--primary-color);
+}
+
 .success-hero {
   text-align: center;
 
@@ -490,18 +496,273 @@
   }
 }
 
-/* Shared public-facing treatment for the vendor application flow. */
+/* Align the completion page with the preceding sign-up steps. */
+:host {
+  background: var(--primary-soft);
+}
+
 .complete-page {
-  width: var(--user-content-width);
-  padding-top: 32px;
+  width: var(--user-content-wide-width);
+  padding: 28px 0 64px;
+  background: var(--primary-soft);
+}
+
+.page-toolbar {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 12px;
 }
 
 .stepper {
-  margin-bottom: 44px;
-  padding: 14px 18px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+
+  li {
+    color: var(--text-normal);
+    font-size: 13px;
+    font-weight: 800;
+
+    &:not(:last-child)::after {
+      height: 1px;
+      background: var(--primary-color);
+    }
+  }
+
+  span {
+    width: 28px;
+    height: 28px;
+    background: var(--bg-white);
+  }
+
+  .done span,
+  .active span {
+    border-color: var(--primary-color);
+    color: var(--bg-white);
+    background: var(--primary-color);
+  }
+}
+
+.success-hero,
+.complete-card {
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-card);
   background: var(--bg-white);
+  box-shadow: none;
+}
+
+.success-hero {
+  margin-bottom: 16px;
+  padding: 32px 28px 28px;
+
+  h1 {
+    font-weight: 900;
+  }
+
+  p {
+    color: var(--text-normal);
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+
+.application-meta {
+  margin: 28px auto 0;
+  padding: 14px 20px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-soft);
+
+  span {
+    font-size: 13px;
+  }
+
+  strong {
+    font-size: 14px;
+    font-weight: 900;
+  }
+}
+
+.complete-card {
+  padding: 22px 24px;
+
+  h2 {
+    font-size: 1.05rem;
+    font-weight: 900;
+  }
+}
+
+.application-summary {
+  border-color: var(--border-primary);
+
+  > div {
+    grid-template-columns: 180px minmax(0, 1fr);
+  }
+
+  dt,
+  dd {
+    padding: 14px 18px;
+    font-size: 14px;
+  }
+
+  dt {
+    background: var(--bg-soft);
+    color: var(--text-dark);
+    font-weight: 800;
+  }
+
+  dd {
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 576px) {
+  .stepper li:not(:last-child)::after {
+    display: block;
+    left: calc(100% + 6px);
+    width: 12px;
+    height: 1px;
+    background: var(--primary-color);
+  }
+}
+
+.next-section {
+  margin-top: 32px;
+}
+
+.next-steps {
+  gap: 0;
+
+  li {
+    padding: 0 18px;
+
+    &:not(:last-child)::after {
+      top: 38px;
+      right: -24px;
+      width: 48px;
+      border-top: 3px dotted var(--border-light);
+    }
+  }
+
+  .step-icon {
+    width: 78px;
+    height: 78px;
+    position: relative;
+    margin-bottom: 14px;
+    border-color: var(--border-primary);
+    background: var(--bg-primary);
+    font-size: 1.7rem;
+  }
+
+  .step-number {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    top: -7px;
+    left: -7px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--bg-white);
+    background: var(--primary-color);
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  strong {
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  p {
+    color: var(--text-normal);
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+.record-cta {
+  margin-top: 32px;
+  padding: 18px 20px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-soft);
+
+  strong {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  p {
+    color: var(--text-normal);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  a {
+    min-height: 48px;
+    border-radius: var(--radius-tag);
+    font-size: 14px;
+    font-weight: 900;
+  }
+}
+
+@media (max-width: 768px) {
+  .complete-page {
+    padding-top: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-toolbar {
+    min-height: 36px;
+  }
+
+  .stepper {
+    margin: 0;
+    padding: 0;
+  }
+
+  .success-hero,
+  .complete-card {
+    padding: 20px 16px;
+  }
+
+  .application-summary > div {
+    grid-template-columns: 1fr;
+  }
+
+  .next-steps {
+    gap: 28px 0;
+
+    li {
+      padding: 0 12px;
+    }
+
+    .step-icon {
+      width: 68px;
+      height: 68px;
+    }
+  }
+}
+
+/* Shared public-facing treatment for the vendor application flow. */
+.complete-page {
+  width: var(--user-content-wide-width);
+  padding-top: 28px;
+  background: var(--primary-soft);
+}
+
+.stepper {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 
   .step-dot {
     border-color: var(--border-primary);
@@ -530,7 +791,7 @@
 }
 
 .application-meta {
-  margin: 28px auto 36px;
+  margin: 28px auto 0;
   border: 1px solid var(--border-primary);
   background: var(--bg-soft);
 }
@@ -557,7 +818,100 @@
   }
 
   .stepper {
-    margin-bottom: 32px;
-    padding: 12px 10px;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Keep the completion summary compact while preserving all submitted details. */
+.success-hero {
+  padding: 22px 28px 20px;
+
+  h1 {
+    margin: 14px 0 6px;
+  }
+
+  p {
+    margin: 3px 0;
+  }
+}
+
+.success-mark {
+  width: 70px;
+  height: 70px;
+  font-size: 2.4rem;
+}
+
+.application-meta {
+  margin-top: 20px;
+  padding-block: 10px;
+}
+
+.complete-card {
+  padding-block: 18px;
+
+  h2 {
+    margin-bottom: 12px;
+  }
+}
+
+.application-summary {
+  > div {
+    min-height: 46px;
+  }
+
+  dt,
+  dd {
+    padding-block: 10px;
+    line-height: 1.5;
+  }
+}
+
+/* Keep all five follow-up steps aligned in one row on tablets. */
+@media (min-width: 577px) and (max-width: 992px) {
+  .next-steps {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0;
+
+    li {
+      min-width: 0;
+      padding: 0 8px;
+
+      &:not(:last-child)::after,
+      &:nth-child(3)::after {
+        display: block;
+        top: 32px;
+        right: -12px;
+        width: 24px;
+      }
+    }
+
+    .step-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 10px;
+      font-size: 1.35rem;
+    }
+
+    .step-number {
+      width: 22px;
+      height: 22px;
+      font-size: 11px;
+    }
+
+    strong {
+      font-size: 13px;
+    }
+
+    p {
+      font-size: 12px;
+      line-height: 1.55;
+    }
+  }
+}
+
+@media (min-width: 641px) and (max-width: 992px) {
+  .complete-page {
+    width: min(100% - 64px, 1100px);
   }
 }

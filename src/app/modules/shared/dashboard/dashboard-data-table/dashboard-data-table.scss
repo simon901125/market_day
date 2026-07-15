@@ -154,10 +154,11 @@
 }
 
 .table-action {
-  width: auto;
+  width: 76px;
   min-width: 76px;
+  box-sizing: border-box;
   height: 34px;
-  padding: 0 12px;
+  padding: 0 8px;
   border: 1px solid var(--primary-color);
   border-radius: var(--radius-tag);
   background: var(--bg-white);
@@ -170,6 +171,11 @@
     border-color 0.2s ease,
     box-shadow 0.2s ease,
     color 0.2s ease;
+
+  &.long-label {
+    width: 104px;
+    min-width: 104px;
+  }
 
   &:hover,
   &.primary,

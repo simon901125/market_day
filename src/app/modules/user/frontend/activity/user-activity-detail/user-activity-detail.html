@@ -15,9 +15,6 @@
 
   <section class="market-section">
     <div class="market-image-wrap">
-      <span class="status-badge" [class]="market?.statusClass">
-        {{ market?.status }}
-      </span>
       <img [src]="market?.image" [alt]="market?.title" />
     </div>
 
@@ -31,40 +28,42 @@
       <div class="info-card">
         <ul>
           <li>
-            <i class="bi bi-calendar-event"></i>
+            <i class="bi bi-flag"></i>
             <div>
-              <span>活動日期</span>
-              <strong>{{ market?.start_date }} - {{ market?.end_date }}</strong>
+              <span>活動狀態</span>
+              <strong class="activity-status-tag" [ngClass]="market?.statusClass">
+                {{ market?.status }}
+              </strong>
             </div>
           </li>
 
           <li>
-            <i class="bi bi-clock"></i>
+            <i class="bi bi-calendar-event"></i>
             <div>
               <span>活動時間</span>
-              <strong>{{ market?.time }}</strong>
+              <div class="schedule-inline">
+                <strong>{{ market?.start_date }} - {{ market?.end_date }}</strong>
+                <strong>{{ market?.time }}</strong>
+              </div>
             </div>
           </li>
 
           <li>
             <i class="bi bi-geo-alt"></i>
-            <div class="location-lines">
-              <strong>活動地點：{{ market?.location }}</strong>
-              <strong>活動地址：{{ market?.address }}</strong>
+            <div>
+              <span>活動地點</span>
+              <strong>{{ market?.location }}</strong>
             </div>
           </li>
 
           <li>
-            <i class="bi bi-stopwatch"></i>
-            <div class="countdown-info">
-              <span class="primary-text">
-                {{ marketDaysText(market?.start_date || '', market?.end_date || '') }}
-              </span>
-              @if (countMarketDays(market?.start_date || '') > 0) {
-                <strong>{{ countMarketDays(market?.start_date || '') }} 天</strong>
-              }
+            <i class="bi bi-map"></i>
+            <div>
+              <span>活動地址</span>
+              <strong>{{ market?.address }}</strong>
             </div>
           </li>
+
         </ul>
       </div>
     </div>

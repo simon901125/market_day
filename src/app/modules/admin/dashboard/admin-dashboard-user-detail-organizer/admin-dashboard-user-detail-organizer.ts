@@ -183,10 +183,10 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
     if (this.isAccountActive) {
       const confirmed = await this.alert.confirmHtml({
         html: `
-          <div class="restore-confirm-content">
-            <div class="restore-confirm-icon"><i class="bi bi-exclamation-circle"></i></div>
+          <div class="registration-swal-content">
+            <div class="registration-swal-icon warning"><i class="bi bi-exclamation-lg"></i></div>
             <h3>停用帳號確認</h3>
-            <p>確定要停用使用者「${username}」(${email})的帳號嗎？</p>
+            <p class="registration-swal-main">確定要停用使用者「${username}」(${email})的帳號嗎？</p>
             <div class="restore-confirm-effects">
               <ul>
                 <li>該帳號將無法登入管理後台與使用相關功能</li>
@@ -210,10 +210,10 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
     } else {
       const confirmed = await this.alert.confirmHtml({
         html: `
-          <div class="restore-confirm-content">
-            <div class="restore-confirm-icon"><i class="bi bi-exclamation-circle"></i></div>
+          <div class="registration-swal-content">
+            <div class="registration-swal-icon warning"><i class="bi bi-exclamation-lg"></i></div>
             <h3>恢復帳號確認</h3>
-            <p>確定要恢復使用者「${username}」(${email})的帳號嗎？</p>
+            <p class="registration-swal-main">確定要恢復使用者「${username}」(${email})的帳號嗎？</p>
             <div class="restore-confirm-effects">
               <ul>
                 <li>該帳號可重新登入系統</li>

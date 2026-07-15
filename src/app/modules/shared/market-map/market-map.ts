@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, Input, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { Dropdown } from '../dropdown/dropdown';
@@ -118,7 +118,7 @@ const createBooths = (): MarketMapBooth[] => {
   return booths;
 };
 
-const DEFAULT_MAP: MarketMapData = {
+export const DEFAULT_MARKET_MAP_DATA: MarketMapData = {
   name: '小集日市集',
   width: 1000,
   height: 580,
@@ -164,7 +164,8 @@ export class MarketMap {
   @ViewChild('fullscreenMapStage') private fullscreenMapStage?: ElementRef<HTMLDivElement>;
 
   @Input() mode: MarketMapMode = 'public';
-  @Input() mapData: MarketMapData = DEFAULT_MAP;
+  @Input() mapData: MarketMapData = DEFAULT_MARKET_MAP_DATA;
+  @Output() boothSelected = new EventEmitter<MarketMapBooth>();
 
   selectedBooth: MarketMapBooth | null = null;
   hoveredBooth: MarketMapBooth | null = null;
@@ -286,11 +287,15 @@ export class MarketMap {
   }
 
   selectBooth(booth: MarketMapBooth): void {
-    if (booth.id === 'service-booth') {
+    if (this.mode === 'vendor-view' || booth.id === 'service-booth') {
       return;
     }
 
     if (this.mode === 'public' && !booth.brand) {
+      return;
+    }
+
+    if (this.mode === 'select' && booth.status === 'occupied') {
       return;
     }
 
@@ -305,6 +310,7 @@ export class MarketMap {
     }
 
     this.selectedBooth = booth;
+    this.boothSelected.emit(booth);
   }
 
   selectBrand(booth: MarketMapBooth): void {
@@ -334,7 +340,7 @@ export class MarketMap {
       this.selectedBooth = booth;
       this.hasPublicBrandSelection = true;
       this.hoverPreviewTimer = null;
-    }, 140);
+    }, 60);
   }
 
   clearBoothPreview(booth: MarketMapBooth): void {

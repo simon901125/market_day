@@ -135,6 +135,28 @@ export class VendorSignupConfirmPage {
     return this.signup?.formData.note?.trim() || '無';
   }
 
+  get signupStatusText(): string {
+    return this.market?.status === '進行中' ? '報名中' : this.market?.status || '報名中';
+  }
+
+  get eventPeriodText(): string {
+    if (!this.market) return '-';
+    return `${this.market.start_date} - ${this.market.end_date}　${this.market.time}`;
+  }
+
+  get registrationPeriodText(): string {
+    if (!this.market) return '-';
+    const eventStart = this.parseDate(this.market.start_date);
+    if (!eventStart) return '-';
+
+    const registrationStart = new Date(eventStart);
+    registrationStart.setDate(registrationStart.getDate() - 45);
+    const registrationEnd = new Date(eventStart);
+    registrationEnd.setDate(registrationEnd.getDate() - 22);
+
+    return `${this.formatDateOnly(registrationStart)} 12:00 - ${this.formatDateOnly(registrationEnd)} 23:59`;
+  }
+
   get eventDates(): string[] {
     if (!this.market) return ['-'];
     return [
@@ -227,5 +249,9 @@ export class VendorSignupConfirmPage {
     const dateText = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
     const weekday = ['日', '一', '二', '三', '四', '五', '六'][date.getDay()];
     return `${includeYear ? `${date.getFullYear()}/` : ''}${dateText}（${weekday}）`;
+  }
+
+  private formatDateOnly(date: Date): string {
+    return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
   }
 }
