@@ -26,7 +26,6 @@ interface StallField {
   value: string;
   required: boolean;
   options?: string[];
-  required?: boolean;
 }
 
 interface UploadGuide {
