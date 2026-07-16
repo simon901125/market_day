@@ -127,6 +127,7 @@
 測試檔：`e2e/auth-password.spec.ts`
 
 - 攤主、主辦方各 1 個 Real API Smoke，先驗證錯誤目前密碼不可修改，再以正確目前密碼修改。
+- 兩個案例另標記為 `@mutating`；`e2e:smoke` 會先以 3 個 workers 跑完其他 20 個案例，再以 1 個 worker 單獨執行 AUTH-07。
 - 成功修改後會在 `finally` 使用同一個 JWT 將密碼還原，避免影響其他測試。
 - 2 個案例已完成撰寫並可被 Playwright 載入，但目前尚未實跑：8081 未啟動，直接啟動後端時 SQL Server 拒絕目前的 `sa` 登入設定。
 - 必須以可正常連線資料庫的方式重新啟動新版後端，再執行 `npx playwright test e2e/auth-password.spec.ts`。

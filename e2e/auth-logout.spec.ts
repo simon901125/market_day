@@ -18,8 +18,14 @@ test.describe('AUTH-08 登出', () => {
       await loginWithUi(page, config, email!, password!);
       await expect(page).toHaveURL(config.dashboardPath);
 
-      await page.locator('button.user-box').click();
-      await page.locator('button.user-menu-item.logout').click();
+      const userMenuButton = page.locator('button.user-box');
+      await userMenuButton.focus();
+      await userMenuButton.press('Enter');
+
+      const logoutButton = page.locator('button.user-menu-item.logout');
+      await expect(logoutButton).toBeVisible();
+      await logoutButton.focus();
+      await logoutButton.press('Enter');
 
       const logoutResponsePromise = page.waitForResponse(
         (response) =>

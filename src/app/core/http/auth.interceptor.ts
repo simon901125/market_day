@@ -1,6 +1,7 @@
 import {
   HttpErrorResponse,
   HttpInterceptorFn,
+  HttpRequest,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
@@ -20,6 +21,19 @@ function isPublicAuthEndpoint(url: string): boolean {
   return PUBLIC_AUTH_ENDPOINTS.some((pattern) => pattern.test(url));
 }
 
+function isLoggedInPasswordChange(request: HttpRequest<unknown>): boolean {
+  if (!/\/api\/auth\/resetPassword\/reset(?:[/?#]|$)/.test(request.url)) {
+    return false;
+  }
+
+  const body = request.body;
+  return (
+    typeof body === 'object' &&
+    body !== null &&
+    'currentPassword' in body
+  );
+}
+
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
@@ -28,7 +42,10 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
     authService.getRoleFromUrl(globalThis.location?.pathname ?? '');
   const token = role ? authService.getToken(role) : null;
   const isBackendRequest = request.url.startsWith(environment.apiBaseUrl);
-  const isPublicAuthRequest = isBackendRequest && isPublicAuthEndpoint(request.url);
+  const isPublicAuthRequest =
+    isBackendRequest &&
+    isPublicAuthEndpoint(request.url) &&
+    !isLoggedInPasswordChange(request);
 
   // 登入、註冊及密碼驗證流程不可攜帶舊 Token，避免過期 Token
   // 讓第一次登入在請求送達後端前就被攔截為 401。

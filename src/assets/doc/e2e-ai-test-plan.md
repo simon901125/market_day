@@ -90,6 +90,13 @@ npm run e2e:ui
 npm run e2e:report
 ```
 
+`e2e:smoke` 會完整執行 22 個帳號案例，分為兩個階段：
+
+1. 先用 3 個 workers 平行執行 20 個不修改密碼的 Smoke。
+2. 再用 1 個 worker 執行標記 `@mutating` 的 2 個 AUTH-07 修改密碼案例，避免共用測試帳號互相影響。
+
+pre-push 使用相同流程，兩個階段都通過後才會允許 push。
+
 執行單一測試檔：
 
 ```powershell

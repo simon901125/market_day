@@ -16,7 +16,7 @@ const passwordApiUrl = 'http://localhost:8081/api/auth/resetPassword/reset';
 
 test.describe('AUTH-07 登入後修改密碼', () => {
   for (const config of passwordRoles) {
-    test(`@smoke ${config.label}目前密碼驗證與修改密碼`, async ({ page }) => {
+    test(`@smoke @mutating ${config.label}目前密碼驗證與修改密碼`, async ({ page }) => {
       test.setTimeout(90_000);
       const { email, password } = getCredentials(config);
       test.skip(
@@ -53,7 +53,10 @@ test.describe('AUTH-07 登入後修改密碼', () => {
 
         passwordChanged = isApiSuccessStatus(incorrectBody.statusCode);
         expect(incorrectBody.statusCode).toBe(400);
-        await expect(page.getByRole('alert')).toContainText('目前密碼錯誤');
+        const incorrectMessage =
+          incorrectBody.messageDetails || incorrectBody.message;
+        expect(incorrectMessage).toBeTruthy();
+        await expect(page.getByRole('alert')).toContainText(incorrectMessage);
 
         const successResponse = await submitPasswordChange(
           page,
@@ -67,7 +70,7 @@ test.describe('AUTH-07 登入後修改密碼', () => {
         passwordChanged = isApiSuccessStatus(successBody.statusCode);
 
         const successDialog = page.getByRole('dialog');
-        await expect(successDialog).toContainText('密碼已變更');
+        await expect(successDialog).toContainText('密碼已更新');
         await successDialog.getByRole('button', { name: '確定' }).click();
       } finally {
         if (passwordChanged) {
