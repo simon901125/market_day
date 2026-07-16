@@ -26,6 +26,7 @@ interface StallField {
   value: string;
   required: boolean;
   options?: string[];
+  required?: boolean;
 }
 
 interface UploadGuide {
@@ -47,6 +48,7 @@ export class VendorDashboardStall implements OnInit {
   private coverFile: File | null = null;
   private persistedAvatarImageUrl: string | null = null;
   private persistedCoverImageUrl: string | null = null;
+  armedBrandImage: 'avatar' | 'cover' | null = null;
 
   /** 基本資料先使用假資料綁定，之後串接 API 時可直接替換欄位 value。 */
   basicFields: StallField[] = [
@@ -269,13 +271,25 @@ export class VendorDashboardStall implements OnInit {
     if (type === 'avatar') {
       this.avatarFile = file;
       this.avatarPreview = preview;
+      this.armedBrandImage = null;
       this.clearInvalid('avatar');
       return;
     }
 
     this.coverFile = file;
     this.coverPreview = preview;
+    this.armedBrandImage = null;
     this.clearInvalid('cover');
+  }
+
+  prepareBrandImageRemoval(event: Event, type: 'avatar' | 'cover'): void {
+    const target = event.target as Element;
+    if (target.closest('.remove-brand-image')) return;
+    if (!globalThis.matchMedia?.('(hover: none)').matches || this.armedBrandImage === type) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    this.armedBrandImage = type;
   }
 
   private readFileAsDataUrl(file: File): Promise<string> {

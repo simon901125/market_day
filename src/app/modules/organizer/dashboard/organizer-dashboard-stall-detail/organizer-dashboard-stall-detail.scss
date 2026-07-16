@@ -2,11 +2,13 @@
 
 .stall-detail-page {
   width: min(100%, var(--dashboard-content-width));
-  height: calc(100dvh - 48px);
+  height: calc(100dvh - var(--dashboard-content-offset, 48px));
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-sizing: border-box;
+  background: var(--bg-white);
 }
 
 .detail-header { flex: 0 0 auto; margin-bottom: 12px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
@@ -16,7 +18,20 @@
 .app-breadcrumb span { color: var(--text-dark); }
 .title-row { display: flex; align-items: center; gap: 12px; }
 .title-row .app-page-title { display: inline-flex; align-items: center; gap: 10px; font-size: 22px; }
-.detail-scroll { min-height: 0; overflow-x: hidden; overflow-y: auto; padding-bottom: 28px; }
+.detail-scroll {
+  width: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: 28px;
+  box-sizing: border-box;
+  background: var(--bg-white);
+}
+
+.detail-scroll > * {
+  width: 100%;
+  box-sizing: border-box;
+}
 
 .detail-card {
   min-width: 0;
@@ -93,4 +108,71 @@
 .booth-pagination { display: block; margin-top: 12px; }
 
 @media (max-width: 1180px) { .summary-grid { grid-template-columns: 1fr; } .event-content { grid-template-columns: 298px minmax(0, 1fr); } }
-@media (max-width: 900px) { .stall-detail-page { height: auto; min-height: calc(100dvh - 48px); overflow: visible; } .detail-scroll { overflow: visible; } .event-content { grid-template-columns: 1fr; } .event-image-frame { aspect-ratio: 5 / 3; min-height: 0; margin: 0; } .event-image-frame img { position: static; } .toolbar { align-items: stretch; flex-direction: column; } .booth-search { width: 100%; box-sizing: border-box; } }
+@media (max-width: 900px) {
+  .stall-detail-page {
+    height: auto;
+    min-height: calc(100dvh - var(--dashboard-content-offset, 48px));
+    overflow: visible;
+  }
+
+  .detail-scroll {
+    overflow: visible;
+  }
+
+  .event-content {
+    grid-template-columns: minmax(190px, 42%) minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .toolbar app-dropdown {
+    width: min(100%, 350px);
+    flex: 0 0 auto;
+  }
+
+  .booth-search {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 576px) {
+  .detail-card {
+    padding-inline: 16px;
+  }
+
+  .toolbar app-dropdown {
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  :host ::ng-deep .toolbar app-dropdown .select-wrapper {
+    width: fit-content;
+    max-width: 100%;
+    grid-template-columns: 64px 136px;
+    gap: 10px;
+  }
+
+  :host ::ng-deep .toolbar app-dropdown .dropdown-list {
+    left: 74px;
+    width: 136px;
+  }
+
+  .event-content {
+    grid-template-columns: 1fr;
+  }
+
+  .event-image-frame {
+    aspect-ratio: 5 / 3;
+    min-height: 0;
+    margin: 0;
+  }
+
+  .event-image-frame img {
+    position: static;
+  }
+}

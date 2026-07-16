@@ -1,5 +1,14 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
 .application-detail-page {
   width: min(100%, var(--dashboard-wide-content-width));
+  max-width: none;
+  margin-inline: 0;
+  box-sizing: border-box;
   color: var(--text-dark);
 }
 
@@ -484,7 +493,7 @@
 .application-detail-page {
   --detail-section-gap: 12px;
   width: min(100%, var(--dashboard-content-width));
-  height: calc(100dvh - 48px);
+  height: calc(100dvh - var(--dashboard-content-offset, 48px));
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -643,7 +652,13 @@
 }
 
 @media (max-width: 992px) {
-  .application-detail-page { height: auto; overflow: visible; }
+  .application-detail-page {
+    width: 100%;
+    max-width: none;
+    height: auto;
+    margin-inline: 0;
+    overflow: visible;
+  }
   .application-detail-page .detail-content { overflow: visible; }
 
   .application-detail-page .summary-card,
@@ -923,8 +938,7 @@
 }
 
 .application-detail-page .status-reason-box {
-  width: fit-content;
-  max-width: min(100%, 920px);
+  width: min(100%, 608px);
   margin-top: 16px;
   padding: 16px 22px;
   border: 1px solid rgba(245, 158, 11, 0.22);
@@ -952,10 +966,18 @@
     margin: 0;
     color: var(--text-dark);
     font-size: 14px;
-    font-weight: 800;
     line-height: 1.65;
     white-space: normal;
     overflow-wrap: anywhere;
+  }
+
+  .reason-title {
+    font-weight: 800;
+  }
+
+  .reason-description {
+    margin-top: 4px;
+    font-weight: 500;
   }
 }
 
@@ -1071,6 +1093,11 @@
 }
 
 @media (max-width: 992px) {
+  .application-detail-page .detail-summary-grid .summary-card {
+    grid-template-columns: minmax(220px, 40%) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
   .application-detail-page .detail-summary-grid .summary-image {
     height: 220px;
   }
@@ -1091,7 +1118,81 @@
 }
 
 @media (max-width: 576px) {
+  .application-detail-page .detail-summary-grid .summary-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .application-detail-page .detail-summary-grid .summary-image {
     height: 180px;
+  }
+
+  .application-detail-page .progress-steps.status-flow {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    min-height: 0;
+    padding: 2px 0 0 22px;
+    overflow: visible;
+  }
+
+  .application-detail-page .progress-step.status-step {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    min-height: 64px;
+    margin: 0 0 12px;
+    padding: 10px 14px;
+    justify-content: center;
+  }
+
+  .application-detail-page .progress-step.status-step::before {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: -22px;
+    z-index: 1;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    background: var(--bg-white);
+    box-sizing: border-box;
+  }
+
+  .application-detail-page .progress-step.status-step:not(:last-of-type)::after {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: -18px;
+    width: 2px;
+    height: calc(100% + 2px);
+    background: var(--border-primary);
+  }
+
+  .application-detail-page .progress-step.status-step span {
+    font-size: 12px;
+  }
+
+  .application-detail-page .progress-step.status-step strong {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .application-detail-page .status-arrow {
+    display: none;
+  }
+
+  .application-detail-page .status-reason-box {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    grid-template-columns: 88px minmax(0, 1fr);
+    padding: 14px 16px;
+    gap: 12px;
+
+    > div {
+      padding-left: 14px;
+    }
   }
 }

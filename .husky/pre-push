@@ -1,0 +1,1 @@
+E2E_PRE_PUSH=1 PLAYWRIGHT_HTML_OPEN=never npm run e2e:smoke

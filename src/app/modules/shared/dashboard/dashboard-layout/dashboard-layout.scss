@@ -13,6 +13,8 @@
 }
 
 .dashboard-main {
+  --dashboard-content-offset: 48px;
+
   flex: 1;
   min-width: 0;
   height: 100dvh;
@@ -21,14 +23,142 @@
   padding: 24px 40px;
 }
 
+.mobile-dashboard-header,
+.mobile-sidebar-backdrop {
+  display: none;
+}
+
 @media (max-width: 992px) {
   .dashboard-main {
     padding: 20px 24px;
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 992px) {
+  .dashboard-layout {
+    display: block;
+  }
+
+  .mobile-dashboard-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    height: 56px;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-white);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+
+    .mobile-dashboard-logo {
+      display: block;
+      width: min(132px, calc(100% - 116px));
+      min-width: 0;
+      height: 38px;
+      object-fit: contain;
+      object-position: left center;
+    }
+  }
+
+  .mobile-menu-toggle {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-tag);
+    background: var(--bg-primary);
+    color: var(--primary-color);
+    display: grid;
+    flex: 0 0 38px;
+    place-items: center;
+    cursor: pointer;
+
+    i {
+      font-size: 24px;
+      line-height: 1;
+    }
+  }
+
+  .mobile-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: rgba(31, 26, 22, 0.42);
+    opacity: 0;
+    visibility: hidden;
+    display: block;
+    cursor: default;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+
+    &.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  app-dashboard-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 120;
+    transform: translateX(-100%);
+    transition: transform 0.24s ease;
+
+    &.mobile-open {
+      transform: translateX(0);
+    }
+  }
+
   .dashboard-main {
-    padding: 16px;
+    --dashboard-content-offset: 100px;
+
+    width: 100%;
+    height: calc(100dvh - 56px);
+    margin-top: 56px;
+    padding: 16px 32px 28px;
+    box-sizing: border-box;
+  }
+
+  .dashboard-main:has(
+    .app-page-header,
+    .organizer-detail-header,
+    .vendor-detail-header,
+    .notification-page.dashboard-list-page > .page-header
+  ) {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .mobile-dashboard-header {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .dashboard-main {
+    --dashboard-content-offset: 88px;
+
+    padding: 12px 20px 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  .mobile-dashboard-header {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .dashboard-main {
+    --dashboard-content-offset: 84px;
+
+    padding-right: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
   }
 }

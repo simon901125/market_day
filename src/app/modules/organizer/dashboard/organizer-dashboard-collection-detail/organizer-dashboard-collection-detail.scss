@@ -7,7 +7,7 @@
   --detail-label-width: 96px;
   --detail-label-gap: 14px;
   width: min(100%, var(--dashboard-content-width));
-  height: calc(100dvh - 48px);
+  height: calc(100dvh - var(--dashboard-content-offset, 48px));
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -758,16 +758,16 @@
     overflow: visible;
   }
 
-  .detail-header,
   .top-grid,
   .middle-grid,
   .bottom-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .detail-header {
-    align-items: flex-start;
-    flex-direction: column;
+  .header-actions {
+    margin-left: auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .detail-scroll {
@@ -782,6 +782,17 @@
   .payment-focus {
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
+    min-height: 0;
+    padding: 0;
+
+    > div {
+      min-height: 46px;
+      padding: 0 14px;
+    }
+
+    > div + div {
+      border-top: 1px solid var(--border-soft);
+    }
   }
 
   .registration-focus {
@@ -791,6 +802,10 @@
 
   .payment-focus-amount {
     text-align: left;
+
+    strong {
+      font-size: 22px;
+    }
   }
 
   .payment-meta-list {
@@ -799,6 +814,35 @@
     div {
       grid-column: auto;
       border-right: 0;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .registration-summary-card {
+    .card-heading {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+
+      h2 {
+        white-space: nowrap;
+      }
+    }
+
+    .card-actions {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+
+      .outline-button {
+        width: 100%;
+        min-width: 0;
+        padding-inline: 8px;
+        white-space: nowrap;
+      }
     }
   }
 }

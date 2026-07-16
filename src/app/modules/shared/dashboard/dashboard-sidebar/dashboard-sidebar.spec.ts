@@ -21,6 +21,14 @@ describe('DashboardSidebar', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should open the user menu while the sidebar is collapsed', () => {
+    component.isCollapsed = true;
+
+    component.toggleUserMenu();
+
+    expect(component.isUserMenuOpen).toBeTrue();
+  });
+
   it('should lock vendor application records until the stall profile is complete', () => {
     const item = {
       label: '我的報名紀錄',

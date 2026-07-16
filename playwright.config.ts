@@ -3,6 +3,15 @@ import { config as loadEnv } from 'dotenv';
 
 loadEnv({ path: '.env.e2e.local', quiet: true });
 
+if (
+  process.env['E2E_PRE_PUSH'] === '1' &&
+  (!process.env['E2E_ORGANIZER_EMAIL'] || !process.env['E2E_ORGANIZER_PASSWORD'])
+) {
+  throw new Error(
+    'Pre-push E2E requires E2E_ORGANIZER_EMAIL and E2E_ORGANIZER_PASSWORD in .env.e2e.local.',
+  );
+}
+
 const isUiMode = process.argv.includes('--ui');
 const slowMo = Number(
   process.env[isUiMode ? 'PW_UI_SLOW_MO' : 'PW_SLOW_MO'] ?? 0,

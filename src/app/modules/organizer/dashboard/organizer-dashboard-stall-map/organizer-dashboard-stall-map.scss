@@ -1,5 +1,5 @@
 :host { display: block; }
-.stall-map-page { width: min(100%, var(--dashboard-content-width)); height: calc(100dvh - 48px); margin: 0 auto; overflow: hidden; display: flex; flex-direction: column; }
+.stall-map-page { width: min(100%, var(--dashboard-content-width)); height: calc(100dvh - var(--dashboard-content-offset, 48px)); margin: 0 auto; overflow: hidden; display: flex; flex-direction: column; }
 .detail-header { flex: 0 0 auto; margin-bottom: 12px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
 .app-breadcrumb { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--text-light); font-size: 14px; font-weight: 800; }
 .app-breadcrumb a { color: var(--text-normal); text-decoration: none; cursor: pointer; }
@@ -37,4 +37,110 @@
 :host ::ng-deep app-market-map .organizer-brand-info h2 { margin-bottom: 6px; }
 :host ::ng-deep app-market-map .organizer-brand-info { margin-top: 6px; padding-top: 8px; }
 :host ::ng-deep app-market-map .organizer-registration-link { height: 40px; margin-top: 10px; }
-@media (max-width: 768px) { .stall-map-page { height: auto; overflow: visible; } .activity-summary { min-height: 0; flex-basis: auto; align-items: flex-start; flex-wrap: wrap; gap: 8px 14px; white-space: normal; } .activity-place { overflow: visible; } }
+@media (max-width: 992px) {
+  .stall-map-page {
+    height: auto;
+    min-height: calc(100dvh - var(--dashboard-content-offset, 48px));
+    overflow: visible;
+  }
+
+  .activity-summary {
+    min-height: 0;
+    flex-basis: auto;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    margin-bottom: 12px;
+    white-space: normal;
+  }
+
+  .activity-name {
+    order: 1;
+  }
+
+  .activity-time {
+    order: 2;
+  }
+
+  .activity-place {
+    order: 3;
+    flex: 1 0 100%;
+    overflow: visible;
+    white-space: normal;
+  }
+
+  .booth-stat {
+    order: 4;
+  }
+
+  .map-card {
+    min-height: 0;
+    flex: 0 0 auto;
+  }
+
+  :host ::ng-deep app-market-map,
+  :host ::ng-deep app-market-map .market-map,
+  :host ::ng-deep app-market-map .map-layout,
+  :host ::ng-deep app-market-map .map-viewport,
+  :host ::ng-deep app-market-map .map-detail {
+    height: auto;
+  }
+
+  :host ::ng-deep app-market-map .map-canvas {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1056 / 590;
+  }
+
+  :host ::ng-deep app-market-map .map-detail {
+    overflow: visible;
+    padding: 18px;
+  }
+
+  :host ::ng-deep app-market-map .organizer-booth-info,
+  :host ::ng-deep app-market-map .organizer-brand-info dl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+  }
+
+  :host ::ng-deep app-market-map .organizer-empty-selection {
+    min-height: 96px;
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .map-card {
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-card);
+    background: var(--bg-white);
+  }
+
+  :host ::ng-deep app-market-map .map-layout {
+    grid-template-columns: 1fr;
+    border: 0;
+  }
+
+  :host ::ng-deep app-market-map .map-viewport {
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  :host ::ng-deep app-market-map .map-viewport:not(.is-fullscreen) .map-canvas {
+    aspect-ratio: 1056 / 590;
+  }
+
+  :host ::ng-deep app-market-map .map-detail {
+    display: none;
+  }
+
+  :host ::ng-deep app-market-map .organizer-booth-info,
+  :host ::ng-deep app-market-map .organizer-brand-info dl {
+    grid-template-columns: 1fr;
+  }
+}

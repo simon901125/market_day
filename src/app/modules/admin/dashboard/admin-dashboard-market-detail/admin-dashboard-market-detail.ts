@@ -207,10 +207,12 @@ export class AdminDashboardMarketDetail implements OnInit {
             <h3>要求補件</h3>
             <p class="registration-swal-main">此活動申請資料需補件，<br>請填寫補件原因後送出通知。</p>
           </div>
-          <label class="registration-swal-field">
+          <label class="registration-swal-field required-reason-field">
             <span>補件原因</span>
-            <textarea id="supplementReason" class="supplement-swal-textarea" maxlength="200" placeholder="請輸入需補充或修正的內容"></textarea>
-            <em class="supplement-swal-counter" id="supplementCount">0/200</em>
+            <span class="required-reason-control">
+              <textarea id="supplementReason" class="supplement-swal-textarea" maxlength="300" placeholder="請輸入需補充或修正的內容"></textarea>
+              <em class="supplement-swal-counter" id="supplementCount">0/300</em>
+            </span>
           </label>
           <p class="registration-swal-field-error" aria-live="polite"></p>
         </div>
@@ -220,7 +222,7 @@ export class AdminDashboardMarketDetail implements OnInit {
       cancelButtonText: '取消',
       reverseButtons: true,
       customClass: {
-        popup: 'require-supplement-swal',
+        popup: 'require-supplement-swal admin-require-supplement-swal',
       },
       didOpen: () => {
         const textarea = document.getElementById('supplementReason') as HTMLTextAreaElement;
@@ -228,10 +230,10 @@ export class AdminDashboardMarketDetail implements OnInit {
         const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
         if (initialReason && textarea) {
           textarea.value = initialReason;
-          if (counter) counter.textContent = `${initialReason.length}/200`;
+          if (counter) counter.textContent = `${initialReason.length}/300`;
         }
         textarea?.addEventListener('input', () => {
-          if (counter) counter.textContent = `${textarea.value.length}/200`;
+          if (counter) counter.textContent = `${textarea.value.length}/300`;
           if (error) error.textContent = '';
           textarea.classList.remove('is-invalid');
         });

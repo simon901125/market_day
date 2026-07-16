@@ -6,6 +6,8 @@ export interface MenuItem {
   icon: string;
   /** 路徑 */
   path: string;
+  /** 額外視為此選單作用中的路徑前綴 */
+  activePathPrefixes?: string[];
   /** 訊息數 */
   badge?: number;
   /** 主辦方資料完成後才能使用 */

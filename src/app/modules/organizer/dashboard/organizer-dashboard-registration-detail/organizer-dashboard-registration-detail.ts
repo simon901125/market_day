@@ -5,6 +5,7 @@
   createComponent,
   EnvironmentInjector,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -18,6 +19,7 @@ import {
 import { ApplicationStatus } from '../../../../models/status/ApplicationStatus';
 import { AlertService } from '../../../../core/services/alert.service';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
+import { MarketMap } from '../../../shared/market-map/market-map';
 
 const registrationRows: OrganizerRegistrationDetailSeed[] = [
   {
@@ -151,11 +153,13 @@ interface DetailSummaryRow {
 
 @Component({
   selector: 'app-organizer-dashboard-registration-detail',
-  imports: [RouterLink],
+  imports: [RouterLink, MarketMap],
   templateUrl: './organizer-dashboard-registration-detail.html',
   styleUrl: './organizer-dashboard-registration-detail.scss',
 })
 export class OrganizerDashboardRegistrationDetail implements OnInit {
+  @ViewChild('boothMapModal') private boothMapModal?: MarketMap;
+
   readonly ApplicationStatus = ApplicationStatus;
   readonly rejectReasonOptions = [
     '品牌資料填寫不完整',
@@ -366,14 +370,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
         this.openInNewTab('/user/brand-detail');
         return;
       case 'viewBoothMap':
-        this.router.navigate(['/organizer/dash-board/stall/detail', this.detail.id], {
-          queryParams: {
-            view: 'map',
-            boothNo: this.detail.boothAssignments[0]?.boothNo !== '-' ? this.detail.boothAssignments[0]?.boothNo : null,
-            returnPage: this.returnPage,
-            returnStatus: this.returnStatus || null,
-          },
-        });
+        this.boothMapModal?.openFullscreenMap();
         return;
     }
   }
@@ -561,7 +558,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
       reverseButtons: true,
       allowOutsideClick: true,
       customClass: {
-        popup: 'registration-action-swal registration-reject-form-swal',
+        popup: 'registration-action-swal registration-reject-form-swal require-supplement-swal',
       },
       didOpen: () => {
         const host = document.getElementById('rejectReasonDropdownHost');
@@ -587,8 +584,12 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
         this.appRef.attachView(dropdownRef.hostView);
         host.appendChild(dropdownRef.location.nativeElement);
 
-        const descriptionInput = document.getElementById('rejectDescription') as HTMLInputElement | null;
+        const descriptionInput = document.getElementById('rejectDescription') as HTMLTextAreaElement | null;
+        const descriptionCounter = document.getElementById('rejectDescriptionCount');
         descriptionInput?.addEventListener('input', () => {
+          if (descriptionCounter) {
+            descriptionCounter.textContent = `${descriptionInput.value.length}/300`;
+          }
           descriptionInput.classList.remove('is-invalid');
           const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
           if (error) {
@@ -604,7 +605,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
         }
       },
       preConfirm: () => {
-        const descriptionInput = document.getElementById('rejectDescription') as HTMLInputElement | null;
+        const descriptionInput = document.getElementById('rejectDescription') as HTMLTextAreaElement | null;
         const description = descriptionInput?.value.trim() ?? '';
         const error = document.querySelector<HTMLElement>('.registration-swal-field-error');
 
@@ -692,9 +693,12 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
           <div id="rejectReasonDropdownHost" class="registration-swal-dropdown-host"></div>
         </label>
 
-        <label class="registration-swal-field">
+        <label class="registration-swal-field required-reason-field">
           <span>原因說明 <b>*</b></span>
-          <input id="rejectDescription" type="text" placeholder="請輸入原因說明" />
+          <span class="required-reason-control">
+            <textarea id="rejectDescription" class="supplement-swal-textarea" maxlength="300" placeholder="請輸入原因說明"></textarea>
+            <em class="supplement-swal-counter" id="rejectDescriptionCount">0/300</em>
+          </span>
         </label>
 
         <p class="registration-swal-field-error" aria-live="polite"></p>

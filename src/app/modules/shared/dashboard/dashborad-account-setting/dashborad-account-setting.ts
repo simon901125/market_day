@@ -91,7 +91,10 @@ export class DashboradAccountSetting implements OnDestroy {
 
     try {
       const result = await firstValueFrom(
-        this.authService.changePassword({ password: payload.newPassword })
+        this.authService.changePassword({
+          currentPassword: payload.currentPassword,
+          password: payload.newPassword,
+        })
       );
 
       if (!isApiSuccessStatus(result.statusCode)) {

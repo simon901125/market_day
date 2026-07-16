@@ -34,3 +34,145 @@
     transform: translateY(0);
   }
 }
+
+/* 平板與手機共用：頁面導覽與操作列黏附在頂部角色列下方。 */
+@media (max-width: 992px) {
+  .dashboard-layout .app-page-header,
+  .dashboard-layout .organizer-detail-header,
+  .dashboard-layout .vendor-detail-header,
+  .dashboard-layout .notification-page.dashboard-list-page > .page-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    width: auto;
+    margin: 0 -32px 0px;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-white);
+    box-sizing: border-box;
+    box-shadow: 0 3px 10px rgb(60 45 25 / 4%);
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
+  .dashboard-layout .app-page-header {
+    align-items: center;
+    border-bottom: 0;
+  }
+
+  .dashboard-layout :is(.organizer-detail-header, .vendor-detail-header) {
+    border-bottom: 0;
+  }
+
+  .dashboard-layout .notification-page.dashboard-list-page > .page-header {
+    align-items: center;
+    margin-bottom: 0;
+    border-bottom: 0;
+
+    h1 {
+      margin: 0;
+    }
+  }
+
+  .dashboard-layout .app-page-header:has(> .app-page-title:only-child) {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .dashboard-layout .app-page-header > .app-page-title {
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  .dashboard-layout :is(
+    .dashboard-list-page,
+    .organizer-detail-page,
+    .dashboard-detail-page,
+    .account-detail-page,
+    .vendor-stall-page
+  ).page-transition {
+    animation: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard-layout {
+    --mobile-page-header-gap: 10px;
+  }
+
+  .dashboard-layout :is(
+    .app-page-header,
+    .organizer-detail-header,
+    .vendor-detail-header,
+    .notification-page.dashboard-list-page > .page-header
+  ) {
+    width: auto;
+    margin: 0 -20px -14px;
+    padding: 16px 20px;
+  }
+
+  .dashboard-layout .app-page-header {
+    align-items: center;
+  }
+
+  .dashboard-layout :is(
+    .app-page-header,
+    .organizer-detail-header,
+    .vendor-detail-header,
+    .detail-header
+  ) {
+    gap: var(--mobile-page-header-gap);
+  }
+
+  .dashboard-layout :is(
+    .app-page-header,
+    .organizer-detail-header,
+    .vendor-detail-header,
+    .detail-header
+  ) .header-actions {
+    gap: var(--mobile-page-header-gap);
+  }
+
+  .dashboard-layout .app-page-header:has(> .app-page-title:not(:only-child)) {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .dashboard-layout .notification-page.dashboard-list-page > .page-header {
+    margin-bottom: 0;
+  }
+
+  .dashboard-layout :is(.organizer-detail-header, .vendor-detail-header) > :first-child {
+    width: 100%;
+    margin: 0;
+    align-self: stretch;
+    text-align: left;
+  }
+
+  .dashboard-layout :is(.organizer-detail-header, .vendor-detail-header, .detail-header) .app-breadcrumb,
+  .dashboard-layout :is(.organizer-detail-header, .vendor-detail-header, .detail-header) .title-row {
+    margin-left: 0;
+    gap: var(--mobile-page-header-gap);
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .dashboard-layout :is(.organizer-detail-header, .vendor-detail-header, .detail-header) .app-breadcrumb {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .dashboard-layout :is(
+    .app-page-header,
+    .organizer-detail-header,
+    .vendor-detail-header,
+    .notification-page.dashboard-list-page > .page-header
+  ) {
+    width: auto;
+    margin-right: -16px;
+    margin-left: -16px;
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+}

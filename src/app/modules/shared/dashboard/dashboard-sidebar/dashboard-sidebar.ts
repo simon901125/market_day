@@ -1,6 +1,6 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MenuItem } from '../../../../models/interface/shared/MenuItem';
 import { UserMenuItem } from '../../../../models/interface/shared/UserMenuItem';
 
@@ -11,6 +11,8 @@ import { UserMenuItem } from '../../../../models/interface/shared/UserMenuItem';
   styleUrl: './dashboard-sidebar.scss',
 })
 export class DashboardSidebar {
+  constructor(private readonly router: Router) {}
+
   /** Logo 圖片路徑 */
   @Input() logoPath = '';
   @Input() collapsedLogoPath = '/assets/images/logo/logo-market-day-little.png';
@@ -45,16 +47,13 @@ export class DashboardSidebar {
   @Output() accountSettingsRequested = new EventEmitter<void>();
   @Output() organizerProfileRequested = new EventEmitter<void>();
   @Output() lockedMenuItemRequested = new EventEmitter<MenuItem>();
+  @Output() menuItemSelected = new EventEmitter<void>();
 
   /** 使用者選單是否展開 */
   isUserMenuOpen = false;
 
   /** 切換使用者選單 */
   toggleUserMenu(): void {
-    if (this.isCollapsed) {
-      return;
-    }
-
     this.isUserMenuOpen = !this.isUserMenuOpen;
   }
 
@@ -91,8 +90,20 @@ export class DashboardSidebar {
       : '請先完成主辦方資料設定，才能使用此功能';
   }
 
+  isMenuItemActive(item: MenuItem): boolean {
+    const currentPath = this.router.url.split(/[?#]/, 1)[0];
+    return item.activePathPrefixes?.some(
+      (prefix) => currentPath === prefix || currentPath.startsWith(`${prefix}/`),
+    ) ?? false;
+  }
+
   requestLockedMenuItem(item: MenuItem): void {
     this.lockedMenuItemRequested.emit(item);
+  }
+
+  selectMenuItem(): void {
+    this.isUserMenuOpen = false;
+    this.menuItemSelected.emit();
   }
 
   /** 點擊頁面其他區域時關閉使用者選單 */

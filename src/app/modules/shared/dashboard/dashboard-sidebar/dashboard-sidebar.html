@@ -1,6 +1,6 @@
 <aside class="dashboard-sidebar" [class.collapsed]="isCollapsed">
   <div class="brand-row">
-    <div class="brand" [routerLink]="homePath">
+    <div class="brand" [routerLink]="homePath" (click)="selectMenuItem()">
       <img [src]="isCollapsed ? collapsedLogoPath : logoPath" alt="Market Day" />
     </div>
   </div>
@@ -30,7 +30,7 @@
           <i class="bi bi-lock-fill menu-lock" aria-hidden="true"></i>
         </button>
       } @else {
-        <a class="menu-item" [routerLink]="item.path" routerLinkActive="active" [attr.title]="isCollapsed ? item.label : null">
+        <a class="menu-item" [routerLink]="item.path" routerLinkActive="active" [class.active]="isMenuItemActive(item)" [attr.title]="isCollapsed ? item.label : null" (click)="selectMenuItem()">
           <i class="bi" [ngClass]="item.icon"></i>
           <span>{{ item.label }}</span>
         </a>
@@ -58,7 +58,7 @@
               <span>{{ item.label }}</span>
             </button>
           } @else {
-            <a class="user-menu-item" [routerLink]="item.path">
+            <a class="user-menu-item" [routerLink]="item.path" (click)="selectMenuItem()">
               <i class="bi" [ngClass]="item.icon"></i>
               <span>{{ item.label }}</span>
             </a>
@@ -71,6 +71,7 @@
       type="button"
       class="user-box"
       [class.open]="isUserMenuOpen"
+      [attr.aria-expanded]="isUserMenuOpen"
       [attr.title]="isCollapsed ? userName : null"
       (click)="toggleUserMenu()"
     >

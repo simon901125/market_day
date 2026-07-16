@@ -12,9 +12,15 @@
 }
 
 .notification-page.dashboard-list-page {
-  min-height: calc(100dvh - 48px);
+  min-height: calc(100dvh - var(--dashboard-content-offset, 48px));
   display: flex;
   flex-direction: column;
+  gap: 14px;
+
+  > .page-header h1,
+  > .tabs {
+    margin-bottom: 0;
+  }
 
   app-dashboard-pagination {
     margin-top: auto;
@@ -88,7 +94,7 @@
 
 .notification-card {
   display: grid;
-  grid-template-columns: 18px 54px 1fr 170px;
+  grid-template-columns: 18px 54px minmax(0, 1fr);
   align-items: center;
   min-height: 56px;
   padding: 0 24px 0 20px;
@@ -167,10 +173,20 @@
     }
   }
 
+  .notification-content {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
   h3 {
+    min-width: 0;
+    flex: 1;
     margin: 0;
     font-size: 14px;
     font-weight: 800;
+    line-height: 1.45;
     color: var(--text-dark);
   }
 
@@ -181,6 +197,7 @@
   }
 
   time {
+    flex: 0 0 170px;
     text-align: right;
     font-size: 13px;
     font-weight: 700;
@@ -212,7 +229,7 @@
   }
 
   .notification-card {
-    grid-template-columns: 18px 54px 1fr 170px;
+    grid-template-columns: 18px 54px minmax(0, 1fr);
     min-height: 56px;
     padding: 0 24px 0 20px;
 
@@ -237,12 +254,24 @@
 
 @media (max-width: 992px) {
   .notification-card {
-    grid-template-columns: 14px 42px 1fr;
-    gap: 8px 10px;
-    padding: 12px 14px;
+    grid-template-columns: 10px 36px minmax(0, 1fr);
+    column-gap: 10px;
+    padding: 13px 16px;
+
+    .notice-icon {
+      width: 32px;
+      height: 32px;
+      font-size: 17px;
+    }
+
+    .notification-content {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+    }
 
     time {
-      grid-column: 3 / -1;
+      flex-basis: auto;
       text-align: left;
     }
   }
@@ -251,13 +280,25 @@
     padding: 16px 14px;
 
     .notification-card {
-      grid-template-columns: 14px 42px 1fr;
-      gap: 8px 10px;
+      grid-template-columns: 10px 36px minmax(0, 1fr);
+      column-gap: 10px;
       min-height: 56px;
-      padding: 12px 14px;
+      padding: 13px 16px;
+
+      .notice-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 17px;
+      }
+
+      .notification-content {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+      }
 
       time {
-        grid-column: 3 / -1;
+        flex-basis: auto;
         text-align: left;
       }
     }

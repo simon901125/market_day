@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { Dropdown } from '../dropdown/dropdown';
@@ -157,7 +157,7 @@ export const DEFAULT_MARKET_MAP_DATA: MarketMapData = {
   templateUrl: './market-map.html',
   styleUrl: './market-map.scss',
 })
-export class MarketMap {
+export class MarketMap implements OnInit {
   private readonly hostElement = inject(ElementRef<HTMLElement>);
 
   @ViewChild('mapViewport') private mapViewport?: ElementRef<HTMLDivElement>;
@@ -165,7 +165,13 @@ export class MarketMap {
 
   @Input() mode: MarketMapMode = 'public';
   @Input() mapData: MarketMapData = DEFAULT_MARKET_MAP_DATA;
+  @Input() launchOnly = false;
+  @Input() fullscreenDateOptions: string[] = [];
+  @Input() fullscreenSelectedDate = '';
+  @Input() fullscreenAllSelected = false;
   @Output() boothSelected = new EventEmitter<MarketMapBooth>();
+  @Output() fullscreenDateSelected = new EventEmitter<string>();
+  @Output() fullscreenAction = new EventEmitter<void>();
 
   selectedBooth: MarketMapBooth | null = null;
   hoveredBooth: MarketMapBooth | null = null;
@@ -196,6 +202,16 @@ export class MarketMap {
     [68, 345], [68, 471],
     [586, 476], [768, 476],
   ];
+
+  ngOnInit(): void {
+    if (this.mode !== 'organizer-view' || this.selectedBooth) {
+      return;
+    }
+
+    this.selectedBooth = this.mapData.booths.find((booth) => booth.code === 'B13')
+      ?? this.mapData.booths.find((booth) => this.isOrganizerBoothSelected(booth))
+      ?? null;
+  }
 
   get viewBox(): string {
     const paddedWidth = this.mapData.width + this.mapPaddingX * 2;
@@ -246,6 +262,20 @@ export class MarketMap {
     }
 
     return this.selectedBooth ?? this.brandBooths[0] ?? null;
+  }
+
+  get vendorSelectedBooth(): MarketMapBooth | null {
+    if (this.mode !== 'select' && this.mode !== 'vendor-view') {
+      return null;
+    }
+
+    return this.selectedBooth
+      ?? this.mapData.booths.find((booth) => booth.status === 'selected' || booth.status === 'mine')
+      ?? null;
+  }
+
+  get isVendorDashboardMode(): boolean {
+    return this.mode === 'select' || this.mode === 'vendor-view';
   }
 
   setPublicTab(tab: PublicMapTab): void {
@@ -438,6 +468,28 @@ export class MarketMap {
 
   resetView(): void {
     this.zoom = 1;
+  }
+
+  selectFullscreenDate(date: string): void {
+    if (!date || date === this.fullscreenSelectedDate) {
+      return;
+    }
+
+    this.selectedBooth = null;
+    this.fullscreenDateSelected.emit(date);
+    window.setTimeout(() => this.centerFullscreenMap(), 0);
+  }
+
+  runFullscreenAction(): void {
+    if (this.mode !== 'select' || !this.vendorSelectedBooth) {
+      return;
+    }
+
+    if (!this.fullscreenAllSelected) {
+      this.selectedBooth = null;
+    }
+    this.fullscreenAction.emit();
+    window.setTimeout(() => this.centerFullscreenMap(), 0);
   }
 
   openFullscreenMap(): void {

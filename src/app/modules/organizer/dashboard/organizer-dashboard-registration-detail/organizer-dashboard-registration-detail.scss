@@ -7,7 +7,7 @@
   --detail-label-width: 96px;
   --detail-label-gap: 14px;
   width: min(100%, var(--dashboard-content-width));
-  height: calc(100dvh - 48px);
+  height: calc(100dvh - var(--dashboard-content-offset, 48px));
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -866,11 +866,6 @@
 }
 
 @media (max-width: 768px) {
-  .event-detail-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .activity-content {
     grid-template-columns: 1fr;
   }
@@ -883,11 +878,6 @@
   .registration-info-item {
     display: block;
     padding: 10px 0;
-  }
-
-  .header-actions {
-    width: 100%;
-    flex-wrap: wrap;
   }
 
   .brand-content {

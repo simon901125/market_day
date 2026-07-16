@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { Component, HostListener } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
@@ -27,6 +27,8 @@ export class DashboardLayout {
   logoPath = '';
   homePath = '/';
   isSidebarCollapsed = false;
+  isMobileViewport = typeof window !== 'undefined' && window.innerWidth <= 992;
+  isMobileSidebarOpen = false;
 
   menuItems: MenuItem[] = [];
   userMenuItems: UserMenuItem[] = [];
@@ -60,6 +62,13 @@ export class DashboardLayout {
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.openOrganizerProfile());
 
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.closeMobileSidebar());
+
     if (this.role === 'organizer') {
       void this.organizerAccess.initialize(true);
     } else if (this.role === 'vendor') {
@@ -71,15 +80,47 @@ export class DashboardLayout {
     return this.role === 'organizer' && this.organizerAccess.needsProfile() !== false;
   }
 
+  get dashboardTitle(): string {
+    if (this.role === 'admin') return '管理員後台';
+    if (this.role === 'organizer') return '主辦方後台';
+    return '攤主後台';
+  }
+
   get vendorProfileRequired(): boolean {
     return this.role === 'vendor' && this.vendorAccess.needsProfile() !== false;
   }
 
   toggleSidebar(): void {
+    if (this.isMobileViewport) {
+      this.toggleMobileSidebar();
+      return;
+    }
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
 
+  toggleMobileSidebar(): void {
+    this.isMobileSidebarOpen = !this.isMobileSidebarOpen;
+  }
+
+  closeMobileSidebar(): void {
+    this.isMobileSidebarOpen = false;
+  }
+
+  @HostListener('window:resize')
+  onViewportResize(): void {
+    this.isMobileViewport = window.innerWidth <= 992;
+    if (!this.isMobileViewport) {
+      this.closeMobileSidebar();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    this.closeMobileSidebar();
+  }
+
   async logout(): Promise<void> {
+    this.closeMobileSidebar();
     if (this.isLoggingOut) {
       return;
     }
@@ -119,6 +160,7 @@ export class DashboardLayout {
   }
 
   openAccountSettings(): void {
+    this.closeMobileSidebar();
     if (this.role === 'admin') {
       return;
     }
@@ -131,6 +173,7 @@ export class DashboardLayout {
   }
 
   openOrganizerProfile(): void {
+    this.closeMobileSidebar();
     if (this.role !== 'organizer') {
       return;
     }
@@ -269,7 +312,7 @@ export class DashboardLayout {
       { label: '首頁', icon: 'bi-house-door', path: '/admin/dash-board/home' },
       { label: '通知中心', icon: 'bi-bell', path: '/admin/dash-board/notification' },
       { label: '活動管理', icon: 'bi-calendar-event', path: '/admin/dash-board/activity' },
-      { label: '使用者管理', icon: 'bi-people', path: '/admin/dash-board/users' },
+      { label: '使用者管理', icon: 'bi-people', path: '/admin/dash-board/users', activePathPrefixes: ['/admin/dash-board/user/detail'] },
       { label: '操作紀錄', icon: 'bi-clock-history', path: '/admin/dash-board/logs' },
     ];
 

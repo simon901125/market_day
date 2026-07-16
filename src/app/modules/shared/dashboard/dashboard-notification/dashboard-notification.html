@@ -36,12 +36,14 @@
 
             <i class="notice-icon" [class]="item.icon" [ngClass]="item.iconClass"></i>
 
-            <h3>
-              <span class="status-text">{{ item.status }}</span>
-              {{ item.title }}
-            </h3>
+            <div class="notification-content">
+              <h3>
+                <span class="status-text">{{ item.status }}</span>
+                {{ item.title }}
+              </h3>
 
-            <time>{{ item.date }}</time>
+              <time>{{ item.date }}</time>
+            </div>
           </article>
         }
       </div>

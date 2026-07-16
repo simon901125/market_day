@@ -389,6 +389,14 @@
 .registration-reject-form-swal {
   overflow: visible !important;
 
+  .supplement-swal-counter {
+    font-size: 12px !important;
+  }
+
+  .registration-swal-field-error {
+    margin-top: 1px;
+  }
+
   .custom-swal-close {
     z-index: 4;
     pointer-events: auto;
@@ -401,10 +409,10 @@
     text-align: left !important;
   }
 
-  .custom-swal-actions {
+  &.custom-swal-popup.double-action-swal .swal2-actions.custom-swal-actions {
     position: relative;
     z-index: 1;
-    margin-top: 1rem !important;
+    margin: 0.5rem auto 0 !important;
   }
 }
 
@@ -892,6 +900,20 @@
     }
   }
 
+}
+
+.admin-require-supplement-swal {
+  .supplement-swal-counter {
+    font-size: 12px;
+  }
+
+  .registration-swal-field-error {
+    margin-top: 1px;
+  }
+
+  .swal2-actions.custom-swal-actions {
+    margin-top: 0.5rem !important;
+  }
 }
 
 .unpublish-request-swal {

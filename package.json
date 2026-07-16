@@ -8,9 +8,15 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "e2e": "playwright test",
+    "e2e:smoke": "npm run e2e:smoke:parallel && npm run e2e:smoke:mutating",
+    "e2e:smoke:parallel": "playwright test --grep @smoke --grep-invert @mutating --workers=3",
+    "e2e:smoke:mutating": "playwright test --grep @mutating --workers=1",
+    "e2e:full": "playwright test --grep-invert @destructive",
+    "e2e:destructive": "playwright test --grep @destructive",
     "e2e:headed": "playwright test --headed",
     "e2e:ui": "playwright test --ui --ui-port=0",
-    "e2e:report": "playwright show-report"
+    "e2e:report": "playwright show-report",
+    "prepare": "husky"
   },
   "prettier": {
     "printWidth": 100,
@@ -49,6 +55,7 @@
     "@types/jasmine": "~5.1.0",
     "@types/node": "^26.1.1",
     "dotenv": "^17.4.2",
+    "husky": "^9.1.7",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

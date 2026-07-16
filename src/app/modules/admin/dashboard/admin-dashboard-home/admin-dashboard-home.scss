@@ -1,10 +1,10 @@
-﻿:host {
+:host {
   display: block;
 }
 
 .admin-home {
   width: min(100%, var(--dashboard-content-width));
-  min-height: calc(100dvh - 48px);
+  min-height: calc(100dvh - var(--dashboard-content-offset, 48px));
   margin: 0 auto;
   padding: 0;
   display: flex;

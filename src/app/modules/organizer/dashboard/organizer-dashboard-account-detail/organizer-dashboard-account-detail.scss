@@ -7,7 +7,7 @@
   --account-summary-bg: #fff7ed;
 
   width: min(100%, var(--dashboard-content-width));
-  height: calc(100dvh - 48px);
+  height: calc(100dvh - var(--dashboard-content-offset, 48px));
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -494,19 +494,24 @@ td:last-child {
   }
 
   .calculation-box {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(130px, auto);
+    gap: 14px;
   }
 
   .calculation-rule {
-    padding-right: 0;
-    padding-bottom: 12px;
-    border-right: 0;
-    border-bottom: 1px solid var(--border-soft);
+    padding-right: 14px;
+    padding-bottom: 0;
+    border-right: 1px solid var(--border-soft);
+    border-bottom: 0;
   }
 
   .calculation-total {
-    min-width: 0;
-    text-align: left;
+    min-width: 130px;
+    text-align: right;
+
+    mark {
+      text-align: right;
+    }
   }
 }
 
@@ -570,5 +575,56 @@ td:last-child {
 
   .calculation-rule strong {
     white-space: normal;
+  }
+}
+
+@media (max-width: 576px) {
+  .account-detail-page > .detail-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    flex-direction: initial;
+    gap: 10px;
+  }
+
+  .detail-header > div {
+    min-width: 0;
+  }
+
+  .app-breadcrumb {
+    gap: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .title-row {
+    gap: 8px;
+  }
+
+  .title-row .app-page-title {
+    font-size: 20px;
+    white-space: nowrap;
+  }
+
+  .report-download-button {
+    height: 38px;
+    padding-inline: 12px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .calculation-box {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .calculation-rule {
+    padding-right: 0;
+    padding-bottom: 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .calculation-total {
+    min-width: 0;
   }
 }

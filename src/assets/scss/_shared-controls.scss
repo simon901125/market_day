@@ -473,6 +473,57 @@
   .app-create-btn {
     width: 100%;
   }
+
+  // 後台列表頁的主要新增操作維持在標題右側，避免按鈕獨占一整列。
+  .dashboard-list-page .app-page-header {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .dashboard-list-page .app-create-btn {
+    width: auto;
+    min-width: max-content;
+    padding-inline: 14px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 576px) {
+  // 手機版的管理頁標題作為次頁首，固定在主導覽列下方。
+  .dashboard-list-page .app-page-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    margin: -16px -20px 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-white);
+    box-shadow: 0 3px 10px rgb(60 45 25 / 4%);
+  }
+
+  .dashboard-main :is(.app-page-header, .organizer-detail-header, .vendor-detail-header, .detail-header) > .header-actions:has(> button:first-child:nth-last-child(2)) {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-self: stretch;
+    gap: 10px;
+  }
+
+  .dashboard-main :is(.app-page-header, .organizer-detail-header, .vendor-detail-header, .detail-header) > .header-actions:has(> button:first-child:nth-last-child(2)) > button {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 360px) {
+  .dashboard-list-page .app-page-header {
+    margin-right: -16px;
+    margin-left: -16px;
+    padding-right: 16px;
+    padding-left: 16px;
+  }
 }
 
 /* Shared dashboard tabs */

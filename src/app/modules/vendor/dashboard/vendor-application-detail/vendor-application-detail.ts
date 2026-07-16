@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import type {
   ApplicationDetail,
   ApplicationStatus,
+  DetailRow,
 } from '../../../../models/interface/vendor/VendorApplicationDetail';
 import type { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { AlertService } from '../../../../core/services/alert.service';
@@ -113,13 +114,59 @@ export class VendorApplicationDetail {
     return `${this.market.start_date} - ${this.market.end_date}　${this.market.time}`;
   }
 
-  /** 取消原因使用獨立區塊呈現，不與固定寬度的狀態流程卡混排。 */
+  /** 原因使用獨立區塊呈現，不與固定寬度的狀態流程卡混排。 */
   get statusProgress() {
-    return this.detail.progress.filter((step) => step.label !== '取消原因');
+    return this.detail.progress.filter((step) => !this.isReasonLabel(step.label));
   }
 
-  get cancellationReason(): string | null {
-    return this.detail.progress.find((step) => step.label === '取消原因')?.value ?? null;
+  /** 取消／退款原因統一顯示於狀態紀錄下方。 */
+  get statusReason(): {
+    label: '取消原因' | '退款原因';
+    title: string;
+    description: string | null;
+  } | null {
+    const cancellationReason = this.detail.progress.find(
+      (step) => step.label === '取消原因',
+    )?.value;
+
+    if (cancellationReason) {
+      return this.createStatusReason('取消原因', cancellationReason);
+    }
+
+    if (this.detail.sideCard.type !== 'refund') {
+      return null;
+    }
+
+    const storedReason = this.detail.sideCard.rows.find((row) =>
+      this.isReasonLabel(row.label),
+    )?.value;
+    const reason = this.refundReason.trim() || storedReason?.trim();
+
+    return reason ? this.createStatusReason('退款原因', reason) : null;
+  }
+
+  /** 退款原因已移至狀態紀錄，退款資訊卡不再重複顯示。 */
+  get sideCardRows(): DetailRow[] {
+    return this.detail.sideCard.rows.filter((row) => !this.isReasonLabel(row.label));
+  }
+
+  private isReasonLabel(label: string): boolean {
+    return ['取消原因', '退款原因', '退款申請原因'].includes(label);
+  }
+
+  private createStatusReason(
+    label: '取消原因' | '退款原因',
+    value: string,
+  ): { label: '取消原因' | '退款原因'; title: string; description: string | null } {
+    const [firstPart, ...remainingParts] = value.split(/[，,]/);
+    const title = firstPart.trim().replace(/^因/, '') || value.trim();
+    const description = remainingParts.join('，').trim();
+
+    return {
+      label,
+      title,
+      description: description || null,
+    };
   }
 
   getHeaderActionIcon(action: string): string {
