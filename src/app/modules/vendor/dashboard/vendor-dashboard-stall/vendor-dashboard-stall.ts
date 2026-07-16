@@ -1,7 +1,17 @@
-import { Component } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
+import { VendorAccessService } from '../../../../core/services/vendor-access.service';
+import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import {
+  VendorStallInfo,
+  VendorStallSaveRequest,
+} from '../../../../models/interface/vendor/VendorStallInfo';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import {
   VendorProduct,
@@ -27,7 +37,7 @@ interface UploadGuide {
   templateUrl: './vendor-dashboard-stall.html',
   styleUrl: './vendor-dashboard-stall.scss',
 })
-export class VendorDashboardStall {
+export class VendorDashboardStall implements OnInit {
   readonly maxProducts = 3;
   readonly invalidFields = new Set<string>();
   avatarPreview = '';
@@ -105,7 +115,125 @@ export class VendorDashboardStall {
   isProductModalOpen = false;
   editingProductIndex: number | null = null;
 
-  constructor(private readonly alert: AlertService) {}
+  isSaving = false;
+  private isFirstLogin = false;
+
+  constructor(
+    private readonly alert: AlertService,
+    private readonly vendorDashboardService: VendorDashboardService,
+    private readonly authService: AuthService,
+    private readonly router: Router,
+    private readonly vendorAccess: VendorAccessService,
+  ) {}
+
+  ngOnInit(): void {
+    this.initializeEmptyStallForm();
+    this.initializeVendorDashboard();
+  }
+
+  private initializeVendorDashboard(): void {
+    this.vendorDashboardService.getVendorFirstLogin().subscribe({
+      next: (response) => {
+        this.isFirstLogin = response.data?.needsProfileSetup === true;
+
+        if (!this.isFirstLogin) {
+          this.loadVendorStallInfo();
+        }
+      },
+      error: () => {
+        // 初始化失敗時仍載入既有資料，避免把一般使用者誤判為首次登入。
+        this.loadVendorStallInfo();
+      },
+    });
+  }
+
+  private initializeEmptyStallForm(): void {
+    const user = this.authService.getUser('vendor');
+    const initialValues: Record<string, string> = {
+      ownerName: user?.name?.trim() ?? '',
+      email: user?.email?.trim() ?? '',
+    };
+
+    this.basicFields = this.basicFields.map((field) => ({
+      ...field,
+      value: initialValues[field.name] ?? '',
+    }));
+    this.avatarPreview = '';
+    this.coverPreview = '';
+    this.brandInfo.description = '';
+    this.brandInfo.category = '';
+    this.products = [];
+  }
+
+  private loadVendorStallInfo(): void {
+    this.vendorDashboardService.getVendorStallInfo().subscribe({
+      next: (response) => {
+        if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+          if (this.isFirstLogin && this.isMissingStallInfo(response.statusCode, response.message)) {
+            return;
+          }
+          void this.alert.error('攤位資料載入失敗', response.message);
+          return;
+        }
+
+        this.applyVendorStallInfo(response.data);
+      },
+      error: (error: unknown) => {
+        if (this.isFirstLogin && this.isMissingStallInfoError(error)) {
+          return;
+        }
+        void this.alert.error('攤位資料載入失敗', this.getErrorMessage(error));
+      },
+    });
+  }
+
+  private isMissingStallInfo(statusCode: number, message?: string): boolean {
+    const normalizedMessage = message?.toLowerCase() ?? '';
+    return statusCode === 404
+      || normalizedMessage.includes('vendor profile not found')
+      || normalizedMessage.includes('找不到攤主資料')
+      || normalizedMessage.includes('找不到攤位資料');
+  }
+
+  private isMissingStallInfoError(error: unknown): boolean {
+    if (!(error instanceof HttpErrorResponse)) {
+      return false;
+    }
+
+    return this.isMissingStallInfo(error.status, error.error?.message);
+  }
+
+  private applyVendorStallInfo(data: VendorStallInfo): void {
+    const user = this.authService.getUser('vendor');
+    const fieldValues: Record<string, string> = {
+      brandName: data.brandName ?? '',
+      ownerName: data.contactName?.trim() || user?.name?.trim() || '',
+      phone: data.contactPhone ?? '',
+      email: data.contactEmail?.trim() || user?.email?.trim() || '',
+      city: data.city ?? '',
+      instagram: data.instagramUrl ?? '',
+      district: data.district ?? '',
+      facebook: data.facebookUrl ?? '',
+      address: data.address ?? '',
+      website: data.websiteUrl ?? '',
+    };
+
+    this.basicFields = this.basicFields.map((field) => ({
+      ...field,
+      value: fieldValues[field.name] ?? '',
+    }));
+    this.avatarPreview = data.avatarImageUrl ?? '';
+    this.coverPreview = data.coverImageUrl ?? '';
+    this.brandInfo.description = data.brandDescription || data.brandSummary || '';
+    this.brandInfo.category = data.brandType ?? '';
+    this.products = (data.products ?? []).map((product) => ({
+      id: product.id,
+      name: product.productName,
+      description: product.productSummary,
+      price: product.productPrice,
+      image: product.productImageUrl ?? '',
+    }));
+  }
 
   async selectBrandImage(event: Event, type: 'avatar' | 'cover'): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -251,7 +379,7 @@ export class VendorDashboardStall {
     this.products = this.products.filter((_, productIndex) => productIndex !== index);
   }
 
-  /** 儲存目前表單資料；串接 API 時可在此送出攤位資料。 */
+  /** 驗證並儲存目前攤位資料。 */
   saveChanges(): void {
     this.invalidFields.clear();
 
@@ -274,11 +402,68 @@ export class VendorDashboardStall {
       return;
     }
 
-    console.log('stall form saved', {
-      basicFields: this.basicFields,
-      brandInfo: this.brandInfo,
-      products: this.products,
+    this.isSaving = true;
+    const shouldReturnToDashboard = this.isFirstLogin;
+    this.vendorDashboardService.saveVendorStallInfo(this.createSaveRequest()).subscribe({
+      next: async (response) => {
+        this.isSaving = false;
+        if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+          void this.alert.error('攤位資料儲存失敗', response.message);
+          return;
+        }
+
+        this.applyVendorStallInfo(response.data);
+        this.isFirstLogin = false;
+        await this.vendorAccess.refresh();
+        await this.alert.success('儲存成功', response.message);
+        if (shouldReturnToDashboard) {
+          void this.router.navigate(['/vendor/dash-board/home']);
+        }
+      },
+      error: (error: unknown) => {
+        this.isSaving = false;
+        void this.alert.error('攤位資料儲存失敗', this.getErrorMessage(error));
+      },
     });
+  }
+
+  private createSaveRequest(): VendorStallSaveRequest {
+    const values = Object.fromEntries(
+      this.basicFields.map((field) => [field.name, field.value.trim()]),
+    );
+    const description = this.brandInfo.description.trim();
+
+    return {
+      brandName: values['brandName'] ?? '',
+      contactName: values['ownerName'] ?? '',
+      contactPhone: (values['phone'] ?? '').replace(/\D/g, ''),
+      contactEmail: values['email'] ?? '',
+      city: values['city'] ?? '',
+      district: values['district'] ?? '',
+      address: values['address'] ?? '',
+      instagramUrl: values['instagram'] || null,
+      facebookUrl: values['facebook'] || null,
+      websiteUrl: values['website'] || null,
+      avatarImageUrl: this.avatarPreview || null,
+      coverImageUrl: this.coverPreview || null,
+      brandSummary: description,
+      brandDescription: description,
+      brandType: this.brandInfo.category.trim(),
+      products: this.products.map((product) => ({
+        id: product.id,
+        productName: product.name.trim(),
+        productPrice: product.price,
+        productSummary: product.description.trim(),
+        productImageUrl: product.image || null,
+      })),
+    };
+  }
+
+  private getErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      return error.error?.message ?? error.message ?? '請稍後再試。';
+    }
+    return '請稍後再試。';
   }
 
   /** 避免編輯或刪除瀏覽器暫存圖片時留下 object URL。 */

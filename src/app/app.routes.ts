@@ -117,6 +117,7 @@ export const routes: Routes = [
       { path: 'home', component: VendorHome },
       { path: 'about', component: VendorAbout },
       { path: 'sign-up', component: VendorMarketSignupList },
+      { path: 'sign-up-detail/:id', component: VendorMarketSignupDetail },
       { path: 'sign-up-detail', component: VendorMarketSignupDetail },
       { path: 'sign-up-form', component: VendorSignupForm },
       { path: 'sign-up-confirm', component: VendorSignupConfirmPage },

@@ -2,8 +2,14 @@ import { DecimalPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { VendorService } from '../../../../core/Vendor/vendorApi/vendor.service';
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { MarketSlot } from '../../../../models/interface/shared/MarketSlot';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import {
+  VendorApplicationSubmitRequest,
+  VendorApplicationSubmitResponse,
+} from '../../../../models/interface/vendor/VendorApplicationSubmit';
 import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
 import { VendorHeader } from '../vendor-header/vendor-header';
 
@@ -13,12 +19,14 @@ interface ConfirmEquipment {
   detail: string;
   price: number;
   quantity: number;
+  pricingUnit?: string | null;
 }
 
 interface ConfirmPowerOption {
   id: string;
   label: string;
   price: number;
+  pricingUnit?: string | null;
 }
 
 interface SignupConfirmData {
@@ -41,6 +49,7 @@ interface SignupConfirmData {
   equipmentFee?: number;
   powerRentalFee: number;
   totalFee: number;
+  applicationRequest: VendorApplicationSubmitRequest;
 }
 
 @Component({
@@ -57,8 +66,13 @@ export class VendorSignupConfirmPage {
   signup: SignupConfirmData | null = null;
 
   agreed = true;
+  isSubmitting = false;
+  submitError = '';
 
-  constructor(private router: Router) {
+  constructor(
+    private readonly router: Router,
+    private readonly vendorService: VendorService,
+  ) {
     const navigation = this.router.currentNavigation();
     this.market = navigation?.extras.state?.['market'] || history.state?.['market'] || null;
     this.signup = navigation?.extras.state?.['signup'] || history.state?.['signup'] || null;
@@ -199,11 +213,20 @@ export class VendorSignupConfirmPage {
   }
 
   equipmentItemTotal(item: ConfirmEquipment): number {
-    return item.price * item.quantity * this.selectedDays;
+    return item.price * item.quantity * this.rentalUnits(item.pricingUnit);
+  }
+
+  rentalUnitLabel(pricingUnit?: string | null): string {
+    const unitLabels: Record<string, string> = {
+      EVENT: '場',
+      DAY: '天',
+      UNIT: '份',
+    };
+    return unitLabels[pricingUnit?.toUpperCase() ?? ''] ?? '天';
   }
 
   powerItemTotal(option: ConfirmPowerOption): number {
-    return option.price * this.selectedDays;
+    return option.price * this.rentalUnits(option.pricingUnit);
   }
 
   /** 返回表單頁時把目前資料帶回去，避免使用者修改資料時市集資訊遺失。 */
@@ -223,15 +246,60 @@ export class VendorSignupConfirmPage {
     });
   }
 
-  /** 確認送出後前往完成頁，沿用同一份 market 與 signup 資料作顯示。 */
-  goToComplete(): void {
+  /** 呼叫後端建立報名資料，成功後才前往完成頁。 */
+  submitApplication(): void {
+    if (!this.agreed || this.isSubmitting) return;
+
+    const request = this.signup?.applicationRequest;
+    if (!request) {
+      this.submitError = '找不到報名申請資料，請返回上一頁重新填寫。';
+      return;
+    }
+
+    this.isSubmitting = true;
+    this.submitError = '';
+
+    this.vendorService.submitVendorApplication(request).subscribe({
+      next: (response) => {
+        if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+          this.isSubmitting = false;
+          this.submitError = response.messageDetails || response.message || '報名申請送出失敗。';
+          return;
+        }
+
+        this.goToComplete(response.data);
+      },
+      error: (error: unknown) => {
+        this.isSubmitting = false;
+        this.submitError = this.getErrorMessage(error);
+      },
+    });
+  }
+
+  private goToComplete(application: VendorApplicationSubmitResponse): void {
     this.router.navigate(['/vendor/sign-up-complete'], {
       state: {
         market: this.market,
         signup: this.signup,
+        application,
         submittedAt: new Date().toISOString(),
       },
     });
+  }
+
+  private getErrorMessage(error: unknown): string {
+    if (typeof error !== 'object' || error === null) return '報名申請送出失敗，請稍後再試。';
+
+    const responseError = (error as { error?: unknown }).error;
+    if (typeof responseError !== 'object' || responseError === null) {
+      return '報名申請送出失敗，請稍後再試。';
+    }
+
+    const message = (responseError as { message?: unknown; messageDetails?: unknown }).messageDetails
+      ?? (responseError as { message?: unknown }).message;
+    return typeof message === 'string' && message.trim()
+      ? message
+      : '報名申請送出失敗，請稍後再試。';
   }
 
   private parseDate(value: string): Date | null {
@@ -253,5 +321,9 @@ export class VendorSignupConfirmPage {
 
   private formatDateOnly(date: Date): string {
     return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+  }
+
+  private rentalUnits(pricingUnit?: string | null): number {
+    return pricingUnit?.toUpperCase() === 'EVENT' ? 1 : this.selectedDays;
   }
 }

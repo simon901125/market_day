@@ -13,6 +13,7 @@ import {
   Tooltip,
   TooltipModel,
 } from 'chart.js';
+import type { ActiveElement, ChartEvent, TooltipItem } from 'chart.js';
 import { OrganizerDashboardNotification } from '../organizer-dashboard-notification/organizer-dashboard-notification';
 import { DashboardHomeTodoCard } from '../../../shared/dashboard/dashboard-home-todo-card/dashboard-home-todo-card';
 import { DashboardNotification } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
@@ -118,7 +119,7 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
       this.getStackBorderRadius(context.datasetIndex, context.dataIndex);
     const totalLabelPlugin: Plugin<'bar'> = {
       id: 'activityRegistrationTotalLabel',
-      afterDatasetsDraw: (chart) => {
+      afterDatasetsDraw: (chart: Chart<'bar'>) => {
         const xScale = chart.scales['x'];
         const yScale = chart.scales['y'];
         const context = chart.ctx;
@@ -191,11 +192,11 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
           easing: 'easeOutQuart',
         },
         interaction: { mode: 'nearest', axis: 'y', intersect: true },
-        onHover: (event, elements) => {
+        onHover: (event: ChartEvent, elements: ActiveElement[]) => {
           const target = event.native?.target as HTMLElement | null;
           if (target) target.style.cursor = elements.length ? 'pointer' : 'default';
         },
-        onClick: (_event, elements) => {
+        onClick: (_event: ChartEvent, elements: ActiveElement[]) => {
           const selected = elements[0];
           if (!selected) return;
           this.navigateFromChart(selected.datasetIndex, selected.index);

@@ -1,17 +1,15 @@
-import { Component, Input } from '@angular/core';
-import { VendorHeader } from '../vendor-header/vendor-header';
-import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { VendorService } from '../../../../core/Vendor/vendorApi/vendor.service';
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
+import {
+  MarketRegistrationStatus,
+  VendorMarketSearchItem,
+} from '../../../../models/interface/vendor/VendorMarketSearch';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
-import { BrandItem } from '../../../../models/interface/shared/BrandItem';
-import { BrandType } from '../../../../models/type/BrandType ';
-import { RouterLink, Router } from '@angular/router';
+import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
+import { VendorHeader } from '../vendor-header/vendor-header';
 import { VendorMarketCard } from '../vendor-market-card/vendor-market-card';
-
-// interface MarketSlot {
-//   date: string;
-//   count: number;
-// }
 
 @Component({
   selector: 'app-vendor-home',
@@ -19,92 +17,106 @@ import { VendorMarketCard } from '../vendor-market-card/vendor-market-card';
   templateUrl: './vendor-home.html',
   styleUrl: './vendor-home.scss',
 })
-export class VendorHome {
-  constructor(private router: Router) {}
+export class VendorHome implements OnInit {
+  markets: MarketCardItem[] = [];
+  isLoadingMarkets = false;
+  marketLoadError = '';
 
-  // 首頁顯示的近期市集活動資料
-  markets: MarketCardItem[] = [
-    {
-      title: '草地野餐市集',
-      start_date: '2026/08/17',
-      end_date: '2026/08/19',
-      description: '在草地上享受美食和音樂，與家人朋友共度美好時光。',
-      time: '10:00 - 18:00',
-      location: '台中市西區 草悟道',
-      address: '台中市西區英才路534號',
-      city: '台中市',
-      area: '西區',
-      category: '親子家庭',
-      image: 'assets/images/market/cards/market-card-01.png',
-      status: MarketStatus.active,
-      statusClass: MarketStatus.getClass(MarketStatus.active),
-      tags: [BrandType.food, BrandType.handmade, BrandType.family],
-      organizer: '台中市政府',
-      transportation: ['捷運綠線：草悟道站', '公車：5、10、20、30路'],
-      price: 600,
-      slots: [
-        { date: '08/17', remaining: 15 },
-        { date: '08/19', remaining: 8 },
-      ],
-    },
-    {
-      title: '台北精品咖啡生活節',
-      start_date: '2026/08/24',
-      end_date: '2026/08/26',
-      description: '體驗精品咖啡的香醇與文化，享受慢活的惬意時光。',
-      time: '10:00 - 18:00',
-      location: '台北市中山區 華山1914文創園區',
-      address: '台北市中山區復興南路一段1號',
-      city: '台北市',
-      area: '中山區',
-      category: '咖啡茶飲',
-      image: 'assets/images/market/cards/market-card-02.png',
-      status: MarketStatus.active,
-      statusClass: MarketStatus.getClass(MarketStatus.active),
-      tags: [BrandType.food, BrandType.handmade, BrandType.fashion],
-      organizer: '台北市政府',
-      transportation: ['捷運紅線：忠孝新生站', '公車：藍5、藍7、藍10路'],
-      price: 600,
-      slots: [
-        { date: '08/24', remaining: 15 },
-        { date: '08/26', remaining: 5 },
-      ],
-    },
-    {
-      title: '手作設計市集',
-      start_date: '2026/08/31',
-      end_date: '2026/09/02',
-      description: '匯聚各式手作設計品牌，展現創意與工藝的魅力。',
-      time: '10:00 - 18:00',
-      location: '台南市中西區 藍晒圖文創園區',
-      address: '台南市中西區創意路123號',
-      city: '台南市',
-      area: '中西區',
-      category: '手作設計',
-      image: 'assets/images/market/cards/market-card-03.png',
-      status: MarketStatus.active,
-      statusClass: MarketStatus.getClass(MarketStatus.active),
-      tags: [BrandType.handmade, BrandType.fashion, BrandType.toy],
-      organizer: '台南市政府',
-      transportation: ['捷運：台南火車站步行約 10 分鐘', '公車：綠幹線、藍幹線'],
-      price: 600,
-      slots: [
-        { date: '08/31', remaining: 6 },
-        { date: '09/02', remaining: 1 },
-      ],
-    },
-  ];
+  constructor(
+    private readonly router: Router,
+    private readonly vendorService: VendorService,
+  ) {}
 
-  get recentMarkets(): MarketCardItem[] {
-    return this.markets.slice(0, 3);
+  ngOnInit(): void {
+    this.loadRecentMarkets();
   }
 
-  /**
-   * 導航到市集報名詳情頁
-   * @param market 選擇的市集
-   */
+  private loadRecentMarkets(): void {
+    this.isLoadingMarkets = true;
+    this.marketLoadError = '';
+
+    this.vendorService
+      .searchMarkets({
+        status: 'OPEN',
+        eventStartAt: new Date(),
+        page: 1,
+        pageSize: 3,
+      })
+      .subscribe({
+        next: (response) => {
+          this.markets = response.data.markets.items.map((item) => this.toMarketCard(item));
+          this.isLoadingMarkets = false;
+        },
+        error: () => {
+          this.markets = [];
+          this.marketLoadError = '近期市集載入失敗，請稍後再試。';
+          this.isLoadingMarkets = false;
+        },
+      });
+  }
+
+  private toMarketCard(item: VendorMarketSearchItem): MarketCardItem {
+    const startAt = new Date(item.startAt);
+    const endAt = new Date(item.endAt);
+    const status = this.toMarketStatus(item.registrationStatus);
+
+    return {
+      id: String(item.eventId),
+      title: item.eventTitle,
+      time: `${this.formatTime(startAt)} - ${this.formatTime(endAt)}`,
+      start_date: this.formatDate(startAt),
+      end_date: this.formatDate(endAt),
+      description: item.summary,
+      location: item.locationName,
+      address: item.address,
+      city: item.city,
+      area: item.district,
+      image: item.imageUrl || 'assets/images/market/cards/market-card-01.png',
+      status,
+      statusClass: MarketStatus.getClass(status),
+      tags: item.categoryName ? [item.categoryName] : [],
+      category: item.categoryName ?? '',
+      organizer: item.organizerName ?? '',
+      transportation: [item.trafficTitle, item.trafficDetail].filter(
+        (value): value is string => Boolean(value),
+      ),
+      price: item.baseFee,
+      maxBooths: item.maxBooths,
+      registrationStartAt: item.registrationStartAt ?? undefined,
+      registrationEndAt: item.registrationEndAt ?? undefined,
+      trafficTitle: item.trafficTitle ?? '',
+      trafficDetail: item.trafficDetail ?? '',
+      slots: [],
+    };
+  }
+
+  private toMarketStatus(status: MarketRegistrationStatus): string {
+    const statusMap: Record<MarketRegistrationStatus, string> = {
+      OPEN: MarketStatus.active,
+      UPCOMING: MarketStatus.preview,
+      CLOSED: MarketStatus.ended,
+    };
+    return statusMap[status];
+  }
+
+  private formatDate(value: Date): string {
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, '0');
+    const day = String(value.getDate()).padStart(2, '0');
+    return `${year}/${month}/${day}`;
+  }
+
+  private formatTime(value: Date): string {
+    const hours = String(value.getHours()).padStart(2, '0');
+    const minutes = String(value.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
+
   goToSignUpDetail(market: MarketCardItem): void {
-    this.router.navigate(['/vendor/sign-up-detail'], {
+    const commands = market.id
+      ? ['/vendor/sign-up-detail', market.id]
+      : ['/vendor/sign-up-detail'];
+    this.router.navigate(commands, {
       state: { market },
     });
   }

@@ -140,7 +140,9 @@
                     <td data-label="設備項目">{{ item.name }}</td>
                     <td data-label="規格">{{ item.detail || '－' }}</td>
                     <td data-label="數量">{{ item.quantity }}</td>
-                    <td data-label="每日單價">${{ item.price | number }} / 天</td>
+                    <td data-label="單價">
+                      ${{ item.price | number }} / {{ rentalUnitLabel(item.pricingUnit) }}
+                    </td>
                     <td data-label="小計" class="subtotal-cell">
                       <strong>${{ equipmentItemTotal(item) | number }}</strong>
                     </td>
@@ -177,7 +179,9 @@
                   <tr>
                     <td data-label="電壓">{{ powerVoltage(option.label) }}</td>
                     <td data-label="功率">{{ powerWattage(option.label) }}</td>
-                    <td data-label="每日費用">${{ option.price | number }} / 天</td>
+                    <td data-label="費用">
+                      ${{ option.price | number }} / {{ rentalUnitLabel(option.pricingUnit) }}
+                    </td>
                     <td data-label="小計" class="subtotal-cell">
                       <strong>${{ powerItemTotal(option) | number }}</strong>
                     </td>
@@ -256,8 +260,12 @@
           </div>
         </div>
 
-        <button type="button" [disabled]="!agreed" (click)="goToComplete()">
-          確認送出報名申請
+        @if (submitError) {
+          <p class="submission-error" role="alert">{{ submitError }}</p>
+        }
+
+        <button type="button" [disabled]="!agreed || isSubmitting" (click)="submitApplication()">
+          {{ isSubmitting ? '送出中…' : '確認送出報名申請' }}
           <i class="bi bi-arrow-right-circle-fill"></i>
         </button>
       </aside>

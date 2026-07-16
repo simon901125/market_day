@@ -1,18 +1,26 @@
 import { DecimalPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
+import { VendorService } from '../../../../core/Vendor/vendorApi/vendor.service';
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { MarketSlot } from '../../../../models/interface/shared/MarketSlot';
+import { VendorApplicationSubmitRequest } from '../../../../models/interface/vendor/VendorApplicationSubmit';
+import {
+  VendorMarketDetail,
+  VendorMarketEquipment,
+} from '../../../../models/interface/vendor/VendorMarketDetail';
 import { UserFooter } from '../../../user/frontend/shared/user-footer/user-footer';
 import { VendorHeader } from '../vendor-header/vendor-header';
 
 interface RentalEquipment {
   id: string;
+  eventEquipmentId?: number;
   name: string;
   detail: string;
   price: number;
+  pricingUnit?: string | null;
   selected: boolean;
   quantity: number;
   maxQuantity: number;
@@ -20,8 +28,10 @@ interface RentalEquipment {
 
 interface PowerOption {
   id: string;
+  eventEquipmentId?: number;
   label: string;
   price: number;
+  pricingUnit?: string | null;
   selected: boolean;
 }
 
@@ -31,73 +41,95 @@ interface PowerOption {
   templateUrl: './vendor-signup-form.html',
   styleUrl: './vendor-signup-form.scss',
 })
-export class VendorSignupForm {
+export class VendorSignupForm implements OnInit {
   /** 從市集詳細頁透過 Router state 帶入的市集資料。 */
   market: MarketCardItem | null = null;
 
   /** 詳細頁已整理好的場次，避免 market 本身沒有 slots 時跨頁遺失。 */
   private routedSlots: MarketSlot[] = [];
+  private marketDetail: VendorMarketDetail | null = null;
+  private readonly shouldLoadMarketDetail: boolean;
 
   /** 報名日期採複選，key 為場次日期。 */
   selectedDates: Record<string, boolean> = {};
 
   /** 設備租借資料集中管理，數量與勾選狀態會同步更新右側摘要。 */
-  equipment: RentalEquipment[] = [
-    {
-      id: 'table',
-      name: '桌子',
-      detail: '180 × 60 公分',
-      price: 100,
-      selected: true,
-      quantity: 1,
-      maxQuantity: 3,
-    },
-    {
-      id: 'chair',
-      name: '椅子',
-      detail: '一般塑膠椅',
-      price: 50,
-      selected: true,
-      quantity: 2,
-      maxQuantity: 6,
-    },
-    {
-      id: 'extension',
-      name: '延長線',
-      detail: '5 公尺',
-      price: 50,
-      selected: false,
-      quantity: 0,
-      maxQuantity: 2,
-    },
-    {
-      id: 'fan',
-      name: '電風扇',
-      detail: '',
-      price: 100,
-      selected: false,
-      quantity: 0,
-      maxQuantity: 2,
-    },
-    {
-      id: 'light',
-      name: '照明燈',
-      detail: 'LED 投光燈 100W',
-      price: 200,
-      selected: false,
-      quantity: 0,
-      maxQuantity: 2,
-    },
-  ];
+  equipment: RentalEquipment[] = [];
+  
+  // equipment: RentalEquipment[] = [
+  //   {
+  //     id: 'table',
+  //     name: '桌子',
+  //     detail: '180 × 60 公分',
+  //     price: 100,
+  //     pricingUnit: 'EVENT',
+  //     selected: true,
+  //     quantity: 1,
+  //     maxQuantity: 3,
+  //   },
+  //   {
+  //     id: 'chair',
+  //     name: '椅子',
+  //     detail: '一般塑膠椅',
+  //     price: 50,
+  //     pricingUnit: 'EVENT',
+  //     selected: true,
+  //     quantity: 2,
+  //     maxQuantity: 6,
+  //   },
+  //   {
+  //     id: 'extension',
+  //     name: '延長線',
+  //     detail: '5 公尺',
+  //     price: 50,
+  //     pricingUnit: 'EVENT',
+  //     selected: false,
+  //     quantity: 0,
+  //     maxQuantity: 2,
+  //   },
+  //   {
+  //     id: 'fan',
+  //     name: '電風扇',
+  //     detail: '',
+  //     price: 100,
+  //     pricingUnit: 'EVENT',
+  //     selected: false,
+  //     quantity: 0,
+  //     maxQuantity: 2,
+  //   },
+  //   {
+  //     id: 'light',
+  //     name: '照明燈',
+  //     detail: 'LED 投光燈 100W',
+  //     price: 200,
+  //     pricingUnit: 'EVENT',
+  //     selected: false,
+  //     quantity: 0,
+  //     maxQuantity: 2,
+  //   },
+  // ];
 
   /** 額外用電選項與費用由資料綁定產生。 */
   powerOptions: PowerOption[] = [
-    { id: 'power110', label: '110V / 1000W', price: 200, selected: true },
-    { id: 'power220', label: '220V / 2000W', price: 400, selected: true },
+    {
+      id: 'power110',
+      label: '110V / 1000W',
+      price: 200,
+      pricingUnit: 'EVENT',
+      selected: true,
+    },
+    {
+      id: 'power220',
+      label: '220V / 2000W',
+      price: 400,
+      pricingUnit: 'EVENT',
+      selected: true,
+    },
   ];
 
   requiresExtraPower = true;
   validationAttempted = false;
+  applicationError = '';
 
   /** 車輛與備註欄位使用雙向綁定，之後可直接轉為 API payload。 */
   formData = {
@@ -111,9 +143,14 @@ export class VendorSignupForm {
   readonly capacityPerDate = 200;
   readonly noteMaxLength = 200;
 
-  constructor(private readonly router: Router) {
+  constructor(
+    private readonly router: Router,
+    private readonly vendorService: VendorService,
+  ) {
     const navigation = this.router.currentNavigation();
     this.market = navigation?.extras.state?.['market'] || history.state?.['market'] || null;
+    this.marketDetail = navigation?.extras.state?.['detail'] || history.state?.['detail'] || null;
+    this.shouldLoadMarketDetail = !this.marketDetail && Boolean(this.market?.id);
     const stateSlots = navigation?.extras.state?.['slots'] ?? history.state?.['slots'];
     this.routedSlots = Array.isArray(stateSlots) ? stateSlots : [];
 
@@ -123,6 +160,24 @@ export class VendorSignupForm {
       : [];
 
     this.initializeSelectedDates(restoredSlots);
+  }
+
+  ngOnInit(): void {
+    if (this.marketDetail) {
+      this.applyMarketEquipments(this.marketDetail.equipments);
+      return;
+    }
+
+    if (!this.shouldLoadMarketDetail || !this.market?.id) return;
+
+    this.vendorService.getMarketDetail(this.market.id).subscribe({
+      next: (response) => {
+        if (response.data) {
+          this.marketDetail = response.data;
+          this.applyMarketEquipments(response.data.equipments);
+        }
+      },
+    });
   }
 
   get slots(): MarketSlot[] {
@@ -165,24 +220,23 @@ export class VendorSignupForm {
     return this.equipment.filter((item) => item.selected && item.quantity > 0);
   }
 
-  get equipmentDailySubtotal(): number {
-    return this.selectedEquipment.reduce((total, item) => total + item.price * item.quantity, 0);
-  }
-
   get equipmentSubtotal(): number {
-    return this.equipmentDailySubtotal * this.selectedDays;
+    return this.selectedEquipment.reduce(
+      (total, item) =>
+        total + item.price * item.quantity * this.rentalUnits(item.pricingUnit),
+      0,
+    );
   }
 
   get selectedPowerOptions(): PowerOption[] {
     return this.requiresExtraPower ? this.powerOptions.filter((option) => option.selected) : [];
   }
 
-  get powerDailySubtotal(): number {
-    return this.selectedPowerOptions.reduce((total, option) => total + option.price, 0);
-  }
-
   get powerSubtotal(): number {
-    return this.powerDailySubtotal * this.selectedDays;
+    return this.selectedPowerOptions.reduce(
+      (total, option) => total + option.price * this.rentalUnits(option.pricingUnit),
+      0,
+    );
   }
 
   get totalFee(): number {
@@ -270,11 +324,15 @@ export class VendorSignupForm {
   /** 驗證必填資料後，帶著完整報名 payload 前往確認頁。 */
   goToConfirm(): void {
     this.validationAttempted = true;
+    this.applicationError = '';
 
     if (this.showDateError || this.showPowerError || this.showVehicleNumberError) {
       this.scrollToFirstError();
       return;
     }
+
+    const applicationRequest = this.buildApplicationRequest();
+    if (!applicationRequest) return;
 
     this.router.navigate(['/vendor/sign-up-confirm'], {
       state: {
@@ -299,9 +357,94 @@ export class VendorSignupForm {
           equipmentFee: this.equipmentSubtotal,
           powerRentalFee: this.powerSubtotal,
           totalFee: this.totalFee,
+          applicationRequest,
         },
       },
     });
+  }
+
+  rentalUnitLabel(pricingUnit?: string | null): string {
+    const unitLabels: Record<string, string> = {
+      EVENT: '場',
+      DAY: '天',
+      UNIT: '份',
+    };
+    return unitLabels[pricingUnit?.toUpperCase() ?? ''] ?? '天';
+  }
+
+  private buildApplicationRequest(): VendorApplicationSubmitRequest | null {
+    const eventId = Number(this.market?.id);
+    if (!Number.isInteger(eventId) || eventId <= 0) {
+      this.applicationError = '找不到活動編號，請返回市集詳細頁後重新報名。';
+      return null;
+    }
+
+    const selectedRentals = [...this.selectedEquipment, ...this.selectedPowerOptions];
+    if (selectedRentals.some((item) => item.eventEquipmentId == null)) {
+      this.applicationError = '活動設備資料尚未載入完成，請稍後再試。';
+      return null;
+    }
+
+    return {
+      eventId,
+      applyDates: this.selectedSlots.map((slot) => this.toApiDate(slot.date)),
+      vehicleNo: this.formData.hasVehicle ? this.formData.vehicleNumber.trim() : null,
+      applicantNote: this.formData.note.trim() || null,
+      equipmentRentals: selectedRentals.map((item) => ({
+        eventEquipmentId: item.eventEquipmentId!,
+        quantity: 'quantity' in item ? item.quantity : 1,
+        rentalUnits: this.rentalUnits(item.pricingUnit),
+      })),
+    };
+  }
+
+  private applyMarketEquipments(equipments: VendorMarketEquipment[]): void {
+    this.equipment = equipments
+      .filter((item) => item.itemType === 'EQUIPMENT' && item.chargeType === 'PAID')
+      .map((item) => ({
+        id: String(item.eventEquipmentId),
+        eventEquipmentId: item.eventEquipmentId,
+        name: item.name,
+        detail: item.description ?? '',
+        price: item.rentalFee,
+        pricingUnit: item.pricingUnit,
+        selected: false,
+        quantity: 0,
+        maxQuantity: item.perStallRentalLimit ?? item.stockQuantity ?? 99,
+      }));
+
+    this.powerOptions = equipments
+      .filter((item) => item.itemType === 'POWER' && item.chargeType === 'PAID')
+      .map((item) => ({
+        id: String(item.eventEquipmentId),
+        eventEquipmentId: item.eventEquipmentId,
+        label: this.powerOptionLabel(item),
+        price: item.rentalFee,
+        pricingUnit: item.pricingUnit,
+        selected: false,
+      }));
+
+    if (!this.powerOptions.length) {
+      this.requiresExtraPower = false;
+    }
+  }
+
+  private powerOptionLabel(item: VendorMarketEquipment): string {
+    const wattage = item.wattageLimit ? `${item.wattageLimit}W` : '';
+    return [item.name, wattage].filter(Boolean).join(' / ');
+  }
+
+  private rentalUnits(pricingUnit?: string | null): number {
+    return pricingUnit?.toUpperCase() === 'EVENT' ? 1 : this.selectedDays;
+  }
+
+  private toApiDate(value: string): string {
+    const date = this.parseDate(value);
+    if (!date) return value.replaceAll('/', '-');
+
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
+      date.getDate(),
+    ).padStart(2, '0')}`;
   }
 
   private scrollToFirstError(): void {

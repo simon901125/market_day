@@ -1,16 +1,86 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
+import { VendorAccessService } from '../../../../core/services/vendor-access.service';
+import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
+import { VendorStallInfo } from '../../../../models/interface/vendor/VendorStallInfo';
 import { VendorDashboardStall } from './vendor-dashboard-stall';
 
 describe('VendorDashboardStall', () => {
   let component: VendorDashboardStall;
   let fixture: ComponentFixture<VendorDashboardStall>;
   let alert: AlertService;
+  let vendorDashboardService: jasmine.SpyObj<VendorDashboardService>;
+  let authService: jasmine.SpyObj<AuthService>;
+  let vendorAccess: jasmine.SpyObj<VendorAccessService>;
+
+  const stallInfo: VendorStallInfo = {
+    brandName: '小集日工作室',
+    contactName: '小集日',
+    contactPhone: '0975859025',
+    contactEmail: 'littlemarket@gmail.com',
+    city: '台中市',
+    district: '南屯區',
+    address: '公益路二段 537 號',
+    instagramUrl: '@littlemarket_day',
+    facebookUrl: '@littlemarket',
+    websiteUrl: 'https://littlemarket.com',
+    avatarImageUrl: 'avatar.png',
+    coverImageUrl: 'cover.png',
+    brandSummary: '品牌簡介',
+    brandDescription: '品牌介紹',
+    brandType: '玩具收藏',
+    products: [
+      {
+        id: 1,
+        productName: '小白狗尿尿',
+        productSummary: '可愛造型',
+        productPrice: 20,
+        productImageUrl: 'product.png',
+      },
+    ],
+  };
 
   beforeEach(async () => {
+    authService = jasmine.createSpyObj<AuthService>('AuthService', ['getUser']);
+    authService.getUser.and.returnValue({
+      name: '登入者姓名',
+      email: 'login@example.com',
+      role: 'VENDOR',
+      status: 'ACTIVE',
+      isLogin: true,
+    });
+    vendorAccess = jasmine.createSpyObj<VendorAccessService>('VendorAccessService', ['refresh']);
+    vendorAccess.refresh.and.resolveTo(false);
+    vendorDashboardService = jasmine.createSpyObj<VendorDashboardService>('VendorDashboardService', [
+      'getVendorFirstLogin',
+      'getVendorStallInfo',
+      'saveVendorStallInfo',
+    ]);
+    vendorDashboardService.getVendorFirstLogin.and.returnValue(of({
+      statusCode: 200,
+      message: 'ok',
+      messageDetails: null,
+      data: { needsProfileSetup: false },
+    }));
+    vendorDashboardService.getVendorStallInfo.and.returnValue(of({
+      statusCode: 200,
+      message: '取得成功',
+      messageDetails: null,
+      data: stallInfo,
+    }));
+
     await TestBed.configureTestingModule({
       imports: [VendorDashboardStall],
+      providers: [
+        provideRouter([]),
+        { provide: VendorDashboardService, useValue: vendorDashboardService },
+        { provide: AuthService, useValue: authService },
+        { provide: VendorAccessService, useValue: vendorAccess },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(VendorDashboardStall);
@@ -30,6 +100,27 @@ describe('VendorDashboardStall', () => {
     expect(textContent).toContain('基本資料');
     expect(firstInput.value).toBe(component.basicFields[0].value);
     expect(textContent).toContain(component.products[0].name);
+    expect(vendorDashboardService.getVendorStallInfo).toHaveBeenCalled();
+  });
+
+  it('should keep an empty form without loading missing stall info on first login', () => {
+    vendorDashboardService.getVendorFirstLogin.and.returnValue(of({
+      statusCode: 0,
+      message: 'ok',
+      messageDetails: null,
+      data: { needsProfileSetup: true },
+    }));
+    const errorSpy = spyOn(alert, 'error');
+
+    component.ngOnInit();
+
+    expect(component.basicFields.find((field) => field.name === 'ownerName')?.value)
+      .toBe('登入者姓名');
+    expect(component.basicFields.find((field) => field.name === 'email')?.value)
+      .toBe('login@example.com');
+    expect(component.basicFields.find((field) => field.name === 'brandName')?.value).toBe('');
+    expect(vendorDashboardService.getVendorStallInfo).toHaveBeenCalledTimes(1);
+    expect(errorSpy).not.toHaveBeenCalled();
   });
 
   it('should open the product modal and append the saved product', async () => {

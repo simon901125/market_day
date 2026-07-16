@@ -1,7 +1,13 @@
 <app-vendor-header></app-vendor-header>
 
 <main class="market-detail-page page-transition frontend-page vendor-frontend-page">
-  @if (market; as market) {
+  @if (isLoading && !market) {
+    <section class="content-card empty-state" aria-live="polite">
+      <i class="bi bi-hourglass-split"></i>
+      <h1>市集資料載入中</h1>
+      <p>正在取得最新的報名資訊與剩餘攤位。</p>
+    </section>
+  } @else if (market; as market) {
     <nav class="detail-breadcrumb" aria-label="breadcrumb">
       <ol>
         <li>
@@ -22,12 +28,12 @@
 
         <div class="hero-info-card">
           <dl class="hero-meta">
-          <div>
+            <div>
             <dt><i class="bi bi-flag"></i>活動狀態</dt>
             <dd>
               <span class="status-text" [class]="market.statusClass">{{ market.status }}</span>
             </dd>
-          </div>
+            </div>
           <div>
             <dt><i class="bi bi-calendar-event"></i>活動時間</dt>
             <dd>{{ dateRangeText }}</dd>
@@ -54,10 +60,19 @@
           </div>
           </dl>
 
-          <button type="button" class="signup-button" (click)="goToSignUpForm()">
+          <button
+            type="button"
+            class="signup-button"
+            [class.profile-required]="vendorProfileRequired"
+            [disabled]="detail?.registrationStatus !== 'OPEN'"
+            [attr.aria-disabled]="vendorProfileRequired || detail?.registrationStatus !== 'OPEN'"
+            [attr.title]="vendorProfileRequired ? '請先完成攤位資料設定' : null"
+            (click)="goToSignUpForm()"
+          >
             立即報名
             <i class="bi bi-arrow-right-circle-fill"></i>
           </button>
+          <p class="signup-hint">報名資料約需 3–5 分鐘完成，送出後將進入主辦方審核流程。</p>
         </div>
       </div>
     </section>
@@ -74,7 +89,7 @@
           >
             <span>{{ slotDateLabel(slot.date) }}</span>
             <strong
-              >剩 <em>{{ slot.remaining }}</em> / {{ boothTotal }} 攤</strong
+              >剩 <em>{{ slot.remaining }}</em> / {{ slot.total ?? boothTotal }} 攤</strong
             >
           </div>
         }
@@ -96,53 +111,40 @@
         <div>
           <i class="bi bi-pencil"></i>
           <span>攤位尺寸</span>
-          <strong>3 × 3 公尺</strong>
-          <small>深 3 公尺 × 寬 3 公尺</small>
+          <strong>{{ stallSizeText }}</strong>
+          <small>實際尺寸以主辦單位公告為準</small>
         </div>
       </div>
     </section>
 
     <section class="content-card intro-card">
-      <h2><i class="bi bi-stopwatch"></i>活動介紹</h2>
-      <p>
-        {{ market.title }}以{{ market.category }}為核心，集結特色品牌與生活風格攤位，
-        打造一個適合交流、探索與停留的週末市集。
-      </p>
-      <p>
-        現場除了多元品牌與美食空間，也規劃舒適的逛展動線，邀請攤主一起為來訪者創造溫暖而有記憶點的體驗。
-      </p>
+      <h2><i class="bi bi-stopwatch"></i>市集介紹</h2>
+      <p>{{ marketDescription }}</p>
     </section>
 
     <div class="two-column-grid">
       <section class="content-card compact-card">
         <h2 class="green"><i class="bi bi-gift"></i>設備提供 <small>（免費提供）</small></h2>
         <ul class="plain-list">
-          <li>帳篷（3 × 3 公尺）</li>
-          <li>桌子（180 × 60 公分）</li>
-          <li>延長線（5 公尺）</li>
-          <li>椅子（一般塑膠椅）</li>
-          <li>照明設備（投光燈 100W）</li>
+          @for (equipment of freeEquipments; track equipment.eventEquipmentId) {
+            <li>{{ equipmentDescription(equipment) }}</li>
+          } @empty {
+            <li>本活動未提供免費設備</li>
+          }
         </ul>
       </section>
 
       <section class="content-card compact-card">
         <h2><i class="bi bi-camera"></i>可租借設備 <small>（每日計費）</small></h2>
         <ul class="price-list">
-          <li>
-            <span>桌子（180 × 60 公分）</span><strong>$100 <small>/ 天</small></strong>
-          </li>
-          <li>
-            <span>椅子（一般塑膠椅）</span><strong>$50 <small>/ 天</small></strong>
-          </li>
-          <li>
-            <span>電風扇</span><strong>$100 <small>/ 天</small></strong>
-          </li>
-          <li>
-            <span>延長線（10 公尺）</span><strong>$50 <small>/ 天</small></strong>
-          </li>
-          <li>
-            <span>展示架</span><strong>$200 <small>/ 天</small></strong>
-          </li>
+          @for (equipment of rentalEquipments; track equipment.eventEquipmentId) {
+            <li>
+              <span>{{ equipmentDescription(equipment) }}</span>
+              <strong>{{ equipmentPrice(equipment) }}</strong>
+            </li>
+          } @empty {
+            <li><span>本活動未提供租借設備</span></li>
+          }
         </ul>
         <p class="card-footnote">* 租借設備數量有限，報名送出時會保留數量，額滿後即不可租借。</p>
       </section>
@@ -150,17 +152,25 @@
 
     <div class="two-column-grid">
       <section class="content-card compact-card power-card">
-        <h2><i class="bi bi-lightning-charge"></i>基本用電 <small>（免費提供）</small></h2>
-        <div class="power-price power-price-free">
-          <span>110V ｜ 500W</span><strong>免費</strong>
-        </div>
+        <h2><i class="bi bi-lightning-charge"></i>用電資訊</h2>
+        @for (power of freePowerOptions; track power.eventEquipmentId) {
+          <div class="power-row">
+            <i class="bi bi-hand-thumbs-up"></i>
+            <div><strong>{{ power.name }}（免費提供）</strong><span>{{ powerDescription(power) }}</span></div>
+          </div>
+        } @empty {
+          <p class="card-footnote">本活動未提供免費用電方案。</p>
+        }
       </section>
 
       <section class="content-card compact-card power-card">
         <h2><i class="bi bi-lightning-charge"></i>額外用電 <small>（開放申請）</small></h2>
         <div class="power-price">
-          <span>110V ｜ 1000W</span><strong>$200 <small>/ 天</small></strong>
-          <span>220V ｜ 3000W</span><strong>$500 <small>/ 天</small></strong>
+          @for (power of paidPowerOptions; track power.eventEquipmentId) {
+            <span>{{ powerDescription(power) }}</span><strong>{{ equipmentPrice(power) }}</strong>
+          } @empty {
+            <span>本活動未提供額外用電方案</span>
+          }
         </div>
       </section>
     </div>
@@ -174,16 +184,16 @@
             <dd>{{ market.organizer }}</dd>
           </div>
           <div>
-            <dt>聯絡信箱</dt>
-            <dd>service&#64;marketday.tw</dd>
+            <dt>聯絡信箱：</dt>
+            <dd>{{ detail?.contactEmail || '-' }}</dd>
           </div>
           <div>
-            <dt>聯絡電話</dt>
-            <dd>04-22556699</dd>
+            <dt>聯絡電話：</dt>
+            <dd>{{ detail?.contactPhone || '-' }}</dd>
           </div>
           <div>
-            <dt>服務時間</dt>
-            <dd>週一至週五 10:00 - 18:00</dd>
+            <dt>服務時間：</dt>
+            <dd>{{ serviceTimeText }}</dd>
           </div>
         </dl>
       </section>
@@ -238,7 +248,7 @@
     <section class="content-card empty-state">
       <i class="bi bi-info-circle"></i>
       <h1>找不到市集資料</h1>
-      <p>請返回市集報名列表，重新選擇想參加的市集。</p>
+      <p>{{ loadError || '請返回市集報名列表，重新選擇想參加的市集。' }}</p>
       <a routerLink="/vendor/sign-up">返回市集列表</a>
     </section>
   }

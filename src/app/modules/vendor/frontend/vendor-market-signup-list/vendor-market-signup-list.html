@@ -8,16 +8,23 @@
     </div>
   </section>
 
-  <app-user-market-search-panel
-    dateRangeTitle="活動日期"
-    searchRoute="/vendor/sign-up"
-    selectedCategory=""
-    [showCategories]="false"
-  ></app-user-market-search-panel>
+  <app-vendor-market-search-panel
+    (search)="onSearch($event)"
+  ></app-vendor-market-search-panel>
+
+  
 
   <section class="market-grid">
+    @if (isLoading) {
+      <p class="market-message">活動載入中...</p>
+    } @else if (loadError) {
+      <p class="market-message market-message-error">{{ loadError }}</p>
+    } @else if (markets.length === 0) {
+      <p class="market-message">查無符合條件的活動。</p>
+    }
+
     <div class="row g-4">
-      @for (market of pagedMarkets; track market.title) {
+      @for (market of markets; track market.id) {
         <div class="col-12 col-md-6 col-lg-4">
           <app-vendor-market-card 
           [market]="market"
@@ -32,7 +39,7 @@
     <app-pagination
       [currentPage]="currentPage"
       [pageSize]="pageSize"
-      [totalItems]="filteredMarkets.length"
+      [totalItems]="totalItems"
       (pageChange)="setPage($event)"
     ></app-pagination>
   </div>

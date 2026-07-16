@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
 import { provideRouter, Router } from '@angular/router';
 
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
@@ -10,7 +11,7 @@ describe('VendorSignupForm', () => {
   let router: Router;
 
   const market: MarketCardItem = {
-    id: 'market-1',
+    id: '1',
     title: '新動市集｜貓貓森林市',
     time: '10:00－18:00',
     start_date: '2026/05/30',
@@ -37,7 +38,7 @@ describe('VendorSignupForm', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [VendorSignupForm],
-      providers: [provideRouter([])],
+      providers: [provideHttpClient(), provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(VendorSignupForm);
@@ -90,6 +91,10 @@ describe('VendorSignupForm', () => {
   it('should navigate to confirmation with the complete signup payload', () => {
     const navigateSpy = spyOn(router, 'navigate');
     component.formData.vehicleNumber = 'ABC-1234';
+    component.equipment[0].eventEquipmentId = 1;
+    component.equipment[1].eventEquipmentId = 2;
+    component.powerOptions[0].eventEquipmentId = 3;
+    component.powerOptions[1].eventEquipmentId = 4;
 
     component.goToConfirm();
 
@@ -97,5 +102,17 @@ describe('VendorSignupForm', () => {
     const navigationExtras = navigateSpy.calls.mostRecent().args[1];
     expect(navigationExtras?.state?.['signup'].selectedSlots.length).toBe(2);
     expect(navigationExtras?.state?.['signup'].totalFee).toBe(3100);
+    expect(navigationExtras?.state?.['signup'].applicationRequest).toEqual({
+      eventId: 1,
+      applyDates: ['2026-05-30', '2026-05-31'],
+      vehicleNo: 'ABC-1234',
+      applicantNote: null,
+      equipmentRentals: [
+        { eventEquipmentId: 1, quantity: 1, rentalUnits: 1 },
+        { eventEquipmentId: 2, quantity: 2, rentalUnits: 1 },
+        { eventEquipmentId: 3, quantity: 1, rentalUnits: 1 },
+        { eventEquipmentId: 4, quantity: 1, rentalUnits: 1 },
+      ],
+    });
   });
 });
