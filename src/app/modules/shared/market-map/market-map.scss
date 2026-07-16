@@ -504,9 +504,19 @@
 }
 
 .mobile-map-preview-action,
+.mobile-vendor-map-action,
 .mobile-map-fullscreen-bar,
 .fullscreen-brand-sheet {
   display: none;
+}
+
+.market-map.is-launch-only:not(.is-map-fullscreen) {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
 }
 
 .fullscreen-modal-panel,
@@ -514,7 +524,13 @@
   display: contents;
 }
 
-.market-map.is-public .map-viewport.is-fullscreen {
+.map-viewport:not(.is-fullscreen) .fullscreen-map-stage {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+
+.market-map .map-viewport.is-fullscreen {
   width: 100vw;
   height: 100dvh;
   position: fixed;
@@ -533,7 +549,7 @@
   scroll-padding: 0;
 }
 
-.market-map.is-public .map-viewport.is-fullscreen.is-closing {
+.market-map .map-viewport.is-fullscreen.is-closing {
   animation: fullscreen-backdrop-out 0.2s ease-in both;
 }
 
@@ -571,6 +587,20 @@
   min-width: 1160px;
   max-width: none;
   height: min(620px, calc(100dvh - 204px));
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 12px;
+  background: var(--map-paper);
+  box-shadow: none;
+  pointer-events: auto;
+}
+
+.market-map.is-vendor-dashboard .map-viewport.is-fullscreen .map-canvas {
+  width: 1000px;
+  min-width: 1000px;
+  max-width: none;
+  height: auto;
+  aspect-ratio: 1056 / 590;
   box-sizing: border-box;
   border: 0;
   border-radius: 12px;
@@ -621,6 +651,236 @@
 
 .map-viewport.is-fullscreen .fullscreen-brand-sheet.is-empty {
   justify-content: center;
+}
+
+.market-map.is-vendor-dashboard .map-viewport.is-fullscreen .mobile-map-fullscreen-bar {
+  grid-template-columns: minmax(0, 1fr) 38px;
+  align-items: center;
+}
+
+.fullscreen-date-filter {
+  grid-column: 1 / -1;
+  width: min(100%, 260px);
+  --dropdown-control-height: 38px;
+  --dropdown-control-padding: 0 12px;
+  --dropdown-control-font-size: 13px;
+  --dropdown-control-font-weight: 800;
+}
+
+.fullscreen-date-filter ::ng-deep .select-wrapper {
+  display: grid;
+  grid-template-columns: 66px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.fullscreen-date-filter ::ng-deep .select-title {
+  margin: 0;
+  color: var(--text-dark);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.fullscreen-date-filter ::ng-deep .dropdown-list {
+  left: 74px;
+  width: calc(100% - 74px);
+}
+
+.map-viewport.is-fullscreen .fullscreen-vendor-sheet {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border-top: 1px solid #eadfce;
+  background: var(--bg-white);
+}
+
+.fullscreen-vendor-selection {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  gap: 3px 10px;
+}
+
+.fullscreen-vendor-selection > span {
+  grid-column: 1 / -1;
+  color: var(--text-light);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.fullscreen-vendor-selection > strong {
+  color: var(--primary-hover);
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.fullscreen-vendor-selection > strong.is-empty {
+  grid-column: 1 / -1;
+  color: var(--text-normal);
+  font-size: 14px;
+}
+
+.fullscreen-vendor-selection > small {
+  color: var(--text-dark);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.fullscreen-vendor-confirm {
+  width: auto;
+  min-width: 156px;
+  flex: 0 0 auto;
+}
+
+.map-viewport.is-fullscreen .organizer-fullscreen-sheet {
+  max-height: min(280px, 42dvh);
+  align-items: stretch;
+  padding: 14px 16px 16px;
+  overflow-y: auto;
+}
+
+.organizer-fullscreen-selection {
+  width: 100%;
+  min-width: 0;
+}
+
+.organizer-fullscreen-kicker {
+  margin-bottom: 6px;
+  color: var(--text-light);
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.organizer-fullscreen-heading {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.organizer-fullscreen-heading > strong {
+  color: var(--primary-hover);
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.organizer-fullscreen-booth-meta {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 20px;
+}
+
+.organizer-fullscreen-booth-meta > div {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: baseline;
+  gap: 8px;
+}
+
+.organizer-fullscreen-booth-meta > .selection-time {
+  grid-column: 1 / -1;
+}
+
+.organizer-fullscreen-booth-meta dt,
+.organizer-fullscreen-booth-meta dd {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.organizer-fullscreen-booth-meta dt {
+  color: var(--text-light);
+  font-weight: 800;
+}
+
+.organizer-fullscreen-booth-meta dd {
+  min-width: 0;
+  color: var(--text-dark);
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.organizer-fullscreen-brand {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 18px;
+}
+
+.organizer-fullscreen-brand-main,
+.organizer-fullscreen-vendor {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.organizer-fullscreen-brand-main > span:not(.app-tag),
+.organizer-fullscreen-vendor > span {
+  color: var(--text-light);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.organizer-fullscreen-brand strong {
+  color: var(--text-dark);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.organizer-fullscreen-brand-main strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.organizer-fullscreen-vendor {
+  text-align: right;
+}
+
+.organizer-fullscreen-category {
+  width: fit-content;
+  max-width: 100%;
+  align-self: flex-start;
+}
+
+.organizer-fullscreen-registration-link {
+  width: 100%;
+  height: 36px;
+  margin-top: 14px;
+  border: 1px solid var(--primary-color);
+  border-radius: var(--radius-tag);
+  color: var(--primary-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  font-size: 13px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.organizer-fullscreen-empty {
+  color: var(--text-normal);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.map-viewport.is-fullscreen .map-legend {
+  display: none;
 }
 
 @keyframes fullscreen-backdrop-in {
@@ -697,10 +957,13 @@
 .fullscreen-map-description {
   max-width: 360px;
   margin: 0;
+  overflow: hidden;
   color: var(--text-normal);
   font-size: 13px;
   font-weight: 700;
   line-height: 1.55;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .fullscreen-brand-placeholder {
@@ -2246,6 +2509,119 @@
   }
 }
 
+@media (max-width: 700px) {
+  .market-map.is-organizer .map-layout > .map-detail {
+    display: none;
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .map-viewport:not(.is-fullscreen) .mobile-vendor-map-action {
+    min-width: 116px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 4;
+    padding: 0 12px;
+    border: 1px solid var(--primary-color);
+    border-radius: var(--radius-tag);
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--primary-color);
+    box-shadow: 0 5px 16px rgba(91, 75, 52, 0.12);
+    font-size: 13px;
+    font-weight: 900;
+    backdrop-filter: blur(4px);
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .map-viewport.is-fullscreen {
+    width: 100vw !important;
+    height: 100dvh !important;
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    padding: 12px !important;
+    background: rgba(31, 25, 18, 0.46);
+    backdrop-filter: blur(2px);
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .map-viewport.is-fullscreen .fullscreen-modal-panel {
+    width: calc(100vw - 24px);
+    height: calc(100dvh - 24px);
+    max-height: calc(100dvh - 24px);
+    border: 1px solid rgba(234, 223, 206, 0.92);
+    border-radius: 16px;
+    box-shadow: 0 18px 42px rgba(31, 25, 18, 0.28);
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .map-viewport.is-fullscreen .mobile-map-fullscreen-bar {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    position: relative;
+    padding: 12px;
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .map-viewport.is-fullscreen .mobile-map-fullscreen-bar > div {
+    min-width: 0;
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .map-viewport.is-fullscreen .mobile-map-fullscreen-bar strong {
+    padding-right: 44px;
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .map-viewport.is-fullscreen .fullscreen-map-description {
+    width: 100%;
+    max-width: none;
+    font-size: 12px;
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .map-viewport.is-fullscreen .mobile-map-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    margin: 0;
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .map-viewport.is-fullscreen .fullscreen-map-stage {
+    padding: 8px;
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .map-viewport.is-fullscreen .map-canvas {
+    width: 1000px;
+    min-width: 1000px;
+    height: auto;
+    min-height: 558px;
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .fullscreen-date-filter {
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .fullscreen-date-filter ::ng-deep .select-wrapper {
+    width: fit-content;
+    grid-template-columns: 58px 142px;
+  }
+
+  :is(.market-map.is-vendor-dashboard, .market-map.is-organizer) .fullscreen-date-filter ::ng-deep .dropdown-list {
+    left: 66px;
+    width: 142px;
+  }
+
+  .map-viewport.is-fullscreen .fullscreen-vendor-sheet {
+    min-height: 86px;
+    padding: 10px 12px;
+  }
+
+  .fullscreen-vendor-confirm {
+    min-width: 142px;
+    padding-inline: 12px;
+    font-size: 13px;
+  }
+}
+
 @media (max-width: 380px) {
   .market-map.is-public .brand-directory-compact {
     grid-template-columns: 1fr;
@@ -2253,8 +2629,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .market-map.is-public .map-viewport.is-fullscreen,
-  .market-map.is-public .map-viewport.is-fullscreen.is-closing,
+  .market-map .map-viewport.is-fullscreen,
+  .market-map .map-viewport.is-fullscreen.is-closing,
   .map-viewport.is-fullscreen .fullscreen-modal-panel,
   .map-viewport.is-fullscreen.is-closing .fullscreen-modal-panel,
   .booth-preview-card,

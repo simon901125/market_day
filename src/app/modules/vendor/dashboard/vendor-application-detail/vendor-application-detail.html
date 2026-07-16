@@ -133,11 +133,14 @@
       }
     </div>
 
-    @if (cancellationReason) {
+    @if (statusReason; as reason) {
       <div class="status-reason-box">
-        <strong>取消原因</strong>
+        <strong>{{ reason.label }}</strong>
         <div>
-          <p>{{ cancellationReason }}</p>
+          <p class="reason-title">{{ reason.title }}</p>
+          @if (reason.description) {
+            <p class="reason-description">{{ reason.description }}</p>
+          }
         </div>
       </div>
     }
@@ -156,7 +159,7 @@
             <div>
               <span>{{ row.label }}</span>
               <strong
-                [class.highlight-text]="row.highlight"
+                [class.highlight-text]="row.highlight && row.label !== '付款狀態'"
                 [class.status-value]="row.label === '付款狀態'"
                 [class.status-tag]="row.label === '付款狀態'"
                 [ngClass]="row.label === '付款狀態' ? getStatusValueClass(row.value) : null"
@@ -225,13 +228,13 @@
             </tbody>
           </table>
         </div>
-      } @else if (detail.sideCard.rows.length) {
+      } @else if (sideCardRows.length) {
         <div class="info-list side-list">
-          @for (row of detail.sideCard.rows; track row.label) {
+          @for (row of sideCardRows; track row.label) {
             <div>
               <span>{{ row.label }}</span>
               <strong
-                [class.highlight-text]="row.highlight"
+                [class.highlight-text]="row.highlight && row.label !== '退款狀態'"
                 [class.status-value]="row.label === '退款狀態'"
                 [class.status-tag]="row.label === '退款狀態'"
                 [ngClass]="row.label === '退款狀態' ? getStatusValueClass(row.value) : null"

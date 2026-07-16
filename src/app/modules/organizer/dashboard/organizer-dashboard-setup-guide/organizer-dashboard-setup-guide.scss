@@ -4,7 +4,7 @@
 
 .organizer-dashboard-setup-guide {
   width: min(100%, var(--dashboard-content-width));
-  height: calc(100dvh - 48px);
+  height: calc(100dvh - var(--dashboard-content-offset, 48px));
   min-height: 0;
   margin: 0 auto;
   display: grid;
@@ -349,7 +349,7 @@
 @media (max-width: 1200px) {
   .organizer-dashboard-setup-guide {
     height: auto;
-    min-height: calc(100dvh - 48px);
+    min-height: calc(100dvh - var(--dashboard-content-offset, 48px));
     display: flex;
     flex-direction: column;
     overflow: visible;
@@ -357,7 +357,58 @@
 
 }
 
-@media (max-width: 768px) {
+@media (min-width: 577px) and (max-width: 992px) {
+  .profile-onboarding-card {
+    gap: 20px;
+  }
+
+  .profile-task-header {
+    padding: 22px 24px 18px;
+  }
+
+  .profile-requirements-panel {
+    margin: 0 24px;
+    padding: 14px 18px 16px;
+  }
+
+  .profile-requirement-list {
+    gap: 12px;
+  }
+
+  .profile-requirement-item {
+    gap: 9px;
+
+    h4 {
+      font-size: 15px;
+    }
+
+    p {
+      font-size: 13px;
+    }
+  }
+
+  .setup-steps {
+    gap: 20px;
+    padding-inline: 4px;
+  }
+
+  .setup-step:not(:last-child)::after {
+    left: calc(50% + 34px);
+    width: calc(100% - 28px);
+  }
+
+  .step-copy {
+    h3 {
+      font-size: 14px;
+    }
+
+    p {
+      font-size: 12px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
   .setup-page-header h1 {
     font-size: 22px;
   }

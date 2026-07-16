@@ -10,12 +10,12 @@ interface BoothRow { code: string; zone: string; size: string; selected: boolean
 @Component({ selector: 'app-organizer-dashboard-stall-detail', imports: [FormsModule, RouterLink, DashboardPagination, Dropdown], templateUrl: './organizer-dashboard-stall-detail.html', styleUrl: './organizer-dashboard-stall-detail.scss' })
 export class OrganizerDashboardStallDetail implements OnInit {
   readonly boothStatus = BoothStatus;
-  selectedDate = '2026/07/18（六）';
+  selectedDate = '2026/07/18';
   activeTab: 'all' | 'available' | 'selected' = 'all';
   keyword = '';
   currentPage = 1;
   readonly pageSize = 5;
-  readonly dates = ['2026/07/18（六）', '2026/07/19（日）'];
+  readonly dates = ['2026/07/18', '2026/07/19'];
   readonly booths: BoothRow[] = [
     { code: 'A01', zone: 'A 區', size: '2m × 3m', selected: true, brand: '森林選物', category: '植物選物', vendor: '林小森', selectedAt: '2026/06/01 10:30' },
     { code: 'A02', zone: 'A 區', size: '2m × 3m', selected: false, brand: '-', category: '-', vendor: '-', selectedAt: '-' },

@@ -4,7 +4,7 @@
 
 .admin-market-detail {
   width: min(100%, var(--dashboard-content-width));
-  min-height: calc(100dvh - 48px);
+  min-height: calc(100dvh - var(--dashboard-content-offset, 48px));
   margin: 0 auto;
   padding: 0;
   display: flex;
@@ -522,6 +522,32 @@
 
 .info-card .activity-name {
   font-size: 20px !important;
+}
+
+@media (max-width: 1100px) {
+  .activity-main-card {
+    .main-card-image {
+      flex-basis: 220px;
+    }
+
+    .main-card-meta-row {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding: 0;
+    }
+
+    .meta-item {
+      min-height: 46px;
+      padding: 7px 0;
+      grid-template-columns: 82px minmax(0, 1fr);
+      gap: 12px;
+      box-sizing: border-box;
+
+      + .meta-item {
+        border-top: 1px solid #e5e7eb;
+      }
+    }
+  }
 }
 
 @media (max-width: 960px) {

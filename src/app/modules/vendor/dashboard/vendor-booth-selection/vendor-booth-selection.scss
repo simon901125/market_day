@@ -1,8 +1,8 @@
 :host { display: block; }
-.booth-page { width:min(100%,var(--dashboard-content-width)); height:calc(100dvh - 48px); margin:0 auto; overflow:hidden; display:flex; flex-direction:column; color:#171717; }
-.content-grid { min-height:0; flex:1 1 auto; display:grid; grid-template-columns:minmax(0,1fr) 310px; gap:22px; align-items:stretch; }
+.booth-page { width:min(100%,var(--dashboard-content-width)); min-height: calc(100dvh - var(--dashboard-content-offset, 48px)); margin:0 auto; display:flex; flex-direction:column; color:#171717; }
+.content-grid { min-height:0; flex:0 0 auto; display:grid; grid-template-columns:minmax(0,1fr) 310px; gap:22px; align-items:stretch; }
 .map-card,.selection-card { border:1px solid #e3e3e3; border-radius:9px; background:#fff; overflow:hidden; }
-.map-card,.selection-card { height:100%; min-height:0; box-sizing:border-box; }
+.map-card,.selection-card { height:auto; min-height:0; box-sizing:border-box; }
 .map-card ::ng-deep app-market-map,
 .map-card ::ng-deep app-market-map .market-map,
 .map-card ::ng-deep app-market-map .map-layout,
@@ -66,16 +66,34 @@
 .map-legend i.available { border:1px solid #d1d5db; background:#f3f4f6; }
 .map-legend i.occupied { border:1px solid #d9a441; background:#fde7b2; }
 .map-legend i.selected { border:2px solid var(--primary-hover); background:var(--primary-color); }
-.vendor-map-body { min-height:0; flex:1 1 auto; overflow:hidden; }
+.vendor-map-body { min-height:0; flex:0 0 auto; overflow:hidden; }
 .vendor-map-body ::ng-deep app-market-map,
 .vendor-map-body ::ng-deep app-market-map .market-map,
 .vendor-map-body ::ng-deep app-market-map .map-layout,
-.vendor-map-body ::ng-deep app-market-map .map-viewport,
-.vendor-map-body ::ng-deep app-market-map .map-canvas { height:100%; min-height:0; box-sizing:border-box; }
+.vendor-map-body ::ng-deep app-market-map .map-viewport { height:auto; min-height:0; box-sizing:border-box; }
+.vendor-map-body ::ng-deep app-market-map .map-canvas { width:100%; height:auto; min-height:0; aspect-ratio:1056 / 590; box-sizing:border-box; }
 .vendor-map-body ::ng-deep app-market-map,
 .vendor-map-body ::ng-deep app-market-map .market-map { display:block; }
 .vendor-map-body ::ng-deep app-market-map .map-layout { border:0; border-radius:0; }
 .vendor-map-body ::ng-deep app-market-map .map-viewport { padding:0 12px 8px; }
+.vendor-map-body ::ng-deep app-market-map .map-legend { display:none; }
 
-@media(max-width:1050px){.booth-page{height:auto;overflow:visible;padding-bottom:28px}.activity-summary{min-height:0;flex-basis:auto;align-items:flex-start;flex-wrap:wrap;gap:8px 14px;white-space:normal}.activity-summary .activity-place{overflow:visible}.content-grid{grid-template-columns:1fr}.map-card,.selection-card{height:auto}.map-card ::ng-deep app-market-map .map-canvas{height:540px}.selection-card{order:-1}}
+@media(max-width:1050px){
+  .booth-page{height:auto;overflow:visible;padding-bottom:28px}
+  .activity-summary{min-height:0;flex-basis:auto;align-items:flex-start;flex-wrap:wrap;gap:8px 14px;white-space:normal}
+  .activity-summary .activity-place{overflow:visible}
+  .content-grid{grid-template-columns:1fr}
+  .map-card,.selection-card{height:auto}
+  .selection-card{order:-1}
+  .vendor-map-body{flex:0 0 auto;overflow:visible}
+  .vendor-map-body ::ng-deep app-market-map,
+  .vendor-map-body ::ng-deep app-market-map .market-map,
+  .vendor-map-body ::ng-deep app-market-map .map-layout,
+  .vendor-map-body ::ng-deep app-market-map .map-viewport{height:auto}
+  .vendor-map-body ::ng-deep app-market-map .map-canvas{
+    width:100%;
+    height:auto;
+    aspect-ratio:1056 / 590;
+  }
+}
 @media(max-width:700px){.detail-header{align-items:stretch;flex-direction:column}.header-complete-btn{width:100%}.vendor-map-toolbar{height:auto;min-height:0;flex-basis:auto;align-items:stretch;flex-direction:column}.date-filter{width:100%;flex-basis:auto}.date-filter app-dropdown{width:100%}:host ::ng-deep .date-filter app-dropdown .select-wrapper{grid-template-columns:68px minmax(0,1fr)}.map-legend{justify-content:flex-start;flex-wrap:wrap}}

@@ -20,4 +20,12 @@ describe('DashboardSidebar', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should open the user menu while the sidebar is collapsed', () => {
+    component.isCollapsed = true;
+
+    component.toggleUserMenu();
+
+    expect(component.isUserMenuOpen).toBeTrue();
+  });
 });

@@ -1,5 +1,27 @@
 <div class="dashboard-layout">
+  <header class="mobile-dashboard-header">
+    <button
+      type="button"
+      class="mobile-menu-toggle"
+      aria-label="開啟導覽選單"
+      [attr.aria-expanded]="isMobileSidebarOpen"
+      (click)="toggleMobileSidebar()"
+    >
+      <i class="bi bi-list"></i>
+    </button>
+    <img class="mobile-dashboard-logo" [src]="logoPath" [alt]="dashboardTitle" />
+  </header>
+
+  <button
+    type="button"
+    class="mobile-sidebar-backdrop"
+    [class.visible]="isMobileSidebarOpen"
+    aria-label="關閉導覽選單"
+    (click)="closeMobileSidebar()"
+  ></button>
+
   <app-dashboard-sidebar
+    [class.mobile-open]="isMobileSidebarOpen"
     [logoPath]="logoPath"
     [homePath]="homePath"
     [menuItems]="menuItems"
@@ -7,9 +29,10 @@
     [userName]="userName"
     [userEmail]="userEmail"
     [userInitial]="userInitial"
-    [isCollapsed]="isSidebarCollapsed"
+    [isCollapsed]="isMobileViewport ? false : isSidebarCollapsed"
     [organizerProfileRequired]="organizerProfileRequired"
     (collapseToggle)="toggleSidebar()"
+    (menuItemSelected)="closeMobileSidebar()"
     (accountSettingsRequested)="openAccountSettings()"
     (organizerProfileRequested)="openOrganizerProfile()"
     (lockedMenuItemRequested)="handleLockedMenuItem($event)"

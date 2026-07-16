@@ -22,6 +22,7 @@ export class VendorProductModal implements OnInit {
   draft: VendorProduct = { name: '', description: '', price: 0, image: '' };
   imageFile: File | null = null;
   imagePreview = '';
+  imageDeleteArmed = false;
   imageName = '每個商品限上傳 1 張圖片';
   errorMessage = '';
   invalidFields = new Set<'name' | 'description' | 'price' | 'image'>();
@@ -41,6 +42,7 @@ export class VendorProductModal implements OnInit {
     if (!file) return;
 
     this.imageFile = file;
+    this.imageDeleteArmed = false;
     this.imageName = file.name;
     this.invalidFields.delete('image');
     this.errorMessage = '';
@@ -55,6 +57,17 @@ export class VendorProductModal implements OnInit {
     this.imagePreview = '';
     this.draft.image = '';
     this.imageName = '尚未選擇圖片';
+    this.imageDeleteArmed = false;
+  }
+
+  prepareImageRemoval(event: Event): void {
+    const target = event.target as Element;
+    if (target.closest('.remove-image')) return;
+    if (!globalThis.matchMedia?.('(hover: none)').matches || this.imageDeleteArmed) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    this.imageDeleteArmed = true;
   }
 
   clearInvalid(field: 'name' | 'description' | 'price'): void {

@@ -43,7 +43,17 @@
         </div>
       </div>
       <div class="vendor-map-body">
-        <app-market-map [mode]="viewMode ? 'vendor-view' : 'select'" [mapData]="mapData" (boothSelected)="selectBooth($event)"></app-market-map>
+        <app-market-map
+          #marketMap
+          [mode]="viewMode ? 'vendor-view' : 'select'"
+          [mapData]="mapData"
+          [fullscreenDateOptions]="dateOptions"
+          [fullscreenSelectedDate]="activeDay.date"
+          [fullscreenAllSelected]="allSelected"
+          (boothSelected)="selectBooth($event)"
+          (fullscreenDateSelected)="selectDayByDate($event)"
+          (fullscreenAction)="handleFullscreenAction()"
+        ></app-market-map>
       </div>
     </section>
     <aside class="selection-card">

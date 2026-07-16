@@ -769,6 +769,7 @@ function createRefundedDetail(): ApplicationDetail {
       rows: [
         { label: '退款狀態', value: '已退款', highlight: true },
         { label: '退款方式', value: '信用卡' },
+        { label: '退款申請原因', value: '因個人行程安排，故申請本次退款。' },
         { label: '退款編號', value: 'R20240608000123' },
         { label: '退款金額', value: 'NT$3,800', highlight: true },
       ],
@@ -858,6 +859,7 @@ function refundCard(refundStatus: string) {
     rows: [
       { label: '退款狀態', value: refundStatus, highlight: true },
       { label: '退款方式', value: '信用卡' },
+      { label: '退款申請原因', value: '因個人行程安排，故申請本次退款。' },
       { label: '退款編號', value: '-' },
       { label: '退款總金額', value: 'NT$3,800', highlight: true },
     ],

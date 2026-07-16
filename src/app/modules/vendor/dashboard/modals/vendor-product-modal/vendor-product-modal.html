@@ -32,7 +32,7 @@
       <h3>商品圖片</h3>
       <div class="upload-row">
         @if (imagePreview) {
-          <div class="image-preview-wrap">
+          <div class="image-preview-wrap" [class.delete-armed]="imageDeleteArmed" (click)="prepareImageRemoval($event)">
             <label class="image-preview-select" aria-label="重新選擇商品圖片">
               <img class="image-preview" [src]="imagePreview" [alt]="draft.name || '商品圖片預覽'" />
               <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" (change)="selectImage($event)" />

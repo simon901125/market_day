@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import type { MarketMapBooth, MarketMapData } from '../../../../models/interface/shared/MarketMap';
@@ -24,6 +24,8 @@ interface DaySelection {
   styleUrl: './vendor-booth-selection.scss',
 })
 export class VendorBoothSelection {
+  @ViewChild('marketMap') private marketMapComponent?: MarketMap;
+
   readonly vendorStatus = VendorStatus;
   readonly applicationNo: string;
   readonly days: DaySelection[] = [
@@ -85,6 +87,23 @@ export class VendorBoothSelection {
   selectBooth(booth: MarketMapBooth): void {
     if (this.viewMode || booth.status === 'occupied') return;
     this.activeDay.booth = booth;
+  }
+
+  handleFullscreenAction(): void {
+    if (!this.activeDay.booth) {
+      return;
+    }
+
+    if (this.allSelected) {
+      this.marketMapComponent?.closeFullscreenMap();
+      this.requestComplete();
+      return;
+    }
+
+    const nextUnselectedIndex = this.days.findIndex((day) => !day.booth);
+    if (nextUnselectedIndex >= 0) {
+      this.selectDay(nextUnselectedIndex);
+    }
   }
 
   requestComplete(): void {

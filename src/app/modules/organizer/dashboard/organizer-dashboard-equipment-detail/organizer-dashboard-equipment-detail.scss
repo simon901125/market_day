@@ -6,7 +6,7 @@
   --detail-label-width: 90px;
   --detail-label-gap: 14px;
   width: min(100%, var(--dashboard-content-width));
-  height: calc(100dvh - 48px);
+  height: calc(100dvh - var(--dashboard-content-offset, 48px));
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -510,7 +510,7 @@
 @media (max-width: 900px) {
   .equipment-detail-page {
     height: auto;
-    min-height: calc(100dvh - 48px);
+    min-height: calc(100dvh - var(--dashboard-content-offset, 48px));
     overflow: visible;
   }
 
@@ -518,7 +518,6 @@
     overflow: visible;
   }
 
-  .activity-content,
   .summary-grid,
   .two-grid,
   .three-grid,
@@ -534,6 +533,8 @@
 
   .activity-content {
     display: grid;
+    grid-template-columns: minmax(190px, 42%) minmax(0, 1fr);
+    gap: 18px;
   }
 
   .activity-card {
@@ -548,6 +549,17 @@
     width: fit-content;
   }
 
+  .overview-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+@media (max-width: 576px) {
+  .activity-content {
+    grid-template-columns: 1fr;
+  }
+
   .activity-image-frame {
     aspect-ratio: 5 / 3;
     height: auto;
@@ -556,9 +568,4 @@
   .activity-image-frame img {
     position: static;
   }
-
-  .overview-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
 }

@@ -4,6 +4,7 @@
   [class.is-organizer]="mode === 'organizer-view'"
   [class.is-vendor-dashboard]="mode === 'select' || mode === 'vendor-view'"
   [class.is-vendor-view]="mode === 'vendor-view'"
+  [class.is-launch-only]="launchOnly"
   [class.is-map-fullscreen]="isFullscreenMap"
 >
   @if (mode !== 'public' && mode !== 'organizer-view') {
@@ -39,7 +40,7 @@
       [class.is-fullscreen]="isFullscreenMap"
       [class.is-closing]="isFullscreenClosing"
     >
-      @if (mode === 'organizer-view') {
+      @if (mode === 'organizer-view' && !isFullscreenMap) {
         <div class="organizer-map-toolbar">
           <app-dropdown
             title="活動日期"
@@ -55,19 +56,45 @@
         </div>
       }
       <div class="fullscreen-modal-panel">
-      @if (mode === 'public') {
+      @if (mode === 'public' || isVendorDashboardMode || mode === 'organizer-view') {
         <div class="mobile-map-fullscreen-bar">
           <button type="button" class="mobile-map-close" aria-label="關閉放大地圖" (click)="closeFullscreenMap()">
             <i class="bi bi-x-lg" aria-hidden="true"></i>
           </button>
           <div>
-            <strong>攤位地圖</strong>
-            <p class="fullscreen-map-description">左右滑動查看攤位。</p>
+            <strong>{{ mode === 'select' ? '放大選位' : mode === 'vendor-view' ? '攤位地圖' : '攤位地圖' }}</strong>
+            <p class="fullscreen-map-description">
+              {{ mode === 'select' ? '拖動地圖並點選攤位，選位結果會自動保留。' : '左右、上下拖動查看攤位。' }}
+            </p>
           </div>
+          @if (isVendorDashboardMode && fullscreenDateOptions.length) {
+            <app-dropdown
+              class="fullscreen-date-filter"
+              title="活動日期"
+              [options]="fullscreenDateOptions"
+              [selectedValue]="fullscreenSelectedDate"
+              (optionSelected)="selectFullscreenDate($event)"
+            ></app-dropdown>
+          }
+          @if (mode === 'organizer-view') {
+            <app-dropdown
+              class="fullscreen-date-filter"
+              title="活動日期"
+              [options]="organizerDates"
+              [selectedValue]="selectedOrganizerDate"
+              (optionSelected)="selectedOrganizerDate = $event"
+            ></app-dropdown>
+          }
         </div>
       }
 
       <div #fullscreenMapStage class="fullscreen-map-stage">
+      @if ((isVendorDashboardMode || mode === 'organizer-view') && !isFullscreenMap) {
+        <button type="button" class="mobile-vendor-map-action" (click)="openFullscreenMap()">
+          <i class="bi bi-arrows-fullscreen" aria-hidden="true"></i>
+          <span>{{ mode === 'select' ? '放大選位' : '放大查看' }}</span>
+        </button>
+      }
       <svg
         class="map-canvas"
         [attr.viewBox]="viewBox"
@@ -242,6 +269,75 @@
             </div>
           }
         </div>
+      }
+
+      @if (isVendorDashboardMode && isFullscreenMap) {
+        <footer class="fullscreen-vendor-sheet" aria-live="polite">
+          <div class="fullscreen-vendor-selection">
+            <span>{{ mode === 'vendor-view' ? '我的攤位' : '目前選擇' }}</span>
+            @if (vendorSelectedBooth; as booth) {
+              <strong>{{ booth.code }}</strong>
+              <small>{{ booth.zone }}｜3m × 3m</small>
+            } @else {
+              <strong class="is-empty">{{ mode === 'vendor-view' ? '尚無攤位資料' : '尚未選擇攤位' }}</strong>
+            }
+          </div>
+          @if (mode === 'select') {
+            <button
+              type="button"
+              class="app-btn primary fullscreen-vendor-confirm"
+              [disabled]="!vendorSelectedBooth"
+              (click)="runFullscreenAction()"
+            >
+              <i class="bi" [ngClass]="fullscreenAllSelected ? 'bi-check-circle' : 'bi-arrow-right'"></i>
+              <span>{{ fullscreenAllSelected ? '完成攤位選擇' : '前往下一日期' }}</span>
+            </button>
+          }
+        </footer>
+      }
+
+      @if (mode === 'organizer-view' && isFullscreenMap) {
+        <footer class="fullscreen-vendor-sheet organizer-fullscreen-sheet" aria-live="polite">
+          <div class="organizer-fullscreen-selection">
+            <span class="organizer-fullscreen-kicker">目前查看</span>
+            @if (selectedBooth; as booth) {
+              <div class="organizer-fullscreen-heading">
+                <strong>{{ booth.code }}</strong>
+                <span class="organizer-selected-status" [class.available]="!isOrganizerBoothSelected(booth)">
+                  {{ isOrganizerBoothSelected(booth) ? '已選擇' : '可選擇' }}
+                </span>
+              </div>
+              <dl class="organizer-fullscreen-booth-meta">
+                <div><dt>區域</dt><dd>{{ booth.zone }}</dd></div>
+                <div><dt>攤位尺寸</dt><dd>3m × 3m</dd></div>
+                @if (isOrganizerBoothSelected(booth)) {
+                  <div class="selection-time"><dt>選位時間</dt><dd>2026/05/28 14:30</dd></div>
+                }
+              </dl>
+              @if (booth.brand; as brand) {
+                <div class="organizer-fullscreen-brand">
+                  <div class="organizer-fullscreen-brand-main">
+                    <span>品牌資訊</span>
+                    <strong>{{ brand.name }}</strong>
+                    <span class="app-tag organizer-fullscreen-category">{{ brand.category }}</span>
+                  </div>
+                  <div class="organizer-fullscreen-vendor">
+                    <span>攤主姓名</span>
+                    <strong>林小森</strong>
+                  </div>
+                </div>
+              }
+              @if (isOrganizerBoothSelected(booth) && booth.brand) {
+                <a class="organizer-fullscreen-registration-link" routerLink="/organizer/dash-board/register/detail">
+                  <i class="bi bi-eye" aria-hidden="true"></i>
+                  查看報名詳情
+                </a>
+              }
+            } @else {
+              <strong class="organizer-fullscreen-empty">請點選攤位查看資訊</strong>
+            }
+          </div>
+        </footer>
       }
 
       @if (mode !== 'public' && mode !== 'organizer-view') {

@@ -4,7 +4,7 @@
 
 .application-page {
   width: min(100%, var(--dashboard-content-width));
-  min-height: calc(100vh - 48px);
+  min-height: calc(100dvh - var(--dashboard-content-offset, 48px));
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -58,6 +58,7 @@ table {
     vertical-align: middle;
     font-size: 13.5px;
     font-weight: 800;
+    white-space: nowrap;
   }
 
   th {
@@ -110,6 +111,30 @@ table {
   }
 }
 
+.table-wrap table th,
+.table-wrap table td {
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+
+.table-wrap table th:nth-child(2),
+.table-wrap table td:nth-child(2) {
+  min-width: 190px;
+}
+
+.table-wrap table th:nth-child(3),
+.table-wrap table td:nth-child(3) {
+  min-width: 230px;
+}
+
+.table-nowrap {
+  display: inline-block;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+
 .event-info {
   display: flex;
   align-items: center;
@@ -129,6 +154,7 @@ table {
     font-size: 14px;
     font-weight: 900;
     line-height: 1.15;
+    white-space: nowrap;
   }
 }
 

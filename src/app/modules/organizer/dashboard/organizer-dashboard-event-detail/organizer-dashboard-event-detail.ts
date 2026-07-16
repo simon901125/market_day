@@ -320,30 +320,21 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
           { key: 'delete', label: '刪除', variant: 'danger' },
         ];
       case ActivityStatus.pendingReview:
-        return [
-          { key: 'withdraw', label: '撤回申請', variant: 'outline' },
-          { key: 'view', label: '查看詳情', variant: 'outline' },
-        ];
+        return [{ key: 'withdraw', label: '撤回申請', variant: 'outline' }];
       case ActivityStatus.revisionRequired:
         return [
           { key: 'edit', label: '編輯', variant: 'outline' },
           { key: 'resubmit', label: '重新送審', variant: 'primary' },
         ];
       case ActivityStatus.mapBuilding:
-        return [{ key: 'view', label: '查看', variant: 'outline' }];
+        return [];
       case ActivityStatus.readyToPublish:
-        return [
-          { key: 'publish', label: '發布活動', variant: 'primary' },
-          { key: 'view', label: '查看詳情', variant: 'outline' },
-        ];
+        return [{ key: 'publish', label: '發布活動', variant: 'primary' }];
       case ActivityStatus.registrationOpen:
       case ActivityStatus.full:
-        return [
-          { key: 'unpublish', label: '下架活動', variant: 'danger' },
-          { key: 'view', label: '查看詳情', variant: 'outline' },
-        ];
+        return [{ key: 'unpublish', label: '下架活動', variant: 'outline' }];
       default:
-        return [{ key: 'view', label: '查看詳情', variant: 'outline' }];
+        return [];
     }
   }
 

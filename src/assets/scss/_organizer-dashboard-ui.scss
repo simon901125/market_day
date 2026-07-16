@@ -168,3 +168,126 @@
     .header-actions { width: 100%; }
   }
 }
+
+@media (max-width: 576px) {
+  .organizer-detail-page,
+  .dashboard-detail-page,
+  .account-detail-page {
+    > header.organizer-detail-header,
+    > header.detail-header,
+    > header.event-detail-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: center;
+      gap: 8px 10px;
+
+      > div:first-child {
+        display: contents;
+      }
+
+      .app-breadcrumb {
+        grid-column: 1;
+        grid-row: 1;
+        width: 100%;
+        justify-self: stretch;
+      }
+
+      .title-row {
+        grid-column: 1;
+        grid-row: 2;
+        width: 100%;
+        min-width: 0;
+        justify-self: stretch;
+      }
+    }
+
+    > header.organizer-detail-header:has(> .header-actions > :only-child),
+    > header.detail-header:has(> .header-actions > :only-child),
+    > header.event-detail-header:has(> .header-actions > :only-child),
+    > header.organizer-detail-header:has(> .report-download-button),
+    > header.detail-header:has(> .report-download-button) {
+      grid-template-columns: minmax(0, 1fr) auto;
+
+      .app-breadcrumb {
+        grid-column: 1 / -1;
+      }
+    }
+
+    > header > .header-actions {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: stretch;
+      justify-content: stretch;
+      gap: 10px;
+
+      > * {
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0;
+      }
+
+      .app-btn {
+        height: 36px !important;
+        padding: 0 8px;
+        gap: 6px;
+        font-size: 12px;
+      }
+    }
+
+    > header > .header-actions:has(> :only-child) {
+      grid-column: 2;
+      grid-row: 2;
+      width: auto;
+      display: flex;
+      align-items: center;
+      justify-self: end;
+      justify-content: flex-end;
+
+      > * {
+        width: auto !important;
+      }
+    }
+
+    > header > .header-actions:has(> :first-child:nth-last-child(3)) > :last-child {
+      grid-column: 1 / -1;
+    }
+
+    > header > .report-download-button {
+      grid-column: 2;
+      grid-row: 2;
+      width: auto;
+      min-width: 0;
+      justify-self: end;
+      white-space: nowrap;
+    }
+
+    .detail-card,
+    .info-card {
+      padding: 16px !important;
+    }
+
+    .cards-container,
+    .cards-grid,
+    .cards-grid-mid,
+    .cards-grid-booth {
+      gap: 12px !important;
+    }
+  }
+}
+
+@media (max-width: 340px) {
+  .organizer-detail-page,
+  .dashboard-detail-page,
+  .account-detail-page {
+    .header-actions .app-btn {
+      padding: 0 6px;
+
+      i {
+        display: none;
+      }
+    }
+  }
+}

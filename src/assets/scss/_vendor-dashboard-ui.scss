@@ -7,12 +7,21 @@
   .vendor-detail-header,
   > .detail-header,
   > .event-detail-header {
+    width: 100%;
     min-height: 52px;
     margin-bottom: 14px;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
     gap: 16px;
+    text-align: left;
+
+    > :first-child {
+      min-width: 0;
+      margin-right: auto;
+      margin-left: 0;
+      text-align: left;
+    }
   }
 
   .app-breadcrumb {
@@ -25,6 +34,7 @@
     min-height: 36px;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 12px;
 
     .app-page-title { font-size: 22px; }
@@ -119,8 +129,90 @@
     > .event-detail-header {
       align-items: stretch;
       flex-direction: column;
+
+      > :first-child {
+        width: 100%;
+        align-self: stretch;
+      }
     }
 
     .header-actions { width: 100%; }
+  }
+}
+
+@media (max-width: 576px) {
+  .vendor-detail-page {
+    > header.vendor-detail-header,
+    > header.detail-header,
+    > header.event-detail-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: center;
+      gap: 8px 10px;
+
+      > :first-child {
+        display: contents;
+      }
+
+      .app-breadcrumb {
+        grid-column: 1;
+        grid-row: 1;
+        width: 100%;
+        justify-self: stretch;
+      }
+
+      .title-row {
+        grid-column: 1;
+        grid-row: 2;
+        width: 100%;
+        min-width: 0;
+        justify-self: stretch;
+      }
+    }
+
+    > header.vendor-detail-header:has(> .header-actions > :only-child),
+    > header.detail-header:has(> .header-actions > :only-child),
+    > header.event-detail-header:has(> .header-actions > :only-child) {
+      grid-template-columns: minmax(0, 1fr) auto;
+
+      .app-breadcrumb {
+        grid-column: 1 / -1;
+      }
+    }
+
+    > header > .header-actions {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: stretch;
+      justify-content: stretch;
+      gap: 10px;
+
+      > * {
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0;
+      }
+    }
+
+    > header > .header-actions:has(> :only-child) {
+      grid-column: 2;
+      grid-row: 2;
+      width: auto;
+      display: flex;
+      align-items: center;
+      justify-self: end;
+      justify-content: flex-end;
+
+      > * {
+        width: auto !important;
+      }
+    }
+
+    > header > .header-actions:has(> :first-child:nth-last-child(3)) > :last-child {
+      grid-column: 1 / -1;
+    }
   }
 }

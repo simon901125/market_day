@@ -25,7 +25,7 @@ interface VendorHomeCard {
 })
 export class VendorDashboardHome {
   /** 是否有紀錄 */
-  hasRecords = false;
+  hasRecords = true;
 
   readonly homeNotificationMaxItems = 6;
 

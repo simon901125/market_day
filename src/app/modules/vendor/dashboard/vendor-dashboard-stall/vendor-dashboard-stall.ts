@@ -14,6 +14,7 @@ interface StallField {
   type: 'text' | 'email' | 'select';
   value: string;
   options?: string[];
+  required?: boolean;
 }
 
 interface UploadGuide {
@@ -31,6 +32,7 @@ export class VendorDashboardStall {
   readonly invalidFields = new Set<string>();
   avatarPreview = '';
   coverPreview = '';
+  armedBrandImage: 'avatar' | 'cover' | null = null;
 
   /** 基本資料先使用假資料綁定，之後串接 API 時可直接替換欄位 value。 */
   basicFields: StallField[] = [
@@ -45,7 +47,6 @@ export class VendorDashboardStall {
       value: '台中市',
       options: ['台北市', '新北市', '台中市', '台南市', '高雄市'],
     },
-    { label: 'Instagram', name: 'instagram', type: 'text', value: '@littlemarket_day' },
     {
       label: '區',
       name: 'district',
@@ -53,9 +54,10 @@ export class VendorDashboardStall {
       value: '南屯區',
       options: ['中區', '西區', '南屯區', '北屯區', '西屯區'],
     },
-    { label: 'Facebook 粉絲專頁', name: 'facebook', type: 'text', value: '@littlemarket' },
     { label: '詳細地址', name: 'address', type: 'text', value: '公益路二段 537 號' },
-    { label: '官方網站', name: 'website', type: 'text', value: 'https://littlemarket.com' },
+    { label: 'Instagram', name: 'instagram', type: 'text', value: '@littlemarket_day', required: false },
+    { label: 'Facebook 粉絲專頁', name: 'facebook', type: 'text', value: '@littlemarket', required: false },
+    { label: '官方網站', name: 'website', type: 'text', value: 'https://littlemarket.com', required: false },
   ];
 
   /** 大頭貼上傳規格說明，讓 template 以資料綁定方式渲染。 */
@@ -126,12 +128,24 @@ export class VendorDashboardStall {
 
     if (type === 'avatar') {
       this.avatarPreview = preview;
+      this.armedBrandImage = null;
       this.clearInvalid('avatar');
       return;
     }
 
     this.coverPreview = preview;
+    this.armedBrandImage = null;
     this.clearInvalid('cover');
+  }
+
+  prepareBrandImageRemoval(event: Event, type: 'avatar' | 'cover'): void {
+    const target = event.target as Element;
+    if (target.closest('.remove-brand-image')) return;
+    if (!globalThis.matchMedia?.('(hover: none)').matches || this.armedBrandImage === type) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    this.armedBrandImage = type;
   }
 
   private readFileAsDataUrl(file: File): Promise<string> {
@@ -146,6 +160,7 @@ export class VendorDashboardStall {
   removeBrandImage(type: 'avatar' | 'cover'): void {
     if (type === 'avatar') this.avatarPreview = '';
     else this.coverPreview = '';
+    this.armedBrandImage = null;
     this.invalidFields.add(type);
   }
 
@@ -241,7 +256,9 @@ export class VendorDashboardStall {
     this.invalidFields.clear();
 
     for (const field of this.basicFields) {
-      if (!field.value.trim()) this.invalidFields.add(field.name);
+      if (field.required !== false && !field.value.trim()) {
+        this.invalidFields.add(field.name);
+      }
     }
 
     if (!this.avatarPreview) this.invalidFields.add('avatar');

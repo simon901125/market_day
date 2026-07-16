@@ -166,6 +166,21 @@
   .logs-filter {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .logs-table {
+    min-width: 1200px;
+
+    th,
+    td {
+      white-space: nowrap;
+    }
+
+    td.log-details {
+      overflow: hidden;
+      overflow-wrap: normal;
+      text-overflow: ellipsis;
+    }
+  }
 }
 
 @media (max-width: 768px) {

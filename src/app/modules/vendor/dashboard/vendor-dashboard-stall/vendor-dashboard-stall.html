@@ -14,7 +14,12 @@
         @for (field of basicFields; track field.name) {
           @if (field.type === 'select') {
             <div class="form-group dropdown-field" [class.invalid-field]="invalidFields.has(field.name)" [attr.data-invalid]="invalidFields.has(field.name)">
-              <span>{{ field.label }} <b class="required-mark">*</b></span>
+              <span>
+                {{ field.label }}
+                @if (field.required !== false) {
+                  <b class="required-mark">*</b>
+                }
+              </span>
               <app-dropdown
                 [options]="field.options ?? []"
                 [selectedValue]="field.value"
@@ -26,7 +31,12 @@
             </div>
           } @else {
             <label class="form-group" [class.invalid-field]="invalidFields.has(field.name)" [attr.data-invalid]="invalidFields.has(field.name)">
-              <span>{{ field.label }} <b class="required-mark">*</b></span>
+              <span>
+                {{ field.label }}
+                @if (field.required !== false) {
+                  <b class="required-mark">*</b>
+                }
+              </span>
               <input [type]="field.type" [(ngModel)]="field.value" (ngModelChange)="clearInvalid(field.name)" [name]="field.name" />
               @if (invalidFields.has(field.name)) {
                 <small class="field-error">此欄位為必填</small>
@@ -46,7 +56,7 @@
       </div>
 
       <div class="avatar-row">
-        <div class="brand-image-wrap avatar-image-wrap" [class.invalid-upload]="invalidFields.has('avatar')" [attr.data-invalid]="invalidFields.has('avatar')">
+        <div class="brand-image-wrap avatar-image-wrap" [class.delete-armed]="armedBrandImage === 'avatar'" [class.invalid-upload]="invalidFields.has('avatar')" [attr.data-invalid]="invalidFields.has('avatar')" (click)="prepareBrandImageRemoval($event, 'avatar')">
           @if (avatarPreview) {
             <label class="brand-image-select" aria-label="重新選擇品牌大頭貼">
               <img class="brand-image avatar-image" [src]="avatarPreview" alt="品牌大頭貼" />
@@ -82,7 +92,7 @@
       </div>
 
       <div class="cover-row">
-        <div class="brand-image-wrap cover-image-wrap" [class.invalid-upload]="invalidFields.has('cover')" [attr.data-invalid]="invalidFields.has('cover')">
+        <div class="brand-image-wrap cover-image-wrap" [class.delete-armed]="armedBrandImage === 'cover'" [class.invalid-upload]="invalidFields.has('cover')" [attr.data-invalid]="invalidFields.has('cover')" (click)="prepareBrandImageRemoval($event, 'cover')">
           @if (coverPreview) {
             <label class="brand-image-select" aria-label="重新選擇品牌封面">
               <img class="brand-image cover-image" [src]="coverPreview" alt="品牌封面" />

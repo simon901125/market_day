@@ -53,8 +53,7 @@
   will-change: transform;
 }
 
-.modal-header,
-.modal-footer {
+.modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -73,25 +72,8 @@
   }
 }
 
-.icon-btn {
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--text-dark);
-  cursor: pointer;
-
-  i {
-    font-size: 18px;
-  }
-
-  &:hover {
-    background: var(--bg-primary);
-    color: var(--primary-color);
-  }
+.modal-header .app-icon-btn i {
+  font-size: 18px;
 }
 
 .settings-list {
@@ -141,11 +123,9 @@
     }
   }
 
-  .outline-action,
-  .danger-action {
+  .account-setting-action {
     width: 112px;
     min-width: 112px;
-    height: 38px;
     padding-inline: 12px;
     justify-self: end;
     margin: 0;
@@ -236,7 +216,7 @@
     white-space: nowrap;
   }
 
-  .outline-action {
+  .account-setting-action {
     justify-self: end;
   }
 }
@@ -264,27 +244,8 @@
   font-size: 12px !important;
 }
 
-.outline-action,
-.danger-action,
-.close-btn {
+.account-setting-action {
   min-width: 112px;
-  height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 16px;
-  border: 1px solid var(--primary-color);
-  border-radius: var(--radius-tag);
-  background: var(--bg-white);
-  color: var(--primary-color);
-  font-size: 14px;
-  font-weight: 900;
-  text-decoration: none;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.outline-action {
   justify-self: end;
 
   &:disabled {
@@ -295,8 +256,7 @@
 
 .danger {
   .setting-icon,
-  p,
-  .danger-action {
+  p {
     color: var(--primary-color);
   }
 
@@ -305,27 +265,16 @@
   }
 }
 
-.modal-footer {
-  justify-content: flex-end;
-  gap: 12px;
+.account-modal > .account-modal-actions {
   margin-top: 18px;
-}
-
-.close-btn {
-  min-width: 88px;
-  border-color: var(--border-soft);
-  background: var(--bg-white);
-  color: var(--text-dark);
-
-  &:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-  }
+  margin-right: 0;
+  margin-bottom: 0;
+  margin-left: 0;
 }
 
 @media (max-width: 768px) {
   .account-overlay {
-    align-items: start;
+    align-items: center;
     padding: 18px;
   }
 
@@ -347,14 +296,14 @@
     justify-self: start;
   }
 
-  .google-row .outline-action {
+  .google-row .account-setting-action {
     grid-column: 1 / -1;
     justify-self: stretch;
     width: 100%;
   }
 
   .muted,
-  .google-row .outline-action {
+  .google-row .account-setting-action {
     grid-column: 1 / -1;
     padding-left: 0;
   }
@@ -362,32 +311,120 @@
 
 @media (max-width: 576px) {
   .account-overlay {
-    padding: 10px;
+    align-items: center;
+    padding: 12px;
   }
 
   .account-modal {
-    max-height: calc(100dvh - 20px);
+    width: 100%;
+    max-height: calc(100dvh - 24px);
+    padding: 16px;
+    border-radius: 9px;
+    overscroll-behavior: contain;
+  }
+
+  .modal-header {
+    margin-bottom: 10px;
   }
 
   .modal-header h2 {
-    font-size: 20px;
+    font-size: 18px;
+  }
+
+  .modal-header .app-icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .settings-list {
+    gap: 9px;
   }
 
   .setting-card {
-    padding: 16px;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .setting-icon {
+    width: 28px;
+
+    i {
+      font-size: 20px;
+    }
+  }
+
+  .setting-content {
+    h3 {
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    p {
+      font-size: 12px;
+      line-height: 1.45;
+    }
+  }
+
+  .account-data {
+    gap: 5px;
+    margin-bottom: 8px;
+
+    div {
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    dt,
+    dd {
+      font-size: 12px;
+    }
+  }
+
+  .google-row {
+    gap: 7px 8px;
+    padding: 8px 10px;
+
+    strong {
+      white-space: normal;
+    }
+
+    .account-setting-action {
+      height: 38px;
+    }
+  }
+
+  .bind-status {
+    min-width: 64px;
+    min-height: 24px;
+    padding-inline: 10px;
+  }
+
+  .muted {
+    margin-top: 5px !important;
+    font-size: 11px !important;
   }
 
   .compact {
+    min-height: 0;
     grid-template-columns: 30px 1fr;
-    gap: 14px;
+    gap: 10px;
 
-    .outline-action,
-    .danger-action {
+    .account-setting-action {
       grid-column: 2;
-      width: 100%;
-      max-width: 160px;
+      width: 144px;
+      max-width: 100%;
+      height: 38px;
       justify-self: start;
-      margin-top: 8px;
+      margin-top: 5px;
+    }
+  }
+
+  .account-modal > .account-modal-actions {
+    margin-top: 10px;
+
+    .app-btn {
+      height: 38px;
     }
   }
 }

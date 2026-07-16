@@ -37,6 +37,7 @@ export interface ResetPasswordRequest {
 }
 
 export interface ChangePasswordRequest {
+  currentPassword: string;
   password: string;
 }
 
