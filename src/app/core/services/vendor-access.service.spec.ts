@@ -18,10 +18,18 @@ describe('VendorAccessService', () => {
     );
     authService.isLoggedIn.and.returnValue(true);
     vendorDashboardService.getVendorFirstLogin.and.returnValue(of({
-      statusCode: 200,
+      statusCode: 0,
       message: 'ok',
       messageDetails: null,
-      data: { needsProfileSetup: true },
+      data: {
+        needsProfile: true,
+        guideMessage: '請先完成攤位資料',
+        name: null,
+        pendingReviewCount: 0,
+        pendingPaymentCount: 0,
+        pendingStallSelectionCount: 0,
+        notifications: [],
+      },
     }));
 
     TestBed.configureTestingModule({

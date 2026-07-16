@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
@@ -23,6 +24,7 @@ interface StallField {
   name: string;
   type: 'text' | 'email' | 'select';
   value: string;
+  required: boolean;
   options?: string[];
 }
 
@@ -41,31 +43,37 @@ export class VendorDashboardStall implements OnInit {
   readonly invalidFields = new Set<string>();
   avatarPreview = '';
   coverPreview = '';
+  private avatarFile: File | null = null;
+  private coverFile: File | null = null;
+  private persistedAvatarImageUrl: string | null = null;
+  private persistedCoverImageUrl: string | null = null;
 
   /** 基本資料先使用假資料綁定，之後串接 API 時可直接替換欄位 value。 */
   basicFields: StallField[] = [
-    { label: '品牌名稱', name: 'brandName', type: 'text', value: '小集日工作室' },
-    { label: '負責人姓名', name: 'ownerName', type: 'text', value: '小集日' },
-    { label: '聯絡電話', name: 'phone', type: 'text', value: '0975-859-025' },
-    { label: 'Email', name: 'email', type: 'email', value: 'littlemarket@gmail.com' },
+    { label: '品牌名稱', name: 'brandName', type: 'text', value: '小集日工作室', required: true },
+    { label: '負責人姓名', name: 'ownerName', type: 'text', value: '小集日', required: true },
+    { label: '聯絡電話', name: 'phone', type: 'text', value: '0975-859-025', required: true },
+    { label: 'Email', name: 'email', type: 'email', value: 'littlemarket@gmail.com', required: true },
     {
       label: '縣市',
       name: 'city',
       type: 'select',
       value: '台中市',
+      required: true,
       options: ['台北市', '新北市', '台中市', '台南市', '高雄市'],
     },
-    { label: 'Instagram', name: 'instagram', type: 'text', value: '@littlemarket_day' },
+    { label: 'Instagram', name: 'instagram', type: 'text', value: '@littlemarket_day', required: false },
     {
       label: '區',
       name: 'district',
       type: 'select',
       value: '南屯區',
+      required: true,
       options: ['中區', '西區', '南屯區', '北屯區', '西屯區'],
     },
-    { label: 'Facebook 粉絲專頁', name: 'facebook', type: 'text', value: '@littlemarket' },
-    { label: '詳細地址', name: 'address', type: 'text', value: '公益路二段 537 號' },
-    { label: '官方網站', name: 'website', type: 'text', value: 'https://littlemarket.com' },
+    { label: 'Facebook 粉絲專頁', name: 'facebook', type: 'text', value: '@littlemarket', required: false },
+    { label: '詳細地址', name: 'address', type: 'text', value: '公益路二段 537 號', required: true },
+    { label: '官方網站', name: 'website', type: 'text', value: 'https://littlemarket.com', required: false },
   ];
 
   /** 大頭貼上傳規格說明，讓 template 以資料綁定方式渲染。 */
@@ -89,8 +97,8 @@ export class VendorDashboardStall implements OnInit {
   /** 品牌文字資料使用 ngModel 雙向綁定，方便後續整理成送出 payload。 */
   brandInfo = {
     description: '',
-    category: '玩具收藏',
-    categories: ['玩具收藏', '餐飲美食', '文創手作', '服飾配件', '寵物生活', '植物選物'],
+    category: '玩具選物',
+    categories: ['餐飲美食', '文創手作', '親子家庭', '寵物生活', '植物選物', '服飾配件', '玩具選物'],
     maxDescriptionLength: 500,
   };
 
@@ -132,11 +140,9 @@ export class VendorDashboardStall implements OnInit {
   private initializeVendorDashboard(): void {
     this.vendorDashboardService.getVendorFirstLogin().subscribe({
       next: (response) => {
-        this.isFirstLogin = response.data?.needsProfileSetup === true;
-
-        if (!this.isFirstLogin) {
-          this.loadVendorStallInfo();
-        }
+        this.isFirstLogin = response.data?.needsProfile === true;
+        // 即使資料尚未完整，也要載入已儲存欄位，避免用空表單覆蓋既有資料。
+        this.loadVendorStallInfo();
       },
       error: () => {
         // 初始化失敗時仍載入既有資料，避免把一般使用者誤判為首次登入。
@@ -158,6 +164,10 @@ export class VendorDashboardStall implements OnInit {
     }));
     this.avatarPreview = '';
     this.coverPreview = '';
+    this.avatarFile = null;
+    this.coverFile = null;
+    this.persistedAvatarImageUrl = null;
+    this.persistedCoverImageUrl = null;
     this.brandInfo.description = '';
     this.brandInfo.category = '';
     this.products = [];
@@ -222,6 +232,10 @@ export class VendorDashboardStall implements OnInit {
     }));
     this.avatarPreview = data.avatarImageUrl ?? '';
     this.coverPreview = data.coverImageUrl ?? '';
+    this.persistedAvatarImageUrl = data.avatarImageUrl;
+    this.persistedCoverImageUrl = data.coverImageUrl;
+    this.avatarFile = null;
+    this.coverFile = null;
     this.brandInfo.description = data.brandDescription || data.brandSummary || '';
     this.brandInfo.category = data.brandType ?? '';
     this.products = (data.products ?? []).map((product) => ({
@@ -253,11 +267,13 @@ export class VendorDashboardStall implements OnInit {
     const preview = await this.readFileAsDataUrl(file);
 
     if (type === 'avatar') {
+      this.avatarFile = file;
       this.avatarPreview = preview;
       this.clearInvalid('avatar');
       return;
     }
 
+    this.coverFile = file;
     this.coverPreview = preview;
     this.clearInvalid('cover');
   }
@@ -272,8 +288,13 @@ export class VendorDashboardStall implements OnInit {
   }
 
   removeBrandImage(type: 'avatar' | 'cover'): void {
-    if (type === 'avatar') this.avatarPreview = '';
-    else this.coverPreview = '';
+    if (type === 'avatar') {
+      this.avatarFile = null;
+      this.avatarPreview = '';
+    } else {
+      this.coverFile = null;
+      this.coverPreview = '';
+    }
     this.invalidFields.add(type);
   }
 
@@ -365,19 +386,39 @@ export class VendorDashboardStall implements OnInit {
   }
 
   /** 驗證並儲存目前攤位資料。 */
-  saveChanges(): void {
+  async saveChanges(): Promise<void> {
     this.invalidFields.clear();
 
+    const missingRequiredLabels: string[] = [];
     for (const field of this.basicFields) {
-      if (!field.value.trim()) this.invalidFields.add(field.name);
+      if (field.required && !field.value.trim()) {
+        this.invalidFields.add(field.name);
+        missingRequiredLabels.push(field.label);
+      }
     }
 
-    if (!this.avatarPreview) this.invalidFields.add('avatar');
-    if (!this.coverPreview) this.invalidFields.add('cover');
-    if (!this.brandInfo.description.trim()) this.invalidFields.add('description');
-    if (!this.brandInfo.category.trim()) this.invalidFields.add('category');
+    if (!this.avatarPreview) {
+      this.invalidFields.add('avatar');
+      missingRequiredLabels.push('品牌大頭貼');
+    }
+    if (!this.coverPreview) {
+      this.invalidFields.add('cover');
+      missingRequiredLabels.push('品牌封面');
+    }
+    if (!this.brandInfo.description.trim()) {
+      this.invalidFields.add('description');
+      missingRequiredLabels.push('品牌簡介');
+    }
+    if (!this.brandInfo.category.trim()) {
+      this.invalidFields.add('category');
+      missingRequiredLabels.push('品牌類型');
+    }
 
     if (this.invalidFields.size > 0) {
+      await this.alert.warning(
+        '必填資料尚未完成',
+        `${missingRequiredLabels.join('、')}尚未填寫，請完成後再儲存。`,
+      );
       document.querySelector<HTMLElement>('[data-invalid="true"]')?.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
@@ -387,27 +428,61 @@ export class VendorDashboardStall implements OnInit {
 
     this.isSaving = true;
     const shouldReturnToDashboard = this.isFirstLogin;
-    this.vendorDashboardService.saveVendorStallInfo(this.createSaveRequest()).subscribe({
-      next: async (response) => {
-        this.isSaving = false;
-        if (!isApiSuccessStatus(response.statusCode) || !response.data) {
-          void this.alert.error('攤位資料儲存失敗', response.message);
-          return;
-        }
+    try {
+      // 首次登入必須先建立 vendor profile，圖片 API 才有資料列可以綁定。
+      const response = await firstValueFrom(
+        this.vendorDashboardService.saveVendorStallInfo(this.createSaveRequest()),
+      );
+      if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+        await this.alert.error('攤位資料儲存失敗', response.message);
+        return;
+      }
 
-        this.applyVendorStallInfo(response.data);
-        this.isFirstLogin = false;
-        await this.vendorAccess.refresh();
-        await this.alert.success('儲存成功', response.message);
-        if (shouldReturnToDashboard) {
-          void this.router.navigate(['/vendor/dash-board/home']);
-        }
-      },
-      error: (error: unknown) => {
-        this.isSaving = false;
-        void this.alert.error('攤位資料儲存失敗', this.getErrorMessage(error));
-      },
-    });
+      await this.uploadPendingBrandImages();
+
+      // 圖片 API 直接更新 DB；重新載入以取得 avatar/cover 的正式 URL。
+      const refreshed = await firstValueFrom(this.vendorDashboardService.getVendorStallInfo());
+      if (!isApiSuccessStatus(refreshed.statusCode) || !refreshed.data) {
+        await this.alert.error('攤位資料讀取失敗', refreshed.message);
+        return;
+      }
+
+      this.applyVendorStallInfo(refreshed.data);
+      this.isFirstLogin = false;
+      await this.vendorAccess.refresh();
+      await this.alert.success('儲存成功', response.message);
+      if (shouldReturnToDashboard) {
+        void this.router.navigate(['/vendor/dash-board/home']);
+      }
+    } catch (error: unknown) {
+      await this.alert.error('攤位資料儲存失敗', this.getErrorMessage(error));
+    } finally {
+      this.isSaving = false;
+    }
+  }
+
+  private async uploadPendingBrandImages(): Promise<void> {
+    if (this.avatarFile) {
+      const result = await firstValueFrom(
+        this.vendorDashboardService.uploadVendorImage(this.avatarFile, 'vendor-avatar'),
+      );
+      if (!isApiSuccessStatus(result.statusCode) || !result.data) {
+        throw new Error(result.message || '品牌頭像上傳失敗');
+      }
+      this.persistedAvatarImageUrl = result.data.imageUrl;
+      this.avatarFile = null;
+    }
+
+    if (this.coverFile) {
+      const result = await firstValueFrom(
+        this.vendorDashboardService.uploadVendorImage(this.coverFile, 'vendor-cover'),
+      );
+      if (!isApiSuccessStatus(result.statusCode) || !result.data) {
+        throw new Error(result.message || '品牌封面上傳失敗');
+      }
+      this.persistedCoverImageUrl = result.data.imageUrl;
+      this.coverFile = null;
+    }
   }
 
   private createSaveRequest(): VendorStallSaveRequest {
@@ -427,13 +502,14 @@ export class VendorDashboardStall implements OnInit {
       instagramUrl: values['instagram'] || null,
       facebookUrl: values['facebook'] || null,
       websiteUrl: values['website'] || null,
-      avatarImageUrl: this.avatarPreview || null,
-      coverImageUrl: this.coverPreview || null,
+      // 預覽可能是大型 data URL；stall/save 僅接受已儲存的正式 URL。
+      avatarImageUrl: this.persistedAvatarImageUrl,
+      coverImageUrl: this.persistedCoverImageUrl,
       brandSummary: description,
       brandDescription: description,
       brandType: this.brandInfo.category.trim(),
       products: this.products.map((product) => ({
-        id: product.id,
+        ...(product.id && product.id > 0 ? { id: product.id } : {}),
         productName: product.name.trim(),
         productPrice: product.price,
         productSummary: product.description.trim(),
@@ -445,6 +521,9 @@ export class VendorDashboardStall implements OnInit {
   private getErrorMessage(error: unknown): string {
     if (error instanceof HttpErrorResponse) {
       return error.error?.message ?? error.message ?? '請稍後再試。';
+    }
+    if (error instanceof Error) {
+      return error.message;
     }
     return '請稍後再試。';
   }

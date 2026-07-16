@@ -1,7 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
-import { isApiSuccessStatus } from '../../models/interface/shared/ApiResult';
 import { AuthService } from '../auth/auth.service';
 import { VendorDashboardService } from '../Vendor/dashboardApi/vendor-dashboard.service';
 
@@ -47,8 +46,8 @@ export class VendorAccessService {
       const response = await firstValueFrom(
         this.vendorDashboardService.getVendorFirstLogin(),
       );
-      const needsProfile = isApiSuccessStatus(response.statusCode) && response.data
-        ? response.data.needsProfileSetup
+      const needsProfile = typeof response.data?.needsProfile === 'boolean'
+        ? response.data.needsProfile
         : true;
       this.needsProfileState.set(needsProfile);
       return needsProfile;

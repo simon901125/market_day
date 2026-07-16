@@ -13,6 +13,8 @@ import {
 import {
   VendorStallInfo,
   VendorStallSaveRequest,
+  StoredVendorImage,
+  VendorImagePurpose,
 } from '../../../models/interface/vendor/VendorStallInfo';
 
 @Injectable({
@@ -100,5 +102,17 @@ export class VendorService {
   ): Observable<ApiResult<VendorStallInfo>> {
     const url = `${environment.apiBaseUrl}api/vendor/stall/save`;
     return this.http.post<ApiResult<VendorStallInfo>>(url, data);
+  }
+
+  /** 上傳攤主頭像或封面；後端會儲存檔案並將實際 URL 綁定至品牌資料。 */
+  uploadVendorImage(
+    file: File,
+    purpose: VendorImagePurpose,
+  ): Observable<ApiResult<StoredVendorImage>> {
+    const url = `${environment.apiBaseUrl}api/images`;
+    const formData = new FormData();
+    formData.append('purpose', purpose);
+    formData.append('file', file, file.name);
+    return this.http.post<ApiResult<StoredVendorImage>>(url, formData);
   }
 }

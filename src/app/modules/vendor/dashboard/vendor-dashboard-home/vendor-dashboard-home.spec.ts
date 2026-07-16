@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { provideRouter } from '@angular/router';
+import { of, throwError } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
@@ -16,15 +17,24 @@ describe('VendorDashboardHome', () => {
       ['getVendorFirstLogin'],
     );
     vendorDashboardService.getVendorFirstLogin.and.returnValue(of({
-      statusCode: 0,
+      statusCode: 200,
       message: 'ok',
       messageDetails: null,
-      data: { needsProfileSetup: true },
+      data: {
+        needsProfile: true,
+        guideMessage: '請先完成攤位資料',
+        name: null,
+        pendingReviewCount: 0,
+        pendingPaymentCount: 0,
+        pendingStallSelectionCount: 0,
+        notifications: [],
+      },
     }));
 
     await TestBed.configureTestingModule({
       imports: [VendorDashboardHome],
       providers: [
+        provideRouter([]),
         { provide: VendorDashboardService, useValue: vendorDashboardService },
         { provide: AuthService, useValue: { getUser: () => null } },
       ],
@@ -42,6 +52,58 @@ describe('VendorDashboardHome', () => {
 
   it('should show first-login guide when profile setup is required', () => {
     expect(component.hasRecords).toBeFalse();
+    expect(component.guideMessage).toBe('請先完成攤位資料');
     expect(vendorDashboardService.getVendorFirstLogin).toHaveBeenCalled();
+  });
+
+  it('should bind dashboard counts, vendor name and notifications', () => {
+    vendorDashboardService.getVendorFirstLogin.and.returnValue(of({
+      statusCode: 200,
+      message: 'ok',
+      messageDetails: null,
+      data: {
+        needsProfile: false,
+        guideMessage: null,
+        name: '小集日',
+        pendingReviewCount: 12,
+        pendingPaymentCount: 6,
+        pendingStallSelectionCount: 2,
+        notifications: [{
+          id: 30,
+          category: 'APPLICATION_REVIEW',
+          type: 'APPLICATION_SUBMITTED',
+          targetType: 'EVENT_APPLICATION',
+          targetId: 9,
+          title: '待審核',
+          content: '報名已送出',
+          isRead: false,
+          readAt: null,
+          createdAt: '2026-07-15T10:00:00',
+        }],
+      },
+    }));
+
+    component.ngOnInit();
+
+    expect(component.hasRecords).toBeTrue();
+    expect(component.vendorName).toBe('小集日');
+    expect(component.todoItems.map((item) => item.count)).toEqual([12, 6, 2]);
+    expect(component.notifications[0]).toEqual(jasmine.objectContaining({
+      status: '待審核',
+      title: '報名已送出',
+      date: '2026/07/15 10:00',
+      unread: true,
+    }));
+  });
+
+  it('should show an error instead of the first-login guide when initialization fails', () => {
+    vendorDashboardService.getVendorFirstLogin.and.returnValue(
+      throwError(() => new Error('network error')),
+    );
+
+    component.ngOnInit();
+
+    expect(component.hasRecords).toBeNull();
+    expect(component.loadError).toBe('首頁資料載入失敗，請重新整理後再試。');
   });
 });

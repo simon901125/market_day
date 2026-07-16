@@ -94,4 +94,32 @@ describe('VendorService', () => {
     expect(request.request.body).toEqual(payload);
     request.flush({ statusCode: 200, message: 'ok', messageDetails: null, data: payload });
   });
+
+  it('should upload a vendor image as multipart form data', () => {
+    const file = new File(['image'], 'avatar.png', { type: 'image/png' });
+
+    service.uploadVendorImage(file, 'vendor-avatar').subscribe();
+
+    const request = httpTesting.expectOne(`${environment.apiBaseUrl}api/images`);
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body instanceof FormData).toBeTrue();
+    expect(request.request.body.get('purpose')).toBe('vendor-avatar');
+    const uploadedFile = request.request.body.get('file') as File;
+    expect(uploadedFile.name).toBe(file.name);
+    expect(uploadedFile.type).toBe(file.type);
+    expect(uploadedFile.size).toBe(file.size);
+    request.flush({
+      statusCode: 200,
+      message: 'ok',
+      messageDetails: null,
+      data: {
+        purpose: 'VENDOR_AVATAR',
+        productId: null,
+        eventId: null,
+        imageUrl: '/images/vendor/avatar.png',
+        contentType: 'image/png',
+        fileSize: file.size,
+      },
+    });
+  });
 });

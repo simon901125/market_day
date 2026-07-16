@@ -59,12 +59,21 @@ describe('VendorDashboardStall', () => {
       'getVendorFirstLogin',
       'getVendorStallInfo',
       'saveVendorStallInfo',
+      'uploadVendorImage',
     ]);
     vendorDashboardService.getVendorFirstLogin.and.returnValue(of({
       statusCode: 200,
       message: 'ok',
       messageDetails: null,
-      data: { needsProfileSetup: false },
+      data: {
+        needsProfile: false,
+        guideMessage: null,
+        name: '登入者姓名',
+        pendingReviewCount: 0,
+        pendingPaymentCount: 0,
+        pendingStallSelectionCount: 0,
+        notifications: [],
+      },
     }));
     vendorDashboardService.getVendorStallInfo.and.returnValue(of({
       statusCode: 200,
@@ -95,31 +104,62 @@ describe('VendorDashboardStall', () => {
 
   it('should render stall data by binding', () => {
     const textContent: string = fixture.nativeElement.textContent;
-    const firstInput: HTMLInputElement = fixture.nativeElement.querySelector('input');
+    const brandNameInput: HTMLInputElement = fixture.nativeElement.querySelector('input[type="text"]');
+    const descriptionInput: HTMLTextAreaElement = fixture.nativeElement.querySelector(
+      'textarea[name="brandDescription"]',
+    );
+    const avatarImage: HTMLImageElement = fixture.nativeElement.querySelector('.avatar-image');
+    const coverImage: HTMLImageElement = fixture.nativeElement.querySelector('.cover-image');
 
     expect(textContent).toContain('基本資料');
-    expect(firstInput.value).toBe(component.basicFields[0].value);
+    expect(brandNameInput.value).toBe(stallInfo.brandName);
+    expect(descriptionInput.value).toBe(stallInfo.brandDescription);
+    expect(avatarImage.getAttribute('src')).toBe(stallInfo.avatarImageUrl);
+    expect(coverImage.getAttribute('src')).toBe(stallInfo.coverImageUrl);
     expect(textContent).toContain(component.products[0].name);
     expect(vendorDashboardService.getVendorStallInfo).toHaveBeenCalled();
   });
 
-  it('should keep an empty form without loading missing stall info on first login', () => {
+  it('should block saving and list only missing required fields', async () => {
+    component.basicFields.find((field) => field.name === 'brandName')!.value = '';
+    component.basicFields.find((field) => field.name === 'instagram')!.value = '';
+    component.brandInfo.description = '';
+    const warningSpy = spyOn(alert, 'warning').and.resolveTo({} as never);
+
+    await component.saveChanges();
+
+    expect(warningSpy).toHaveBeenCalledWith(
+      '必填資料尚未完成',
+      '品牌名稱、品牌簡介尚未填寫，請完成後再儲存。',
+    );
+    expect(component.invalidFields.has('brandName')).toBeTrue();
+    expect(component.invalidFields.has('description')).toBeTrue();
+    expect(component.invalidFields.has('instagram')).toBeFalse();
+    expect(vendorDashboardService.saveVendorStallInfo).not.toHaveBeenCalled();
+  });
+
+  it('should load saved stall fields even when profile is still incomplete', () => {
     vendorDashboardService.getVendorFirstLogin.and.returnValue(of({
       statusCode: 0,
       message: 'ok',
       messageDetails: null,
-      data: { needsProfileSetup: true },
+      data: {
+        needsProfile: true,
+        guideMessage: '請先完成攤位資料',
+        name: null,
+        pendingReviewCount: 0,
+        pendingPaymentCount: 0,
+        pendingStallSelectionCount: 0,
+        notifications: [],
+      },
     }));
     const errorSpy = spyOn(alert, 'error');
 
     component.ngOnInit();
 
-    expect(component.basicFields.find((field) => field.name === 'ownerName')?.value)
-      .toBe('登入者姓名');
-    expect(component.basicFields.find((field) => field.name === 'email')?.value)
-      .toBe('login@example.com');
-    expect(component.basicFields.find((field) => field.name === 'brandName')?.value).toBe('');
-    expect(vendorDashboardService.getVendorStallInfo).toHaveBeenCalledTimes(1);
+    expect(component.basicFields.find((field) => field.name === 'brandName')?.value)
+      .toBe(stallInfo.brandName);
+    expect(vendorDashboardService.getVendorStallInfo).toHaveBeenCalledTimes(2);
     expect(errorSpy).not.toHaveBeenCalled();
   });
 
@@ -139,6 +179,28 @@ describe('VendorDashboardStall', () => {
     expect(component.isProductModalOpen).toBeFalse();
   });
 
+  it('should omit non-positive product ids from the save request', () => {
+    component.products = [
+      { id: 0, name: '新增商品', description: '新品說明', price: 45, image: 'new.png' },
+      { id: 88, name: '既有商品', description: '既有說明', price: 80, image: 'old.png' },
+    ];
+
+    const request = (component as any).createSaveRequest();
+
+    expect(request.products[0].id).toBeUndefined();
+    expect(request.products[1].id).toBe(88);
+  });
+
+  it('should never send data URL previews through the stall JSON API', () => {
+    component.avatarPreview = 'data:image/png;base64,avatar-preview';
+    component.coverPreview = 'data:image/png;base64,cover-preview';
+
+    const request = (component as any).createSaveRequest();
+
+    expect(request.avatarImageUrl).toBe('avatar.png');
+    expect(request.coverImageUrl).toBe('cover.png');
+  });
+
   it('should show warning instead of form when product limit is reached', async () => {
     component.products = [
       ...component.products,
@@ -147,6 +209,12 @@ describe('VendorDashboardStall', () => {
         description: '商品介紹',
         price: 100,
         image: 'third-product.png',
+      },
+      {
+        name: '第四個商品',
+        description: '商品介紹',
+        price: 120,
+        image: 'fourth-product.png',
       },
     ];
     const warningSpy = spyOn(alert, 'warning').and.resolveTo({} as never);

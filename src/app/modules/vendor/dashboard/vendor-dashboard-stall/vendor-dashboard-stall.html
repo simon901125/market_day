@@ -13,23 +13,41 @@
       <div class="form-grid">
         @for (field of basicFields; track field.name) {
           @if (field.type === 'select') {
-            <div class="form-group dropdown-field" [class.invalid-field]="invalidFields.has(field.name)" [attr.data-invalid]="invalidFields.has(field.name)">
-              <span>{{ field.label }} <b class="required-mark">*</b></span>
+            <div
+              class="form-group dropdown-field"
+              [class.invalid-field]="invalidFields.has(field.name)"
+              [attr.data-invalid]="invalidFields.has(field.name)"
+              [attr.aria-required]="field.required"
+            >
+              <span>
+                {{ field.label }}
+                @if (field.required) { <b class="required-mark">*</b> }
+              </span>
               <app-dropdown
                 [options]="field.options ?? []"
                 [selectedValue]="field.value"
                 (optionSelected)="updateBasicField(field, $event)"
               ></app-dropdown>
               @if (invalidFields.has(field.name)) {
-                <small class="field-error">此欄位為必填</small>
+                <small class="field-error">{{ field.label }}尚未填寫</small>
               }
             </div>
           } @else {
             <label class="form-group" [class.invalid-field]="invalidFields.has(field.name)" [attr.data-invalid]="invalidFields.has(field.name)">
-              <span>{{ field.label }} <b class="required-mark">*</b></span>
-              <input [type]="field.type" [(ngModel)]="field.value" (ngModelChange)="clearInvalid(field.name)" [name]="field.name" />
+              <span>
+                {{ field.label }}
+                @if (field.required) { <b class="required-mark">*</b> }
+              </span>
+              <input
+                [type]="field.type"
+                [(ngModel)]="field.value"
+                (ngModelChange)="clearInvalid(field.name)"
+                [name]="field.name"
+                [required]="field.required"
+                [attr.aria-required]="field.required"
+              />
               @if (invalidFields.has(field.name)) {
-                <small class="field-error">此欄位為必填</small>
+                <small class="field-error">{{ field.label }}尚未填寫</small>
               }
             </label>
           }
@@ -117,7 +135,7 @@
 
       <div class="brand-grid">
         <label class="form-group" [class.invalid-field]="invalidFields.has('description')" [attr.data-invalid]="invalidFields.has('description')">
-          <span>品牌簡介</span>
+          <span>品牌簡介 <b class="required-mark">*</b></span>
           <div class="textarea-box">
             <textarea
               name="brandDescription"
@@ -129,19 +147,19 @@
             <small>{{ brandInfo.description.length }} / {{ brandInfo.maxDescriptionLength }}</small>
           </div>
           @if (invalidFields.has('description')) {
-            <small class="field-error">此欄位為必填</small>
+            <small class="field-error">品牌簡介尚未填寫</small>
           }
         </label>
 
         <div class="form-group dropdown-field" [class.invalid-field]="invalidFields.has('category')" [attr.data-invalid]="invalidFields.has('category')">
-          <span>品牌類型</span>
+          <span>品牌類型 <b class="required-mark">*</b></span>
           <app-dropdown
             [options]="brandInfo.categories"
             [selectedValue]="brandInfo.category"
             (optionSelected)="updateCategory($event)"
           ></app-dropdown>
           @if (invalidFields.has('category')) {
-            <small class="field-error">此欄位為必填</small>
+            <small class="field-error">品牌類型尚未填寫</small>
           }
         </div>
       </div>

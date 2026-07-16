@@ -25,7 +25,7 @@ describe('VendorDashboardService', () => {
 
   it('should get vendor dashboard initialization state', () => {
     service.getVendorFirstLogin().subscribe((response) => {
-      expect(response.data.needsProfileSetup).toBeTrue();
+      expect(response.data.needsProfile).toBeTrue();
     });
 
     const request = httpTesting.expectOne(
@@ -36,7 +36,15 @@ describe('VendorDashboardService', () => {
       statusCode: 200,
       message: 'ok',
       messageDetails: null,
-      data: { needsProfileSetup: true },
+      data: {
+        needsProfile: true,
+        guideMessage: '請先完成攤位資料',
+        name: null,
+        pendingReviewCount: 0,
+        pendingPaymentCount: 0,
+        pendingStallSelectionCount: 0,
+        notifications: [],
+      },
     });
   });
 });

@@ -91,6 +91,7 @@ export class VendorProductModal implements OnInit {
     }
 
     this.saveProduct.emit({
+      ...(this.draft.id && this.draft.id > 0 ? { id: this.draft.id } : {}),
       name,
       description,
       price: this.draft.price,

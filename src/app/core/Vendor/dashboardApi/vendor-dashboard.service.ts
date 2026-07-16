@@ -7,6 +7,8 @@ import { VendorDashboardInit } from '../../../models/interface/vendor/VendorDash
 import {
   VendorStallInfo,
   VendorStallSaveRequest,
+  StoredVendorImage,
+  VendorImagePurpose,
 } from '../../../models/interface/vendor/VendorStallInfo';
 import { VendorService } from '../vendorApi/vendor.service';
 @Injectable({
@@ -32,5 +34,13 @@ export class VendorDashboardService {
   /** 儲存攤主攤位資料 */
   saveVendorStallInfo(data: VendorStallSaveRequest): Observable<ApiResult<VendorStallInfo>> {
     return this.vendorService.saveVendorStallInfo(data);
+  }
+
+  /** 上傳攤主品牌圖片。 */
+  uploadVendorImage(
+    file: File,
+    purpose: VendorImagePurpose,
+  ): Observable<ApiResult<StoredVendorImage>> {
+    return this.vendorService.uploadVendorImage(file, purpose);
   }
 }

@@ -27,3 +27,14 @@ export interface VendorStallInfo {
 }
 
 export type VendorStallSaveRequest = VendorStallInfo;
+
+export type VendorImagePurpose = 'vendor-avatar' | 'vendor-cover';
+
+export interface StoredVendorImage {
+  purpose: string;
+  productId: number | null;
+  eventId: number | null;
+  imageUrl: string;
+  contentType: string;
+  fileSize: number;
+}

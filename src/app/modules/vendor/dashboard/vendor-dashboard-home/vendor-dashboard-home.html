@@ -1,5 +1,14 @@
 <section class="vendor-home page-transition">
-  @if (!hasRecords) {
+  @if (hasRecords === null && !loadError) {
+    <app-loading-spinner [displayStatus]="true" />
+  } @else if (loadError) {
+    <section class="home-load-error" role="alert">
+      <i class="bi bi-exclamation-circle"></i>
+      <h1>首頁資料載入失敗</h1>
+      <p>{{ loadError }}</p>
+      <button class="app-btn primary" type="button" (click)="ngOnInit()">重新載入</button>
+    </section>
+  } @else if (hasRecords === false) {
     <div class="empty-home">
       <header class="empty-home-header">
         <h1>歡迎加入小集日！</h1>
@@ -25,11 +34,11 @@
       </div>
 
       <div class="empty-home-action">
-        <p><i class="bi bi-info-circle"></i>未完成攤位資料前，無法報名市集活動。</p>
+        <p><i class="bi bi-info-circle"></i>{{ guideMessage || '未完成攤位資料前，無法報名市集活動。' }}</p>
         <a class="app-btn primary" routerLink="/vendor/dash-board/myStall"><i class="bi bi-pencil"></i>開始填寫資料</a>
       </div>
     </div>
-  } @else {
+  } @else if (hasRecords === true) {
   <header class="welcome-header">
     <h1 class="welcome-title">歡迎回來，{{ vendorName }}！</h1>
     <p class="welcome-subtitle">快速掌握報名進度、攤位選擇與最新通知。</p>

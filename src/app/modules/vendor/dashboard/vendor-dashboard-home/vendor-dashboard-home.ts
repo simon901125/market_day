@@ -3,11 +3,14 @@ import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { VendorDashboardNotification } from '../../../../models/interface/vendor/VendorDashboardInit';
 import { DashboardHomeTodoCard } from '../../../shared/dashboard/dashboard-home-todo-card/dashboard-home-todo-card';
 import {
   DashboardNotification,
   NotificationItem,
 } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
+import { LoadingSpinner } from '../../../shared/loading-spinner/loading-spinner';
 
 interface VendorHomeCard {
   icon: string;
@@ -20,15 +23,19 @@ interface VendorHomeCard {
 
 @Component({
   selector: 'app-vendor-dashboard-home',
-  imports: [RouterLink, DashboardHomeTodoCard, DashboardNotification],
+  imports: [RouterLink, DashboardHomeTodoCard, DashboardNotification, LoadingSpinner],
   templateUrl: './vendor-dashboard-home.html',
   styleUrl: './vendor-dashboard-home.scss',
 })
 export class VendorDashboardHome implements OnInit {
-  /** 是否有紀錄 */
-  hasRecords = false;
+  hasRecords: boolean | null = null;
+  loadError = '';
+  guideMessage = '';
+  todoItems: VendorHomeCard[] = [];
+  notifications: NotificationItem[] = [];
 
   readonly homeNotificationMaxItems = 6;
+  private dashboardVendorName = '';
 
   constructor(
     private readonly authService: AuthService,
@@ -36,117 +43,92 @@ export class VendorDashboardHome implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.hasRecords = null;
+    this.loadError = '';
+
     this.vendorDashboardService.getVendorFirstLogin().subscribe({
       next: (response) => {
-        if (response.data && typeof response.data.needsProfileSetup === 'boolean') {
-          this.hasRecords = !response.data.needsProfileSetup;
+        const dashboard = response.data;
+        if (!isApiSuccessStatus(response.statusCode) || !dashboard) {
+          this.loadError = response.message || '首頁資料載入失敗，請稍後再試。';
+          return;
         }
+
+        this.hasRecords = !dashboard.needsProfile;
+        this.guideMessage = dashboard.guideMessage ?? '';
+        this.dashboardVendorName = dashboard.name?.trim() ?? '';
+        this.todoItems = [
+          {
+            icon: 'bi-clipboard-check',
+            count: dashboard.pendingReviewCount,
+            unit: '筆',
+            label: '待審核報名',
+            path: '/vendor/dash-board/application-record',
+            iconColor: 'orange',
+          },
+          {
+            icon: 'bi-wallet2',
+            count: dashboard.pendingPaymentCount,
+            unit: '筆',
+            label: '待付款報名',
+            path: '/vendor/dash-board/application-record',
+            iconColor: 'orange',
+          },
+          {
+            icon: 'bi-shop',
+            count: dashboard.pendingStallSelectionCount,
+            unit: '筆',
+            label: '待選擇攤位',
+            path: '/vendor/dash-board/application-record',
+            iconColor: 'blue',
+          },
+        ];
+        this.notifications = (dashboard.notifications ?? [])
+          .map((item) => this.toNotificationItem(item));
+      },
+      error: () => {
+        this.loadError = '首頁資料載入失敗，請重新整理後再試。';
       },
     });
   }
 
   get vendorName(): string {
-    return this.authService.getUser('vendor')?.name?.trim() || '攤主';
+    return this.dashboardVendorName
+      || this.authService.getUser('vendor')?.name?.trim()
+      || '攤主';
   }
 
-  readonly todoItems: VendorHomeCard[] = [
-    { icon: 'bi-clipboard-check', count: 1, unit: '筆', label: '待審核報名', path: '/vendor/dash-board/application-record', iconColor: 'orange' },
-    { icon: 'bi-wallet2', count: 1, unit: '筆', label: '待付款報名', path: '/vendor/dash-board/application-record', iconColor: 'orange' },
-    { icon: 'bi-shop', count: 1, unit: '筆', label: '待選擇攤位', path: '/vendor/dash-board/application-record', iconColor: 'blue' },
-    { icon: 'bi-arrow-counterclockwise', count: 1, unit: '筆', label: '退款處理中', path: '/vendor/dash-board/application-record', iconColor: 'purple' },
-  ];
+  private toNotificationItem(item: VendorDashboardNotification): NotificationItem {
+    const appearance = this.notificationAppearance(item.category);
+    return {
+      status: item.title,
+      title: item.content,
+      date: this.formatDateTime(item.createdAt),
+      icon: appearance.icon,
+      iconClass: appearance.iconClass,
+      unread: !item.isRead,
+      type: item.category,
+    };
+  }
 
-  readonly notifications: NotificationItem[] = [
-    {
-      icon: 'bi bi-clipboard-check',
-      iconClass: 'orange',
-      status: '審核中',
-      title: '您的「夏日綠意市集」報名資料已送出，主辦方正在審核。',
-      date: '2026/06/02 14:30',
-      unread: true,
-      type: '報名',
-    },
-    {
-      icon: 'bi bi-wallet2',
-      iconClass: 'blue',
-      status: '待付款',
-      title: '您的報名已通過審核，請於付款期限內完成付款。',
-      date: '2026/06/02 13:10',
-      unread: true,
-      type: '付款',
-    },
-    {
-      icon: 'bi bi-shop',
-      iconClass: 'green',
-      status: '選位完成',
-      title: '您已完成「植感生活市集」所有活動日期的攤位選擇。',
-      date: '2026/06/02 10:15',
-      unread: false,
-      type: '攤位',
-    },
-    {
-      icon: 'bi bi-arrow-counterclockwise',
-      iconClass: 'purple',
-      status: '退款處理中',
-      title: '主辦方已收到退款申請，款項正在處理中。',
-      date: '2026/06/01 16:20',
-      unread: false,
-      type: '退款',
-    },
-    {
-      icon: 'bi bi-calendar-event',
-      iconClass: 'orange',
-      status: '活動提醒',
-      title: '「春日手作生活節」將於三天後開始，請提前確認進場資訊。',
-      date: '2026/06/01 11:30',
-      unread: false,
-      type: '活動',
-    },
-    {
-      icon: 'bi bi-check-circle',
-      iconClass: 'green',
-      status: '報名完成',
-      title: '您的「植感生活市集」報名流程已全部完成。',
-      date: '2026/05/31 15:45',
-      unread: false,
-      type: '報名',
-    },
-    {
-      icon: 'bi bi-megaphone',
-      iconClass: 'purple',
-      status: '主辦公告',
-      title: '活動進場動線已更新，請於活動前查看最新公告。',
-      date: '2026/05/30 09:20',
-      unread: false,
-      type: '公告',
-    },
-    {
-      icon: 'bi bi-cash-coin',
-      iconClass: 'blue',
-      status: '退款完成',
-      title: '退款款項已退回信用卡，實際入帳時間依發卡銀行為準。',
-      date: '2026/05/29 16:10',
-      unread: false,
-      type: '退款',
-    },
-    {
-      icon: 'bi bi-geo-alt',
-      iconClass: 'green',
-      status: '進場提醒',
-      title: '活動進場時間為 12:30，請攜帶攤主證明並依現場指示報到。',
-      date: '2026/05/28 13:40',
-      unread: false,
-      type: '活動',
-    },
-    {
-      icon: 'bi bi-info-circle',
-      iconClass: 'blue',
-      status: '選位開放',
-      title: '「夏日綠意市集」攤位選擇已開放，請於期限內完成選位。',
-      date: '2026/05/28 10:20',
-      unread: false,
-      type: '攤位',
-    },
-  ];
+  private notificationAppearance(category: string): { icon: string; iconClass: string } {
+    switch (category) {
+      case 'PAYMENT':
+        return { icon: 'bi bi-wallet2', iconClass: 'blue' };
+      case 'STALL_ASSIGNMENT':
+        return { icon: 'bi bi-shop', iconClass: 'green' };
+      case 'EVENT_CHANGE':
+        return { icon: 'bi bi-calendar-event', iconClass: 'purple' };
+      case 'SYSTEM':
+        return { icon: 'bi bi-info-circle', iconClass: 'blue' };
+      case 'EXCEPTION':
+        return { icon: 'bi bi-exclamation-triangle', iconClass: 'red' };
+      default:
+        return { icon: 'bi bi-clipboard-check', iconClass: 'orange' };
+    }
+  }
 
+  private formatDateTime(value: string): string {
+    return value ? value.replace('T', ' ').slice(0, 16).replaceAll('-', '/') : '';
+  }
 }
