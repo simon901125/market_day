@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
@@ -19,6 +19,9 @@ import type {
 import type { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
+import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
+import type { VendorApplicationSummary } from '../../../../models/interface/vendor/VendorApplicationSearch';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
 const DETAIL_LINK = '/vendor/dash-board/application-record/detail';
 
@@ -334,13 +337,87 @@ export const VENDOR_APPLICATION_RECORD_JSON: ApplicationRecordJson[] = [
 /** 將 JSON 假資料轉成畫面與詳細頁可直接使用的完整 record。 */
 export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = VENDOR_APPLICATION_RECORD_JSON.map(createRecord);
 
+interface ApiStatusConfig {
+  status: ApplicationRecordStatus;
+  statusClass: string;
+  detailType: ApplicationStatus;
+  actionTypes: RecordActionType[];
+}
+
+/** API 未提供活動圖片時使用的預設縮圖。 */
+const DEFAULT_EVENT_IMAGE = 'assets/images/market/cards/market-card-01.png';
+
+/** 將後端中文狀態轉成現有清單的 badge、詳情與操作按鈕設定。 */
+const API_STATUS_CONFIG: Record<string, ApiStatusConfig> = {
+  待審核: {
+    status: 'reviewing',
+    statusClass: 'reviewing',
+    detailType: 'reviewing',
+    actionTypes: ['cancel', 'view'],
+  },
+  待付款: {
+    status: 'payment',
+    statusClass: 'payment',
+    detailType: 'payment',
+    actionTypes: ['payment', 'cancel', 'view'],
+  },
+  待選位: {
+    status: 'booth',
+    statusClass: 'booth',
+    detailType: 'booth',
+    actionTypes: ['booth', 'refund', 'view'],
+  },
+  報名完成: {
+    status: 'completed',
+    statusClass: 'completed',
+    detailType: 'completed',
+    actionTypes: ['view'],
+  },
+  保證金已退還: {
+    status: 'depositRefunded',
+    statusClass: 'deposit-refunded',
+    detailType: 'depositRefunded',
+    actionTypes: ['view'],
+  },
+  退款申請中: {
+    status: 'refundApplying',
+    statusClass: 'refund-applying',
+    detailType: 'refundApplying',
+    actionTypes: ['view'],
+  },
+  退款處理中: {
+    status: 'refundProcessing',
+    statusClass: 'refund-processing',
+    detailType: 'refundProcessing',
+    actionTypes: ['view'],
+  },
+  已退款: {
+    status: 'refunded',
+    statusClass: 'refunded',
+    detailType: 'refunded',
+    actionTypes: ['view'],
+  },
+  已取消: {
+    status: 'history',
+    statusClass: 'history',
+    detailType: 'cancelled',
+    actionTypes: ['view'],
+  },
+  審核未通過: {
+    status: 'history',
+    statusClass: 'history',
+    detailType: 'cancelled',
+    actionTypes: ['view'],
+  },
+};
+
 @Component({
   selector: 'app-vendor-application-record',
   imports: [CommonModule, RouterLink, DashboardPagination, Dropdown, DateRangeSelector],
   templateUrl: './vendor-application-record.html',
   styleUrl: './vendor-application-record.scss',
 })
-export class VendorApplicationRecord {
+export class VendorApplicationRecord implements OnInit {
   /** 目前選取的報名狀態分頁，預設顯示全部紀錄。 */
   activeTab: RecordTab['value'] = 'all';
 
@@ -392,46 +469,126 @@ export class VendorApplicationRecord {
     { label: '歷史紀錄', value: 'history' },
   ];
 
-  /** 報名紀錄假資料；每筆資料內的 detail 可供詳細頁直接使用。 */
-  records: ApplicationRecord[] = VENDOR_APPLICATION_RECORDS;
+  /** 後端回傳的目前頁報名紀錄。 */
+  records: ApplicationRecord[] = [];
 
-  constructor(private alert: AlertService) {}
+  /** 符合搜尋條件的總筆數。 */
+  totalItems = 0;
+
+  /** 搜尋區目前輸入的活動名稱與日期區間。 */
+  eventTitle = '';
+  eventStartAt: string | null = null;
+  eventEndAt: string | null = null;
+
+  /** 控制搜尋按鈕與空資料列的載入中狀態。 */
+  isLoading = false;
+
+  constructor(
+    private readonly alert: AlertService,
+    private readonly vendorDashboardService: VendorDashboardService,
+  ) {}
+
+  /** 進入頁面後立即取得第一頁報名紀錄。 */
+  ngOnInit(): void {
+    this.loadApplications();
+  }
 
   /** 目前下拉選單顯示文字。 */
   get selectedStatusLabel(): string {
     return this.statusOptions.find((option) => this.statusValueMap[option] === this.activeTab) ?? '';
   }
 
-  /** 依目前分頁篩選後的紀錄。 */
+  /** 後端已套用狀態篩選，此 getter 保留給既有樣板使用。 */
   get filteredRecords(): ApplicationRecord[] {
-    if (this.activeTab === 'all') {
-      return this.records;
-    }
-
-    return this.records.filter((record) => record.status === this.activeTab);
+    return this.records;
   }
 
-  /** 目前頁面要顯示的紀錄資料。 */
+  /** 後端已完成分頁，不再對目前頁資料重複 slice。 */
   get pagedRecords(): ApplicationRecord[] {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    return this.filteredRecords.slice(startIndex, startIndex + this.pageSize);
+    return this.records;
   }
 
   /** 切換狀態分頁時回到第一頁。 */
   setActiveTab(tab: RecordTab['value']): void {
     this.activeTab = tab;
     this.currentPage = 1;
+    this.loadApplications();
   }
 
   /** 選取報名狀態後重設到第一頁，行為對齊 OrganizerDashboardEventManagement 的 selectStatus。 */
   selectStatus(status: string): void {
     this.activeTab = this.statusValueMap[status] ?? 'all';
     this.currentPage = 1;
+    this.loadApplications();
   }
 
   /** 接收共用分頁元件送出的頁碼。 */
   setPage(page: number): void {
     this.currentPage = page;
+    this.loadApplications();
+  }
+
+  /** 同步活動名稱輸入值，不需要為此額外引入 FormsModule。 */
+  onEventTitleInput(event: Event): void {
+    this.eventTitle = (event.target as HTMLInputElement).value;
+  }
+
+  /** 接收共用日期元件輸出的 ISO 日期。 */
+  onDateRangeChange(range: { startDate: string | null; endDate: string | null }): void {
+    this.eventStartAt = range.startDate;
+    this.eventEndAt = range.endDate;
+  }
+
+  /** 使用者送出新條件時回到第一頁。 */
+  search(): void {
+    this.currentPage = 1;
+    this.loadApplications();
+  }
+
+  /** 向 StallController 取得後端篩選、分頁後的報名紀錄。 */
+  private loadApplications(): void {
+    this.isLoading = true;
+    this.vendorDashboardService.searchVendorApplications({
+      eventTitle: this.eventTitle,
+      status: this.getApiStatus(),
+      eventStartAt: this.eventStartAt ?? undefined,
+      eventEndAt: this.eventEndAt ?? undefined,
+      page: this.currentPage,
+      pageSize: this.pageSize,
+    }).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (!isApiSuccessStatus(response.statusCode)) {
+          this.records = [];
+          this.totalItems = 0;
+          void this.alert.error('報名紀錄載入失敗', response.message);
+          return;
+        }
+
+        // 分頁數據以後端回傳為準，避免前端對單頁資料再次切頁。
+        const page = response.data.applications;
+        this.currentPage = page.page;
+        this.totalItems = page.totalItems;
+        this.records = page.items.map(createApiRecord);
+      },
+      error: () => {
+        this.isLoading = false;
+        this.records = [];
+        this.totalItems = 0;
+        void this.alert.error('報名紀錄載入失敗', '無法連線至伺服器，請稍後再試。');
+      },
+    });
+  }
+
+  /** 把畫面的歷史紀錄選項轉成後端可辨識的「已取消」狀態。 */
+  private getApiStatus(): string | undefined {
+    if (this.activeTab === 'all') {
+      return undefined;
+    }
+    if (this.activeTab === 'history') {
+      return '已取消';
+    }
+    return this.selectedStatusLabel || undefined;
   }
 
   /** 處理列表操作按鈕；退款申請需先經過確認視窗。 */
@@ -518,6 +675,57 @@ export class VendorApplicationRecord {
       </div>
     `;
   }
+}
+
+/** 將 API 摘要轉成現有清單與路由共用的 ApplicationRecord。 */
+function createApiRecord(item: VendorApplicationSummary): ApplicationRecord {
+  const config = API_STATUS_CONFIG[item.applicationStatus] ?? API_STATUS_CONFIG['待審核'];
+  const image = item.eventImageUrl || DEFAULT_EVENT_IMAGE;
+  const startDate = item.eventStartAt?.slice(0, 10) || item.eventDate.split(' - ')[0] || '';
+  const endDate = item.eventEndAt?.slice(0, 10) || item.eventDate.split(' - ')[1] || startDate;
+  // API 清單僅回傳市集摘要，其餘欄位使用安全預設值以相容既有 MarketCardItem。
+  const market: MarketCardItem = {
+    id: String(item.eventId),
+    title: item.eventTitle,
+    time: '',
+    start_date: startDate,
+    end_date: endDate,
+    description: '',
+    location: item.location,
+    address: item.location,
+    city: '',
+    area: '',
+    image,
+    status: MarketStatus.ended,
+    statusClass: MarketStatus.getClass(MarketStatus.ended),
+    tags: [],
+    category: '',
+    organizer: '',
+    transportation: [],
+  };
+  const detail = DETAIL_FACTORY_MAP[config.detailType]();
+
+  return {
+    id: item.applicationId,
+    image,
+    market,
+    marketName: item.eventTitle,
+    eventDate: item.eventDate,
+    location: item.location,
+    applicationNo: item.applicationNo,
+    status: config.status,
+    statusText: item.applicationStatus,
+    statusClass: config.statusClass,
+    actions: config.actionTypes.map((type) => ({ ...RECORD_ACTION_MAP[type] })),
+    detail: {
+      ...detail,
+      title: item.eventTitle,
+      applicationNo: item.applicationNo,
+      dateRange: item.eventDate,
+      location: item.location,
+      image,
+    },
+  };
 }
 
 function createRecord(record: ApplicationRecordJson): ApplicationRecord {

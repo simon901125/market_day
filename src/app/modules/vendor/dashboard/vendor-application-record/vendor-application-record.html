@@ -8,7 +8,14 @@
       <span class="app-control-title">活動名稱</span>
       <span class="app-search-input">
         <i class="bi bi-search"></i>
-        <input type="search" placeholder="請輸入活動名稱" />
+        <!-- 輸入與 Enter 都交由頁面元件組合 API 搜尋條件。 -->
+        <input
+          type="search"
+          placeholder="請輸入活動名稱"
+          [value]="eventTitle"
+          (input)="onEventTitleInput($event)"
+          (keydown.enter)="search()"
+        />
       </span>
     </label>
 
@@ -20,9 +27,18 @@
       (optionSelected)="selectStatus($event)"
     ></app-dropdown>
 
-    <app-date-range-selector selectorTitle="活動日期"></app-date-range-selector>
+    <!-- 共用日期元件回傳 yyyy-MM-dd，可直接對應後端 LocalDate。 -->
+    <app-date-range-selector
+      selectorTitle="活動日期"
+      [startDate]="eventStartAt"
+      [endDate]="eventEndAt"
+      (dateRangeChange)="onDateRangeChange($event)"
+    ></app-date-range-selector>
 
-    <button type="button" class="app-btn search">搜尋</button>
+    <!-- 請求期間停用按鈕，避免重複送出相同搜尋。 -->
+    <button type="button" class="app-btn search" [disabled]="isLoading" (click)="search()">
+      {{ isLoading ? '搜尋中…' : '搜尋' }}
+    </button>
   </section>
 
   <div class="dashboard-list-content">
@@ -91,7 +107,10 @@
               </tr>
             } @empty {
               <tr>
-                <td class="empty-cell" colspan="6">目前沒有符合條件的報名紀錄</td>
+                <!-- 列表尚未回傳時共用空狀態列顯示載入提示。 -->
+                <td class="empty-cell" colspan="6">
+                  {{ isLoading ? '報名紀錄載入中…' : '目前沒有符合條件的報名紀錄' }}
+                </td>
               </tr>
             }
           </tbody>
@@ -100,11 +119,12 @@
     </section>
   </div>
 
+  <!-- totalItems 使用後端總筆數，切頁時再向 API 取得對應頁。 -->
   <app-dashboard-pagination
     class="dashboard-list-pagination"
     [currentPage]="currentPage"
     [pageSize]="pageSize"
-    [totalItems]="filteredRecords.length"
+    [totalItems]="totalItems"
     (pageChange)="setPage($event)"
   ></app-dashboard-pagination>
 </section>

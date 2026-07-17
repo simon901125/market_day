@@ -1,9 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiResult } from '../../../models/interface/shared/ApiResult';
 import { VendorDashboardInit } from '../../../models/interface/vendor/VendorDashboardInit';
+import {
+  VendorApplicationSearchParams,
+  VendorApplicationSearchResult,
+} from '../../../models/interface/vendor/VendorApplicationSearch';
 import {
   VendorStallInfo,
   VendorStallSaveRequest,
@@ -24,6 +28,33 @@ export class VendorDashboardService {
   getVendorFirstLogin(): Observable<ApiResult<VendorDashboardInit>> {
     const url = `${environment.apiBaseUrl}api/vendor/dashboard/init`;
     return this.http.get<ApiResult<VendorDashboardInit>>(url);
+  }
+
+  /** 搜尋目前登入攤主的報名紀錄。 */
+  searchVendorApplications(
+    search: VendorApplicationSearchParams = {},
+  ): Observable<ApiResult<VendorApplicationSearchResult>> {
+    const url = `${environment.apiBaseUrl}api/vendor/applications/search`;
+    let params = new HttpParams();
+
+    // 日期參數依 StallController 的 snake_case 命名送出，其餘維持後端定義的 camelCase。
+    const queryValues: Record<string, string | number | undefined> = {
+      eventTitle: search.eventTitle?.trim() || undefined,
+      status: search.status?.trim() || undefined,
+      event_start_at: search.eventStartAt || undefined,
+      event_end_at: search.eventEndAt || undefined,
+      page: search.page,
+      pageSize: search.pageSize,
+    };
+
+    // 空白條件不放入 query string，讓後端的 optional/defaultValue 生效。
+    for (const [key, value] of Object.entries(queryValues)) {
+      if (value !== undefined) {
+        params = params.set(key, String(value));
+      }
+    }
+
+    return this.http.get<ApiResult<VendorApplicationSearchResult>>(url, { params });
   }
 
   /** 取得攤主攤位資料 */

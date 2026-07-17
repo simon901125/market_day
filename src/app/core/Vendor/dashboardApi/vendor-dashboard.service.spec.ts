@@ -47,4 +47,46 @@ describe('VendorDashboardService', () => {
       },
     });
   });
+
+  it('should search vendor applications with controller query parameter names', () => {
+    service.searchVendorApplications({
+      eventTitle: '  春日市集  ',
+      status: '待付款',
+      eventStartAt: '2026-07-01',
+      eventEndAt: '2026-07-31',
+      page: 2,
+      pageSize: 6,
+    }).subscribe((response) => {
+      expect(response.data.applications.page).toBe(2);
+    });
+
+    // 確認前端參數名與 StallController.searchVendorApplications() 完全一致。
+    const request = httpTesting.expectOne((candidate) =>
+      candidate.url === `${environment.apiBaseUrl}api/vendor/applications/search`
+      && candidate.params.get('eventTitle') === '春日市集'
+      && candidate.params.get('status') === '待付款'
+      && candidate.params.get('event_start_at') === '2026-07-01'
+      && candidate.params.get('event_end_at') === '2026-07-31'
+      && candidate.params.get('page') === '2'
+      && candidate.params.get('pageSize') === '6',
+    );
+    expect(request.request.method).toBe('GET');
+    request.flush({
+      statusCode: 200,
+      message: '攤主報名紀錄取得成功',
+      messageDetails: null,
+      data: {
+        totalCount: 1,
+        applications: {
+          items: [],
+          page: 2,
+          pageSize: 6,
+          totalItems: 1,
+          totalPages: 1,
+          hasPrevious: true,
+          hasNext: false,
+        },
+      },
+    });
+  });
 });
