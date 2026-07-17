@@ -1,8 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
-import { AuthService } from '../auth/auth.service';
-import { VendorDashboardService } from '../Vendor/dashboardApi/vendor-dashboard.service';
+import { AuthService } from '../../auth/auth.service';
+import { VendorDashboardService } from './vendor-dashboard.service';
 
 @Injectable({ providedIn: 'root' })
 export class VendorAccessService {

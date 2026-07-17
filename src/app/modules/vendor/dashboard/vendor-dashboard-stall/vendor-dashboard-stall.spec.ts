@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
-import { VendorAccessService } from '../../../../core/services/vendor-access.service';
+import { VendorAccessService } from '../../../../core/Vendor/dashboardApi/vendor-access.service';
 import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
 import { VendorStallInfo } from '../../../../models/interface/vendor/VendorStallInfo';
 import { VendorDashboardStall } from './vendor-dashboard-stall';

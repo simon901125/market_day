@@ -7,7 +7,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { OrganizerAccessService } from '../../../../core/services/organizer-access.service';
 import { OrganizerProfileDialogService } from '../../../../core/services/organizer-profile-dialog.service';
-import { VendorAccessService } from '../../../../core/services/vendor-access.service';
+import { VendorAccessService } from '../../../../core/Vendor/dashboardApi/vendor-access.service';
 import { AuthPortalRole } from '../../../../models/interface/shared/Auth';
 import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 import { MenuItem } from '../../../../models/interface/shared/MenuItem';

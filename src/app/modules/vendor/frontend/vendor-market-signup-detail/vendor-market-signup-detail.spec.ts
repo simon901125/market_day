@@ -4,7 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { Router, provideRouter } from '@angular/router';
 
 import { AlertService } from '../../../../core/services/alert.service';
-import { VendorAccessService } from '../../../../core/services/vendor-access.service';
+import { VendorAccessService } from '../../../../core/Vendor/dashboardApi/vendor-access.service';
 import { VendorMarketSignupDetail } from './vendor-market-signup-detail';
 
 describe('VendorMarketSignupDetail', () => {

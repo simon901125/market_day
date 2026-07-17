@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 
-import { AuthService } from '../auth/auth.service';
-import { VendorDashboardService } from '../Vendor/dashboardApi/vendor-dashboard.service';
+import { AuthService } from '../../auth/auth.service';
+import { VendorDashboardService } from './vendor-dashboard.service';
 import { VendorAccessService } from './vendor-access.service';
 
 describe('VendorAccessService', () => {
