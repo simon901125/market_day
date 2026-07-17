@@ -1,4 +1,11 @@
 <main class="application-detail-page vendor-detail-page page-transition" [class.modal-open]="showDialog">
+  <!-- 詳情 API 請求期間與失敗時提供明確頁面狀態。 -->
+  @if (isLoading) {
+    <p class="notice-box" role="status">報名詳情載入中…</p>
+  } @else if (loadError) {
+    <p class="notice-box" role="alert">{{ loadError }}</p>
+  }
+
   <header class="page-title app-page-header vendor-detail-header">
     <div>
       <nav class="breadcrumb-line app-breadcrumb" aria-label="麵包屑">
@@ -331,7 +338,7 @@
           </tbody>
         </table>
       </div>
-      <p class="section-subtotal">設備租借費小計：<strong>NT$300（2天）</strong></p>
+      <p class="section-subtotal">設備租借費小計：<strong>{{ equipmentSubtotal }}</strong></p>
     </section>
 
     <section class="detail-card resource-card">
@@ -347,12 +354,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>基本用電（免費提供）</td>
-              <td>110V / 500W</td>
-              <td>免費</td>
-              <td>NT$0</td>
-            </tr>
+            <!-- 基本用電改由 API equipmentRentals.freeBasicPower 產生。 -->
+            @for (item of basicPower; track item.specification) {
+              <tr>
+                <td>{{ item.specification }}</td>
+                <td>{{ item.wattage }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.subtotal }}</td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
@@ -374,7 +384,7 @@
             @for (item of extraPower; track item.voltage) {
               <tr>
                 <td>{{ item.voltage }}</td>
-                <td>－</td>
+                <td>{{ item.wattage }}</td>
                 <td>{{ item.price }}</td>
                 <td>{{ item.subtotal }}</td>
               </tr>
@@ -382,7 +392,7 @@
           </tbody>
         </table>
       </div>
-      <p class="section-subtotal">額外用電小計：<strong>NT$1,200（2天）</strong></p>
+      <p class="section-subtotal">額外用電小計：<strong>{{ extraPowerSubtotal }}</strong></p>
     </section>
   </div>
 
@@ -401,7 +411,8 @@
       </table>
     </div>
     <div class="detail-total">
-      <span>總計</span><strong>NT$3,800</strong>
+      <!-- 總計使用 API feedetail 的總計列。 -->
+      <span>總計</span><strong>{{ totalFee }}</strong>
     </div>
   </section>
   </div>

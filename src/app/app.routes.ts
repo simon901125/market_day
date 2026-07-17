@@ -186,7 +186,8 @@ export const routes: Routes = [
         component: VendorBoothSelection,
       },
       {
-        path: 'application-record/detail/:applicationNo',
+        // 報名詳情後端端點以資料庫 applicationId 查詢。
+        path: 'application-record/detail/:id',
         component: VendorApplicationDetail,
       },
       {

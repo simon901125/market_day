@@ -1,16 +1,43 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 
+import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
+import type { VendorApplicationApiDetail } from '../../../../models/interface/vendor/VendorApplicationApiDetail';
 import { VendorApplicationDetail } from './vendor-application-detail';
 
 describe('VendorApplicationDetail', () => {
   let component: VendorApplicationDetail;
   let fixture: ComponentFixture<VendorApplicationDetail>;
+  let dashboardService: jasmine.SpyObj<VendorDashboardService>;
 
   beforeEach(async () => {
+    // 模擬詳情端點，驗證頁面不再依賴 VENDOR_APPLICATION_RECORDS 假資料。
+    dashboardService = jasmine.createSpyObj<VendorDashboardService>('VendorDashboardService', [
+      'getVendorApplicationDetail',
+    ]);
+    dashboardService.getVendorApplicationDetail.and.returnValue(of({
+      statusCode: 200,
+      message: '攤主報名詳情取得成功',
+      messageDetails: null,
+      data: createApiDetail(),
+    }));
+
     await TestBed.configureTestingModule({
       imports: [VendorApplicationDetail],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        { provide: VendorDashboardService, useValue: dashboardService },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: convertToParamMap({ id: '25' }),
+              queryParamMap: convertToParamMap({}),
+            },
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(VendorApplicationDetail);
@@ -18,39 +45,140 @@ describe('VendorApplicationDetail', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should load the detail by application id', () => {
     expect(component).toBeTruthy();
+    expect(dashboardService.getVendorApplicationDetail).toHaveBeenCalledOnceWith(25);
+    expect(component.currentApplicationNo).toBe('MD202607170025');
   });
 
-  it('should render refund applying detail by binding', () => {
+  it('should render API application, payment and fee data', () => {
     const textContent: string = fixture.nativeElement.textContent;
 
-    expect(component.currentStatus).toBe('refundApplying');
-    expect(textContent).toContain('退款申請中');
-    expect(textContent).toContain(component.detail.title);
-    expect(textContent).toContain('退款審核時間');
-    expect(textContent).toContain('7 - 14 個工作天');
+    expect(component.currentStatus).toBe('payment');
+    expect(textContent).toContain('夏日手作市集');
+    expect(textContent).toContain('MD202607170025');
+    expect(textContent).toContain('NT$3,800');
+    expect(textContent).toContain('桌子');
   });
 
-  it('should render refund processing detail by binding', () => {
-    component.setStatus('refundProcessing');
-    fixture.detectChanges();
-
-    const textContent: string = fixture.nativeElement.textContent;
-
-    expect(textContent).toContain('退款處理中');
-    expect(textContent).toContain('退款審核時間');
-    expect(textContent).toContain('2026/06/10 10:55');
-  });
-
-  it('should render refund success detail and booth action by binding', () => {
-    component.setStatus('refundSuccess');
-    fixture.detectChanges();
-
-    const textContent: string = fixture.nativeElement.textContent;
-
-    expect(textContent).toContain('退款申請');
-    expect(textContent).toContain('待選位');
-    expect(textContent).toContain('尚未選擇攤位');
+  it('should map API stall and status-flow data', () => {
+    expect(component.boothAssignments).toEqual([
+      {
+        date: '2026/07/18',
+        number: 'A12',
+        zone: 'A 區',
+        selectedAt: '',
+      },
+    ]);
+    expect(component.statusProgress[0]).toEqual({
+      label: '報名日期',
+      value: '已報名　2026/07/01 10:30',
+    });
   });
 });
+
+function createApiDetail(): VendorApplicationApiDetail {
+  return {
+    application: {
+      applicationId: 25,
+      applicationNo: 'MD202607170025',
+      applicationStatus: '待付款',
+    },
+    event: {
+      eventId: 8,
+      eventCoverImageUrl: '/images/events/8.jpg',
+      eventTitle: '夏日手作市集',
+      eventStatus: '活動預告',
+      statusNote: '報名中',
+      eventTime: '2026/07/18 - 2026/07/19',
+      eventStartAt: '2026-07-18T10:00:00',
+      eventEndAt: '2026-07-19T18:00:00',
+      locationName: '台北市中正區 華山文創園區',
+      address: '台北市中正區八德路一段1號',
+    },
+    vendor: {
+      vendorOwnerName: '王小明',
+      vendorPhone: '0912345678',
+      vendorEmail: 'vendor@example.com',
+      address: '台北市中正區',
+    },
+    brand: {
+      brandName: '測試品牌',
+      categoryName: '文創手作',
+      brandDescription: '手作商品',
+    },
+    applicationdetail: {
+      registrationPeriods: '2026/07/18 10:00-18:00',
+      width: 3,
+      length: 3,
+      stallZone: 'A 區',
+      stallCategory: '文創手作',
+      vehicleNo: 'ABC-1234',
+      applicantNote: null,
+      reviewNote: null,
+      reviewNoteDetail: null,
+    },
+    stall: [
+      {
+        applyDate: '2026/07/18',
+        stallNo: 'A12',
+        zoneName: 'A 區',
+        selectionStatus: '已選擇',
+      },
+    ],
+    fee: {
+      paymentStatus: '待付款',
+      paymentMethod: null,
+      paymentNo: null,
+      providerTradeNo: null,
+      paidAt: null,
+      paymentAmount: 3800,
+    },
+    refund: {
+      refundStatus: null,
+      refundStatusText: null,
+      refundMethod: null,
+      refundNo: null,
+      refundAmount: null,
+      refundedAt: null,
+    },
+    feedetail: [
+      { item: '報名費', content: '1 天', amount: 650 },
+      { item: '設備租借費', content: '桌子 × 1', amount: 150 },
+      { item: '額外電費', content: '110V', amount: 2000 },
+      { item: '保證金', content: '保證金', amount: 1000 },
+      { item: '總計', content: null, amount: 3800 },
+    ],
+    equipmentRentals: {
+      freeEquipments: [
+        {
+          equipmentName: '椅子',
+          specification: '塑膠椅',
+          quantity: 2,
+          unit: '個',
+          subtotal: 0,
+        },
+      ],
+      freeBasicPower: [],
+      rentalEquipments: [
+        {
+          equipmentName: '桌子',
+          specification: '180 × 60 公分',
+          quantity: 1,
+          unit: '張',
+          subtotal: 150,
+          total: 150,
+        },
+      ],
+      extraPower: [],
+    },
+    status: [
+      {
+        key: 'APPLIED',
+        label: '報名日期',
+        value: '已報名',
+        createdAt: '2026/07/01 10:30',
+      },
+    ],
+  };
+}

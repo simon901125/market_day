@@ -8,6 +8,7 @@ import {
   VendorApplicationSearchParams,
   VendorApplicationSearchResult,
 } from '../../../models/interface/vendor/VendorApplicationSearch';
+import { VendorApplicationApiDetail } from '../../../models/interface/vendor/VendorApplicationApiDetail';
 import {
   VendorStallInfo,
   VendorStallSaveRequest,
@@ -55,6 +56,14 @@ export class VendorDashboardService {
     }
 
     return this.http.get<ApiResult<VendorApplicationSearchResult>>(url, { params });
+  }
+
+  /** 依報名 ID 取得目前登入攤主自己的報名詳情。 */
+  getVendorApplicationDetail(
+    applicationId: number,
+  ): Observable<ApiResult<VendorApplicationApiDetail>> {
+    const url = `${environment.apiBaseUrl}api/vendor/applications/${applicationId}`;
+    return this.http.get<ApiResult<VendorApplicationApiDetail>>(url);
   }
 
   /** 取得攤主攤位資料 */

@@ -21,12 +21,15 @@ export class VendorPaymentPage {
   readonly equipmentRentalFee = 0;
   readonly extraPowerFee = 50;
   readonly deposit = 1000;
+  /** 付款頁保留列表帶入的 applicationId，返回詳情時可呼叫詳情 API。 */
+  readonly detailRouteId: string;
 
   constructor(
     route: ActivatedRoute,
     private readonly alert: AlertService,
   ) {
     const applicationNo = route.snapshot.paramMap.get('applicationNo');
+    this.detailRouteId = route.snapshot.queryParamMap.get('applicationId') ?? applicationNo ?? '';
     this.record =
       VENDOR_APPLICATION_RECORDS.find((record) => record.applicationNo === applicationNo) ??
       this.paymentRecord;

@@ -28,6 +28,8 @@ export class VendorBoothSelection {
 
   readonly vendorStatus = VendorStatus;
   readonly applicationNo: string;
+  /** 返回報名詳情時使用的資料庫 applicationId。 */
+  readonly applicationId: string;
   readonly days: DaySelection[] = [
     { date: '2026/07/18', booth: null, selectedAt: null },
     { date: '2026/07/19', booth: null, selectedAt: null },
@@ -39,6 +41,7 @@ export class VendorBoothSelection {
 
   constructor(private readonly route: ActivatedRoute, private readonly router: Router) {
     this.applicationNo = this.route.snapshot.paramMap.get('applicationNo') ?? 'MD20260601001';
+    this.applicationId = this.route.snapshot.queryParamMap.get('applicationId') ?? this.applicationNo;
     this.viewMode = this.route.snapshot.queryParamMap.get('mode') === 'view';
     if (this.viewMode) {
       const dates = this.route.snapshot.queryParamMap.get('dates')?.split(',').filter(Boolean) ?? [];
@@ -127,6 +130,6 @@ export class VendorBoothSelection {
   closeDialog(): void { this.dialog = null; }
 
   backToDetail(): void {
-    this.router.navigate(['/vendor/dash-board/application-record/detail', this.applicationNo]);
+    this.router.navigate(['/vendor/dash-board/application-record/detail', this.applicationId]);
   }
 }

@@ -4,14 +4,14 @@
       <nav class="breadcrumb-line app-breadcrumb" aria-label="breadcrumb">
         <a routerLink="/vendor/dash-board/application-record">我的報名紀錄</a>
         <i class="bi bi-chevron-right"></i>
-        <a [routerLink]="['/vendor/dash-board/application-record/detail', record.applicationNo]">報名詳情</a>
+        <a [routerLink]="['/vendor/dash-board/application-record/detail', detailRouteId]">報名詳情</a>
         <i class="bi bi-chevron-right"></i>
         <span>付款頁面</span>
       </nav>
 
       <div class="app-page-title-wrap title-row">
         <a
-          [routerLink]="['/vendor/dash-board/application-record/detail', record.applicationNo]"
+          [routerLink]="['/vendor/dash-board/application-record/detail', detailRouteId]"
           class="app-back-link"
           aria-label="返回報名詳情"
         >

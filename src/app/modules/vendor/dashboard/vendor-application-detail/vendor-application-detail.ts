@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import type {
   ApplicationDetail,
@@ -8,8 +8,11 @@ import type {
 } from '../../../../models/interface/vendor/VendorApplicationDetail';
 import type { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { AlertService } from '../../../../core/services/alert.service';
+import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { VendorStatus } from '../../../../models/status/VendorStatus';
-import { VENDOR_APPLICATION_RECORDS } from '../vendor-application-record/vendor-application-record';
+import type { VendorApplicationApiDetail } from '../../../../models/interface/vendor/VendorApplicationApiDetail';
 
 @Component({
   selector: 'app-vendor-application-detail',
@@ -17,101 +20,72 @@ import { VENDOR_APPLICATION_RECORDS } from '../vendor-application-record/vendor-
   templateUrl: './vendor-application-detail.html',
   styleUrl: './vendor-application-detail.scss',
 })
-export class VendorApplicationDetail {
+export class VendorApplicationDetail implements OnInit {
   readonly vendorStatus = VendorStatus;
-  /** 目前報名編號，由 application-record 點擊查看時透過 route param 帶入。 */
-  currentApplicationNo = VENDOR_APPLICATION_RECORDS[0].applicationNo;
+  /** 詳情 API 使用的報名 ID，由清單的「查看」連結帶入。 */
+  currentApplicationId = 0;
+
+  /** 報名編號供付款與選位路由繼續使用。 */
+  currentApplicationNo = '';
+
+  /** API 回傳前使用空資料模型，讓樣板可安全繫結。 */
+  detail: ApplicationDetail = createEmptyApplicationDetail();
+  market: MarketCardItem = createEmptyMarket();
+  eventDateText = '';
+  isLoading = true;
+  loadError = '';
+
   /** 是否顯示頁內彈窗；退款成功提示改由共用 SweetAlert 顯示。 */
   showDialog = false;
   /** 付款結果假資料；之後串接金流 API 時可由後端回傳決定 success 或 failed。 */
   mockPaymentResult: 'success' | 'failed' = 'success';
   refundReason = '';
 
-  readonly basicEquipment = [
-    { name: '桌子（基本）', spec: '180 × 60 公分', quantity: 1, unit: '張' },
-    { name: '椅子（基本）', spec: '一般塑膠椅', quantity: 2, unit: '張' },
-  ];
-
-  readonly rentalEquipment = [
-    {
-      name: '桌子（加租）',
-      spec: '180 × 60 公分',
-      quantity: 1,
-      price: 'NT$100 / 張',
-      subtotal: 'NT$200（2天）',
-    },
-    {
-      name: '椅子（加租）',
-      spec: '一般塑膠椅',
-      quantity: 2,
-      price: 'NT$50 / 張',
-      subtotal: 'NT$100（2天）',
-    },
-  ];
-
-  readonly extraPower = [
-    { voltage: '110V / 1000W', price: 'NT$200 / 天', subtotal: 'NT$400（2天）' },
-    { voltage: '220V / 2000W', price: 'NT$400 / 天', subtotal: 'NT$800（2天）' },
-  ];
-
-  readonly boothAssignments = [
-    { date: '2026/05/30', number: 'A12', zone: 'A 區', selectedAt: '2026/05/28 14:30' },
-    { date: '2026/05/31', number: 'A12', zone: 'A 區', selectedAt: '2026/05/28 14:30' },
-  ];
-
-  readonly feeBreakdown = [
-    {
-      label: '報名費',
-      content: '2 天（05/30 ＋ 05/31）',
-      amount: 'NT$1,300（NT$650 × 2 天）',
-    },
-    {
-      label: '設備租借費',
-      content: '桌子（加租）× 1、椅子（加租）× 2',
-      amount: 'NT$300（NT$150 × 2 天）',
-    },
-    {
-      label: '額外用電費',
-      content: '110V / 1000W、220V / 2000W',
-      amount: 'NT$1,200（NT$600 × 2 天）',
-    },
-    { label: '保證金', content: '活動結束後退還', amount: 'NT$1,000' },
-  ];
+  /** 下列明細均由詳情 API 的 equipmentRentals、stall 與 feedetail 轉換。 */
+  basicEquipment: Array<{ name: string; spec: string; quantity: number; unit: string }> = [];
+  rentalEquipment: Array<{
+    name: string;
+    spec: string;
+    quantity: number;
+    price: string;
+    subtotal: string;
+  }> = [];
+  basicPower: Array<{ specification: string; wattage: string; price: string; subtotal: string }> = [];
+  extraPower: Array<{ voltage: string; wattage: string; price: string; subtotal: string }> = [];
+  boothAssignments: Array<{
+    date: string;
+    number: string;
+    zone: string;
+    selectedAt: string;
+  }> = [];
+  feeBreakdown: Array<{ label: string; content: string; amount: string }> = [];
+  equipmentSubtotal = formatCurrency(0);
+  extraPowerSubtotal = formatCurrency(0);
+  totalFee = formatCurrency(0);
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private alert: AlertService,
-  ) {
-    const applicationNo = this.route.snapshot.paramMap.get('applicationNo');
-    const matchedRecord = VENDOR_APPLICATION_RECORDS.find(
-      (record) => record.applicationNo === applicationNo,
-    );
+    private readonly vendorDashboardService: VendorDashboardService,
+  ) {}
 
-    if (matchedRecord) {
-      this.currentApplicationNo = matchedRecord.applicationNo;
+  /** 讀取路由中的 applicationId，並向 StallController 取得詳情。 */
+  ngOnInit(): void {
+    const applicationId = Number(this.route.snapshot.paramMap.get('id'));
+    if (!Number.isInteger(applicationId) || applicationId < 1) {
+      this.isLoading = false;
+      this.loadError = '報名 ID 不正確，無法載入報名詳情。';
+      return;
     }
 
-    this.showDialog = false;
+    this.currentApplicationId = applicationId;
+    this.loadApplicationDetail(applicationId);
   }
 
-  /** 目前展示的報名狀態，直接由 records 裡的 detail 決定。 */
+  /** 目前展示的報名狀態。 */
   get currentStatus(): ApplicationStatus {
     return this.detail.status;
-  }
-
-  /** 目前頁面要顯示的詳細資料。 */
-  get detail(): ApplicationDetail {
-    return this.currentRecord.detail;
-  }
-
-  /** 目前報名關聯的市集卡片資料，提供 activity-detail 讀取。 */
-  get market(): MarketCardItem {
-    return this.currentRecord.market;
-  }
-
-  get eventDateText(): string {
-    return `${this.market.start_date} - ${this.market.end_date}　${this.market.time}`;
   }
 
   /** 原因使用獨立區塊呈現，不與固定寬度的狀態流程卡混排。 */
@@ -198,26 +172,189 @@ export class VendorApplicationDetail {
     return statusClassMap[statusText.trim()] ?? null;
   }
 
-  /** 目前報名編號對應的列表資料。 */
-  private get currentRecord() {
-    return (
-      VENDOR_APPLICATION_RECORDS.find(
-        (record) => record.applicationNo === this.currentApplicationNo,
-      ) ?? VENDOR_APPLICATION_RECORDS[0]
-    );
+  /** 前端模擬操作完成後暫時更新畫面狀態。 */
+  setStatus(status: ApplicationStatus): void {
+    const display = getApplicationStatusDisplay(status);
+    this.detail = {
+      ...this.detail,
+      status,
+      statusText: display.statusText,
+      statusClass: display.statusClass,
+    };
+    this.showDialog = false;
   }
 
-  /** 切換展示狀態，方便開發時檢查不同狀態版面。 */
-  setStatus(status: ApplicationStatus): void {
-    const matchedRecord = VENDOR_APPLICATION_RECORDS.find(
-      (record) => record.detail.status === status,
+  /** 調用攤主報名詳情 API，並統一處理業務失敗與網路錯誤。 */
+  private loadApplicationDetail(applicationId: number): void {
+    this.isLoading = true;
+    this.loadError = '';
+    this.vendorDashboardService.getVendorApplicationDetail(applicationId).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (!isApiSuccessStatus(response.statusCode)) {
+          this.loadError = response.message;
+          void this.alert.error('報名詳情載入失敗', response.message);
+          return;
+        }
+
+        this.applyApiDetail(response.data);
+      },
+      error: () => {
+        this.isLoading = false;
+        this.loadError = '無法連線至伺服器，請稍後再試。';
+        void this.alert.error('報名詳情載入失敗', this.loadError);
+      },
+    });
+  }
+
+  /** 將後端詳情結構轉成現有樣板所使用的顯示模型。 */
+  private applyApiDetail(api: VendorApplicationApiDetail): void {
+    const statusDisplay = mapApiApplicationStatus(api.application.applicationStatus);
+    const image = api.event.eventCoverImageUrl || 'assets/images/market/cards/market-card-01.png';
+    const selectedStalls = api.stall.filter((stall) => Boolean(stall.stallNo));
+    const hasRefund = Boolean(api.refund.refundStatus);
+
+    this.currentApplicationId = api.application.applicationId;
+    this.currentApplicationNo = api.application.applicationNo;
+    this.eventDateText = api.event.eventTime;
+    this.market = {
+      id: String(api.event.eventId),
+      title: api.event.eventTitle,
+      time: '',
+      start_date: api.event.eventStartAt?.slice(0, 10) ?? '',
+      end_date: api.event.eventEndAt?.slice(0, 10) ?? '',
+      description: '',
+      location: api.event.locationName,
+      address: api.event.address,
+      city: '',
+      area: '',
+      image,
+      status: api.event.eventStatus,
+      statusClass: MarketStatus.getClass(api.event.eventStatus),
+      tags: [],
+      category: api.brand.categoryName ?? '',
+      organizer: '',
+      transportation: [],
+    };
+
+    const applicationRows: DetailRow[] = [
+      { label: '報名場次', value: displayValue(api.applicationdetail.registrationPeriods) },
+      {
+        label: '攤位尺寸',
+        value: api.applicationdetail.width && api.applicationdetail.length
+          ? `${api.applicationdetail.width} × ${api.applicationdetail.length} 公尺`
+          : '—',
+      },
+      { label: '攤位分區', value: displayValue(api.applicationdetail.stallZone) },
+      { label: '攤位類別', value: displayValue(api.applicationdetail.stallCategory) },
+      { label: '車牌號碼', value: displayValue(api.applicationdetail.vehicleNo) },
+      { label: '備註', value: displayValue(api.applicationdetail.applicantNote) },
+    ];
+    const paymentRows = createPaymentRows(api);
+    const refundRows = createRefundRows(api);
+    const statusProgress = api.status
+      .filter((step) => Boolean(step.value || step.createdAt))
+      .map((step) => ({
+        label: step.label,
+        value: [step.value, step.createdAt].filter(Boolean).join('　'),
+      }));
+    const boothSelected = selectedStalls.length > 0;
+    const boothActionLabel = boothSelected
+      ? '查看攤位地圖'
+      : statusDisplay.status === 'booth'
+        ? '選擇攤位'
+        : undefined;
+
+    this.detail = {
+      status: statusDisplay.status,
+      statusText: api.application.applicationStatus,
+      statusClass: statusDisplay.statusClass,
+      title: api.event.eventTitle,
+      applicationNo: api.application.applicationNo,
+      dateRange: api.event.eventTime,
+      location: api.event.locationName,
+      image,
+      progress: statusProgress,
+      applicationRows,
+      paymentRows,
+      paymentLines: [],
+      paymentEmptyTitle: '尚未產生付款資訊',
+      paymentEmptyText: '審核通過後將顯示付款明細。',
+      booth: {
+        selected: boothSelected,
+        rows: [],
+        actionLabel: boothActionLabel,
+        emptyTitle: '尚未選擇攤位',
+        emptyText: '完成付款後，即可進行攤位選擇。',
+      },
+      sideCard: hasRefund
+        ? {
+            type: 'refund',
+            title: '退款資訊',
+            icon: 'bi-bank',
+            rows: refundRows,
+          }
+        : {
+            type: 'booth',
+            title: '攤位資訊',
+            icon: 'bi-shop',
+            rows: [],
+          },
+      actionButton: ['completed', 'booth'].includes(statusDisplay.status)
+        ? { label: '申請退款', action: 'requestRefund' }
+        : undefined,
+    };
+
+    // 設備、用電、攤位與費用表格直接使用 API 明細，不再保留固定金額。
+    this.basicEquipment = api.equipmentRentals.freeEquipments.map((item) => ({
+      name: item.equipmentName,
+      spec: displayValue(item.specification),
+      quantity: item.quantity,
+      unit: item.unit,
+    }));
+    this.rentalEquipment = api.equipmentRentals.rentalEquipments.map((item) => ({
+      name: item.equipmentName,
+      spec: displayValue(item.specification),
+      quantity: item.quantity,
+      price: item.unitPrice == null ? '—' : `${formatCurrency(item.unitPrice)} / ${item.unit}`,
+      subtotal: formatCurrency(item.total ?? item.subtotal),
+    }));
+    this.basicPower = api.equipmentRentals.freeBasicPower.map((item) => ({
+      specification: item.powerSpecification,
+      wattage: item.wattage == null ? '—' : `${item.wattage}W`,
+      price: '免費',
+      subtotal: formatCurrency(item.subtotal),
+    }));
+    this.extraPower = api.equipmentRentals.extraPower.map((item) => ({
+      voltage: item.powerSpecification,
+      wattage: item.wattage == null ? '—' : `${item.wattage}W`,
+      price: item.unitPrice == null
+        ? '—'
+        : `${formatCurrency(item.unitPrice)}${item.unit ? ` / ${item.unit}` : ''}`,
+      subtotal: formatCurrency(item.total ?? item.subtotal),
+    }));
+    this.boothAssignments = selectedStalls.map((stall) => ({
+      date: stall.applyDate,
+      number: displayValue(stall.stallNo),
+      zone: displayValue(stall.zoneName),
+      selectedAt: '',
+    }));
+    this.feeBreakdown = api.feedetail
+      .filter((item) => item.item !== '總計')
+      .map((item) => ({
+        label: item.item,
+        content: displayValue(item.content),
+        amount: formatCurrency(item.amount),
+      }));
+    this.equipmentSubtotal = formatCurrency(sumAmounts(
+      api.equipmentRentals.rentalEquipments.map((item) => item.total ?? item.subtotal),
+    ));
+    this.extraPowerSubtotal = formatCurrency(sumAmounts(
+      api.equipmentRentals.extraPower.map((item) => item.total ?? item.subtotal),
+    ));
+    this.totalFee = formatCurrency(
+      api.feedetail.find((item) => item.item === '總計')?.amount ?? api.fee.paymentAmount,
     );
-
-    if (matchedRecord) {
-      this.currentApplicationNo = matchedRecord.applicationNo;
-    }
-
-    this.showDialog = false;
   }
 
   /** 執行頁面主要操作。 */
@@ -273,7 +410,7 @@ export class VendorApplicationDetail {
       '/vendor/dash-board/application-record/detail',
       this.currentApplicationNo,
       'payment',
-    ]);
+    ], { queryParams: { applicationId: this.currentApplicationId } });
   }
 
   openBoothPage(): void {
@@ -286,12 +423,13 @@ export class VendorApplicationDetail {
     ], {
       queryParams: viewOnly
         ? {
+            applicationId: this.currentApplicationId,
             mode: 'view',
             dates: this.boothAssignments.map((booth) => booth.date).join(','),
             booths: this.boothAssignments.map((booth) => booth.number).join(','),
             selectedAt: this.boothAssignments.map((booth) => booth.selectedAt).join(','),
           }
-        : undefined,
+        : { applicationId: this.currentApplicationId },
     });
   }
 
@@ -471,4 +609,136 @@ export class VendorApplicationDetail {
     this.showDialog = false;
   }
 
+}
+
+/** 將 API 中文狀態對應到現有詳情頁狀態與 CSS class。 */
+function mapApiApplicationStatus(statusText: string): {
+  status: ApplicationStatus;
+  statusClass: string;
+} {
+  const statusMap: Record<string, { status: ApplicationStatus; statusClass: string }> = {
+    待審核: { status: 'reviewing', statusClass: 'reviewing' },
+    待付款: { status: 'payment', statusClass: 'payment' },
+    待選位: { status: 'booth', statusClass: 'booth' },
+    報名完成: { status: 'completed', statusClass: 'completed' },
+    保證金已退還: { status: 'depositRefunded', statusClass: 'deposit-refunded' },
+    退款申請中: { status: 'refundApplying', statusClass: 'refund-applying' },
+    退款處理中: { status: 'refundProcessing', statusClass: 'refund-processing' },
+    已退款: { status: 'refunded', statusClass: 'refunded' },
+    已取消: { status: 'cancelled', statusClass: 'history' },
+    審核未通過: { status: 'cancelled', statusClass: 'history' },
+  };
+
+  return statusMap[statusText] ?? statusMap['待審核'];
+}
+
+/** 本地操作暫時更新狀態時使用的顯示文字。 */
+function getApplicationStatusDisplay(status: ApplicationStatus): {
+  statusText: string;
+  statusClass: string;
+} {
+  const displayMap: Record<ApplicationStatus, { statusText: string; statusClass: string }> = {
+    reviewing: { statusText: '待審核', statusClass: 'reviewing' },
+    payment: { statusText: '待付款', statusClass: 'payment' },
+    completed: { statusText: '報名完成', statusClass: 'completed' },
+    depositRefunded: { statusText: '保證金已退還', statusClass: 'deposit-refunded' },
+    cancelled: { statusText: '已取消', statusClass: 'history' },
+    refunded: { statusText: '已退款', statusClass: 'refunded' },
+    refundApplying: { statusText: '退款申請中', statusClass: 'refund-applying' },
+    refundProcessing: { statusText: '退款處理中', statusClass: 'refund-processing' },
+    refundSuccess: { statusText: '退款申請', statusClass: 'refund-applying' },
+    booth: { statusText: '待選位', statusClass: 'booth' },
+  };
+  return displayMap[status];
+}
+
+/** 依後端付款資料建立畫面欄位，空值不顯示。 */
+function createPaymentRows(api: VendorApplicationApiDetail): DetailRow[] {
+  return [
+    api.fee.paymentStatus
+      ? { label: '付款狀態', value: api.fee.paymentStatus, highlight: true }
+      : null,
+    api.fee.paymentMethod
+      ? { label: '付款方式', value: api.fee.paymentMethod }
+      : null,
+    api.fee.paymentNo ? { label: '付款編號', value: api.fee.paymentNo } : null,
+    api.fee.providerTradeNo
+      ? { label: '交易編號', value: api.fee.providerTradeNo }
+      : null,
+    api.fee.paidAt ? { label: '付款時間', value: api.fee.paidAt } : null,
+    api.fee.paymentAmount != null
+      ? { label: '付款金額', value: formatCurrency(api.fee.paymentAmount), highlight: true }
+      : null,
+  ].filter((row): row is DetailRow => row !== null);
+}
+
+/** 依後端退款資料建立右側退款資訊卡。 */
+function createRefundRows(api: VendorApplicationApiDetail): DetailRow[] {
+  return [
+    api.refund.refundStatusText
+      ? { label: '退款狀態', value: api.refund.refundStatusText, highlight: true }
+      : null,
+    api.refund.refundMethod
+      ? { label: '退款方式', value: api.refund.refundMethod }
+      : null,
+    api.refund.refundNo ? { label: '退款編號', value: api.refund.refundNo } : null,
+    api.refund.refundAmount != null
+      ? { label: '退款金額', value: formatCurrency(api.refund.refundAmount), highlight: true }
+      : null,
+    api.refund.refundedAt ? { label: '退款時間', value: api.refund.refundedAt } : null,
+  ].filter((row): row is DetailRow => row !== null);
+}
+
+function createEmptyApplicationDetail(): ApplicationDetail {
+  return {
+    status: 'reviewing',
+    statusText: '',
+    statusClass: 'reviewing',
+    title: '',
+    applicationNo: '',
+    dateRange: '',
+    location: '',
+    image: 'assets/images/market/cards/market-card-01.png',
+    progress: [],
+    applicationRows: [],
+    paymentRows: [],
+    paymentLines: [],
+    booth: { selected: false, rows: [] },
+    sideCard: { type: 'booth', title: '攤位資訊', icon: 'bi-shop', rows: [] },
+  };
+}
+
+function createEmptyMarket(): MarketCardItem {
+  return {
+    title: '',
+    time: '',
+    start_date: '',
+    end_date: '',
+    description: '',
+    location: '',
+    address: '',
+    city: '',
+    area: '',
+    image: 'assets/images/market/cards/market-card-01.png',
+    status: '',
+    statusClass: '',
+    tags: [],
+    category: '',
+    organizer: '',
+    transportation: [],
+  };
+}
+
+function displayValue(value: string | number | null | undefined): string {
+  const text = value == null ? '' : String(value).trim();
+  return text || '—';
+}
+
+function formatCurrency(value: number | null | undefined): string {
+  const amount = Number(value ?? 0);
+  return `NT$${Number.isFinite(amount) ? amount.toLocaleString('zh-TW') : '0'}`;
+}
+
+function sumAmounts(values: Array<number | null | undefined>): number {
+  return values.reduce<number>((total, value) => total + Number(value ?? 0), 0);
 }
