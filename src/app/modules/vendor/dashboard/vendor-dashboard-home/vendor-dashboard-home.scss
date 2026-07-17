@@ -16,39 +16,6 @@
   }
 }
 
-.home-load-error {
-  min-height: 360px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 12px;
-  color: var(--text-normal);
-  text-align: center;
-
-  > i {
-    color: var(--primary-color);
-    font-size: 40px;
-  }
-
-  h1,
-  p {
-    margin: 0;
-  }
-
-  h1 {
-    color: var(--text-dark);
-    font-size: 22px;
-    font-weight: 900;
-  }
-
-  .app-btn {
-    width: auto;
-    min-width: 140px;
-    margin-top: 8px;
-  }
-}
-
 .welcome-header {
   padding-top: 0;
 }

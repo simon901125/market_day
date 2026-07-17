@@ -82,6 +82,14 @@ export class VendorDashboardHome implements OnInit {
             path: '/vendor/dash-board/application-record',
             iconColor: 'blue',
           },
+          {
+            icon: 'bi-arrow-counterclockwise',
+            count: 1,
+            unit: '筆',
+            label: '退款處理中',
+            path: '/vendor/dash-board/application-record',
+            iconColor: 'purple',
+          },
         ];
         this.notifications = (dashboard.notifications ?? [])
           .map((item) => this.toNotificationItem(item));

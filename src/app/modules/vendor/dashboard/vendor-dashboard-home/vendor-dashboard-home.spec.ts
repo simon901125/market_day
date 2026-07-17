@@ -87,7 +87,19 @@ describe('VendorDashboardHome', () => {
 
     expect(component.hasRecords).toBeTrue();
     expect(component.vendorName).toBe('小集日');
-    expect(component.todoItems.map((item) => item.count)).toEqual([12, 6, 2]);
+    expect(component.todoItems).toEqual([
+      jasmine.objectContaining({ label: '待審核報名', count: 12 }),
+      jasmine.objectContaining({ label: '待付款報名', count: 6 }),
+      jasmine.objectContaining({ label: '待選擇攤位', count: 2 }),
+      jasmine.objectContaining({
+        icon: 'bi-arrow-counterclockwise',
+        label: '退款處理中',
+        count: 1,
+        unit: '筆',
+        path: '/vendor/dash-board/application-record',
+        iconColor: 'purple',
+      }),
+    ]);
     expect(component.notifications[0]).toEqual(jasmine.objectContaining({
       status: '待審核',
       title: '報名已送出',
