@@ -1,70 +1,51 @@
-<section class="market-search-section">
-  <div class="container">
-    
+<section class="app-filter-bar market-search-panel">
+  <label class="app-search-field keyword-input">
+    <span class="app-control-title">活動名稱</span>
+    <span class="app-search-input">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        placeholder="請輸入活動名稱或關鍵字"
+        [value]="keyword"
+        (input)="onKeywordInput($event)"
+        (keydown.enter)="submitSearch()"
+      />
+    </span>
+  </label>
 
-    <div class="search-card">
-      <div class="search-row">
-        <div class="search-col search-keyword">
-          <span class="field-label">活動名稱</span>
-          <div class="search-field">
-            <i class="bi bi-search"></i>
-            <input type="text" placeholder="請輸入活動名稱或關鍵字" [(ngModel)]="keyword" />
-          </div>
-        </div>
+  <app-dropdown
+    title="區域"
+    [options]="areaOptions"
+    [placeholder]="areaPlaceholder"
+    iconClass="bi bi-geo-alt-fill"
+    [selectedValue]="selectedArea"
+    (optionSelected)="selectArea($event)"
+  ></app-dropdown>
 
-        <div class="search-col search-area">
-          <span class="field-label">區域</span>
-          <div class="search-field">
-            <i class="bi bi-geo-alt"></i>
-            <select [(ngModel)]="selectedArea">
-              <option value="">選擇區域</option>
-              @for (area of areas; track area) {
-                <option [value]="area">{{ area }}</option>
-              }
-            </select>
-          </div>
-        </div>
+  <app-date-range-selector
+    title="活動日期"
+    [startDate]="startDate"
+    [endDate]="endDate"
+    (dateRangeChange)="onDateRangeChange($event)"
+  ></app-date-range-selector>
 
-        <div class="search-col search-date">
-          <span class="field-label">活動日期</span>
-          <div class="search-field">
-            <i class="bi bi-calendar4"></i>
-            <input type="text" placeholder="開始日期" [(ngModel)]="startDate" />
-          </div>
-        </div>
+  <app-dropdown
+    title="縣市"
+    [options]="cityOptions"
+    [placeholder]="cityPlaceholder"
+    [selectedValue]="selectedCity"
+    (optionSelected)="selectCity($event)"
+  ></app-dropdown>
 
-        <span class="dash">-</span>
+  <app-dropdown
+    title="活動狀態"
+    [options]="statusOptions"
+    placeholder="全部狀態"
+    [selectedValue]="selectedStatus"
+    (optionSelected)="selectStatus($event)"
+  ></app-dropdown>
 
-        <div class="search-col search-date">
-          <span class="field-label field-label-spacer" aria-hidden="true">活動日期</span>
-          <div class="search-field">
-            <i class="bi bi-calendar4"></i>
-            <input type="text" placeholder="結束日期" [(ngModel)]="endDate" />
-          </div>
-        </div>
-
-        <div class="search-col search-select-col">
-          <span class="field-label">縣市</span>
-          <select class="form-select search-select" [(ngModel)]="selectedCity">
-            <option value="">全部縣市</option>
-            @for (city of cities; track city) {
-              <option [value]="city">{{ city }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="search-col search-select-col">
-          <span class="field-label">活動狀態</span>
-          <select class="form-select search-select" [(ngModel)]="selectedStatus">
-            <option value="">全部狀態</option>
-            @for (status of statuses; track status) {
-              <option [value]="status">{{ status }}</option>
-            }
-          </select>
-        </div>
-
-        <button type="button" class="search-btn">搜尋</button>
-      </div>
-    </div>
-  </div>
+  <button class="app-btn search" type="button" (click)="submitSearch()">
+    搜尋
+  </button>
 </section>

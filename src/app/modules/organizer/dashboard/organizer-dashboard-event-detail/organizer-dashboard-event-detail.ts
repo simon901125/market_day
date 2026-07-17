@@ -2,6 +2,7 @@
 import { FormsModule } from '@angular/forms';
 import { HostListener } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { BoothLayoutExampleModal } from '../modals/booth-layout-example-modal/booth-layout-example-modal';
 import { BoothZoneModal } from '../modals/booth-zone-modal/booth-zone-modal';
@@ -23,8 +24,9 @@ import {
   VenueBoothForm,
 } from '../../../../models/interface/organizer/OrganizerEventEditor';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
+import { AddressApiService } from '../../../../core/services/address-api.service';
 import { AlertService } from '../../../../core/services/alert.service';
-import { TAIWAN_ADMINISTRATIVE_DIVISIONS, TAIWAN_CITY_OPTIONS } from '../../../../models/config/TaiwanAdministrativeDivisions';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
 @Component({
   selector: 'app-organizer-dashboard-event-detail',
@@ -123,6 +125,10 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   /** 程式主動導頁時略過未儲存防護。 */
   private navigationAllowed = false;
 
+  /** 縣市與行政區 API 載入序號，避免較舊的請求覆蓋新選擇。 */
+  private addressLoadId = 0;
+  private districtLoadId = 0;
+
   /** Modal 退場動畫時間，需和帳號設定 modal 一致。 */
   private readonly modalCloseDelay = 180;
 
@@ -180,11 +186,9 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   /** 活動類型選項，之後可改由 API 取得。 */
   readonly categoryOptions = ['餐飲美食', '文創手作', '親子家庭', '寵物生活', '植物選物', '服飾配件', '玩具選物'];
 
-  /** 台灣縣市選項。 */
-  readonly cityOptions = TAIWAN_CITY_OPTIONS;
-
-  /** 縣市與行政區對照表。 */
-  readonly cityDistrictMap = TAIWAN_ADMINISTRATIVE_DIVISIONS;
+  /** 由地址 API 取得的台灣縣市與行政區選項。 */
+  cityOptions: string[] = [];
+  districtOptions: string[] = [];
 
   /** 攤位分區預設色票。 */
   readonly zoneColors = ['#f97316', '#65a30d', '#0ea5e9', '#8b5cf6', '#ec4899'];
@@ -195,6 +199,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly addressApiService: AddressApiService,
     private readonly alert: AlertService,
   ) {
     this.activityId = Number(this.route.snapshot.paramMap.get('id')) || 0;
@@ -210,6 +215,9 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       this.loadActivityIntoEditor();
     }
 
+    if (!this.isViewMode) {
+      void this.loadCityOptions();
+    }
     this.initialEditorSnapshot = this.getEditorSnapshot();
   }
 
@@ -243,10 +251,6 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
 
   get statusClass(): string {
     return ActivityStatus.getClass(this.activity.status);
-  }
-
-  get districtOptions(): string[] {
-    return this.cityDistrictMap[this.venueForm.city] ?? [];
   }
 
   get eventDateTimeOrderInvalid(): boolean {
@@ -730,6 +734,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     if (this.venueForm.city !== city) {
       this.venueForm.city = city;
       this.venueForm.district = '';
+      void this.loadDistrictOptions(city);
     }
   }
 
@@ -1207,8 +1212,81 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
 
   /** 元件銷毀時釋放本機預覽圖 URL。 */
   ngOnDestroy(): void {
+    this.addressLoadId += 1;
+    this.districtLoadId += 1;
     this.releaseCoverPreview();
     this.releaseLayoutPreview();
+  }
+
+  private async loadCityOptions(): Promise<void> {
+    const addressLoadId = ++this.addressLoadId;
+
+    try {
+      const response = await firstValueFrom(
+        this.addressApiService.getAddressCities(),
+      );
+      if (addressLoadId !== this.addressLoadId) {
+        return;
+      }
+
+      if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+        await this.alert.error('載入失敗', response.message || '無法取得縣市資料，請稍後再試。');
+        return;
+      }
+
+      this.cityOptions = response.data;
+      if (this.venueForm.city) {
+        await this.loadDistrictOptions(
+          this.venueForm.city,
+          this.venueForm.district,
+          addressLoadId,
+        );
+      }
+    } catch {
+      if (addressLoadId === this.addressLoadId) {
+        await this.alert.error('載入失敗', '無法取得縣市資料，請稍後再試。');
+      }
+    }
+  }
+
+  private async loadDistrictOptions(
+    city: string,
+    preferredDistrict = '',
+    addressLoadId?: number,
+  ): Promise<void> {
+    const districtLoadId = ++this.districtLoadId;
+    this.districtOptions = [];
+
+    if (!city) {
+      this.venueForm.district = '';
+      return;
+    }
+
+    try {
+      const response = await firstValueFrom(
+        this.addressApiService.getAddressDistricts(city),
+      );
+      if (
+        districtLoadId !== this.districtLoadId
+        || (addressLoadId !== undefined && addressLoadId !== this.addressLoadId)
+      ) {
+        return;
+      }
+
+      if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+        await this.alert.error('載入失敗', response.message || '無法取得行政區資料，請稍後再試。');
+        return;
+      }
+
+      this.districtOptions = response.data;
+      this.venueForm.district = this.districtOptions.includes(preferredDistrict)
+        ? preferredDistrict
+        : '';
+    } catch {
+      if (districtLoadId === this.districtLoadId) {
+        await this.alert.error('載入失敗', '無法取得行政區資料，請稍後再試。');
+      }
+    }
   }
 
   /** 釋放活動封面預覽 URL，避免記憶體殘留。 */
