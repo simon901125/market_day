@@ -1,5 +1,4 @@
 import { Component, ElementRef, OnDestroy, OnInit, Signal, ViewChild } from '@angular/core';
-import { forkJoin } from 'rxjs';
 import { Router, RouterLink } from '@angular/router';
 import {
   BarController,
@@ -71,7 +70,7 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
     this.loadDashboardData();
   }
 
-  /** 主辦方後台首頁待辦統計卡片資料。 */
+  /** 主辦方後台首頁待辦展示資料；待報名列表統計 API 完成後再串接。 */
   todoItems: TodoItem[] = [
     {
       icon: 'bi-clipboard-heart',
@@ -103,24 +102,17 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
   activityRegistrationOverview: ActivityRegistrationOverview[] = [];
 
   private loadDashboardData(): void {
-    forkJoin({
-      applications: this.organizerApi.searchOrganizerApplications({ page: 1, pageSize: 1 }),
-      events: this.organizerApi.searchOrganizerEvents({ sort: 'UPCOMING_FIRST', page: 1, pageSize: 3 }),
-    }).subscribe(({ applications, events }) => {
-        if (isApiSuccessStatus(applications.statusCode) && applications.data) {
-          const summary = applications.data.taskSummary;
-        this.todoItems = this.todoItems.map((item, index) => ({
-          ...item,
-          count: [summary.pendingReviewCount, summary.pendingRefundConfirmationCount,
-            summary.pendingStallSelectionCount][index] ?? item.count,
-          label: index === 1 ? '退款待確認' : item.label,
-        }));
-        }
+    this.organizerApi.searchOrganizerEvents({
+        sort: 'UPCOMING_FIRST',
+        page: 1,
+        pageSize: 3,
+        registrationOverview: true,
+      }).subscribe((events) => {
         if (!isApiSuccessStatus(events.statusCode) || !events.data) return;
         this.activityRegistrationOverview = events.data.events.items.map((event) => ({
           eventId: event.eventId,
-          eventTitle: event.eventTitle,
-          capacity: event.capacity,
+          eventTitle: event.eventTitle ?? '',
+          capacity: event.capacity ?? 0,
           registeredCount: event.registeredCount,
           paidCount: event.paidCount,
           selectedCount: event.selectedCount,

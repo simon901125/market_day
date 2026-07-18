@@ -712,7 +712,7 @@
   align-items: center;
   padding: 0 14px;
 
-  input {
+  > input {
     height: 100%;
   }
 }
@@ -736,6 +736,26 @@ textarea {
   background: transparent;
   color: var(--text-dark);
   font-size: 14px;
+}
+
+// 複合控制項的框線統一由外層容器負責，避免驗證時出現框中框。
+:host .text-control > input,
+:host .textarea-control > textarea,
+:host .date-time-control > input,
+:host .unit-control > input {
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  box-shadow: none;
+
+  &:hover,
+  &:focus,
+  &:focus-visible {
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+  }
 }
 
 .with-count {
@@ -1071,9 +1091,10 @@ textarea {
 }
 
 .equipment-power-form {
+  --equipment-section-gap: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0;
 }
 
 .equipment-power-section,
@@ -1105,26 +1126,26 @@ textarea {
 }
 
 .power-settings-section + .power-settings-section {
-  margin-top: 18px;
-  padding-top: 18px;
+  margin-top: var(--equipment-section-gap);
+  padding-top: var(--equipment-section-gap);
   border-top: 1px solid var(--border-soft);
 }
 
 .power-settings-section .power-panel {
-  margin-top: 16px;
-  padding: 18px 0 0;
+  margin-top: var(--equipment-section-gap);
+  padding: var(--equipment-section-gap) 0 0;
   border: 0;
   border-top: 1px solid var(--border-soft);
   border-radius: 0;
   background: transparent;
 
   &:first-of-type {
-    margin-top: 14px;
+    margin-top: var(--equipment-section-gap);
   }
 }
 
 .power-settings-section > .form-section-title + .power-panel {
-  padding-top: 8px;
+  padding-top: 0;
   border-top: 0;
 }
 

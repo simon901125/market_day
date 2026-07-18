@@ -194,8 +194,8 @@
               </div>
             </div>
             <div class="radio-row readonly-radio-row">
-              <label><input type="radio" name="readonlyProvidesEquipmentRental" [checked]="!providesEquipmentRental" disabled /> 不提供設備租借</label>
-              <label><input type="radio" name="readonlyProvidesEquipmentRental" [checked]="providesEquipmentRental" disabled /> 提供設備租借</label>
+              <label><input type="radio" name="readonlyProvidesEquipmentRental" [checked]="providesEquipmentRental === false" disabled /> 不提供設備租借</label>
+              <label><input type="radio" name="readonlyProvidesEquipmentRental" [checked]="providesEquipmentRental === true" disabled /> 提供設備租借</label>
             </div>
             @if (providesEquipmentRental) {
               <div class="equipment-table-wrap readonly-table-wrap">
@@ -236,8 +236,8 @@
             <div class="power-panel">
               <h3>基本用電（免費提供） <b>*</b></h3>
               <div class="radio-row readonly-radio-row">
-                <label><input type="radio" name="readonlyProvidesBasicPower" [checked]="!providesBasicPower" disabled /> 不提供基本用電</label>
-                <label><input type="radio" name="readonlyProvidesBasicPower" [checked]="providesBasicPower" disabled /> 提供基本用電</label>
+                <label><input type="radio" name="readonlyProvidesBasicPower" [checked]="providesBasicPower === false" disabled /> 不提供基本用電</label>
+                <label><input type="radio" name="readonlyProvidesBasicPower" [checked]="providesBasicPower === true" disabled /> 提供基本用電</label>
               </div>
               @if (providesBasicPower) {
                 <div class="equipment-table-wrap readonly-table-wrap">
@@ -255,8 +255,8 @@
             <div class="power-panel">
               <h3>額外申請用電 <b>*</b></h3>
               <div class="radio-row readonly-radio-row">
-                <label><input type="radio" name="readonlyAllowsExtraPower" [checked]="!allowsExtraPower" disabled /> 不開放額外申請</label>
-                <label><input type="radio" name="readonlyAllowsExtraPower" [checked]="allowsExtraPower" disabled /> 開放額外申請</label>
+                <label><input type="radio" name="readonlyAllowsExtraPower" [checked]="allowsExtraPower === false" disabled /> 不開放額外申請</label>
+                <label><input type="radio" name="readonlyAllowsExtraPower" [checked]="allowsExtraPower === true" disabled /> 開放額外申請</label>
               </div>
               @if (allowsExtraPower) {
                 <div class="equipment-table-wrap readonly-table-wrap">
@@ -361,18 +361,18 @@
         <div class="basic-info-left">
           <label class="field">
             <span>活動名稱 <b>*</b></span>
-            <span class="text-control with-count" [class.invalid]="submitAttempted && !form.name.trim()" [attr.data-invalid]="submitAttempted && !form.name.trim()">
+            <span class="text-control with-count" [class.invalid]="submitAttempted && eventNameInvalid" [attr.data-invalid]="submitAttempted && eventNameInvalid">
               <input type="text" maxlength="50" placeholder="請輸入活動名稱" [(ngModel)]="form.name" name="eventName" />
               <small>{{ form.name.length }} / 50</small>
             </span>
-            @if (submitAttempted && !form.name.trim()) {
-              <small class="field-error">請輸入活動名稱</small>
+            @if (submitAttempted && eventNameInvalid) {
+              <small class="field-error">請輸入 1～50 字的活動名稱</small>
             }
           </label>
 
           <fieldset class="field category-field">
             <legend>活動類型（可複選） <b>*</b></legend>
-            <div class="category-grid" [class.invalid]="submitAttempted && form.categories.length === 0" [attr.data-invalid]="submitAttempted && form.categories.length === 0">
+            <div class="category-grid" [class.invalid]="submitAttempted && categorySelectionInvalid" [attr.data-invalid]="submitAttempted && categorySelectionInvalid">
               @for (category of categoryOptions; track category) {
                 <label class="category-option" [class.selected]="isCategorySelected(category)">
                   <input type="checkbox" [checked]="isCategorySelected(category)" (change)="toggleCategory(category)" />
@@ -380,8 +380,8 @@
                 </label>
               }
             </div>
-            @if (submitAttempted && form.categories.length === 0) {
-              <small class="field-error">請至少選擇一種活動類型</small>
+            @if (submitAttempted && categorySelectionInvalid) {
+              <small class="field-error">請至少選擇一種有效的活動類型</small>
             }
           </fieldset>
         </div>
@@ -427,7 +427,7 @@
 
       <label class="field full">
         <span>活動簡介 <b>*</b><small class="app-field-context">（顯示於活動列表）</small></span>
-        <span class="textarea-control with-count" [class.invalid]="submitAttempted && !form.description.trim()" [attr.data-invalid]="submitAttempted && !form.description.trim()">
+        <span class="textarea-control with-count" [class.invalid]="submitAttempted && eventDescriptionInvalid" [attr.data-invalid]="submitAttempted && eventDescriptionInvalid">
           <textarea class="app-textarea"
             maxlength="300"
             placeholder="請輸入活動簡介，讓攤主快速了解活動內容與特色..."
@@ -436,14 +436,14 @@
           ></textarea>
           <small>{{ form.description.length }} / 300</small>
         </span>
-        @if (submitAttempted && !form.description.trim()) {
-          <small class="field-error">請輸入活動簡介</small>
+        @if (submitAttempted && eventDescriptionInvalid) {
+          <small class="field-error">請輸入 1～300 字的活動簡介</small>
         }
       </label>
 
       <label class="field full">
         <span>活動介紹 <b>*</b><small class="app-field-context">（顯示於活動詳情）</small></span>
-        <span class="textarea-control introduction-control with-count" [class.invalid]="submitAttempted && !form.introduction.trim()" [attr.data-invalid]="submitAttempted && !form.introduction.trim()">
+        <span class="textarea-control introduction-control with-count" [class.invalid]="submitAttempted && eventIntroductionInvalid" [attr.data-invalid]="submitAttempted && eventIntroductionInvalid">
           <textarea class="app-textarea"
             maxlength="800"
             placeholder="請輸入完整活動介紹，例如活動理念、主題亮點、適合參與的品牌類型與現場規劃..."
@@ -452,8 +452,8 @@
           ></textarea>
           <small>{{ form.introduction.length }} / 800</small>
         </span>
-        @if (submitAttempted && !form.introduction.trim()) {
-          <small class="field-error">請輸入活動介紹</small>
+        @if (submitAttempted && eventIntroductionInvalid) {
+          <small class="field-error">請輸入 1～800 字的活動介紹</small>
         }
       </label>
       } @else if (currentStep === 1) {
@@ -579,31 +579,25 @@
             <label>
               <strong>捷運</strong>
               <span>
-                <input class="transport-input" [class.invalid]="submitAttempted && !timeForm.metro.trim()" [attr.data-invalid]="submitAttempted && !timeForm.metro.trim()" type="text" placeholder="請輸入最近捷運站與步行時間" [(ngModel)]="timeForm.metro" name="metro" />
-                @if (submitAttempted && !timeForm.metro.trim()) {
-                  <small class="field-error">請填寫捷運資訊</small>
-                }
+                <input class="transport-input" [class.invalid]="submitAttempted && transportationMissing" [attr.data-invalid]="submitAttempted && transportationMissing" type="text" placeholder="請輸入最近捷運站與步行時間" [(ngModel)]="timeForm.metro" name="metro" />
               </span>
             </label>
             <label>
               <strong>公車</strong>
               <span>
-                <input class="transport-input" [class.invalid]="submitAttempted && !timeForm.bus.trim()" [attr.data-invalid]="submitAttempted && !timeForm.bus.trim()" type="text" placeholder="請輸入公車路線與下車站點" [(ngModel)]="timeForm.bus" name="bus" />
-                @if (submitAttempted && !timeForm.bus.trim()) {
-                  <small class="field-error">請填寫公車資訊</small>
-                }
+                <input class="transport-input" [class.invalid]="submitAttempted && transportationMissing" [attr.data-invalid]="submitAttempted && transportationMissing" type="text" placeholder="請輸入公車路線與下車站點" [(ngModel)]="timeForm.bus" name="bus" />
               </span>
             </label>
             <label>
               <strong>開車</strong>
               <span>
-                <input class="transport-input" [class.invalid]="submitAttempted && !timeForm.driving.trim()" [attr.data-invalid]="submitAttempted && !timeForm.driving.trim()" type="text" placeholder="請輸入停車資訊或開車說明" [(ngModel)]="timeForm.driving" name="driving" />
-                @if (submitAttempted && !timeForm.driving.trim()) {
-                  <small class="field-error">請填寫開車資訊</small>
-                }
+                <input class="transport-input" [class.invalid]="submitAttempted && transportationMissing" [attr.data-invalid]="submitAttempted && transportationMissing" type="text" placeholder="請輸入停車資訊或開車說明" [(ngModel)]="timeForm.driving" name="driving" />
               </span>
             </label>
           </div>
+          @if (submitAttempted && transportationMissing) {
+            <small class="field-error section-error">捷運、公車、開車資訊請至少填寫一項</small>
+          }
         </section>
       } @else if (currentStep === 2) {
         <div class="venue-booth-top-grid">
@@ -620,11 +614,11 @@
                   [options]="cityOptions"
                   placeholder="請選擇縣市"
                   [selectedValue]="venueForm.city"
-                  [invalid]="submitAttempted && !venueForm.city"
+                  [invalid]="submitAttempted && citySelectionInvalid"
                   (optionSelected)="selectCity($event)"
                 ></app-dropdown>
-                @if (submitAttempted && !venueForm.city) {
-                  <small class="field-error" data-invalid="true">請選擇縣市</small>
+                @if (submitAttempted && citySelectionInvalid) {
+                  <small class="field-error" data-invalid="true">請選擇有效的縣市</small>
                 }
               </label>
 
@@ -634,31 +628,31 @@
                   [options]="districtOptions"
                   placeholder="請選擇行政區"
                   [selectedValue]="venueForm.district"
-                  [invalid]="submitAttempted && !venueForm.district"
+                  [invalid]="submitAttempted && districtSelectionInvalid"
                   (optionSelected)="venueForm.district = $event"
                 ></app-dropdown>
-                @if (submitAttempted && !venueForm.district) {
-                  <small class="field-error" data-invalid="true">請選擇行政區</small>
+                @if (submitAttempted && districtSelectionInvalid) {
+                  <small class="field-error" data-invalid="true">請選擇該縣市所屬的行政區</small>
                 }
               </label>
 
               <label class="field venue-full-field">
                 <span>地址 <b>*</b></span>
-                <span class="text-control" [class.invalid]="submitAttempted && !venueForm.address.trim()" [attr.data-invalid]="submitAttempted && !venueForm.address.trim()">
-                  <input type="text" placeholder="請輸入活動地址" [(ngModel)]="venueForm.address" name="address" />
+                <span class="text-control" [class.invalid]="submitAttempted && venueAddressInvalid" [attr.data-invalid]="submitAttempted && venueAddressInvalid">
+                  <input type="text" maxlength="255" placeholder="請輸入活動地址" [(ngModel)]="venueForm.address" name="address" />
                 </span>
-                @if (submitAttempted && !venueForm.address.trim()) {
-                  <small class="field-error">請輸入活動地址</small>
+                @if (submitAttempted && venueAddressInvalid) {
+                  <small class="field-error">請輸入 1～255 字的活動地址</small>
                 }
               </label>
 
               <label class="field venue-full-field">
                 <span>活動場地名稱 <b>*</b></span>
-                <span class="text-control" [class.invalid]="submitAttempted && !venueForm.venueName.trim()" [attr.data-invalid]="submitAttempted && !venueForm.venueName.trim()">
-                  <input type="text" placeholder="請輸入場地名稱" [(ngModel)]="venueForm.venueName" name="venueName" />
+                <span class="text-control" [class.invalid]="submitAttempted && venueNameInvalid" [attr.data-invalid]="submitAttempted && venueNameInvalid">
+                  <input type="text" maxlength="200" placeholder="請輸入場地名稱" [(ngModel)]="venueForm.venueName" name="venueName" />
                 </span>
-                @if (submitAttempted && !venueForm.venueName.trim()) {
-                  <small class="field-error">請輸入活動場地名稱</small>
+                @if (submitAttempted && venueNameInvalid) {
+                  <small class="field-error">請輸入 1～200 字的活動場地名稱</small>
                 }
               </label>
             </div>
@@ -712,6 +706,16 @@
                 </span>
                 @if (submitAttempted && !(venueForm.boothPrice !== null && venueForm.boothPrice >= 0)) {
                   <small class="field-error">請輸入攤位價格</small>
+                }
+              </label>
+              <label class="field">
+                <span>保證金 <b>*</b></span>
+                <span class="unit-control" [class.invalid]="submitAttempted && !(venueForm.depositAmount !== null && venueForm.depositAmount >= 0)" [attr.data-invalid]="submitAttempted && !(venueForm.depositAmount !== null && venueForm.depositAmount >= 0)">
+                  <input type="number" min="0" [(ngModel)]="venueForm.depositAmount" name="depositAmount" />
+                  <small>元／攤</small>
+                </span>
+                @if (submitAttempted && !(venueForm.depositAmount !== null && venueForm.depositAmount >= 0)) {
+                  <small class="field-error">請輸入保證金，沒有保證金請填 0</small>
                 }
               </label>
             </div>
@@ -852,9 +856,12 @@
             </button>
           </div>
           <div class="radio-row">
-            <label><input type="radio" name="providesEquipmentRental" [ngModel]="providesEquipmentRental" (ngModelChange)="providesEquipmentRental = false" [value]="false" /> 不提供設備租借</label>
-            <label><input type="radio" name="providesEquipmentRental" [ngModel]="providesEquipmentRental" (ngModelChange)="providesEquipmentRental = true" [value]="true" /> 提供設備租借</label>
+            <label><input type="radio" name="providesEquipmentRental" [ngModel]="providesEquipmentRental" (ngModelChange)="providesEquipmentRental = $event" [value]="false" /> 不提供設備租借</label>
+            <label><input type="radio" name="providesEquipmentRental" [ngModel]="providesEquipmentRental" (ngModelChange)="providesEquipmentRental = $event" [value]="true" /> 提供設備租借</label>
           </div>
+          @if (submitAttempted && providesEquipmentRental === null) {
+            <small class="field-error section-error" data-invalid="true">請選擇是否提供設備</small>
+          }
           @if (submitAttempted && providesEquipmentRental && equipmentItems.length === 0) {
             <small class="field-error section-error" data-invalid="true">請至少新增一項設備</small>
           }
@@ -917,9 +924,12 @@
               </button>
             </div>
             <div class="radio-row">
-              <label><input type="radio" name="providesBasicPower" [ngModel]="providesBasicPower" (ngModelChange)="providesBasicPower = false" [value]="false" /> 不提供基本用電</label>
-              <label><input type="radio" name="providesBasicPower" [ngModel]="providesBasicPower" (ngModelChange)="providesBasicPower = true" [value]="true" /> 提供基本用電</label>
+              <label><input type="radio" name="providesBasicPower" [ngModel]="providesBasicPower" (ngModelChange)="providesBasicPower = $event" [value]="false" /> 不提供基本用電</label>
+              <label><input type="radio" name="providesBasicPower" [ngModel]="providesBasicPower" (ngModelChange)="providesBasicPower = $event" [value]="true" /> 提供基本用電</label>
             </div>
+            @if (submitAttempted && providesBasicPower === null) {
+              <small class="field-error section-error" data-invalid="true">請選擇是否提供基本用電</small>
+            }
             @if (submitAttempted && providesBasicPower && basicPowerPlans.length === 0) {
               <small class="field-error section-error" data-invalid="true">請至少新增一筆基本用電</small>
             }
@@ -962,9 +972,12 @@
               </button>
             </div>
             <div class="radio-row">
-              <label><input type="radio" name="allowsExtraPower" [ngModel]="allowsExtraPower" (ngModelChange)="allowsExtraPower = false" [value]="false" /> 不開放額外申請</label>
-              <label><input type="radio" name="allowsExtraPower" [ngModel]="allowsExtraPower" (ngModelChange)="allowsExtraPower = true" [value]="true" /> 開放額外申請</label>
+              <label><input type="radio" name="allowsExtraPower" [ngModel]="allowsExtraPower" (ngModelChange)="allowsExtraPower = $event" [value]="false" /> 不開放額外申請</label>
+              <label><input type="radio" name="allowsExtraPower" [ngModel]="allowsExtraPower" (ngModelChange)="allowsExtraPower = $event" [value]="true" /> 開放額外申請</label>
             </div>
+            @if (submitAttempted && allowsExtraPower === null) {
+              <small class="field-error section-error" data-invalid="true">請選擇是否開放額外用電</small>
+            }
             @if (submitAttempted && allowsExtraPower && extraPowerPlans.length === 0) {
               <small class="field-error section-error" data-invalid="true">請至少新增一筆用電方案</small>
             }

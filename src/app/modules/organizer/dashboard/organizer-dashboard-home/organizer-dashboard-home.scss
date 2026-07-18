@@ -108,6 +108,80 @@
 
 }
 
+.registration-overview-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.registration-overview-info {
+  position: relative;
+  display: inline-flex;
+}
+
+.registration-overview-info-button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted, #8a837a);
+  cursor: help;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--primary-soft, #fff4e8);
+    color: var(--primary-color, #d9772f);
+    outline: none;
+  }
+}
+
+.registration-overview-help {
+  position: absolute;
+  top: calc(100% + 7px);
+  left: -8px;
+  z-index: 20;
+  width: min(320px, calc(100vw - 48px));
+  padding: 9px 11px;
+  border: 1px solid var(--border-primary, #eed8bd);
+  border-radius: 8px;
+  background: #fffaf4;
+  color: var(--text-normal, #5f5a54);
+  box-shadow: 0 6px 18px rgb(60 45 25 / 12%);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.55;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-3px);
+  transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+
+  &::before {
+    position: absolute;
+    top: -5px;
+    left: 14px;
+    width: 9px;
+    height: 9px;
+    border-top: 1px solid var(--border-primary, #eed8bd);
+    border-left: 1px solid var(--border-primary, #eed8bd);
+    background: #fffaf4;
+    content: '';
+    transform: rotate(45deg);
+  }
+}
+
+.registration-overview-info:hover .registration-overview-help,
+.registration-overview-info:focus-within .registration-overview-help {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
 .view-all-link {
   flex: 0 0 auto;
   color: var(--primary-color, #d9772f);

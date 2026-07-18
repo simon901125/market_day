@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { defer, finalize, Observable } from 'rxjs';
+import { defer, finalize, Observable, timeout } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { ApiResult } from '../../models/interface/shared/ApiResult';
@@ -8,6 +8,7 @@ import { LoadingService } from '../services/loading.service';
 
 export interface HttpRequestOptions {
   skipLoading?: boolean;
+  timeoutMs?: number;
 }
 
 @Injectable({
@@ -63,7 +64,10 @@ export class HttpService {
     request$: Observable<T>,
     options: HttpRequestOptions
   ): Observable<T> {
-    return options.skipLoading ? request$ : this.withLoading(request$);
+    const protectedRequest$ = options.timeoutMs
+      ? request$.pipe(timeout({ first: options.timeoutMs }))
+      : request$;
+    return options.skipLoading ? protectedRequest$ : this.withLoading(protectedRequest$);
   }
 
   private withLoading<T>(request$: Observable<T>): Observable<T> {

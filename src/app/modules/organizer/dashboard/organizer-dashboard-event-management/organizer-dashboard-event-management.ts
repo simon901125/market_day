@@ -54,15 +54,22 @@ export class OrganizerDashboardEventManagement implements OnInit {
 
   /** 活動管理列表欄位設定。 */
   columns: DashboardTableColumn[] = [
-    { key: 'name', label: '活動名稱', type: 'imageText', width: '15%' },
+    { key: 'name', label: '活動名稱', type: 'imageText', width: '14%' },
     { key: 'date', label: '活動日期', nowrap: true, width: '14%' },
-    { key: 'status', label: '活動狀態', type: 'status', align: 'center', width: '9%' },
-    { key: 'location', label: '活動地點', width: '17%' },
+    { key: 'status', label: '活動狀態', type: 'status', align: 'center', width: '8%' },
+    { key: 'location', label: '活動地點', width: '21%' },
     { key: 'signupProgress', label: '報名人數', type: 'progress', align: 'center', nowrap: true, width: '9%' },
-    { key: 'pendingReviewCount', label: '待審核', align: 'center', nowrap: true, width: '8%' },
-    { key: 'paidCount', label: '付款人數', align: 'center', nowrap: true, width: '8%' },
-    { key: 'selectedCount', label: '已選位', align: 'center', nowrap: true, width: '8%' },
-    { key: 'action', label: '', type: 'action', align: 'end', width: '12%' },
+    {
+      key: 'applicationProgress',
+      label: '報名處理進度',
+      type: 'multiValue',
+      align: 'center',
+      nowrap: true,
+      width: '18%',
+      valueKeys: ['pendingReviewCount', 'paidCount', 'selectedCount'],
+      valueLabels: ['待審核', '已付款', '已選位'],
+    },
+    { key: 'action', label: '', type: 'action', align: 'end', width: '16%' },
   ];
 
   /**
@@ -510,14 +517,14 @@ export class OrganizerDashboardEventManagement implements OnInit {
       this.serverTotalItems = response.data.totalCount;
       this.rows = response.data.events.items.map((event) => ({
         id: event.eventId,
-        name: event.eventTitle,
+        name: event.eventTitle ?? '',
         nameImage: event.coverImageUrl || 'assets/images/shared/no-image-placeholder.svg',
         date: `${this.formatApiDate(event.eventStartAt)} - ${this.formatApiDate(event.eventEndAt)}`,
         location: [event.city, event.district, event.locationName].filter(Boolean).join(' '),
         status: event.statusText,
-        signupProgress: `${event.registeredCount} / ${event.capacity}`,
+        signupProgress: `${event.registeredCount} / ${event.capacity ?? 0}`,
         signupProgressCurrent: event.registeredCount,
-        signupProgressTotal: event.capacity,
+        signupProgressTotal: event.capacity ?? 0,
         pendingReviewCount: String(event.pendingReviewCount),
         paidCount: String(event.paidCount),
         selectedCount: String(event.selectedCount),
@@ -545,7 +552,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
     return mapping.get(status);
   }
 
-  private formatApiDate(value: string): string {
+  private formatApiDate(value: string | null): string {
     const date = value?.slice(0, 10);
     return date ? date.replaceAll('-', '/') : '';
   }
@@ -582,7 +589,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
         ];
       case ActivityStatus.revisionRequired:
         return [
-          { key: 'edit', label: '編輯', variant: 'outline' },
+          { key: 'view', label: '查看', variant: 'outline' },
           { key: 'resubmit', label: '重新送審', variant: 'primary' },
         ];
       case ActivityStatus.mapBuilding:

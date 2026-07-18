@@ -30,8 +30,76 @@ export interface VenueBoothForm {
   boothLength: number | null;
   totalBooths: number | null;
   boothPrice: number | null;
+  depositAmount: number | null;
   layoutFileName: string;
   layoutPreviewUrl: string;
+}
+
+export interface OrganizerEventSaveRequest {
+  eventId: number | null;
+  eventTitle: string | null;
+  summary: string | null;
+  description: string | null;
+  categoryIds: number[];
+  schedule: {
+    startAt: string | null;
+    endAt: string | null;
+    registrationStartAt: string | null;
+    registrationEndAt: string | null;
+  };
+  location: {
+    locationName: string | null;
+    city: string | null;
+    district: string | null;
+    address: string | null;
+    trafficInfoMetro: string | null;
+    trafficInfoBus: string | null;
+    trafficInfoDriving: string | null;
+  };
+  booth: {
+    maxBooths: number | null;
+    stallWidth: number | null;
+    stallLength: number | null;
+    baseFee: number | null;
+    depositAmount: number | null;
+    zones: Array<{
+      zoneId: number | null;
+      zoneName: string;
+      stallCount: number;
+      colorCode: string;
+    }>;
+  };
+  equipment: {
+    providesEquipmentRental: boolean | null;
+    providesBasicPower: boolean | null;
+    allowsExtraPower: boolean | null;
+    items: OrganizerEventSaveEquipmentItem[];
+  };
+}
+
+export interface OrganizerEventSaveEquipmentItem {
+  equipmentId: number | null;
+  equipmentGroupKey: string | null;
+  name: string;
+  rentalFee: number;
+  pricingUnit: 'DAY';
+  unit: string | null;
+  chargeType: 'FREE' | 'PAID';
+  itemType: 'EQUIPMENT' | 'POWER';
+  description: string | null;
+  stockQuantity: number | null;
+  perStallRentalLimit: number | null;
+  rentalStatus: 'ACTIVE';
+  wattageLimit: number | null;
+}
+
+export interface StoredEventImage {
+  purpose: 'EVENT_COVER' | 'EVENT_MAP';
+  productId: null;
+  eventId: number;
+  imageUrl: string;
+  contentType: string;
+  fileSize: number;
 }
 
 export interface BoothZone {

@@ -202,6 +202,25 @@
     font-size: 13px;
   }
 
+  // Modal 複合欄位只保留外層控制項框線，驗證狀態不再形成雙層框。
+  .event-config-dialog .text-control > input,
+  .event-config-dialog .textarea-control > textarea,
+  .event-config-dialog .unit-control > input {
+    border: 0;
+    border-radius: 0;
+    outline: 0;
+    background: transparent;
+    box-shadow: none;
+
+    &:hover,
+    &:focus,
+    &:focus-visible {
+      border: 0;
+      outline: 0;
+      box-shadow: none;
+    }
+  }
+
   input {
     height: 100%;
     padding: 0 14px;
