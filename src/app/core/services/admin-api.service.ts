@@ -6,6 +6,7 @@ import { EventRevisionRequest, EventStatusChangeDto } from '../../models/interfa
 import { AdminEventDetailDto, AdminEventStatusLogPage } from '../../models/interface/admin/AdminEventDetail';
 import { AdminEventPage, AdminEventSearchRequest } from '../../models/interface/admin/AdminEventSearch';
 import { AdminNoticePage, AdminNoticeSearchRequest } from '../../models/interface/admin/AdminNoticeSearch';
+import { AdminUserPage, AdminUserSearchRequest } from '../../models/interface/admin/AdminUserSearch';
 import { ApiResult } from '../../models/interface/shared/ApiResult';
 import { HttpRequestOptions, HttpService } from '../http/http.service';
 
@@ -74,5 +75,12 @@ export class AdminApiService {
   /** 確認活動下架（同意下架申請） */
   confirmEventUnpublish(id: number, note: string | null = null): Observable<ApiResult<EventStatusChangeDto>> {
     return this.httpService.post<EventStatusChangeDto>(`api/admin/events/${id}/unpublish-confirm`, note);
+  }
+
+  searchUsers(
+    request: AdminUserSearchRequest,
+    options: HttpRequestOptions = {},
+  ): Observable<ApiResult<AdminUserPage>> {
+    return this.httpService.post<AdminUserPage>('api/admin/users/search', request, options);
   }
 }
