@@ -16,7 +16,7 @@ export interface AdminMarketDetail {
   activityInfo: {
     image: string;
     name: string;
-    type: string;
+    types: string[];
     time: string;
     locationName: string;
     location: string;

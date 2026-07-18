@@ -103,13 +103,15 @@ export class AdminDashboardMarketDetail implements OnInit {
 
   /** 把 API 回傳的活動詳細資料轉成畫面用的 AdminMarketDetail */
   private mapDetail(data: AdminEventDetailDto): AdminMarketDetail {
+    const categoryNames = data.categories?.map((category) => category.name) ?? [];
+
     return {
       activityId: data.eventId,
       activityStatus: ActivityStatus.fromApiStatus(data.eventStatus),
       activityInfo: {
         image: data.coverImg,
         name: data.eventName,
-        type: data.eventType,
+        types: categoryNames,
         time: data.eventTime,
         locationName: data.locationName,
         location: data.addr,

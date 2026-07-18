@@ -1,3 +1,9 @@
+export interface AdminEventCategory {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 export interface AdminEventBoothZone {
   name: string;
   qty: number;
@@ -29,7 +35,7 @@ export interface AdminEventDetailDto {
   locationName: string;
   addr: string;
   eventStatus: string;
-  eventType: string;
+  categories: AdminEventCategory[];
   description: string;
   registrationStartTime: string;
   registrationEndTime: string;
