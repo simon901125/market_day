@@ -5,6 +5,7 @@ import { AdminDashboardOverview } from '../../models/interface/admin/AdminDashbo
 import { EventRevisionRequest, EventStatusChangeDto } from '../../models/interface/admin/AdminEventAction';
 import { AdminEventDetailDto, AdminEventStatusLogPage } from '../../models/interface/admin/AdminEventDetail';
 import { AdminEventPage, AdminEventSearchRequest } from '../../models/interface/admin/AdminEventSearch';
+import { AdminLogPage, AdminLogsSearchRequest } from '../../models/interface/admin/AdminLogSearch';
 import { AdminNoticePage, AdminNoticeSearchRequest } from '../../models/interface/admin/AdminNoticeSearch';
 import { AdminUserPage, AdminUserSearchRequest } from '../../models/interface/admin/AdminUserSearch';
 import { ApiResult } from '../../models/interface/shared/ApiResult';
@@ -82,5 +83,12 @@ export class AdminApiService {
     options: HttpRequestOptions = {},
   ): Observable<ApiResult<AdminUserPage>> {
     return this.httpService.post<AdminUserPage>('api/admin/users/search', request, options);
+  }
+
+  searchLogs(
+    request: AdminLogsSearchRequest,
+    options: HttpRequestOptions = {},
+  ): Observable<ApiResult<AdminLogPage>> {
+    return this.httpService.post<AdminLogPage>('api/admin/logs/search', request, options);
   }
 }

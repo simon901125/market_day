@@ -64,7 +64,7 @@
                 <span class="actionType-tag" [class]="getOperationClass(log.actionType)">{{ log.actionType }}</span>
               </td >
               <td class="log-targetRole">
-                <span class="target-role-tag" [class.organizer]="log.targetRole === '主辦方'">{{ log.targetRole }}</span>
+                <span class="target-role-tag" [class]="getTargetRoleClass(log.targetRole)">{{ log.targetRole }}</span>
               </td>
               <td class="log-target">{{ log.target }}</td>
               <td class="log-email">{{ log.targetEmail }}</td>
