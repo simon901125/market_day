@@ -41,6 +41,25 @@
                     {{ row[column.key] }}
                   </span>
                 }
+                @case ('progress') {
+                  @if (getProgressTotal(column, row) > 0) {
+                    <div
+                      class="table-progress"
+                      [class.complete]="getProgressCurrent(column, row) >= getProgressTotal(column, row)"
+                      [attr.aria-label]="row[column.key]"
+                    >
+                      <span class="table-progress-value">{{ row[column.key] }}</span>
+                      <span class="table-progress-track" aria-hidden="true">
+                        <span
+                          class="table-progress-fill"
+                          [style.width.%]="getProgressPercent(column, row)"
+                        ></span>
+                      </span>
+                    </div>
+                  } @else {
+                    <span>-</span>
+                  }
+                }
                 @case ('action') {
                   <div class="table-actions">
                     @for (action of getRowActions(column, row); track action.key ?? action.label) {

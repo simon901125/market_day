@@ -32,6 +32,12 @@
     @if (feedbackMessage) {
       <div class="detail-feedback" role="status"><i class="bi bi-check-circle"></i>{{ feedbackMessage }}</div>
     }
+    @if (isDetailLoading) {
+      <div class="detail-feedback" role="status">活動資料載入中...</div>
+    }
+    @if (detailLoadError) {
+      <div class="detail-feedback" role="alert">{{ detailLoadError }}</div>
+    }
 
     <section class="event-editor-card detail-view-card">
       <aside class="event-stepper" aria-label="活動詳細資料分類">
@@ -117,8 +123,6 @@
               <label class="field"><span>報名開始時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" [value]="timeForm.registrationStartTime" disabled /></span></label>
               <label class="field"><span>報名結束日期 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-calendar3"></i><input type="date" [value]="timeForm.registrationEndDate" disabled /></span></label>
               <label class="field"><span>報名結束時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" [value]="timeForm.registrationEndTime" disabled /></span></label>
-              <label class="field confirmation-date-field"><span>最終確認日期 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-calendar3"></i><input type="date" [value]="timeForm.confirmationDate" disabled /></span></label>
-              <label class="field"><span>最終確認時間 <b>*</b></span><span class="date-time-control view-disabled-control"><i class="bi bi-clock"></i><input type="time" [value]="timeForm.confirmationTime" disabled /></span></label>
             </div>
           </section>
           <section class="time-section divided-section transport-section">
@@ -556,39 +560,12 @@
               }
             </label>
 
-            <label class="field confirmation-date-field">
-              <span>最終名單確認日期 <b>*</b></span>
-              <span class="date-time-control" [class.invalid]="submitAttempted && !timeForm.confirmationDate" [attr.data-invalid]="submitAttempted && !timeForm.confirmationDate">
-                <i class="bi bi-calendar3"></i>
-                <input type="date" [(ngModel)]="timeForm.confirmationDate" name="confirmationDate" />
-              </span>
-              @if (submitAttempted && !timeForm.confirmationDate) {
-                <small class="field-error">請選擇最終確認日期</small>
-              }
-            </label>
-
-            <label class="field">
-              <span>最終名單確認時間 <b>*</b></span>
-              <span class="date-time-control" [class.invalid]="submitAttempted && !timeForm.confirmationTime" [attr.data-invalid]="submitAttempted && !timeForm.confirmationTime">
-                <i class="bi bi-clock"></i>
-                <input type="time" [(ngModel)]="timeForm.confirmationTime" name="confirmationTime" />
-              </span>
-              @if (submitAttempted && !timeForm.confirmationTime) {
-                <small class="field-error">請選擇最終確認時間</small>
-              }
-            </label>
           </div>
           @if (submitAttempted && registrationDateTimeOrderInvalid) {
             <small class="field-error section-error" data-invalid="true">報名截止時間必須晚於報名開始時間</small>
           }
           @if (submitAttempted && registrationEndAfterEventStart) {
             <small class="field-error section-error" data-invalid="true">報名截止時間必須早於或等於活動開始時間</small>
-          }
-          @if (submitAttempted && confirmationBeforeRegistrationEnd) {
-            <small class="field-error section-error" data-invalid="true">最終名單確認時間不可早於報名截止時間</small>
-          }
-          @if (submitAttempted && confirmationAfterEventStart) {
-            <small class="field-error section-error" data-invalid="true">最終名單確認時間必須早於活動開始時間</small>
           }
         </section>
 

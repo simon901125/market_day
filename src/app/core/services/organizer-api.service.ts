@@ -7,6 +7,9 @@ import {
   OrganizerProfileSaveRequest,
 } from '../../models/interface/organizer/OrganizerProfile';
 import { ApiResult } from '../../models/interface/shared/ApiResult';
+import { OrganizerEventSearchResponse } from '../../models/interface/organizer/OrganizerEventSearch';
+import { OrganizerApplicationSearchResponse } from '../../models/interface/organizer/OrganizerApplicationSearch';
+import { OrganizerEventDetail } from '../../models/interface/organizer/OrganizerEventDetail';
 import { HttpService } from '../http/http.service';
 
 @Injectable({
@@ -17,6 +20,42 @@ export class OrganizerApiService {
 
   getOrganizerDashboardInit(): Observable<ApiResult<OrganizerDashboardInit>> {
     return this.httpService.get<OrganizerDashboardInit>('api/organizer/dashboard/init');
+  }
+
+  searchOrganizerEvents(params: {
+    keyword?: string;
+    status?: string;
+    startDate?: string | null;
+    endDate?: string | null;
+    sort?: 'DEFAULT' | 'UPCOMING_FIRST';
+    page?: number;
+    pageSize?: number;
+  } = {}): Observable<ApiResult<OrganizerEventSearchResponse>> {
+    const query = new URLSearchParams();
+    if (params.keyword) query.set('keyword', params.keyword);
+    if (params.status) query.set('status', params.status);
+    if (params.startDate) query.set('startDate', params.startDate);
+    if (params.endDate) query.set('endDate', params.endDate);
+    query.set('sort', params.sort ?? 'DEFAULT');
+    query.set('page', String(params.page ?? 1));
+    query.set('pageSize', String(params.pageSize ?? 6));
+    return this.httpService.get<OrganizerEventSearchResponse>(
+      `api/organizer/events/search?${query.toString()}`,
+    );
+  }
+
+  getOrganizerEventDetail(eventId: number): Observable<ApiResult<OrganizerEventDetail>> {
+    return this.httpService.get<OrganizerEventDetail>(`api/organizer/events/${eventId}`);
+  }
+
+  searchOrganizerApplications(params: { page?: number; pageSize?: number } = {}): Observable<ApiResult<OrganizerApplicationSearchResponse>> {
+    const query = new URLSearchParams({
+      page: String(params.page ?? 1),
+      pageSize: String(params.pageSize ?? 6),
+    });
+    return this.httpService.get<OrganizerApplicationSearchResponse>(
+      `api/organizer/applications/search?${query.toString()}`,
+    );
   }
 
   getOrganizerProfile(): Observable<ApiResult<OrganizerProfile>> {

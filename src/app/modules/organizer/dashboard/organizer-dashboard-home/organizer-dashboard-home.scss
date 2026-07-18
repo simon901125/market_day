@@ -132,6 +132,21 @@
   margin-top: 2px;
 }
 
+.registration-overview-empty {
+  display: flex;
+  min-height: 170px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-muted, #8a837a);
+  font-size: 14px;
+  font-weight: 700;
+
+  i {
+    font-size: 20px;
+  }
+}
+
 :host ::ng-deep .registration-chart-tooltip {
   --tooltip-caret-top: 50%;
 

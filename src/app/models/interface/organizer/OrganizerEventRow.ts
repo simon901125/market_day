@@ -14,8 +14,14 @@ export interface OrganizerEventRow {
   status: string;
   /** 報名人數 / 攤位上限。 */
   signupProgress: string;
+  signupProgressCurrent?: number;
+  signupProgressTotal?: number;
+  /** 待審核報名人數。 */
+  pendingReviewCount?: string;
   /** 已付款攤主數。 */
   paidCount: string;
+  /** 已完成全部報名日期選位的人數。 */
+  selectedCount?: string;
   /** 草稿資料是否已完整，可送出審核。 */
   canSubmitReview?: boolean;
   /** 主辦方提出下架申請時填寫的原因。 */

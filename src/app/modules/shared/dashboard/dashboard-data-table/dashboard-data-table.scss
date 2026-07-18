@@ -153,6 +153,47 @@
   font-weight: 900;
 }
 
+.table-progress {
+  display: inline-flex;
+  min-width: 76px;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+
+  &.complete {
+    .table-progress-value {
+      color: #c35f22;
+    }
+
+    .table-progress-fill {
+      background: #d9772f;
+    }
+  }
+}
+
+.table-progress-value {
+  color: var(--text-dark);
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.table-progress-track {
+  width: 72px;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #f0ece6;
+}
+
+.table-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #dea064;
+  transition: width 0.25s ease;
+}
+
 .table-action {
   width: 76px;
   min-width: 76px;
