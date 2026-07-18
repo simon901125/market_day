@@ -203,6 +203,7 @@ export class VendorApplicationDetail implements OnInit {
         }
 
         this.applyApiDetail(response.data);
+        this.loadVendorStallMap(response.data);
       },
       error: () => {
         this.isLoading = false;
@@ -359,6 +360,42 @@ export class VendorApplicationDetail implements OnInit {
     this.totalFee = formatCurrency(
       api.feedetail.find((item) => item.item === '總計')?.amount ?? api.fee.paymentAmount,
     );
+  }
+
+  /** 以選位地圖 API 的已選攤位資料更新 booth-information 區塊。 */
+  private loadVendorStallMap(api: VendorApplicationApiDetail): void {
+    const canViewStallMap = ['booth', 'completed', 'depositRefunded'].includes(
+      this.currentStatus,
+    ) || api.stall.some((stall) => Boolean(stall.stallNo));
+
+    if (!canViewStallMap || !this.currentApplicationNo) {
+      return;
+    }
+
+    this.vendorDashboardService.getVendorStallMap(this.currentApplicationNo).subscribe({
+      next: (response) => {
+        if (!isApiSuccessStatus(response.statusCode)) {
+          return;
+        }
+
+        this.boothAssignments = response.data.application.selectedStalls.map((stall) => ({
+          date: stall.applyDate,
+          number: displayValue(stall.stallNo),
+          zone: displayValue(stall.zoneName),
+          selectedAt: '',
+        }));
+
+        this.detail = {
+          ...this.detail,
+          booth: {
+            ...this.detail.booth,
+            selected: this.boothAssignments.length > 0,
+          },
+        };
+      },
+      // 詳情 API 已提供可顯示的攤位資料；地圖 API 失敗時保留原資料。
+      error: () => undefined,
+    });
   }
 
   /** 執行頁面主要操作。 */

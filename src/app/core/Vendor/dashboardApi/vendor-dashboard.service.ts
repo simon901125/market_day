@@ -9,6 +9,11 @@ import {
   VendorApplicationSearchResult,
 } from '../../../models/interface/vendor/VendorApplicationSearch';
 import { VendorApplicationApiDetail } from '../../../models/interface/vendor/VendorApplicationApiDetail';
+import { VendorStallMap } from '../../../models/interface/vendor/VendorStallMap';
+import {
+  VendorStallSelectionRequest,
+  VendorStallSelectionResult,
+} from '../../../models/interface/vendor/VendorStallSelection';
 import {
   VendorStallInfo,
   VendorStallSaveRequest,
@@ -64,6 +69,30 @@ export class VendorDashboardService {
   ): Observable<ApiResult<VendorApplicationApiDetail>> {
     const url = `${environment.apiBaseUrl}api/vendor/applications/${applicationId}`;
     return this.http.get<ApiResult<VendorApplicationApiDetail>>(url);
+  }
+
+  /** 依報名編號取得目前登入攤主的選位地圖。 */
+  getVendorStallMap(
+    applicationNo: string,
+    applyDate?: string,
+  ): Observable<ApiResult<VendorStallMap>> {
+    const encodedApplicationNo = encodeURIComponent(applicationNo.trim());
+    const url = `${environment.apiBaseUrl}api/vendor/stall-map/${encodedApplicationNo}`;
+    let params = new HttpParams();
+
+    if (applyDate?.trim()) {
+      params = params.set('applyDate', applyDate.trim());
+    }
+
+    return this.http.get<ApiResult<VendorStallMap>>(url, { params });
+  }
+
+  /** 將同一筆報名中尚未選位的日期一次送至 StallController.selectEventStall()。 */
+  selectEventStall(
+    selection: VendorStallSelectionRequest,
+  ): Observable<ApiResult<VendorStallSelectionResult>> {
+    const url = `${environment.apiBaseUrl}api/stalls/select`;
+    return this.http.post<ApiResult<VendorStallSelectionResult>>(url, selection);
   }
 
   /** 取得攤主攤位資料 */

@@ -129,4 +129,76 @@ describe('VendorDashboardService', () => {
       },
     });
   });
+
+  it('should get a vendor stall map by application number and apply date', () => {
+    service.getVendorStallMap('MD 2026/001', '2026-07-18').subscribe((response) => {
+      expect(response.data.application.selectedStalls[0].stallNo).toBe('A12');
+    });
+
+    const request = httpTesting.expectOne((candidate) =>
+      candidate.url === `${environment.apiBaseUrl}api/vendor/stall-map/MD%202026%2F001`
+      && candidate.params.get('applyDate') === '2026-07-18',
+    );
+    expect(request.request.method).toBe('GET');
+    request.flush({
+      statusCode: 200,
+      message: 'Vendor stall map retrieved successfully',
+      messageDetails: null,
+      data: {
+        application: {
+          applicationNo: 'MD 2026/001',
+          applicationStatus: '報名完成',
+          vendorName: '測試品牌',
+          currentApplyDate: '2026-07-18',
+          applyDates: '2026-07-18',
+          applyDateCount: 1,
+          selectedStalls: [{
+            selectedStallId: 12,
+            applyDate: '2026-07-18',
+            stallNo: 'A12',
+            zoneName: 'A 區',
+            width: 3,
+            length: 3,
+          }],
+          alreadyselectdate: ['2026-07-18'],
+        },
+        event: {
+          eventTitle: '夏日手作市集',
+          startAt: '2026-07-18T10:00:00',
+          endAt: '2026-07-19T18:00:00',
+          address: '台北市中正區八德路一段1號',
+        },
+        stalls: [],
+      },
+    });
+  });
+
+  it('should submit all selected event stalls with the controller request body', () => {
+    const body = {
+      applicationNo: 'MD202607170025',
+      selections: [
+        { applyDate: '2026-07-18', stallNo: 'A06' },
+        { applyDate: '2026-07-19', stallNo: 'B03' },
+      ],
+    };
+
+    service.selectEventStall(body).subscribe((response) => {
+      expect(response.data.selections).toEqual(body.selections);
+    });
+
+    const request = httpTesting.expectOne(`${environment.apiBaseUrl}api/stalls/select`);
+    expect(request.request.method).toBe('POST');
+    // 確認 request body 的欄位名與 StallSelectionRequest 完全一致。
+    expect(request.request.body).toEqual(body);
+    request.flush({
+      statusCode: 200,
+      message: '攤位選擇成功',
+      messageDetails: null,
+      data: {
+        applicationNo: body.applicationNo,
+        stallNo: 'A06',
+        selections: body.selections,
+      },
+    });
+  });
 });

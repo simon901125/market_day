@@ -15,12 +15,44 @@ describe('VendorApplicationDetail', () => {
     // 模擬詳情端點，驗證頁面不再依賴 VENDOR_APPLICATION_RECORDS 假資料。
     dashboardService = jasmine.createSpyObj<VendorDashboardService>('VendorDashboardService', [
       'getVendorApplicationDetail',
+      'getVendorStallMap',
     ]);
     dashboardService.getVendorApplicationDetail.and.returnValue(of({
       statusCode: 200,
       message: '攤主報名詳情取得成功',
       messageDetails: null,
       data: createApiDetail(),
+    }));
+    dashboardService.getVendorStallMap.and.returnValue(of({
+      statusCode: 200,
+      message: 'Vendor stall map retrieved successfully',
+      messageDetails: null,
+      data: {
+        application: {
+          applicationNo: 'MD202607170025',
+          applicationStatus: '報名完成',
+          vendorName: '測試品牌',
+          currentApplyDate: '2026-07-18',
+          applyDates: '2026-07-18',
+          applyDateCount: 1,
+          selectedStalls: [{
+            selectedStallId: 12,
+            applyDate: '2026-07-18',
+            stallNo: 'A12',
+            zoneName: 'A 區',
+            width: 3,
+            length: 3,
+          }],
+          alreadyselectdate: ['2026-07-18'],
+        },
+        event: {
+          eventTitle: '夏日手作市集',
+          startAt: '2026-07-18T10:00:00',
+          endAt: '2026-07-19T18:00:00',
+          address: '台北市中正區八德路一段1號',
+        },
+        stalls: [],
+      },
     }));
 
     await TestBed.configureTestingModule({
@@ -48,6 +80,7 @@ describe('VendorApplicationDetail', () => {
   it('should load the detail by application id', () => {
     expect(component).toBeTruthy();
     expect(dashboardService.getVendorApplicationDetail).toHaveBeenCalledOnceWith(25);
+    expect(dashboardService.getVendorStallMap).toHaveBeenCalledOnceWith('MD202607170025');
     expect(component.currentApplicationNo).toBe('MD202607170025');
   });
 
@@ -64,7 +97,7 @@ describe('VendorApplicationDetail', () => {
   it('should map API stall and status-flow data', () => {
     expect(component.boothAssignments).toEqual([
       {
-        date: '2026/07/18',
+        date: '2026-07-18',
         number: 'A12',
         zone: 'A 區',
         selectedAt: '',

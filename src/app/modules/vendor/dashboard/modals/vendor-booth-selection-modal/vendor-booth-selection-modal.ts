@@ -27,6 +27,8 @@ export class VendorBoothSelectionModal implements OnDestroy {
 
   get dialog(): VendorBoothSelectionDialog { return this.dialogValue; }
   @Input({ required: true }) days: readonly VendorBoothSelectionDialogDay[] = [];
+  /** API 送出期間鎖定確認按鈕，避免重複建立選位資料。 */
+  @Input() submitting = false;
 
   @Output() closeDialog = new EventEmitter<void>();
   @Output() confirmSelection = new EventEmitter<void>();
@@ -47,6 +49,7 @@ export class VendorBoothSelectionModal implements OnDestroy {
   }
 
   requestConfirm(): void {
+    if (this.submitting) return;
     this.closeWith(() => this.confirmSelection.emit());
   }
 
