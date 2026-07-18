@@ -757,7 +757,7 @@
 
 .detail-hero {
   grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.78fr);
-  align-items: start;
+  align-items: stretch;
   gap: 22px;
   padding: 0;
   border: 0;
@@ -765,7 +765,7 @@
 }
 
 .hero-image {
-  height: 470px;
+  height: auto;
   min-height: 470px;
   border-radius: 14px;
   box-shadow: var(--shadow-soft);
@@ -776,7 +776,7 @@
 }
 
 .hero-content {
-  height: 470px;
+  min-height: 470px;
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -1112,6 +1112,7 @@
 
   .hero-content {
     height: auto;
+    min-height: 0;
   }
 }
 
