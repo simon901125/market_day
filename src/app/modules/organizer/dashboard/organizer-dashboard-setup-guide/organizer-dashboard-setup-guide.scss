@@ -42,7 +42,7 @@
   min-height: 0;
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-section);
-  background: var(--primary-soft);
+  background: var(--bg-primary);
   display: grid;
   grid-template-rows: auto auto;
   align-content: center;
@@ -54,7 +54,7 @@
 .profile-task-header {
   min-width: 0;
   padding: 24px 32px 20px;
-  background: var(--primary-soft);
+  background: var(--bg-primary);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -141,7 +141,7 @@
   margin: 0 30px;
   padding: 14px 20px 16px;
   border-radius: 10px;
-  background: var(--bg-white);
+  background: var(--primary-soft);
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 8px;

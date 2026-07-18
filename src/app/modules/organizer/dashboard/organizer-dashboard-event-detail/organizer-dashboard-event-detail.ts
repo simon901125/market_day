@@ -1,7 +1,9 @@
 ﻿import { Component, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { HostListener } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { BoothLayoutExampleModal } from '../modals/booth-layout-example-modal/booth-layout-example-modal';
 import { BoothZoneModal } from '../modals/booth-zone-modal/booth-zone-modal';
@@ -19,12 +21,34 @@ import {
   EventPowerPlanDraft,
   EventTimeForm,
   FormStep,
+  OrganizerEventSaveEquipmentItem,
+  OrganizerEventSaveRequest,
+  OrganizerEventSubmitReviewResponse,
   StatusAction,
   VenueBoothForm,
 } from '../../../../models/interface/organizer/OrganizerEventEditor';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
+import { AddressApiService } from '../../../../core/services/address-api.service';
+import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
+import { OrganizerEventDetail } from '../../../../models/interface/organizer/OrganizerEventDetail';
 import { AlertService } from '../../../../core/services/alert.service';
-import { TAIWAN_ADMINISTRATIVE_DIVISIONS, TAIWAN_CITY_OPTIONS } from '../../../../models/config/TaiwanAdministrativeDivisions';
+import { ApiResult, isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+
+function createEmptyEventTimeForm(): EventTimeForm {
+  return {
+    eventStartDate: '',
+    eventEndDate: '',
+    eventStartTime: '',
+    eventEndTime: '',
+    registrationStartDate: '',
+    registrationStartTime: '',
+    registrationEndDate: '',
+    registrationEndTime: '',
+    metro: '',
+    bus: '',
+    driving: '',
+  };
+}
 
 @Component({
   selector: 'app-organizer-dashboard-event-detail',
@@ -65,6 +89,9 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
 
   /** 顯示在頁面上的操作回饋訊息。 */
   feedbackMessage = '';
+  isDetailLoading = false;
+  detailLoadError = '';
+  private serverAvailableActions: string[] = [];
 
   /** 建立／編輯活動目前所在步驟。 */
   currentStep = 0;
@@ -123,6 +150,10 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   /** 程式主動導頁時略過未儲存防護。 */
   private navigationAllowed = false;
 
+  /** 縣市與行政區 API 載入序號，避免較舊的請求覆蓋新選擇。 */
+  private addressLoadId = 0;
+  private districtLoadId = 0;
+
   /** Modal 退場動畫時間，需和帳號設定 modal 一致。 */
   private readonly modalCloseDelay = 180;
 
@@ -131,6 +162,10 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
 
   /** 攤位配置圖上傳錯誤訊息。 */
   layoutUploadError = '';
+
+  /** 尚未送到圖片 API 的新封面與配置圖。 */
+  private selectedCoverFile: File | null = null;
+  private selectedLayoutFile: File | null = null;
 
   /** 活動封面拖曳上傳區是否處於拖曳狀態。 */
   isCoverDragging = false;
@@ -152,13 +187,13 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   powerPlanDraft: EventPowerPlanDraft = this.createEmptyPowerPlanDraft();
 
   /** 是否提供設備租借。 */
-  providesEquipmentRental = true;
+  providesEquipmentRental: boolean | null = null;
 
   /** 是否提供基本免費用電。 */
-  providesBasicPower = true;
+  providesBasicPower: boolean | null = null;
 
   /** 是否開放額外申請用電。 */
-  allowsExtraPower = true;
+  allowsExtraPower: boolean | null = null;
 
   /** 設備清單。 */
   equipmentItems: EventEquipment[] = [];
@@ -180,11 +215,12 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   /** 活動類型選項，之後可改由 API 取得。 */
   readonly categoryOptions = ['餐飲美食', '文創手作', '親子家庭', '寵物生活', '植物選物', '服飾配件', '玩具選物'];
 
-  /** 台灣縣市選項。 */
-  readonly cityOptions = TAIWAN_CITY_OPTIONS;
+  /** 分類選項尚未有專用 API，先依資料庫固定種子資料對應 ID。 */
+  private readonly categoryIdByName = new Map(this.categoryOptions.map((name, index) => [name, index + 1]));
 
-  /** 縣市與行政區對照表。 */
-  readonly cityDistrictMap = TAIWAN_ADMINISTRATIVE_DIVISIONS;
+  /** 由地址 API 取得的台灣縣市與行政區選項。 */
+  cityOptions: string[] = [];
+  districtOptions: string[] = [];
 
   /** 攤位分區預設色票。 */
   readonly zoneColors = ['#f97316', '#65a30d', '#0ea5e9', '#8b5cf6', '#ec4899'];
@@ -195,45 +231,42 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly addressApiService: AddressApiService,
+    private readonly organizerApiService: OrganizerApiService,
     private readonly alert: AlertService,
   ) {
     this.activityId = Number(this.route.snapshot.paramMap.get('id')) || 0;
     this.editActivityId = Number(this.route.snapshot.queryParamMap.get('edit')) || 0;
     this.returnPage = Number(this.route.snapshot.queryParamMap.get('returnPage') || history.state?.returnPage) || 1;
     this.returnStatus = this.route.snapshot.queryParamMap.get('returnStatus') || history.state?.returnStatus || '';
+    const requestedStep = Number(this.route.snapshot.queryParamMap.get('step'));
+    if (Number.isInteger(requestedStep) && requestedStep >= 1 && requestedStep <= this.steps.length) {
+      this.currentStep = requestedStep - 1;
+    }
+    if (this.route.snapshot.queryParamMap.get('validation') === 'review') {
+      this.submitAttempted = true;
+      this.validationMessage = '活動資料尚未填寫完整';
+    }
     this.isViewMode = this.activityId > 0;
     this.isEditMode = !this.isViewMode && this.editActivityId > 0;
     const stateActivity = history.state?.activity as OrganizerEventRow | undefined;
     this.activity = stateActivity ?? this.getFallbackActivity(this.activityId);
 
-    if (this.isViewMode || this.isEditMode) {
-      this.loadActivityIntoEditor();
-    }
+    if (this.isViewMode || this.isEditMode) void this.loadOrganizerEventDetail();
 
+    if (!this.isViewMode) {
+      void this.loadCityOptions();
+    }
     this.initialEditorSnapshot = this.getEditorSnapshot();
   }
 
   private getFallbackActivity(activityId: number): OrganizerEventRow {
-    if (activityId === 15) {
-      return {
-        id: 15,
-        name: '草稿測試市集',
-        nameImage: 'assets/images/shared/no-image-placeholder.svg',
-        date: '-',
-        location: '尚未填寫',
-        status: ActivityStatus.draft,
-        signupProgress: '-',
-        paidCount: '-',
-        actionLabel: '查看詳情',
-      };
-    }
-
     return {
       id: activityId || 1,
-      name: '夏日綠意市集',
-      nameImage: 'assets/images/market/cards/market-card-01.png',
-      date: '2026/06/15 - 2026/06/21',
-      location: '台北市 信義區 草悟廣場',
+      name: '',
+      nameImage: 'assets/images/shared/no-image-placeholder.svg',
+      date: '-',
+      location: '',
       status: ActivityStatus.draft,
       signupProgress: '-',
       paidCount: '-',
@@ -243,10 +276,6 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
 
   get statusClass(): string {
     return ActivityStatus.getClass(this.activity.status);
-  }
-
-  get districtOptions(): string[] {
-    return this.cityDistrictMap[this.venueForm.city] ?? [];
   }
 
   get eventDateTimeOrderInvalid(): boolean {
@@ -276,22 +305,17 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     );
   }
 
-  get confirmationBeforeRegistrationEnd(): boolean {
-    return this.isDateTimeBefore(
-      this.timeForm.confirmationDate,
-      this.timeForm.confirmationTime,
-      this.timeForm.registrationEndDate,
-      this.timeForm.registrationEndTime,
+  get eventStartNotFuture(): boolean {
+    return this.isDateTimeNotFuture(
+      this.timeForm.eventStartDate,
+      this.timeForm.eventStartTime,
     );
   }
 
-  get confirmationAfterEventStart(): boolean {
-    return this.isDateTimeAfter(
-      this.timeForm.confirmationDate,
-      this.timeForm.confirmationTime,
-      this.timeForm.eventStartDate,
-      this.timeForm.eventStartTime,
-      true,
+  get registrationStartNotFuture(): boolean {
+    return this.isDateTimeNotFuture(
+      this.timeForm.registrationStartDate,
+      this.timeForm.registrationStartTime,
     );
   }
 
@@ -304,43 +328,75 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       this.boothZoneTotal !== Number(this.venueForm.totalBooths);
   }
 
+  get eventNameInvalid(): boolean {
+    const value = this.form.name.trim();
+    return !value || value.length > 50;
+  }
+
+  get eventDescriptionInvalid(): boolean {
+    const value = this.form.description.trim();
+    return !value || value.length > 300;
+  }
+
+  get eventIntroductionInvalid(): boolean {
+    const value = this.form.introduction.trim();
+    return !value || value.length > 800;
+  }
+
+  get categorySelectionInvalid(): boolean {
+    return this.form.categories.length === 0 ||
+      this.form.categories.some((category) => !this.categoryIdByName.has(category));
+  }
+
+  get citySelectionInvalid(): boolean {
+    return !this.venueForm.city ||
+      (this.cityOptions.length > 0 && !this.cityOptions.includes(this.venueForm.city));
+  }
+
+  get districtSelectionInvalid(): boolean {
+    return !this.venueForm.district ||
+      (this.districtOptions.length > 0 && !this.districtOptions.includes(this.venueForm.district));
+  }
+
+  get venueAddressInvalid(): boolean {
+    const value = this.venueForm.address.trim();
+    return !value || value.length > 255;
+  }
+
+  get venueNameInvalid(): boolean {
+    const value = this.venueForm.venueName.trim();
+    return !value || value.length > 200;
+  }
+
   get isEquipmentPowerComplete(): boolean {
+    const selectionsComplete =
+      this.providesEquipmentRental !== null &&
+      this.providesBasicPower !== null &&
+      this.allowsExtraPower !== null;
     const equipmentReady = !this.providesEquipmentRental || this.equipmentItems.length > 0;
     const basicPowerReady = !this.providesBasicPower || this.basicPowerPlans.length > 0;
     const extraPowerReady = !this.allowsExtraPower || this.extraPowerPlans.length > 0;
-    return equipmentReady && basicPowerReady && extraPowerReady;
+    return selectionsComplete && equipmentReady && basicPowerReady && extraPowerReady;
   }
 
   get availableActions(): StatusAction[] {
-    switch (this.activity.status) {
-      case ActivityStatus.draft:
-        return [
-          { key: 'edit', label: '編輯', variant: 'outline' },
-          { key: 'submit', label: '送出審核', variant: 'primary' },
-          { key: 'delete', label: '刪除', variant: 'danger' },
-        ];
-      case ActivityStatus.pendingReview:
-        return [{ key: 'withdraw', label: '撤回申請', variant: 'outline' }];
-      case ActivityStatus.revisionRequired:
-        return [
-          { key: 'edit', label: '編輯', variant: 'outline' },
-          { key: 'resubmit', label: '重新送審', variant: 'primary' },
-        ];
-      case ActivityStatus.mapBuilding:
-        return [];
-      case ActivityStatus.readyToPublish:
-        return [{ key: 'publish', label: '發布活動', variant: 'primary' }];
-      case ActivityStatus.registrationOpen:
-      case ActivityStatus.full:
-        return [{ key: 'unpublish', label: '下架活動', variant: 'outline' }];
-      default:
-        return [];
-    }
+    const definitions: Record<string, StatusAction> = {
+      EDIT: { key: 'edit', label: '編輯', variant: 'outline' },
+      SUBMIT_REVIEW: { key: 'submit', label: '送出審核', variant: 'primary' },
+      DELETE: { key: 'delete', label: '刪除', variant: 'danger' },
+      RESUBMIT_REVIEW: { key: 'resubmit', label: '重新送審', variant: 'primary' },
+      PUBLISH: { key: 'publish', label: '發布活動', variant: 'primary' },
+      REQUEST_UNPUBLISH: { key: 'unpublish', label: '下架活動', variant: 'outline' },
+    };
+    return this.serverAvailableActions.map((action) => definitions[action]).filter(Boolean);
   }
 
   /** 依據狀態按鈕執行送審、發布、下架、刪除等操作。 */
   async handleStatusAction(action: StatusAction): Promise<void> {
     this.feedbackMessage = '';
+    if ((action.key === 'submit' || action.key === 'resubmit') && !await this.ensureReviewSubmissionIsValid()) {
+      return;
+    }
     switch (action.key) {
       case 'edit':
         this.router.navigate(['/organizer/dash-board/activity/detail'], {
@@ -373,10 +429,13 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         )) {
           return;
         }
+        const submitted = await this.requestOrganizerEventReview(this.activity.id);
+        if (!submitted) return;
         this.activity = { ...this.activity, status: ActivityStatus.pendingReview };
+        this.serverAvailableActions = submitted.availableActions;
         await this.alert.success(
           '送出審核成功',
-          '活動資料已送出審核，管理員將盡快為您審核。<br>審核結果將以通知信與站內通知告知您，謝謝！',
+          '活動資料已送出審核，管理員將盡快為您審核。<br>審核結果將透過站內通知告知您。',
           '知道了',
         );
         return;
@@ -388,7 +447,10 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         )) {
           return;
         }
+        const resubmitted = await this.requestOrganizerEventReview(this.activity.id);
+        if (!resubmitted) return;
         this.activity = { ...this.activity, status: ActivityStatus.pendingReview };
+        this.serverAvailableActions = resubmitted.availableActions;
         await this.alert.success(
           '重新送審成功',
           `活動「${this.activity.name}」已成功重新送審。<br>我們將盡快進行審核，結果將以通知告知您。`,
@@ -506,21 +568,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   };
 
   /** 第二步：活動與報名時間、交通方式表單。 */
-  timeForm: EventTimeForm = {
-    eventStartDate: '',
-    eventEndDate: '',
-    eventStartTime: '',
-    eventEndTime: '',
-    registrationStartDate: '',
-    registrationStartTime: '',
-    registrationEndDate: '',
-    registrationEndTime: '',
-    confirmationDate: '',
-    confirmationTime: '',
-    metro: '',
-    bus: '',
-    driving: '',
-  };
+  timeForm: EventTimeForm = createEmptyEventTimeForm();
 
   /** 第三步：活動場地與攤位規劃表單。 */
   venueForm: VenueBoothForm = {
@@ -532,25 +580,22 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     boothLength: null,
     totalBooths: null,
     boothPrice: null,
+    depositAmount: null,
     layoutFileName: '',
     layoutPreviewUrl: '',
   };
 
   /** 攤位分區清單，新增與編輯 Modal 都會更新這份資料。 */
-  boothZones: BoothZone[] = [
-    { name: 'A 區', color: '#f97316', count: 50 },
-    { name: 'B 區', color: '#65a30d', count: 50 },
-    { name: 'C 區', color: '#0ea5e9', count: 50 },
-  ];
+  boothZones: BoothZone[] = [];
 
   /** 第一步必填欄位是否都已完成。 */
   get isBasicInfoComplete(): boolean {
     return Boolean(
-      this.form.name.trim() &&
+      !this.eventNameInvalid &&
       this.form.coverPreviewUrl &&
-      this.form.categories.length > 0 &&
-      this.form.description.trim() &&
-      this.form.introduction.trim()
+      !this.categorySelectionInvalid &&
+      !this.eventDescriptionInvalid &&
+      !this.eventIntroductionInvalid
     );
   }
 
@@ -565,31 +610,30 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       this.timeForm.registrationStartTime,
       this.timeForm.registrationEndDate,
       this.timeForm.registrationEndTime,
-      this.timeForm.confirmationDate,
-      this.timeForm.confirmationTime,
     ];
     const hasTransportation = [this.timeForm.metro, this.timeForm.bus, this.timeForm.driving]
       .every((value) => value.trim());
 
     return requiredTimes.every(Boolean) && hasTransportation &&
+      !this.eventStartNotFuture &&
+      !this.registrationStartNotFuture &&
       !this.eventDateTimeOrderInvalid &&
       !this.registrationDateTimeOrderInvalid &&
-      !this.registrationEndAfterEventStart &&
-      !this.confirmationBeforeRegistrationEnd &&
-      !this.confirmationAfterEventStart;
+      !this.registrationEndAfterEventStart;
   }
 
   /** 第三步必填欄位是否都已完成，並檢查分區總數是否吻合攤位總數。 */
   get isVenueInfoComplete(): boolean {
     return Boolean(
-      this.venueForm.city &&
-      this.venueForm.district &&
-      this.venueForm.address.trim() &&
-      this.venueForm.venueName.trim() &&
+      !this.citySelectionInvalid &&
+      !this.districtSelectionInvalid &&
+      !this.venueAddressInvalid &&
+      !this.venueNameInvalid &&
       this.isPositiveNumber(this.venueForm.boothLength) &&
       this.isPositiveNumber(this.venueForm.boothWidth) &&
       this.isPositiveInteger(this.venueForm.totalBooths) &&
       this.isNonNegativeNumber(this.venueForm.boothPrice) &&
+      this.isNonNegativeNumber(this.venueForm.depositAmount) &&
       this.boothZones.length > 0 &&
       !this.boothZoneCountMismatch &&
       this.venueForm.layoutFileName
@@ -610,11 +654,11 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   getStepErrorCount(step: number): number {
     if (step === 0) {
       return [
-        !this.form.name.trim(),
+        this.eventNameInvalid,
         !this.form.coverPreviewUrl,
-        this.form.categories.length === 0,
-        !this.form.description.trim(),
-        !this.form.introduction.trim(),
+        this.categorySelectionInvalid,
+        this.eventDescriptionInvalid,
+        this.eventIntroductionInvalid,
       ].filter(Boolean).length;
     }
 
@@ -628,32 +672,31 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         this.timeForm.registrationStartTime,
         this.timeForm.registrationEndDate,
         this.timeForm.registrationEndTime,
-        this.timeForm.confirmationDate,
-        this.timeForm.confirmationTime,
       ];
       const missingTimes = requiredTimes.filter((value) => !value).length;
       const missingTransportation = [this.timeForm.metro, this.timeForm.bus, this.timeForm.driving]
         .filter((value) => !value.trim()).length;
       const dateLogicErrors = [
+        this.eventStartNotFuture,
+        this.registrationStartNotFuture,
         this.eventDateTimeOrderInvalid,
         this.registrationDateTimeOrderInvalid,
         this.registrationEndAfterEventStart,
-        this.confirmationBeforeRegistrationEnd,
-        this.confirmationAfterEventStart,
       ].filter(Boolean).length;
       return missingTimes + missingTransportation + dateLogicErrors;
     }
 
     if (step === 2) {
       return [
-        !this.venueForm.city,
-        !this.venueForm.district,
-        !this.venueForm.address.trim(),
-        !this.venueForm.venueName.trim(),
+        this.citySelectionInvalid,
+        this.districtSelectionInvalid,
+        this.venueAddressInvalid,
+        this.venueNameInvalid,
         !this.isPositiveNumber(this.venueForm.boothLength),
         !this.isPositiveNumber(this.venueForm.boothWidth),
         !this.isPositiveInteger(this.venueForm.totalBooths),
         !this.isNonNegativeNumber(this.venueForm.boothPrice),
+        !this.isNonNegativeNumber(this.venueForm.depositAmount),
         this.boothZones.length === 0,
         this.boothZoneCountMismatch,
         !this.venueForm.layoutFileName,
@@ -661,6 +704,9 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
 
     return [
+      this.providesEquipmentRental === null,
+      this.providesBasicPower === null,
+      this.allowsExtraPower === null,
       this.providesEquipmentRental && this.equipmentItems.length === 0,
       this.providesBasicPower && this.basicPowerPlans.length === 0,
       this.allowsExtraPower && this.extraPowerPlans.length === 0,
@@ -674,11 +720,9 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
   }
 
-  /** 前往下一步。 */
+  /** 前往下一步；建立過程可自由切換步驟，完整驗證留到送審時執行。 */
   goNext(): void {
-    if (this.currentStep < this.steps.length - 1) {
-      this.currentStep += 1;
-    }
+    if (this.currentStep < this.steps.length - 1) this.currentStep += 1;
   }
 
   /** 開啟新增攤位分區 Modal，並清空暫存資料。 */
@@ -730,31 +774,102 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     if (this.venueForm.city !== city) {
       this.venueForm.city = city;
       this.venueForm.district = '';
+      void this.loadDistrictOptions(city);
     }
   }
 
   /** 儲存草稿並回到詳情查看狀態。 */
   async saveDraft(): Promise<void> {
-    this.activity = {
-      ...this.activity,
-      name: this.form.name.trim() || this.activity.name,
-      nameImage: this.form.coverPreviewUrl || this.activity.nameImage,
-      status: ActivityStatus.draft,
-    };
-    this.initialEditorSnapshot = this.getEditorSnapshot();
+    this.submitAttempted = false;
+    this.validationMessage = '';
 
-    await this.alert.success(
-      '儲存草稿成功',
-      '活動資料已儲存為草稿，您可以稍後再繼續編輯。',
-      '知道了',
-    );
+    if (this.totalErrorCount > 0) {
+      const saveIncompleteDraft = await this.alert.confirm(
+        '尚有必填資料未完成',
+        '目前內容仍可儲存為草稿，未完成的欄位需在送出審核前補齊。',
+        '儲存草稿',
+        '繼續編輯',
+      );
+      if (!saveIncompleteDraft) return;
+    }
 
-    const detailActivityId = this.isEditMode ? this.editActivityId : this.activity.id;
-    this.navigationAllowed = true;
-    this.router.navigate(['/organizer/dash-board/activity/detail', detailActivityId], {
-      queryParams: { returnPage: this.returnPage, returnStatus: this.returnStatus || null },
-      state: { activity: this.activity, returnPage: this.returnPage, returnStatus: this.returnStatus },
-    });
+    try {
+      const response = await firstValueFrom(
+        this.organizerApiService.saveOrganizerEvent(this.buildOrganizerEventSaveRequest()),
+      );
+      if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+        await this.alert.error('儲存失敗', response.message || '活動資料儲存失敗，請稍後再試。');
+        return;
+      }
+
+      const eventId = response.data.eventId;
+      const uploadErrors: string[] = [];
+      if (this.selectedCoverFile) {
+        try {
+          const coverResponse = await firstValueFrom(
+            this.organizerApiService.uploadOrganizerEventImage(eventId, 'EVENT_COVER', this.selectedCoverFile),
+          );
+          if (!isApiSuccessStatus(coverResponse.statusCode)) uploadErrors.push('活動封面');
+        } catch {
+          uploadErrors.push('活動封面');
+        }
+      }
+      if (this.selectedLayoutFile) {
+        try {
+          const layoutResponse = await firstValueFrom(
+            this.organizerApiService.uploadOrganizerEventImage(eventId, 'EVENT_MAP', this.selectedLayoutFile),
+          );
+          if (!isApiSuccessStatus(layoutResponse.statusCode)) uploadErrors.push('攤位配置圖');
+        } catch {
+          uploadErrors.push('攤位配置圖');
+        }
+      }
+
+      if (uploadErrors.length > 0) {
+        await this.alert.error(
+          '圖片上傳失敗',
+          `活動資料已儲存，但${uploadErrors.join('、')}上傳失敗，原圖仍會保留，請重新編輯後再試。`,
+        );
+      } else {
+        await this.alert.success(
+          '儲存草稿成功',
+          '尚未完成的必填欄位可以稍後補充；送出審核前，系統會再次檢查所有必填資料。',
+          '知道了',
+        );
+      }
+
+      this.navigationAllowed = true;
+      this.router.navigate(['/organizer/dash-board/activity/detail', eventId], {
+        queryParams: { returnPage: this.returnPage, returnStatus: this.returnStatus || null },
+      });
+    } catch (error: unknown) {
+      await this.alert.error(
+        '儲存失敗',
+        this.getRequestErrorMessage(error, '活動資料儲存失敗，請稍後再試。'),
+      );
+    }
+  }
+
+  private getRequestErrorMessage(error: unknown, fallback: string): string {
+    if (!(error instanceof HttpErrorResponse)) return fallback;
+
+    const backendMessage = error.error && typeof error.error === 'object'
+      && typeof error.error.message === 'string'
+      ? error.error.message.trim()
+      : '';
+    if (backendMessage) return backendMessage;
+    if (error.status >= 500) return `伺服器處理失敗（${error.status}），請查看後端錯誤紀錄。`;
+    if (error.status > 0) return `請求失敗（${error.status}），請稍後再試。`;
+    return '無法連線至後端服務，請確認後端已啟動。';
+  }
+
+  get transportationMissing(): boolean {
+    return [this.timeForm.metro, this.timeForm.bus, this.timeForm.driving]
+      .some((value) => !value.trim());
+  }
+
+  isTransportationFieldMissing(value: string): boolean {
+    return !value.trim();
   }
 
   /** 取消建立／編輯，若有未儲存變更會先提示確認。 */
@@ -811,7 +926,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   /** 送出審核前執行全部步驟驗證，通過後顯示確認與成功提示。 */
   async submitForReview(): Promise<void> {
     this.submitAttempted = true;
-    const firstInvalidStep = this.steps.findIndex((_, index) => this.getStepErrorCount(index) > 0);
+    const firstInvalidStep = this.getFirstInvalidStep();
 
     if (firstInvalidStep === -1) {
       this.validationMessage = '';
@@ -826,37 +941,41 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         return;
       }
 
+      const eventId = await this.persistEditorForReview();
+      if (!eventId) return;
+      const review = await this.requestOrganizerEventReview(eventId);
+      if (!review) return;
+
       this.activity = {
         ...this.activity,
+        id: eventId,
         name: eventName,
         nameImage: this.form.coverPreviewUrl || this.activity.nameImage,
         status: ActivityStatus.pendingReview,
       };
+      this.serverAvailableActions = review.availableActions;
       this.initialEditorSnapshot = this.getEditorSnapshot();
+      this.navigationAllowed = true;
 
       await this.alert.success(
         '送出審核成功',
-        '活動資料已送出審核，管理員將盡快為您審核。<br>審核結果將以通知信與站內通知告知您，謝謝！',
+        '活動資料已送出審核，管理員將盡快為您審核。<br>審核結果將透過站內通知告知您。',
         '知道了',
       );
-
-      if (this.isEditMode) {
-        this.navigationAllowed = true;
-        this.router.navigate(['/organizer/dash-board/activity/detail', this.editActivityId], {
-          queryParams: { returnPage: this.returnPage, returnStatus: this.returnStatus || null },
-          state: { activity: this.activity, returnPage: this.returnPage, returnStatus: this.returnStatus },
-        });
-      } else {
-        this.navigationAllowed = true;
-        this.router.navigate(['/organizer/dash-board/activity'], {
-          queryParams: { page: this.returnPage, status: this.returnStatus || null },
-        });
-      }
+      this.router.navigate(['/organizer/dash-board/activity/detail', eventId], {
+        queryParams: { returnPage: this.returnPage, returnStatus: this.returnStatus || null },
+        state: { activity: this.activity, returnPage: this.returnPage, returnStatus: this.returnStatus },
+      });
       return;
     }
 
     this.validationMessage = '活動資料尚未填寫完整';
     this.currentStep = firstInvalidStep;
+
+    await this.alert.error(
+      '無法送出審核',
+      `活動資料尚有 ${this.totalErrorCount} 項需要確認，已為您前往第一個未完成的步驟。`,
+    );
 
     setTimeout(() => {
       document.querySelector<HTMLElement>('[data-invalid="true"]')?.scrollIntoView({
@@ -864,6 +983,121 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         block: 'center',
       });
     });
+  }
+
+  private async persistEditorForReview(): Promise<number | null> {
+    try {
+      const saved = await firstValueFrom(
+        this.organizerApiService.saveOrganizerEvent(this.buildOrganizerEventSaveRequest()),
+      );
+      if (!isApiSuccessStatus(saved.statusCode) || !saved.data) {
+        await this.alert.error('無法送出審核', saved.message || '活動資料儲存失敗。');
+        return null;
+      }
+
+      const eventId = saved.data.eventId;
+      const uploads: Array<{ label: string; file: File; purpose: 'EVENT_COVER' | 'EVENT_MAP' }> = [];
+      if (this.selectedCoverFile) {
+        uploads.push({ label: '活動封面', file: this.selectedCoverFile, purpose: 'EVENT_COVER' });
+      }
+      if (this.selectedLayoutFile) {
+        uploads.push({ label: '攤位配置圖', file: this.selectedLayoutFile, purpose: 'EVENT_MAP' });
+      }
+      for (const upload of uploads) {
+        const result = await firstValueFrom(
+          this.organizerApiService.uploadOrganizerEventImage(eventId, upload.purpose, upload.file),
+        );
+        if (!isApiSuccessStatus(result.statusCode)) {
+          await this.alert.error('無法送出審核', `${upload.label}上傳失敗，請重新上傳後再試。`);
+          return null;
+        }
+      }
+      return eventId;
+    } catch (error) {
+      await this.alert.error('無法送出審核', this.getRequestErrorMessage(error, '活動資料儲存失敗。'));
+      return null;
+    }
+  }
+
+  private async requestOrganizerEventReview(
+    eventId: number,
+  ): Promise<OrganizerEventSubmitReviewResponse | null> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApiService.submitOrganizerEventReview(eventId),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) return response.data;
+      await this.handleReviewSubmissionFailure(response, eventId);
+      return null;
+    } catch (error) {
+      await this.alert.error('無法送出審核', this.getRequestErrorMessage(error, '送出審核失敗。'));
+      return null;
+    }
+  }
+
+  private async handleReviewSubmissionFailure(
+    response: ApiResult<OrganizerEventSubmitReviewResponse>,
+    eventId: number,
+  ): Promise<void> {
+    const missingFields = response.data?.missingFields ?? [];
+    const targetStep = this.reviewStepForMissingFields(missingFields);
+    await this.alert.error(
+      '無法送出審核',
+      missingFields.length > 0
+        ? `${response.message}，請完成 ${missingFields.length} 項必要資料。`
+        : response.message || '送出審核失敗。',
+    );
+    if (targetStep < 0) return;
+    if (!this.isViewMode) {
+      this.currentStep = targetStep;
+      this.validationMessage = '活動資料尚未填寫完整';
+      return;
+    }
+    this.router.navigate(['/organizer/dash-board/activity/detail'], {
+      queryParams: {
+        edit: eventId,
+        step: targetStep + 1,
+        validation: 'review',
+        returnPage: this.returnPage,
+        returnStatus: this.returnStatus || null,
+      },
+    });
+  }
+
+  private reviewStepForMissingFields(fields: string[]): number {
+    if (fields.some((field) => /^(eventTitle|summary|description|categoryIds|coverImage)/.test(field))) return 0;
+    if (fields.some((field) => field.startsWith('schedule.') || field.startsWith('location.traffic'))) return 1;
+    if (fields.some((field) => field.startsWith('location.') || field.startsWith('booth.'))) return 2;
+    if (fields.some((field) => field.startsWith('equipment.'))) return 3;
+    return -1;
+  }
+
+  /** 詳情頁的送審／重新送審也套用與編輯頁相同的完整驗證。 */
+  private async ensureReviewSubmissionIsValid(): Promise<boolean> {
+    const firstInvalidStep = this.getFirstInvalidStep();
+    if (firstInvalidStep === -1) {
+      return true;
+    }
+
+    await this.alert.error(
+      '無法送出審核',
+      `活動資料尚有 ${this.totalErrorCount} 項需要確認，請先完成必填欄位與資料限制。`,
+    );
+    this.router.navigate(['/organizer/dash-board/activity/detail'], {
+      queryParams: {
+        edit: this.activity.id,
+        step: firstInvalidStep + 1,
+        validation: 'review',
+        returnPage: this.returnPage,
+        returnStatus: this.returnStatus || null,
+      },
+      state: { activity: this.activity, returnPage: this.returnPage, returnStatus: this.returnStatus },
+    });
+    return false;
+  }
+
+  private getFirstInvalidStep(): number {
+    return this.steps.findIndex((_, index) => this.getStepErrorCount(index) > 0);
   }
 
   /** 儲存新增或編輯後的攤位分區。 */
@@ -1132,6 +1366,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.releaseLayoutPreview();
     this.venueForm.layoutFileName = '';
     this.layoutUploadError = '';
+    this.selectedLayoutFile = null;
     input.value = '';
   }
 
@@ -1202,13 +1437,87 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.releaseCoverPreview();
     this.form.coverFileName = '';
     this.coverUploadError = '';
+    this.selectedCoverFile = null;
     input.value = '';
   }
 
   /** 元件銷毀時釋放本機預覽圖 URL。 */
   ngOnDestroy(): void {
+    this.addressLoadId += 1;
+    this.districtLoadId += 1;
     this.releaseCoverPreview();
     this.releaseLayoutPreview();
+  }
+
+  private async loadCityOptions(): Promise<void> {
+    const addressLoadId = ++this.addressLoadId;
+
+    try {
+      const response = await firstValueFrom(
+        this.addressApiService.getAddressCities(),
+      );
+      if (addressLoadId !== this.addressLoadId) {
+        return;
+      }
+
+      if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+        await this.alert.error('載入失敗', response.message || '無法取得縣市資料，請稍後再試。');
+        return;
+      }
+
+      this.cityOptions = response.data;
+      if (this.venueForm.city) {
+        await this.loadDistrictOptions(
+          this.venueForm.city,
+          this.venueForm.district,
+          addressLoadId,
+        );
+      }
+    } catch {
+      if (addressLoadId === this.addressLoadId) {
+        await this.alert.error('載入失敗', '無法取得縣市資料，請稍後再試。');
+      }
+    }
+  }
+
+  private async loadDistrictOptions(
+    city: string,
+    preferredDistrict = '',
+    addressLoadId?: number,
+  ): Promise<void> {
+    const districtLoadId = ++this.districtLoadId;
+    this.districtOptions = [];
+
+    if (!city) {
+      this.venueForm.district = '';
+      return;
+    }
+
+    try {
+      const response = await firstValueFrom(
+        this.addressApiService.getAddressDistricts(city),
+      );
+      if (
+        districtLoadId !== this.districtLoadId
+        || (addressLoadId !== undefined && addressLoadId !== this.addressLoadId)
+      ) {
+        return;
+      }
+
+      if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+        await this.alert.error('載入失敗', response.message || '無法取得行政區資料，請稍後再試。');
+        return;
+      }
+
+      this.districtOptions = response.data;
+      this.venueForm.district = this.districtOptions.includes(preferredDistrict)
+        ? preferredDistrict
+        : '';
+    } catch {
+      if (districtLoadId === this.districtLoadId) {
+        await this.alert.error('載入失敗', '無法取得行政區資料，請稍後再試。');
+      }
+    }
   }
 
   /** 釋放活動封面預覽 URL，避免記憶體殘留。 */
@@ -1249,6 +1558,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.coverUploadError = '';
     this.form.coverFileName = file.name;
     this.form.coverPreviewUrl = URL.createObjectURL(file);
+    this.selectedCoverFile = file;
   }
 
   /** 檢查攤位配置圖檔案格式與大小，通過後建立預覽 URL。 */
@@ -1259,8 +1569,8 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       input.value = '';
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      this.layoutUploadError = '攤位配置圖檔案不可超過 10 MB';
+    if (file.size > 5 * 1024 * 1024) {
+      this.layoutUploadError = '攤位配置圖檔案不可超過 5 MB';
       input.value = '';
       return;
     }
@@ -1268,7 +1578,251 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.releaseLayoutPreview();
     this.layoutUploadError = '';
     this.venueForm.layoutFileName = file.name;
-    this.venueForm.layoutPreviewUrl = file.type.startsWith('image/') ? URL.createObjectURL(file) : '';
+    this.venueForm.layoutPreviewUrl = URL.createObjectURL(file);
+    this.selectedLayoutFile = file;
+  }
+
+  private async loadOrganizerEventDetail(): Promise<void> {
+    const eventId = this.isViewMode ? this.activityId : this.editActivityId;
+    this.isDetailLoading = true;
+    this.detailLoadError = '';
+    try {
+      const response = await firstValueFrom(this.organizerApiService.getOrganizerEventDetail(eventId));
+      if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+        this.detailLoadError = response.message || '無法取得活動詳情';
+        return;
+      }
+      this.applyOrganizerEventDetail(response.data);
+      this.initialEditorSnapshot = this.getEditorSnapshot();
+    } catch {
+      this.detailLoadError = '無法取得活動詳情，請稍後再試。';
+    } finally {
+      this.isDetailLoading = false;
+    }
+  }
+
+  private applyOrganizerEventDetail(detail: OrganizerEventDetail): void {
+    const start = this.splitDateTime(detail.schedule.startAt);
+    const end = this.splitDateTime(detail.schedule.endAt);
+    const registrationStart = this.splitDateTime(detail.schedule.registrationStartAt);
+    const registrationEnd = this.splitDateTime(detail.schedule.registrationEndAt);
+    const cover = detail.coverImageUrl || 'assets/images/shared/no-image-placeholder.svg';
+    this.activity = {
+      id: detail.eventId,
+      name: detail.eventTitle ?? '',
+      nameImage: cover,
+      date: `${start.date || '-'} - ${end.date || '-'}`,
+      location: [detail.location.city, detail.location.district, detail.location.locationName].filter(Boolean).join(' '),
+      status: detail.statusText,
+      signupProgress: '-',
+      paidCount: '-',
+      actionLabel: '查看詳情',
+    };
+    this.serverAvailableActions = detail.availableActions;
+    detail.categories.forEach((category) => this.categoryIdByName.set(category.categoryName, category.categoryId));
+    this.detailCategories = detail.categories.map((category) => category.categoryName);
+    this.form = {
+      name: detail.eventTitle ?? '',
+      coverFileName: detail.coverImageUrl?.split('/').pop() ?? '',
+      coverPreviewUrl: detail.coverImageUrl ?? '',
+      categories: [...this.detailCategories],
+      description: detail.summary ?? '',
+      introduction: detail.description ?? '',
+    };
+    this.timeForm = {
+      eventStartDate: start.date,
+      eventEndDate: end.date,
+      eventStartTime: start.time,
+      eventEndTime: end.time,
+      registrationStartDate: registrationStart.date,
+      registrationStartTime: registrationStart.time,
+      registrationEndDate: registrationEnd.date,
+      registrationEndTime: registrationEnd.time,
+      metro: detail.location.trafficInfoMetro ?? '',
+      bus: detail.location.trafficInfoBus ?? '',
+      driving: detail.location.trafficInfoDriving ?? '',
+    };
+    this.venueForm = {
+      city: detail.location.city ?? '',
+      district: detail.location.district ?? '',
+      address: detail.location.address ?? '',
+      venueName: detail.location.locationName ?? '',
+      boothWidth: detail.booth.stallWidth,
+      boothLength: detail.booth.stallLength,
+      totalBooths: detail.booth.maxBooths,
+      boothPrice: detail.booth.baseFee,
+      depositAmount: detail.booth.depositAmount,
+      layoutFileName: detail.booth.mapImageUrl?.split('/').pop() ?? '',
+      layoutPreviewUrl: detail.booth.mapImageUrl ?? '',
+    };
+    this.boothZones = detail.booth.zones.map((zone, index) => ({
+      name: zone.zoneName,
+      color: zone.colorCode ?? this.zoneColors[index % this.zoneColors.length],
+      count: zone.stallCount,
+    }));
+    this.mapEquipmentItems(detail);
+  }
+
+  private mapEquipmentItems(detail: OrganizerEventDetail): void {
+    const equipment = detail.equipment.items.filter((item) => item.itemType === 'EQUIPMENT');
+    const equipmentGroups = new Map<string, typeof equipment>();
+    equipment.forEach((item) => {
+      const key = item.equipmentGroupKey || item.name;
+      equipmentGroups.set(key, [...(equipmentGroups.get(key) ?? []), item]);
+    });
+    this.equipmentItems = [...equipmentGroups.values()].map((group) => {
+      const free = group.find((item) => item.chargeType === 'FREE');
+      const paid = group.find((item) => item.chargeType === 'PAID');
+      const source = free ?? paid!;
+      return {
+        name: source.name,
+        specification: source.description ?? '',
+        unit: source.unit ?? '',
+        freeQuantity: free?.perStallRentalLimit ?? 0,
+        rentable: Boolean(paid),
+        rentalPrice: paid?.rentalFee ?? null,
+        rentalLimit: paid?.perStallRentalLimit ?? null,
+        dailyRentalQuantity: paid?.stockQuantity ?? null,
+      };
+    });
+    const power = detail.equipment.items.filter((item) => item.itemType === 'POWER');
+    const toPowerPlan = (item: typeof power[number]): EventPowerPlan => ({
+      voltage: item.name,
+      wattage: item.wattageLimit,
+      fee: item.chargeType === 'PAID' ? item.rentalFee : null,
+      description: item.description ?? '',
+    });
+    this.basicPowerPlans = power.filter((item) => item.chargeType === 'FREE').map(toPowerPlan);
+    this.extraPowerPlans = power.filter((item) => item.chargeType === 'PAID').map(toPowerPlan);
+    this.providesEquipmentRental = detail.equipment.providesEquipmentRental;
+    this.providesBasicPower = detail.equipment.providesBasicPower;
+    this.allowsExtraPower = detail.equipment.allowsExtraPower;
+  }
+
+  private splitDateTime(value: string | null): { date: string; time: string } {
+    if (!value) return { date: '', time: '' };
+    const [date, time = ''] = value.split('T');
+    return { date, time: time.slice(0, 5) };
+  }
+
+  private buildOrganizerEventSaveRequest(): OrganizerEventSaveRequest {
+    const categoryIds = this.form.categories
+      .map((category) => this.categoryIdByName.get(category))
+      .filter((id): id is number => id !== undefined);
+    return {
+      eventId: this.isEditMode ? this.editActivityId : null,
+      eventTitle: this.form.name.trim() || null,
+      summary: this.form.description.trim() || null,
+      description: this.form.introduction.trim() || null,
+      categoryIds,
+      schedule: {
+        startAt: this.toApiDateTimeOrNull(this.timeForm.eventStartDate, this.timeForm.eventStartTime),
+        endAt: this.toApiDateTimeOrNull(this.timeForm.eventEndDate, this.timeForm.eventEndTime),
+        registrationStartAt: this.toApiDateTimeOrNull(this.timeForm.registrationStartDate, this.timeForm.registrationStartTime),
+        registrationEndAt: this.toApiDateTimeOrNull(this.timeForm.registrationEndDate, this.timeForm.registrationEndTime),
+      },
+      location: {
+        locationName: this.venueForm.venueName.trim() || null,
+        city: this.venueForm.city || null,
+        district: this.venueForm.district || null,
+        address: this.venueForm.address.trim() || null,
+        trafficInfoMetro: this.timeForm.metro.trim() || null,
+        trafficInfoBus: this.timeForm.bus.trim() || null,
+        trafficInfoDriving: this.timeForm.driving.trim() || null,
+      },
+      booth: {
+        maxBooths: this.isPositiveInteger(this.venueForm.totalBooths)
+          ? Number(this.venueForm.totalBooths)
+          : null,
+        stallWidth: this.venueForm.boothWidth,
+        stallLength: this.venueForm.boothLength,
+        baseFee: this.venueForm.boothPrice,
+        depositAmount: this.venueForm.depositAmount,
+        zones: this.boothZones.map((zone) => ({
+          zoneId: null,
+          zoneName: zone.name.trim(),
+          stallCount: Number(zone.count),
+          colorCode: zone.color.toUpperCase(),
+        })),
+      },
+      equipment: {
+        providesEquipmentRental: this.providesEquipmentRental,
+        providesBasicPower: this.providesBasicPower,
+        allowsExtraPower: this.allowsExtraPower,
+        items: this.buildOrganizerEventEquipmentItems(),
+      },
+    };
+  }
+
+  /** 草稿允許日期與時間尚未成對填寫；完整值才轉為 API 日期時間。 */
+  private toApiDateTimeOrNull(date: string, time: string): string | null {
+    return date && time ? `${date}T${time}:00` : null;
+  }
+
+  private buildOrganizerEventEquipmentItems(): OrganizerEventSaveEquipmentItem[] {
+    const items: OrganizerEventSaveEquipmentItem[] = [];
+    if (this.providesEquipmentRental) {
+      this.equipmentItems.forEach((equipment, index) => {
+        const equipmentGroupKey = `equipment-${index + 1}`;
+        if (equipment.freeQuantity > 0) {
+          items.push(this.toEquipmentItem(equipment, equipmentGroupKey, 'FREE'));
+        }
+        if (equipment.rentable) {
+          items.push(this.toEquipmentItem(equipment, equipmentGroupKey, 'PAID'));
+        }
+      });
+    }
+    if (this.providesBasicPower) {
+      this.basicPowerPlans.forEach((plan) => items.push(this.toPowerEquipmentItem(plan, 'FREE')));
+    }
+    if (this.allowsExtraPower) {
+      this.extraPowerPlans.forEach((plan) => items.push(this.toPowerEquipmentItem(plan, 'PAID')));
+    }
+    return items;
+  }
+
+  private toEquipmentItem(
+    equipment: EventEquipment,
+    equipmentGroupKey: string,
+    chargeType: 'FREE' | 'PAID',
+  ): OrganizerEventSaveEquipmentItem {
+    return {
+      equipmentId: null,
+      equipmentGroupKey,
+      name: equipment.name,
+      rentalFee: chargeType === 'PAID' ? Number(equipment.rentalPrice) : 0,
+      pricingUnit: 'DAY',
+      unit: equipment.unit,
+      chargeType,
+      itemType: 'EQUIPMENT',
+      description: equipment.specification || null,
+      stockQuantity: chargeType === 'PAID' ? Number(equipment.dailyRentalQuantity) : null,
+      perStallRentalLimit: chargeType === 'PAID'
+        ? Number(equipment.rentalLimit) : equipment.freeQuantity,
+      rentalStatus: 'ACTIVE',
+      wattageLimit: null,
+    };
+  }
+
+  private toPowerEquipmentItem(
+    plan: EventPowerPlan,
+    chargeType: 'FREE' | 'PAID',
+  ): OrganizerEventSaveEquipmentItem {
+    return {
+      equipmentId: null,
+      equipmentGroupKey: null,
+      name: plan.voltage,
+      rentalFee: chargeType === 'PAID' ? Number(plan.fee) : 0,
+      pricingUnit: 'DAY',
+      unit: null,
+      chargeType,
+      itemType: 'POWER',
+      description: plan.description || null,
+      stockQuantity: null,
+      perStallRentalLimit: null,
+      rentalStatus: 'ACTIVE',
+      wattageLimit: Number(plan.wattage),
+    };
   }
 
   /** 編輯模式下，將既有活動資料帶入三步驟表單。 */
@@ -1298,8 +1852,6 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       registrationStartTime: '10:00',
       registrationEndDate: '2026-05-31',
       registrationEndTime: '23:59',
-      confirmationDate: '2026-06-10',
-      confirmationTime: '12:00',
       metro: '捷運站步行約 8 分鐘',
       bus: '公車站下車後步行約 3 分鐘',
       driving: '附近設有收費停車場，請依現場指示停放',
@@ -1314,6 +1866,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       boothLength: 3,
       totalBooths: 150,
       boothPrice: 2500,
+      depositAmount: 0,
       layoutFileName: 'booth-layout-example.svg',
       layoutPreviewUrl: 'assets/images/organizer/booth/booth-layout-example.svg',
     };
@@ -1354,8 +1907,6 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       registrationStartTime: '',
       registrationEndDate: '',
       registrationEndTime: '',
-      confirmationDate: '',
-      confirmationTime: '',
       metro: '',
       bus: '',
       driving: '',
@@ -1370,6 +1921,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       boothLength: null,
       totalBooths: null,
       boothPrice: null,
+      depositAmount: null,
       layoutFileName: '',
       layoutPreviewUrl: '',
     };
@@ -1378,9 +1930,9 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.equipmentItems = [];
     this.basicPowerPlans = [];
     this.extraPowerPlans = [];
-    this.providesEquipmentRental = true;
-    this.providesBasicPower = true;
-    this.allowsExtraPower = true;
+    this.providesEquipmentRental = null;
+    this.providesBasicPower = null;
+    this.allowsExtraPower = null;
   }
 
   /** 目前表單是否和初始快照不同。 */
@@ -1555,6 +2107,14 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       return false;
     }
     return this.toDateTime(endDate, endTime) <= this.toDateTime(startDate, startTime);
+  }
+
+  /** 送審時，活動與報名開始時間都必須晚於現在。 */
+  private isDateTimeNotFuture(date: string, time: string): boolean {
+    if (!date || !time) {
+      return false;
+    }
+    return this.toDateTime(date, time) <= Date.now();
   }
 
   /** 檢查指定日期時間是否晚於比較日期時間。 */

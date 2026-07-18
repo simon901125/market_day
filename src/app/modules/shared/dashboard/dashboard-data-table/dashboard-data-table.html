@@ -11,14 +11,23 @@
             [class.end]="column.align === 'end'"
             [class.nowrap]="column.nowrap"
           >
-            {{ column.label }}
+            @if (column.type === 'multiValue' && column.valueLabels?.length) {
+              <span class="multi-value-grid multi-value-header">
+                @for (label of column.valueLabels; track label) {
+                  <span>{{ label }}</span>
+                }
+              </span>
+            } @else {
+              {{ column.label }}
+            }
           </th>
         }
       </tr>
     </thead>
 
     <tbody>
-      @for (row of rows; track row['id']) {
+      @if (rows.length > 0) {
+        @for (row of rows; track row['id']) {
         <tr>
           @for (column of columns; track column.key) {
             <td
@@ -33,12 +42,38 @@
                 @case ('imageText') {
                   <div class="image-text-cell">
                     <img [src]="row[column.key + 'Image']" [alt]="row[column.key]" />
-                    <span>{{ row[column.key] }}</span>
+                    <span>{{ getDisplayValue(row, column.key) }}</span>
                   </div>
                 }
                 @case ('status') {
                   <span class="status-badge" [class]="row[column.key + 'Class'] ?? getStatusClass(row[column.key])">
                     {{ row[column.key] }}
+                  </span>
+                }
+                @case ('progress') {
+                  @if (hasProgress(column, row)) {
+                    <div
+                      class="table-progress"
+                      [class.complete]="getProgressCurrent(column, row) >= getProgressTotal(column, row)"
+                      [attr.aria-label]="row[column.key]"
+                    >
+                      <span class="table-progress-value">{{ row[column.key] }}</span>
+                      <span class="table-progress-track" aria-hidden="true">
+                        <span
+                          class="table-progress-fill"
+                          [style.width.%]="getProgressPercent(column, row)"
+                        ></span>
+                      </span>
+                    </div>
+                  } @else {
+                    <span>{{ getDisplayValue(row, column.key) }}</span>
+                  }
+                }
+                @case ('multiValue') {
+                  <span class="multi-value-grid">
+                    @for (valueKey of column.valueKeys ?? []; track valueKey) {
+                      <span>{{ getDisplayValue(row, valueKey) }}</span>
+                    }
                   </span>
                 }
                 @case ('action') {
@@ -71,15 +106,30 @@
                   </div>
                 }
                 @default {
-                  <span [class]="row[column.key + 'TextClass'] ?? null">{{ row[column.key] ?? '-' }}</span>
+                  <span [class]="row[column.key + 'TextClass'] ?? null">{{ getDisplayValue(row, column.key) }}</span>
                 }
               }
             </td>
           }
         </tr>
-      } @empty {
-        <tr>
-          <td class="empty-cell" [attr.colspan]="columns.length">{{ emptyText }}</td>
+        }
+
+        @for (fillerRow of fillerRows; track fillerRow) {
+          <tr class="filler-row" aria-hidden="true">
+            <td [attr.colspan]="columns.length"></td>
+          </tr>
+        }
+      } @else {
+        <tr class="empty-row" [style.height.px]="minimumRows > 0 ? minimumRows * 56 : null">
+          <td class="empty-cell" [attr.colspan]="columns.length">
+            <div class="table-empty-state">
+              <i class="bi bi-calendar2-plus" aria-hidden="true"></i>
+              <strong>{{ emptyText }}</strong>
+              @if (emptyHint) {
+                <span>{{ emptyHint }}</span>
+              }
+            </div>
+          </td>
         </tr>
       }
     </tbody>

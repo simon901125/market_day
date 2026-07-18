@@ -38,17 +38,21 @@
       class="event-table"
       [columns]="columns"
       [rows]="displayRows"
-      tableMinWidth="1120px"
+      tableMinWidth="1180px"
+      [minimumRows]="pageSize"
       emptyText="目前沒有活動資料"
+      emptyHint="點選右上角「建立活動」開始新增活動"
       (actionClick)="onTableAction($event)"
     ></app-dashboard-data-table>
   </div>
 
-  <app-dashboard-pagination
-    class="dashboard-list-pagination"
-    [currentPage]="currentPage"
-    [pageSize]="pageSize"
-    [totalItems]="totalItems"
-    (pageChange)="onPageChange($event)"
-  ></app-dashboard-pagination>
+  @if (totalItems > 0) {
+    <app-dashboard-pagination
+      class="dashboard-list-pagination"
+      [currentPage]="currentPage"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems"
+      (pageChange)="onPageChange($event)"
+    ></app-dashboard-pagination>
+  }
 </section>

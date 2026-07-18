@@ -15,7 +15,7 @@
   <app-dropdown
     title="縣市"
     [options]="cityOptions"
-    placeholder="選擇縣市"
+    [placeholder]="cityPlaceholder"
     iconClass="bi bi-geo-alt-fill"
     [selectedValue]="selectedCity"
     (optionSelected)="selectCity($event)"

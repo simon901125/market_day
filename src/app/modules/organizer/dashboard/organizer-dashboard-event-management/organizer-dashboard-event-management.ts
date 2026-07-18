@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 import { OrganizerEventRow } from '../../../../models/interface/organizer/OrganizerEventRow';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
@@ -9,6 +10,8 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { AlertService } from '../../../../core/services/alert.service';
+import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
 @Component({
   selector: 'app-organizer-dashboard-event-management',
@@ -52,13 +55,22 @@ export class OrganizerDashboardEventManagement implements OnInit {
 
   /** 活動管理列表欄位設定。 */
   columns: DashboardTableColumn[] = [
-    { key: 'name', label: '活動名稱', type: 'imageText', width: '18%' },
-    { key: 'date', label: '活動日期', nowrap: true, width: '16%' },
-    { key: 'status', label: '活動狀態', type: 'status', align: 'center', width: '10%' },
-    { key: 'location', label: '活動地點', width: '20%' },
-    { key: 'signupProgress', label: '報名人數', align: 'center', nowrap: true, width: '9%' },
-    { key: 'paidCount', label: '付款人數', align: 'center', nowrap: true, width: '8%' },
-    { key: 'action', label: '', type: 'action', align: 'end', width: '19%' },
+    { key: 'name', label: '活動名稱', type: 'imageText', width: '14%' },
+    { key: 'date', label: '活動日期', nowrap: true, width: '18%' },
+    { key: 'status', label: '活動狀態', type: 'status', align: 'center', width: '9%' },
+    { key: 'location', label: '活動地點', width: '17%' },
+    { key: 'signupProgress', label: '報名人數', type: 'progress', align: 'center', nowrap: true, width: '8%' },
+    {
+      key: 'applicationProgress',
+      label: '報名處理進度',
+      type: 'multiValue',
+      align: 'center',
+      nowrap: true,
+      width: '18%',
+      valueKeys: ['pendingReviewCount', 'paidCount', 'selectedCount'],
+      valueLabels: ['待審核', '已付款', '已選位'],
+    },
+    { key: 'action', label: '', type: 'action', align: 'end', width: '16%' },
   ];
 
   /**
@@ -247,11 +259,13 @@ export class OrganizerDashboardEventManagement implements OnInit {
 
   /** 目前頁面實際顯示的資料。 */
   displayRows: OrganizerEventRow[] = [];
+  private serverTotalItems = 0;
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly alert: AlertService,
+    private readonly organizerApi: OrganizerApiService,
   ) {}
 
   /** 初始化列表，並從網址 query params 還原搜尋、篩選與分頁狀態。 */
@@ -273,7 +287,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       this.selectedStatus = statusFromUrl;
     }
 
-    this.updateDisplayRows();
+    this.loadEvents();
   }
 
   /** 依照狀態、名稱與日期區間回傳篩選後的活動。 */
@@ -290,14 +304,14 @@ export class OrganizerDashboardEventManagement implements OnInit {
 
   /** 篩選後的總筆數。 */
   get totalItems(): number {
-    return this.filteredRows.length;
+    return this.serverTotalItems;
   }
 
   /** 切換分頁。 */
   onPageChange(page: number): void {
     this.currentPage = page;
     this.syncListQueryParams();
-    this.updateDisplayRows();
+    this.loadEvents();
   }
 
   /** 切換活動狀態篩選。 */
@@ -305,7 +319,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
     this.selectedStatus = status === ActivityStatus.all ? '' : status;
     this.currentPage = 1;
     this.syncListQueryParams();
-    this.updateDisplayRows();
+    this.loadEvents();
   }
 
   /** 執行搜尋；之後串接 API 時可在這裡改為呼叫服務層。 */
@@ -328,7 +342,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
     this.appliedEndDate = endDate;
     this.currentPage = 1;
     this.syncListQueryParams();
-    this.updateDisplayRows();
+    this.loadEvents();
   }
 
   /** 點擊列表操作按鈕，帶著返回列表所需狀態前往活動詳情。 */
@@ -381,7 +395,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
           `確定要送出「${activity.name}」進行審核嗎？<br>送出後將暫時無法編輯活動內容，需等待審核結果。`,
           '確定送出',
         )) return true;
-        this.updateActivityStatus(activity.id, ActivityStatus.pendingReview);
+        if (!await this.submitReviewFromList(activity)) return true;
         await this.alert.success(
           '送出審核成功',
           `活動「${activity.name}」已送出審核，審核結果將透過通知中心告知。`,
@@ -407,7 +421,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
           `確定要重新送審「${activity.name}」嗎？<br>送出後將再次進入審核流程。`,
           '確定重新送審',
         )) return true;
-        this.updateActivityStatus(activity.id, ActivityStatus.pendingReview);
+        if (!await this.submitReviewFromList(activity)) return true;
         await this.alert.success(
           '重新送審成功',
           `活動「${activity.name}」已重新送出審核。`,
@@ -430,6 +444,48 @@ export class OrganizerDashboardEventManagement implements OnInit {
       default:
         return false;
     }
+  }
+
+  private async submitReviewFromList(activity: OrganizerEventRow): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApi.submitOrganizerEventReview(activity.id),
+      );
+      if (isApiSuccessStatus(response.statusCode)) {
+        this.updateActivityStatus(activity.id, ActivityStatus.pendingReview);
+        return true;
+      }
+
+      const missingFields = response.data?.missingFields ?? [];
+      await this.alert.error(
+        '無法送出審核',
+        missingFields.length > 0
+          ? `${response.message}，請完成 ${missingFields.length} 項必要資料。`
+          : response.message || '送出審核失敗。',
+      );
+      if (missingFields.length > 0) {
+        this.router.navigate(['/organizer/dash-board/activity/detail'], {
+          queryParams: {
+            edit: activity.id,
+            step: this.reviewStepForMissingFields(missingFields) + 1,
+            validation: 'review',
+            returnPage: this.currentPage,
+            returnStatus: this.selectedStatus || null,
+          },
+        });
+      }
+      return false;
+    } catch {
+      await this.alert.error('無法送出審核', '送出審核失敗，請稍後再試。');
+      return false;
+    }
+  }
+
+  private reviewStepForMissingFields(fields: string[]): number {
+    if (fields.some((field) => /^(eventTitle|summary|description|categoryIds|coverImage)/.test(field))) return 0;
+    if (fields.some((field) => field.startsWith('schedule.') || field.startsWith('location.traffic'))) return 1;
+    if (fields.some((field) => field.startsWith('location.') || field.startsWith('booth.'))) return 2;
+    return 3;
   }
 
   private updateActivityStatus(
@@ -490,6 +546,60 @@ export class OrganizerDashboardEventManagement implements OnInit {
     });
   }
 
+  private loadEvents(): void {
+    this.organizerApi.searchOrganizerEvents({
+      keyword: this.appliedKeyword || undefined,
+      status: this.toApiStatus(this.selectedStatus),
+      startDate: this.appliedStartDate,
+      endDate: this.appliedEndDate,
+      sort: 'DEFAULT',
+      page: this.currentPage,
+      pageSize: this.pageSize,
+    }).subscribe((response) => {
+      if (!isApiSuccessStatus(response.statusCode) || !response.data) return;
+      this.serverTotalItems = response.data.totalCount;
+      this.rows = response.data.events.items.map((event) => ({
+        id: event.eventId,
+        name: event.eventTitle ?? '',
+        nameImage: event.coverImageUrl || 'assets/images/shared/no-image-placeholder.svg',
+        date: `${this.formatApiDate(event.eventStartAt)} - ${this.formatApiDate(event.eventEndAt)}`,
+        location: [event.city, event.district, event.locationName].filter(Boolean).join(' '),
+        status: event.statusText,
+        signupProgress: `${event.registeredCount} / ${event.capacity ?? 0}`,
+        signupProgressCurrent: event.registeredCount,
+        signupProgressTotal: event.capacity ?? 0,
+        pendingReviewCount: String(event.pendingReviewCount),
+        paidCount: String(event.paidCount),
+        selectedCount: String(event.selectedCount),
+        actionLabel: '查看',
+      }));
+      this.displayRows = this.rows.map((row) => this.toDisplayRow(row));
+    });
+  }
+
+  private toApiStatus(status: string): string | undefined {
+    const mapping = new Map<string, string>([
+      [ActivityStatus.draft, 'DRAFT'],
+      [ActivityStatus.pendingReview, 'PENDING_REVIEW'],
+      [ActivityStatus.revisionRequired, 'REVISION_REQUIRED'],
+      [ActivityStatus.mapBuilding, 'MAP_BUILDING'],
+      [ActivityStatus.readyToPublish, 'READY_TO_PUBLISH'],
+      [ActivityStatus.registrationOpen, 'REGISTRATION_OPEN'],
+      [ActivityStatus.full, 'FULL'],
+      [ActivityStatus.published, 'PUBLISHED'],
+      [ActivityStatus.active, 'ACTIVE'],
+      [ActivityStatus.ended, 'ENDED'],
+      [ActivityStatus.unpublishRequested, 'UNPUBLISH_REQUESTED'],
+      [ActivityStatus.unpublished, 'UNPUBLISHED'],
+    ]);
+    return mapping.get(status);
+  }
+
+  private formatApiDate(value: string | null): string {
+    const date = value?.slice(0, 10);
+    return date ? date.replaceAll('-', '/') : '';
+  }
+
   /** 更新目前分頁顯示的資料。 */
   private updateDisplayRows(): void {
     const rows = this.filteredRows;
@@ -511,8 +621,6 @@ export class OrganizerDashboardEventManagement implements OnInit {
             key: 'submit',
             label: '送出審核',
             variant: 'primary',
-            disabled: !row.canSubmitReview,
-            hint: row.canSubmitReview ? undefined : '請先完成所有必填資料後再送出審核',
           },
         ];
       case ActivityStatus.pendingReview:
@@ -522,7 +630,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
         ];
       case ActivityStatus.revisionRequired:
         return [
-          { key: 'edit', label: '編輯', variant: 'outline' },
+          { key: 'view', label: '查看', variant: 'outline' },
           { key: 'resubmit', label: '重新送審', variant: 'primary' },
         ];
       case ActivityStatus.mapBuilding:
@@ -558,7 +666,9 @@ export class OrganizerDashboardEventManagement implements OnInit {
       return {
         ...row,
         signupProgress: '',
+        pendingReviewCount: '',
         paidCount: '',
+        selectedCount: '',
         actionLabel: actions[0]?.label ?? '查看',
         actions,
       };
@@ -566,8 +676,18 @@ export class OrganizerDashboardEventManagement implements OnInit {
 
     return {
       ...row,
-      signupProgress: pendingStatisticStatuses.includes(row.status) ? '-' : row.signupProgress,
-      paidCount: pendingStatisticStatuses.includes(row.status) ? '-' : row.paidCount,
+      signupProgress: pendingStatisticStatuses.includes(row.status) || row.signupProgress.startsWith('0 /')
+        ? '-'
+        : row.signupProgress,
+      paidCount: pendingStatisticStatuses.includes(row.status) || row.paidCount === '0'
+        ? '-'
+        : row.paidCount,
+      pendingReviewCount: pendingStatisticStatuses.includes(row.status) || row.pendingReviewCount === '0'
+        ? '-'
+        : row.pendingReviewCount,
+      selectedCount: pendingStatisticStatuses.includes(row.status) || row.selectedCount === '0'
+        ? '-'
+        : row.selectedCount,
       actionLabel: actions[0]?.label ?? '查看',
       actions,
     };

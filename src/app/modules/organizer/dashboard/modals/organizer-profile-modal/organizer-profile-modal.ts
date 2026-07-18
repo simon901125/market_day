@@ -2,9 +2,9 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleCha
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 
+import { AddressApiService } from '../../../../../core/services/address-api.service';
 import { AlertService } from '../../../../../core/services/alert.service';
 import { OrganizerApiService } from '../../../../../core/services/organizer-api.service';
-import { TAIWAN_ADMINISTRATIVE_DIVISIONS, TAIWAN_CITY_OPTIONS } from '../../../../../models/config/TaiwanAdministrativeDivisions';
 import {
   OrganizerProfile,
   OrganizerProfileForm,
@@ -35,6 +35,7 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
   private closeTimer?: number;
   private profileLoadId = 0;
   private profileSaveId = 0;
+  private districtLoadId = 0;
 
   @Input() name = '';
   @Input() email = '';
@@ -47,20 +48,17 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
   isSavingProfile = false;
   validationErrors: Partial<Record<OrganizerProfileField, string>> = {};
 
-  readonly cityOptions = TAIWAN_CITY_OPTIONS;
-  readonly cityDistrictMap = TAIWAN_ADMINISTRATIVE_DIVISIONS;
+  cityOptions: string[] = [];
+  districtOptions: string[] = [];
   readonly weekdayOptions = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
 
   form: OrganizerProfileForm = this.createForm();
 
   constructor(
+    private readonly addressApiService: AddressApiService,
     private readonly organizerApiService: OrganizerApiService,
     private readonly alert: AlertService,
   ) {}
-
-  get districtOptions(): string[] {
-    return this.cityDistrictMap[this.form.city] ?? [];
-  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['open']?.currentValue) {
@@ -93,9 +91,10 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
 
   onCityChange(city: string): void {
     this.form.city = city;
-    this.form.district = this.districtOptions[0] ?? '';
+    this.form.district = '';
     this.clearValidationError('city');
     this.clearValidationError('district');
+    void this.loadDistrictOptions(city);
   }
 
   clearValidationError(field: OrganizerProfileField): void {
@@ -171,6 +170,7 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
 
     this.profileLoadId += 1;
     this.profileSaveId += 1;
+    this.districtLoadId += 1;
     this.isLoadingProfile = false;
     this.isSavingProfile = false;
     this.isClosing = true;
@@ -184,6 +184,7 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
   ngOnDestroy(): void {
     this.profileLoadId += 1;
     this.profileSaveId += 1;
+    this.districtLoadId += 1;
     this.clearCloseTimer();
   }
 
@@ -192,9 +193,10 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
     this.isLoadingProfile = true;
 
     try {
-      const response = await firstValueFrom(
-        this.organizerApiService.getOrganizerProfile(),
-      );
+      const [response, cityResponse] = await Promise.all([
+        firstValueFrom(this.organizerApiService.getOrganizerProfile()),
+        firstValueFrom(this.addressApiService.getAddressCities()),
+      ]);
       if (loadId !== this.profileLoadId || !this.open) {
         return;
       }
@@ -204,7 +206,17 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
         return;
       }
 
+      if (!isApiSuccessStatus(cityResponse.statusCode) || !cityResponse.data) {
+        await this.alert.error('載入失敗', cityResponse.message || '無法取得縣市資料，請稍後再試。');
+        return;
+      }
+
+      this.cityOptions = cityResponse.data;
       this.form = this.createForm(response.data);
+      if (!this.cityOptions.includes(this.form.city)) {
+        this.form.city = this.cityOptions[0] ?? '';
+      }
+      await this.loadDistrictOptions(this.form.city, this.form.district, loadId);
       this.validationErrors = {};
     } catch {
       if (loadId === this.profileLoadId && this.open) {
@@ -218,15 +230,6 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
   }
 
   private createForm(profile?: OrganizerProfile): OrganizerProfileForm {
-    const defaultCity = '台北市';
-    const defaultDistrict = '大安區';
-    const city = profile?.city?.trim() || defaultCity;
-    const availableDistricts = this.cityDistrictMap[city] ?? [];
-    const requestedDistrict = profile?.district?.trim() || '';
-    const district = availableDistricts.includes(requestedDistrict)
-      ? requestedDistrict
-      : availableDistricts[0] || defaultDistrict;
-
     return {
       organizerName: profile?.organizerName?.trim() || '',
       contactName: profile?.contactName?.trim() || this.name || '',
@@ -234,13 +237,54 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
       contactEmail: profile?.contactEmail?.trim() || this.email || '',
       companyName: profile?.companyName?.trim() || '',
       taxId: profile?.taxId?.trim() || '',
-      city,
-      district,
+      city: profile?.city?.trim() || '',
+      district: profile?.district?.trim() || '',
       address: profile?.address?.trim() || '',
       serviceDays: this.parseServiceDays(profile?.serviceDays),
       serviceStartTime: this.normalizeTime(profile?.serviceStartTime),
       serviceEndTime: this.normalizeTime(profile?.serviceEndTime),
     };
+  }
+
+  private async loadDistrictOptions(
+    city: string,
+    preferredDistrict = '',
+    profileLoadId?: number,
+  ): Promise<void> {
+    const districtLoadId = ++this.districtLoadId;
+    this.districtOptions = [];
+
+    if (!city) {
+      this.form.district = '';
+      return;
+    }
+
+    try {
+      const response = await firstValueFrom(
+        this.addressApiService.getAddressDistricts(city),
+      );
+      if (
+        districtLoadId !== this.districtLoadId
+        || !this.open
+        || (profileLoadId !== undefined && profileLoadId !== this.profileLoadId)
+      ) {
+        return;
+      }
+
+      if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+        await this.alert.error('載入失敗', response.message || '無法取得行政區資料，請稍後再試。');
+        return;
+      }
+
+      this.districtOptions = response.data;
+      this.form.district = this.districtOptions.includes(preferredDistrict)
+        ? preferredDistrict
+        : this.districtOptions[0] ?? '';
+    } catch {
+      if (districtLoadId === this.districtLoadId && this.open) {
+        await this.alert.error('載入失敗', '無法取得行政區資料，請稍後再試。');
+      }
+    }
   }
 
   private parseServiceDays(serviceDays: string | null | undefined): string[] {

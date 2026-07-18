@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { AddressApiService } from '../../../../core/services/address-api.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { VendorAccessService } from '../../../../core/Vendor/dashboardApi/vendor-access.service';
 import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
@@ -75,7 +76,7 @@ export class VendorDashboardStall implements OnInit {
       type: 'select',
       value: '台中市',
       required: true,
-      options: ['台北市', '新北市', '台中市', '台南市', '高雄市'],
+      options: [],
     },
     { label: 'Instagram', name: 'instagram', type: 'text', value: '@littlemarket_day', required: false },
     {
@@ -84,7 +85,7 @@ export class VendorDashboardStall implements OnInit {
       type: 'select',
       value: '南屯區',
       required: true,
-      options: ['中區', '西區', '南屯區', '北屯區', '西屯區'],
+      options: [],
     },
     { label: 'Facebook 粉絲專頁', name: 'facebook', type: 'text', value: '@littlemarket', required: false },
     { label: '詳細地址', name: 'address', type: 'text', value: '公益路二段 537 號', required: true },
@@ -139,6 +140,7 @@ export class VendorDashboardStall implements OnInit {
 
   isSaving = false;
   private isFirstLogin = false;
+  private districtLoadId = 0;
 
   constructor(
     private readonly alert: AlertService,
@@ -146,10 +148,12 @@ export class VendorDashboardStall implements OnInit {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly vendorAccess: VendorAccessService,
+    private readonly addressApiService: AddressApiService,
   ) {}
 
   ngOnInit(): void {
     this.initializeEmptyStallForm();
+    this.loadCityOptions();
     this.initializeVendorDashboard();
   }
 
@@ -247,6 +251,7 @@ export class VendorDashboardStall implements OnInit {
       ...field,
       value: fieldValues[field.name] ?? '',
     }));
+    this.loadDistrictOptions(fieldValues['city'], fieldValues['district']);
     this.avatarPreview = data.avatarImageUrl ?? '';
     this.coverPreview = data.coverImageUrl ?? '';
     this.persistedAvatarImageUrl = data.avatarImageUrl;
@@ -332,6 +337,67 @@ export class VendorDashboardStall implements OnInit {
   updateBasicField(field: StallField, value: string): void {
     field.value = value;
     this.clearInvalid(field.name);
+
+    if (field.name === 'city') {
+      const districtField = this.getBasicField('district');
+      if (districtField) {
+        districtField.value = '';
+      }
+      this.clearInvalid('district');
+      this.loadDistrictOptions(value);
+    }
+  }
+
+  private loadCityOptions(): void {
+    this.addressApiService.getAddressCities().subscribe({
+      next: (response) => {
+        if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+          void this.alert.error('載入失敗', response.message || '無法取得縣市資料，請稍後再試。');
+          return;
+        }
+
+        const cityField = this.getBasicField('city');
+        if (cityField) {
+          cityField.options = response.data;
+        }
+      },
+      error: () => {
+        void this.alert.error('載入失敗', '無法取得縣市資料，請稍後再試。');
+      },
+    });
+  }
+
+  private loadDistrictOptions(city: string, preferredDistrict = ''): void {
+    const loadId = ++this.districtLoadId;
+    const districtField = this.getBasicField('district');
+    if (!districtField) return;
+
+    districtField.options = [];
+    if (!city) {
+      districtField.value = '';
+      return;
+    }
+
+    this.addressApiService.getAddressDistricts(city).subscribe({
+      next: (response) => {
+        if (loadId !== this.districtLoadId) return;
+        if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+          void this.alert.error('載入失敗', response.message || '無法取得行政區資料，請稍後再試。');
+          return;
+        }
+
+        districtField.options = response.data;
+        districtField.value = response.data.includes(preferredDistrict) ? preferredDistrict : '';
+      },
+      error: () => {
+        if (loadId !== this.districtLoadId) return;
+        void this.alert.error('載入失敗', '無法取得行政區資料，請稍後再試。');
+      },
+    });
+  }
+
+  private getBasicField(name: string): StallField | undefined {
+    return this.basicFields.find((field) => field.name === name);
   }
 
   updateCategory(value: string): void {

@@ -23,6 +23,38 @@ describe('OrganizerDashboardHome', () => {
               messageDetails: null,
               data: { needsProfile: false },
             }),
+            searchOrganizerEvents: () => of({
+              statusCode: 200,
+              message: 'OK',
+              messageDetails: null,
+              data: {
+                totalCount: 3,
+                events: {
+                  items: [1, 2, 3].map((eventId) => ({
+                    eventId,
+                    eventTitle: `Market ${eventId}`,
+                    capacity: 100,
+                    registeredCount: 80,
+                    paidCount: 70,
+                    selectedCount: 60,
+                  })),
+                },
+              },
+            }),
+            searchOrganizerApplications: () => of({
+              statusCode: 200,
+              message: 'OK',
+              messageDetails: null,
+              data: {
+                taskSummary: {
+                  pendingReviewCount: 12,
+                  pendingRefundConfirmationCount: 3,
+                  pendingStallSelectionCount: 50,
+                },
+                totalCount: 0,
+                applications: { items: [] },
+              },
+            }),
           },
         },
       ],

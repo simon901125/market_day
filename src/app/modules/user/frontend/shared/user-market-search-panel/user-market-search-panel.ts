@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { AddressApiService } from '../../../../../core/services/address-api.service';
 import { CategoryItem } from '../../../../../models/interface/user/CategoryItem';
+import { isApiSuccessStatus } from '../../../../../models/interface/shared/ApiResult';
 import { Dropdown } from '../../../../shared/dropdown/dropdown';
 import { DateRangeSelector } from '../../../../shared/date-range-selector/date-range-selector';
-import { TAIWAN_CITY_OPTIONS } from '../../../../../models/config/TaiwanAdministrativeDivisions';
 import { BrandType } from '../../../../../models/type/BrandType ';
 import { MarketStatus } from '../../../../../models/status/MarketStatus';
 
@@ -29,7 +30,7 @@ export interface UserMarketSearchParams {
   styleUrl: './user-market-search-panel.scss',
 })
 /** 一般使用者市集活動搜尋區塊，負責蒐集篩選條件並同步到 query params。 */
-export class UserMarketSearchPanel {
+export class UserMarketSearchPanel implements OnInit {
   /** 搜尋送出後前往的頁面，讓前台不同入口共用同一套搜尋面板。 */
   @Input() searchRoute = '/user/activity-list';
 
@@ -60,8 +61,11 @@ export class UserMarketSearchPanel {
   /** 使用者按下搜尋後，將篩選條件回傳父層。 */
   @Output() searchSubmit = new EventEmitter<UserMarketSearchParams>();
 
-  /** 台灣縣市選項。 */
-  readonly cityOptions = TAIWAN_CITY_OPTIONS;
+  /** 後端地址 API 回傳的台灣縣市選項。 */
+  cityOptions: string[] = [];
+
+  isCityLoading = false;
+  cityLoadFailed = false;
 
   /** 前台活動狀態篩選選項。 */
   readonly statusOptions = MarketStatus.filterList;
@@ -77,7 +81,41 @@ export class UserMarketSearchPanel {
     { name: BrandType.toy, icon: 'bi bi-gift' },
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    private readonly router: Router,
+    private readonly addressApiService: AddressApiService,
+  ) {}
+
+  ngOnInit(): void {
+    this.loadCityOptions();
+  }
+
+  get cityPlaceholder(): string {
+    if (this.isCityLoading) return '縣市載入中...';
+    if (this.cityLoadFailed) return '縣市載入失敗';
+    return '選擇縣市';
+  }
+
+  private loadCityOptions(): void {
+    this.isCityLoading = true;
+    this.cityLoadFailed = false;
+
+    this.addressApiService.getAddressCities().subscribe({
+      next: (response) => {
+        this.isCityLoading = false;
+        if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+          this.cityLoadFailed = true;
+          return;
+        }
+
+        this.cityOptions = response.data;
+      },
+      error: () => {
+        this.isCityLoading = false;
+        this.cityLoadFailed = true;
+      },
+    });
+  }
 
   /** 選取活動類型。 */
   selectCategory(index: number): void {

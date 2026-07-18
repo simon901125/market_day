@@ -20,10 +20,12 @@ import { DashboardNotification } from '../../../shared/dashboard/dashboard-notif
 import { TodoItem } from '../../../../models/interface/organizer/OrganizerDashboardHomeTodo';
 import { OrganizerAccessService } from '../../../../core/services/organizer-access.service';
 import { OrganizerDashboardSetupGuide } from '../organizer-dashboard-setup-guide/organizer-dashboard-setup-guide';
+import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
 interface ActivityRegistrationOverview {
-  id: number;
-  name: string;
+  eventId: number;
+  eventTitle: string;
   capacity: number;
   registeredCount: number;
   paidCount: number;
@@ -43,17 +45,21 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
   private set registrationChartRef(ref: ElementRef<HTMLCanvasElement> | undefined) {
     if (!ref) return;
 
+    this.registrationCanvas = ref;
+
     this.removeRegistrationTooltip();
     this.registrationChart?.destroy();
     this.registrationChart = new Chart(ref.nativeElement, this.createRegistrationChartConfig());
   }
 
   private registrationChart?: Chart<'bar'>;
+  private registrationCanvas?: ElementRef<HTMLCanvasElement>;
   readonly needsProfile: Signal<boolean | null>;
 
   constructor(
     private readonly router: Router,
     private readonly organizerAccess: OrganizerAccessService,
+    private readonly organizerApi: OrganizerApiService,
   ) {
     super();
     this.needsProfile = this.organizerAccess.needsProfile;
@@ -61,9 +67,10 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
 
   ngOnInit(): void {
     void this.organizerAccess.initialize();
+    this.loadDashboardData();
   }
 
-  /** 主辦方後台首頁待辦統計卡片資料。 */
+  /** 主辦方後台首頁待辦展示資料；待報名列表統計 API 完成後再串接。 */
   todoItems: TodoItem[] = [
     {
       icon: 'bi-clipboard-heart',
@@ -77,7 +84,7 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
       icon: 'bi-wallet2',
       count: 3,
       unit: '筆',
-      label: '退款待處理',
+      label: '退款待確認',
       path: '/organizer/dash-board/collection',
       iconColor: 'red',
     },
@@ -92,11 +99,34 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
   ];
 
   /** 首頁圖表展示資料；串接 API 後由首頁統計端點取代。 */
-  readonly activityRegistrationOverview: ActivityRegistrationOverview[] = [
-    { id: 1, name: '夏日綠意市集', capacity: 150, registeredCount: 128, paidCount: 118, selectedCount: 106 },
-    { id: 2, name: '職人咖啡生活市集', capacity: 120, registeredCount: 120, paidCount: 102, selectedCount: 95 },
-    { id: 3, name: '衣著選物週末', capacity: 100, registeredCount: 100, paidCount: 96, selectedCount: 88 },
-  ];
+  activityRegistrationOverview: ActivityRegistrationOverview[] = [];
+
+  private loadDashboardData(): void {
+    this.organizerApi.searchOrganizerEvents({
+        sort: 'UPCOMING_FIRST',
+        page: 1,
+        pageSize: 3,
+        registrationOverview: true,
+      }).subscribe((events) => {
+        if (!isApiSuccessStatus(events.statusCode) || !events.data) return;
+        this.activityRegistrationOverview = events.data.events.items.map((event) => ({
+          eventId: event.eventId,
+          eventTitle: event.eventTitle ?? '',
+          capacity: event.capacity ?? 0,
+          registeredCount: event.registeredCount,
+          paidCount: event.paidCount,
+          selectedCount: event.selectedCount,
+        }));
+        if (this.registrationCanvas) {
+          this.removeRegistrationTooltip();
+          this.registrationChart?.destroy();
+          this.registrationChart = new Chart(
+            this.registrationCanvas.nativeElement,
+            this.createRegistrationChartConfig(),
+          );
+        }
+      });
+  }
 
   ngOnDestroy(): void {
     this.removeRegistrationTooltip();
@@ -141,7 +171,7 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
     return {
       type: 'bar',
       data: {
-        labels: rows.map((row) => row.name),
+        labels: rows.map((row) => row.eventTitle),
         datasets: [
           {
             label: '已選位',
@@ -226,7 +256,7 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
             beginAtZero: true,
             // Reserve space at the end of each bar so the external tooltip can
             // remain on the right while its caret still points at the hovered item.
-            suggestedMax: Math.max(...rows.map((row) => row.capacity)) * 1.25,
+            suggestedMax: Math.max(1, ...rows.map((row) => row.capacity)) * 1.25,
             grid: { color: '#ece9e4' },
             border: { display: false },
             ticks: { display: false },
@@ -248,10 +278,10 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
     if (!activity) return;
 
     const destinations = [
-      { path: '/organizer/dash-board/stall', queryParams: { activity: activity.name } },
-      { path: '/organizer/dash-board/stall', queryParams: { activity: activity.name } },
-      { path: '/organizer/dash-board/collection', queryParams: { keyword: activity.name } },
-      { path: '/organizer/dash-board/activity', queryParams: { keyword: activity.name } },
+      { path: '/organizer/dash-board/stall', queryParams: { activity: activity.eventTitle } },
+      { path: '/organizer/dash-board/stall', queryParams: { activity: activity.eventTitle } },
+      { path: '/organizer/dash-board/collection', queryParams: { keyword: activity.eventTitle } },
+      { path: '/organizer/dash-board/activity', queryParams: { keyword: activity.eventTitle } },
     ];
     const destination = destinations[datasetIndex];
     if (destination) void this.router.navigate([destination.path], { queryParams: destination.queryParams });
@@ -283,7 +313,7 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
     if (!row) return;
 
     const title = document.createElement('strong');
-    title.textContent = row.name;
+    title.textContent = row.eventTitle;
 
     const selectedSummary = document.createElement('div');
     selectedSummary.className = 'registration-chart-tooltip-selected';
