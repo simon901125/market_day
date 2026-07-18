@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { VendorAccessService } from '../../../../core/Vendor/dashboardApi/vendor-access.service';
 import { VendorService } from '../../../../core/Vendor/vendorApi/vendor.service';
@@ -104,6 +105,7 @@ export class VendorMarketSignupDetail implements OnInit {
     private readonly vendorService: VendorService,
     private readonly alert: AlertService,
     private readonly vendorAccess: VendorAccessService,
+    private readonly authService: AuthService,
   ) {
     const navigation = this.router.currentNavigation();
     this.market = navigation?.extras.state?.['market'] || history.state?.['market'] || null;
@@ -383,8 +385,25 @@ export class VendorMarketSignupDetail implements OnInit {
     return this.vendorAccess.needsProfile() === true;
   }
 
+  get isVendorLoggedIn(): boolean {
+    return this.authService.isLoggedIn('vendor');
+  }
+
   /** 前往報名資料填寫頁；首次登入尚未建立攤位資料時先引導完成設定。 */
   async goToSignUpForm(): Promise<void> {
+    if (!this.isVendorLoggedIn) {
+      const goToLogin = await this.alert.confirm(
+        '請先登入',
+        '登入攤主帳號後即可報名市集。',
+        '前往登入',
+        '取消',
+      );
+      if (goToLogin) {
+        await this.router.navigate(['/vendor/login']);
+      }
+      return;
+    }
+
     const needsProfile = await this.vendorAccess.initialize();
     if (needsProfile) {
       const openStallProfile = await this.alert.confirm(
