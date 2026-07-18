@@ -12,6 +12,7 @@ import { OrganizerApplicationSearchResponse } from '../../models/interface/organ
 import { OrganizerEventDetail } from '../../models/interface/organizer/OrganizerEventDetail';
 import {
   OrganizerEventSaveRequest,
+  OrganizerEventSubmitReviewResponse,
   StoredEventImage,
 } from '../../models/interface/organizer/OrganizerEventEditor';
 import { HttpService } from '../http/http.service';
@@ -59,6 +60,15 @@ export class OrganizerApiService {
 
   saveOrganizerEvent(payload: OrganizerEventSaveRequest): Observable<ApiResult<OrganizerEventDetail>> {
     return this.httpService.post<OrganizerEventDetail>('api/organizer/events', payload);
+  }
+
+  submitOrganizerEventReview(
+    eventId: number,
+  ): Observable<ApiResult<OrganizerEventSubmitReviewResponse>> {
+    return this.httpService.post<OrganizerEventSubmitReviewResponse>(
+      `api/organizer/events/${eventId}/submit-review`,
+      null,
+    );
   }
 
   uploadOrganizerEventImage(

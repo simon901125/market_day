@@ -67,6 +67,16 @@ export class DashboardDataTable {
     return Number(row[`${column.key}Current`]) || 0;
   }
 
+  hasProgress(column: DashboardTableColumn, row: Record<string, any>): boolean {
+    const displayValue = row[column.key];
+    const hasDisplayValue = displayValue !== null
+      && displayValue !== undefined
+      && String(displayValue).trim() !== ''
+      && String(displayValue).trim() !== '-';
+
+    return hasDisplayValue && this.getProgressTotal(column, row) > 0;
+  }
+
   getProgressTotal(column: DashboardTableColumn, row: Record<string, any>): number {
     return Number(row[`${column.key}Total`]) || 0;
   }

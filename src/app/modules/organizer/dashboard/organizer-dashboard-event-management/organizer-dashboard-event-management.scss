@@ -25,7 +25,7 @@
 
 :host ::ng-deep .event-table {
   .dashboard-table-wrap {
-    overflow-x: hidden;
+    overflow-x: auto;
     background: linear-gradient(
       to bottom,
       var(--bg-primary) 0,
@@ -61,6 +61,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  td[data-column='date'] {
+    overflow: hidden;
   }
 
   th[data-column='action'],

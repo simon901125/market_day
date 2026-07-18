@@ -23,6 +23,7 @@ import {
   FormStep,
   OrganizerEventSaveEquipmentItem,
   OrganizerEventSaveRequest,
+  OrganizerEventSubmitReviewResponse,
   StatusAction,
   VenueBoothForm,
 } from '../../../../models/interface/organizer/OrganizerEventEditor';
@@ -31,7 +32,7 @@ import { AddressApiService } from '../../../../core/services/address-api.service
 import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
 import { OrganizerEventDetail } from '../../../../models/interface/organizer/OrganizerEventDetail';
 import { AlertService } from '../../../../core/services/alert.service';
-import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { ApiResult, isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
 function createEmptyEventTimeForm(): EventTimeForm {
   return {
@@ -304,6 +305,20 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     );
   }
 
+  get eventStartNotFuture(): boolean {
+    return this.isDateTimeNotFuture(
+      this.timeForm.eventStartDate,
+      this.timeForm.eventStartTime,
+    );
+  }
+
+  get registrationStartNotFuture(): boolean {
+    return this.isDateTimeNotFuture(
+      this.timeForm.registrationStartDate,
+      this.timeForm.registrationStartTime,
+    );
+  }
+
   get boothZoneTotal(): number {
     return this.boothZones.reduce((total, zone) => total + Number(zone.count || 0), 0);
   }
@@ -414,10 +429,13 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         )) {
           return;
         }
+        const submitted = await this.requestOrganizerEventReview(this.activity.id);
+        if (!submitted) return;
         this.activity = { ...this.activity, status: ActivityStatus.pendingReview };
+        this.serverAvailableActions = submitted.availableActions;
         await this.alert.success(
           '送出審核成功',
-          '活動資料已送出審核，管理員將盡快為您審核。<br>審核結果將以通知信與站內通知告知您，謝謝！',
+          '活動資料已送出審核，管理員將盡快為您審核。<br>審核結果將透過站內通知告知您。',
           '知道了',
         );
         return;
@@ -429,7 +447,10 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         )) {
           return;
         }
+        const resubmitted = await this.requestOrganizerEventReview(this.activity.id);
+        if (!resubmitted) return;
         this.activity = { ...this.activity, status: ActivityStatus.pendingReview };
+        this.serverAvailableActions = resubmitted.availableActions;
         await this.alert.success(
           '重新送審成功',
           `活動「${this.activity.name}」已成功重新送審。<br>我們將盡快進行審核，結果將以通知告知您。`,
@@ -591,9 +612,11 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       this.timeForm.registrationEndTime,
     ];
     const hasTransportation = [this.timeForm.metro, this.timeForm.bus, this.timeForm.driving]
-      .some((value) => value.trim());
+      .every((value) => value.trim());
 
     return requiredTimes.every(Boolean) && hasTransportation &&
+      !this.eventStartNotFuture &&
+      !this.registrationStartNotFuture &&
       !this.eventDateTimeOrderInvalid &&
       !this.registrationDateTimeOrderInvalid &&
       !this.registrationEndAfterEventStart;
@@ -652,8 +675,10 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       ];
       const missingTimes = requiredTimes.filter((value) => !value).length;
       const missingTransportation = [this.timeForm.metro, this.timeForm.bus, this.timeForm.driving]
-        .some((value) => value.trim()) ? 0 : 1;
+        .filter((value) => !value.trim()).length;
       const dateLogicErrors = [
+        this.eventStartNotFuture,
+        this.registrationStartNotFuture,
         this.eventDateTimeOrderInvalid,
         this.registrationDateTimeOrderInvalid,
         this.registrationEndAfterEventStart,
@@ -839,8 +864,12 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   }
 
   get transportationMissing(): boolean {
-    return ![this.timeForm.metro, this.timeForm.bus, this.timeForm.driving]
-      .some((value) => value.trim());
+    return [this.timeForm.metro, this.timeForm.bus, this.timeForm.driving]
+      .some((value) => !value.trim());
+  }
+
+  isTransportationFieldMissing(value: string): boolean {
+    return !value.trim();
   }
 
   /** 取消建立／編輯，若有未儲存變更會先提示確認。 */
@@ -912,32 +941,31 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         return;
       }
 
+      const eventId = await this.persistEditorForReview();
+      if (!eventId) return;
+      const review = await this.requestOrganizerEventReview(eventId);
+      if (!review) return;
+
       this.activity = {
         ...this.activity,
+        id: eventId,
         name: eventName,
         nameImage: this.form.coverPreviewUrl || this.activity.nameImage,
         status: ActivityStatus.pendingReview,
       };
+      this.serverAvailableActions = review.availableActions;
       this.initialEditorSnapshot = this.getEditorSnapshot();
+      this.navigationAllowed = true;
 
       await this.alert.success(
         '送出審核成功',
-        '活動資料已送出審核，管理員將盡快為您審核。<br>審核結果將以通知信與站內通知告知您，謝謝！',
+        '活動資料已送出審核，管理員將盡快為您審核。<br>審核結果將透過站內通知告知您。',
         '知道了',
       );
-
-      if (this.isEditMode) {
-        this.navigationAllowed = true;
-        this.router.navigate(['/organizer/dash-board/activity/detail', this.editActivityId], {
-          queryParams: { returnPage: this.returnPage, returnStatus: this.returnStatus || null },
-          state: { activity: this.activity, returnPage: this.returnPage, returnStatus: this.returnStatus },
-        });
-      } else {
-        this.navigationAllowed = true;
-        this.router.navigate(['/organizer/dash-board/activity'], {
-          queryParams: { page: this.returnPage, status: this.returnStatus || null },
-        });
-      }
+      this.router.navigate(['/organizer/dash-board/activity/detail', eventId], {
+        queryParams: { returnPage: this.returnPage, returnStatus: this.returnStatus || null },
+        state: { activity: this.activity, returnPage: this.returnPage, returnStatus: this.returnStatus },
+      });
       return;
     }
 
@@ -955,6 +983,93 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         block: 'center',
       });
     });
+  }
+
+  private async persistEditorForReview(): Promise<number | null> {
+    try {
+      const saved = await firstValueFrom(
+        this.organizerApiService.saveOrganizerEvent(this.buildOrganizerEventSaveRequest()),
+      );
+      if (!isApiSuccessStatus(saved.statusCode) || !saved.data) {
+        await this.alert.error('無法送出審核', saved.message || '活動資料儲存失敗。');
+        return null;
+      }
+
+      const eventId = saved.data.eventId;
+      const uploads: Array<{ label: string; file: File; purpose: 'EVENT_COVER' | 'EVENT_MAP' }> = [];
+      if (this.selectedCoverFile) {
+        uploads.push({ label: '活動封面', file: this.selectedCoverFile, purpose: 'EVENT_COVER' });
+      }
+      if (this.selectedLayoutFile) {
+        uploads.push({ label: '攤位配置圖', file: this.selectedLayoutFile, purpose: 'EVENT_MAP' });
+      }
+      for (const upload of uploads) {
+        const result = await firstValueFrom(
+          this.organizerApiService.uploadOrganizerEventImage(eventId, upload.purpose, upload.file),
+        );
+        if (!isApiSuccessStatus(result.statusCode)) {
+          await this.alert.error('無法送出審核', `${upload.label}上傳失敗，請重新上傳後再試。`);
+          return null;
+        }
+      }
+      return eventId;
+    } catch (error) {
+      await this.alert.error('無法送出審核', this.getRequestErrorMessage(error, '活動資料儲存失敗。'));
+      return null;
+    }
+  }
+
+  private async requestOrganizerEventReview(
+    eventId: number,
+  ): Promise<OrganizerEventSubmitReviewResponse | null> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApiService.submitOrganizerEventReview(eventId),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) return response.data;
+      await this.handleReviewSubmissionFailure(response, eventId);
+      return null;
+    } catch (error) {
+      await this.alert.error('無法送出審核', this.getRequestErrorMessage(error, '送出審核失敗。'));
+      return null;
+    }
+  }
+
+  private async handleReviewSubmissionFailure(
+    response: ApiResult<OrganizerEventSubmitReviewResponse>,
+    eventId: number,
+  ): Promise<void> {
+    const missingFields = response.data?.missingFields ?? [];
+    const targetStep = this.reviewStepForMissingFields(missingFields);
+    await this.alert.error(
+      '無法送出審核',
+      missingFields.length > 0
+        ? `${response.message}，請完成 ${missingFields.length} 項必要資料。`
+        : response.message || '送出審核失敗。',
+    );
+    if (targetStep < 0) return;
+    if (!this.isViewMode) {
+      this.currentStep = targetStep;
+      this.validationMessage = '活動資料尚未填寫完整';
+      return;
+    }
+    this.router.navigate(['/organizer/dash-board/activity/detail'], {
+      queryParams: {
+        edit: eventId,
+        step: targetStep + 1,
+        validation: 'review',
+        returnPage: this.returnPage,
+        returnStatus: this.returnStatus || null,
+      },
+    });
+  }
+
+  private reviewStepForMissingFields(fields: string[]): number {
+    if (fields.some((field) => /^(eventTitle|summary|description|categoryIds|coverImage)/.test(field))) return 0;
+    if (fields.some((field) => field.startsWith('schedule.') || field.startsWith('location.traffic'))) return 1;
+    if (fields.some((field) => field.startsWith('location.') || field.startsWith('booth.'))) return 2;
+    if (fields.some((field) => field.startsWith('equipment.'))) return 3;
+    return -1;
   }
 
   /** 詳情頁的送審／重新送審也套用與編輯頁相同的完整驗證。 */
@@ -1992,6 +2107,14 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       return false;
     }
     return this.toDateTime(endDate, endTime) <= this.toDateTime(startDate, startTime);
+  }
+
+  /** 送審時，活動與報名開始時間都必須晚於現在。 */
+  private isDateTimeNotFuture(date: string, time: string): boolean {
+    if (!date || !time) {
+      return false;
+    }
+    return this.toDateTime(date, time) <= Date.now();
   }
 
   /** 檢查指定日期時間是否晚於比較日期時間。 */

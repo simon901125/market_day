@@ -102,6 +102,15 @@ export interface StoredEventImage {
   fileSize: number;
 }
 
+export interface OrganizerEventSubmitReviewResponse {
+  eventId: number;
+  workflowStatus: string;
+  status: string;
+  statusText: string;
+  availableActions: string[];
+  missingFields: string[];
+}
+
 export interface BoothZone {
   name: string;
   color: string;

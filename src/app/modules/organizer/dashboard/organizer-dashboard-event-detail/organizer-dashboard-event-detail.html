@@ -504,9 +504,12 @@
               }
             </label>
           </div>
-          @if (submitAttempted && eventDateTimeOrderInvalid) {
-            <small class="field-error section-error" data-invalid="true">活動結束時間必須晚於活動開始時間</small>
-          }
+            @if (submitAttempted && eventDateTimeOrderInvalid) {
+              <small class="field-error section-error" data-invalid="true">活動結束時間必須晚於活動開始時間</small>
+            }
+            @if (submitAttempted && eventStartNotFuture) {
+              <small class="field-error section-error" data-invalid="true">活動開始時間必須晚於現在</small>
+            }
         </section>
 
         <section class="time-section divided-section">
@@ -561,9 +564,12 @@
             </label>
 
           </div>
-          @if (submitAttempted && registrationDateTimeOrderInvalid) {
-            <small class="field-error section-error" data-invalid="true">報名截止時間必須晚於報名開始時間</small>
-          }
+            @if (submitAttempted && registrationDateTimeOrderInvalid) {
+              <small class="field-error section-error" data-invalid="true">報名截止時間必須晚於報名開始時間</small>
+            }
+            @if (submitAttempted && registrationStartNotFuture) {
+              <small class="field-error section-error" data-invalid="true">報名開始時間必須晚於現在</small>
+            }
           @if (submitAttempted && registrationEndAfterEventStart) {
             <small class="field-error section-error" data-invalid="true">報名截止時間必須早於或等於活動開始時間</small>
           }
@@ -579,24 +585,24 @@
             <label>
               <strong>捷運</strong>
               <span>
-                <input class="transport-input" [class.invalid]="submitAttempted && transportationMissing" [attr.data-invalid]="submitAttempted && transportationMissing" type="text" placeholder="請輸入最近捷運站與步行時間" [(ngModel)]="timeForm.metro" name="metro" />
+                <input class="transport-input" [class.invalid]="submitAttempted && isTransportationFieldMissing(timeForm.metro)" [attr.data-invalid]="submitAttempted && isTransportationFieldMissing(timeForm.metro)" type="text" placeholder="請輸入最近捷運站與步行時間，若無請填無" [(ngModel)]="timeForm.metro" name="metro" />
               </span>
             </label>
             <label>
               <strong>公車</strong>
               <span>
-                <input class="transport-input" [class.invalid]="submitAttempted && transportationMissing" [attr.data-invalid]="submitAttempted && transportationMissing" type="text" placeholder="請輸入公車路線與下車站點" [(ngModel)]="timeForm.bus" name="bus" />
+                <input class="transport-input" [class.invalid]="submitAttempted && isTransportationFieldMissing(timeForm.bus)" [attr.data-invalid]="submitAttempted && isTransportationFieldMissing(timeForm.bus)" type="text" placeholder="請輸入公車路線與下車站點，若無請填無" [(ngModel)]="timeForm.bus" name="bus" />
               </span>
             </label>
             <label>
               <strong>開車</strong>
               <span>
-                <input class="transport-input" [class.invalid]="submitAttempted && transportationMissing" [attr.data-invalid]="submitAttempted && transportationMissing" type="text" placeholder="請輸入停車資訊或開車說明" [(ngModel)]="timeForm.driving" name="driving" />
+                <input class="transport-input" [class.invalid]="submitAttempted && isTransportationFieldMissing(timeForm.driving)" [attr.data-invalid]="submitAttempted && isTransportationFieldMissing(timeForm.driving)" type="text" placeholder="請輸入停車資訊或開車說明，若無請填無" [(ngModel)]="timeForm.driving" name="driving" />
               </span>
             </label>
           </div>
           @if (submitAttempted && transportationMissing) {
-            <small class="field-error section-error">捷運、公車、開車資訊請至少填寫一項</small>
+            <small class="field-error section-error">捷運、公車與開車資訊皆為必填，若沒有請填「無」</small>
           }
         </section>
       } @else if (currentStep === 2) {
