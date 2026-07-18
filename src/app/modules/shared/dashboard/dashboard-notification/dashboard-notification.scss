@@ -85,6 +85,19 @@
   min-height: 0;
 }
 
+.notification-page.is-loading {
+  .notification-list-shell {
+    opacity: 0.45;
+    transition: opacity 0.15s ease;
+  }
+
+  .tabs button,
+  app-dashboard-pagination {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
 .notification-page:not(.home-mode) {
   app-dashboard-pagination {
     display: block;

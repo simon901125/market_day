@@ -45,17 +45,14 @@ export class AdminDashboardHome extends AdminDashboardNotification implements On
    */
   homeNotificationMaxItems = 4;
 
-  constructor(
-    private readonly adminApiService: AdminApiService,
-    private readonly alert: AlertService,
-  ) {
-    super();
+  constructor(adminApiService: AdminApiService, alert: AlertService) {
+    super(adminApiService, alert);
   }
 
   /**
    * 元件初始化時，先依照目前畫面高度決定最新通知顯示筆數，並讀取後台概況資料
    */
-  ngOnInit(): void {
+  override ngOnInit(): void {
     this.updateHomeNotificationMaxItems();
     this.loadDashboardOverview();
   }
