@@ -1,12 +1,14 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { firstValueFrom, Observable } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
 import { AdminApiService } from '../../../../core/services/admin-api.service';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { AdminMarketDetail } from '../../../../models/interface/admin/AdminMarketDetail';
 import { AdminEventDetailDto, AdminEventStatusLog } from '../../../../models/interface/admin/AdminEventDetail';
-import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { EventStatusChangeDto } from '../../../../models/interface/admin/AdminEventAction';
+import { ApiResult, isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 
 /** 後端 Role 的 API 值對應到畫面顯示用的中文角色名稱 */
@@ -141,6 +143,9 @@ export class AdminDashboardMarketDetail implements OnInit {
       },
       boothLayoutImage: data.boothLayoutImage,
       statusLogs: data.logs.items.map((log) => this.mapStatusLog(log)),
+      unpublishRequestId: data.unpublishRequestId,
+      unpublishReason: data.unpublishReason,
+      unpublishRequestedAt: data.unpublishRequestedAt,
     };
   }
 
@@ -155,6 +160,32 @@ export class AdminDashboardMarketDetail implements OnInit {
         operatorName: log.operator,
       },
     };
+  }
+
+  /**
+   * 呼叫活動狀態變更類 API 的共用流程：送出請求 → 檢查結果 → 提示訊息 → 重新讀取詳細資料
+   */
+  private async runEventAction(
+    request$: Observable<ApiResult<EventStatusChangeDto>>,
+    successTitle: string,
+    successMessage: string,
+    failTitle: string,
+  ): Promise<void> {
+    try {
+      const res = await firstValueFrom(request$);
+      if (!isApiSuccessStatus(res.statusCode)) {
+        await this.alert.error(failTitle, res.message);
+        return;
+      }
+
+      await this.alert.success(successTitle, successMessage);
+
+      if (this.eventId) {
+        this.loadDetail(this.eventId);
+      }
+    } catch (error: any) {
+      await this.alert.error(failTitle, error.error?.message || '請稍後再試。');
+    }
   }
 
   getStatusClass(status: string): string {
@@ -231,11 +262,16 @@ export class AdminDashboardMarketDetail implements OnInit {
     await this.openRequireSupplementConfirm(result.value);
   }
 
-  private async openRequireSupplementConfirm(reason: string): Promise<void> {
-    const escapedReason = reason
+  /** 把字串裡的 HTML 特殊字元轉義，避免帶進 Swal 的 html 字串時被當成標籤解析。 */
+  private escapeHtml(text: string): string {
+    return text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
+  }
+
+  private async openRequireSupplementConfirm(reason: string): Promise<void> {
+    const escapedReason = this.escapeHtml(reason);
 
     const result = await this.alert.custom({
       html: `
@@ -267,13 +303,13 @@ export class AdminDashboardMarketDetail implements OnInit {
       return;
     }
 
-    if (!result.isConfirmed) return;
+    if (!result.isConfirmed || !this.eventId) return;
 
-    // TODO: 呼叫後端 API，將活動狀態改為「補件中」
-    this.alert.success(
+    await this.runEventAction(
+      this.adminApiService.requestEventRevision(this.eventId, { note: reason, isUnpublish: false }),
       '補件要求已送出',
       '補件要求成功送出。<br />活動狀態更新為「補件中」，已通知送主辦方補件。',
-      '確認',
+      '補件要求失敗',
     );
   }
 
@@ -285,13 +321,13 @@ export class AdminDashboardMarketDetail implements OnInit {
       '取消',
     );
 
-    if (!confirmed) return;
+    if (!confirmed || !this.eventId) return;
 
-    // TODO: 呼叫後端 API，將活動狀態改為「地圖建置中」
-    this.alert.success(
+    await this.runEventAction(
+      this.adminApiService.approveEvent(this.eventId),
       '審核通過',
       '活動資料已審核通過。<br />活動已進入「地圖建置中狀態」，請盡速建立攤位地圖。',
-      '知道了',
+      '審核失敗',
     );
   };
 
@@ -303,12 +339,13 @@ export class AdminDashboardMarketDetail implements OnInit {
       '取消',
     );
 
-    if (!confirmed) return;
+    if (!confirmed || !this.eventId) return;
 
-    // TODO: 呼叫後端 API，將活動狀態改為「待發布」
-    this.alert.success(
+    await this.runEventAction(
+      this.adminApiService.completeEventMapBuilding(this.eventId),
       '地圖建置已送出',
       '地圖建置成功送出。<br />活動狀態更新為「待發布」， 並通知主辦方確認活動內容。',
+      '地圖建置失敗',
     );
   };
 
@@ -332,11 +369,11 @@ export class AdminDashboardMarketDetail implements OnInit {
             <div class="admin-swal-unpublish-form-data">
                 <span>活動名稱</span><span>${ this.detail?.activityInfo.name }</span>
                 <span>主辦方</span><span>${this.detail?.organizerInfo.organizerName}</span>
-                <span>申請時間</span><span>${"//TODO:Datetime"}</span>
+                <span>申請時間</span><span>${this.detail?.unpublishRequestedAt ?? '-'}</span>
             </div>
             <div class="admin-swal-unpublish-form-reason">
                 <span>申請原因</span>
-                <div>${"//TODO:Reason"}</div>
+                <div>${this.escapeHtml(this.detail?.unpublishReason ?? '-')}</div>
             </div>
         </div>
         <div class="admin-swal-unpublish-form-option-section">
@@ -432,29 +469,37 @@ export class AdminDashboardMarketDetail implements OnInit {
     if (!result.isConfirmed || !result.value) return;
 
     if (result.value.approved) {
-      this.handleUnpublishApproved();
+      await this.handleUnpublishApproved();
     } else {
-      this.handleUnpublishRejected(result.value.reason);
+      await this.handleUnpublishRejected(result.value.reason);
     }
   }
 
-  private handleUnpublishApproved(): void {
-    // TODO: 呼叫後端 API，將活動狀態改為「已下架」
-    this.alert.success(
+  private async handleUnpublishApproved(): Promise<void> {
+    if (!this.eventId) return;
+
+    await this.runEventAction(
+      this.adminApiService.confirmEventUnpublish(this.eventId),
       '審核通過',
       '活動已成功下架。<br />活動狀態更新為「已下架」，已通知主辦方。',
+      '下架審核失敗',
     );
   }
 
-  private handleUnpublishRejected(reason: string): void {
-    // TODO: 呼叫後端 API，將下架申請駁回（帶上 reason），活動狀態維持原狀並通知主辦方
-    const escapedReason = reason
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-    this.alert.success(
+  private async handleUnpublishRejected(reason: string): Promise<void> {
+    const unpublishRequestId = this.detail?.unpublishRequestId;
+    if (!unpublishRequestId) {
+      await this.alert.error('下架審核失敗', '找不到下架申請單，請重新整理頁面。');
+      return;
+    }
+
+    const escapedReason = this.escapeHtml(reason);
+
+    await this.runEventAction(
+      this.adminApiService.requestEventRevision(unpublishRequestId, { note: reason, isUnpublish: true }),
       '已駁回下架申請',
       `已駁回主辦方的下架申請。<br />活動狀態維持不變，已通知主辦方。<br /><br />審核說明：${escapedReason}`,
+      '下架審核失敗',
     );
   }
 

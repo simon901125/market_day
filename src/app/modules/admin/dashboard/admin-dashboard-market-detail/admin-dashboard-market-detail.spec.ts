@@ -4,7 +4,9 @@ import { of } from 'rxjs';
 
 import { AdminDashboardMarketDetail } from './admin-dashboard-market-detail';
 import { AdminApiService } from '../../../../core/services/admin-api.service';
+import { AlertService } from '../../../../core/services/alert.service';
 import { AdminEventDetailDto, AdminEventStatusLogPage } from '../../../../models/interface/admin/AdminEventDetail';
+import { EventStatusChangeDto } from '../../../../models/interface/admin/AdminEventAction';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 
 const fakeLogsPage: AdminEventStatusLogPage = {
@@ -58,7 +60,13 @@ const fakeEventDetail: AdminEventDetailDto = {
   boothLayoutImage: 'assets/images/organizer/booth/booth-layout-example.svg',
   unpublishRequestId: null,
   unpublishReason: null,
+  unpublishRequestedAt: null,
   logs: fakeLogsPage,
+};
+
+const fakeStatusChange: EventStatusChangeDto = {
+  eventName: '夏日綠意市集',
+  newEventStatus: 'mapBuilding',
 };
 
 describe('AdminDashboardMarketDetail', () => {
@@ -66,21 +74,48 @@ describe('AdminDashboardMarketDetail', () => {
   let fixture: ComponentFixture<AdminDashboardMarketDetail>;
   let router: Router;
   let adminApiServiceSpy: jasmine.SpyObj<AdminApiService>;
+  let alertServiceSpy: jasmine.SpyObj<AlertService>;
 
   beforeEach(async () => {
-    adminApiServiceSpy = jasmine.createSpyObj('AdminApiService', ['getEventDetail', 'getEventStatusLogs']);
+    adminApiServiceSpy = jasmine.createSpyObj('AdminApiService', [
+      'getEventDetail',
+      'getEventStatusLogs',
+      'approveEvent',
+      'requestEventRevision',
+      'completeEventMapBuilding',
+      'confirmEventUnpublish',
+    ]);
     adminApiServiceSpy.getEventDetail.and.returnValue(
       of({ statusCode: 200, message: 'ok', messageDetails: null, data: fakeEventDetail }),
     );
     adminApiServiceSpy.getEventStatusLogs.and.returnValue(
       of({ statusCode: 200, message: 'ok', messageDetails: null, data: { ...fakeLogsPage, page: 2, hasPrevious: true, hasNext: false } }),
     );
+    adminApiServiceSpy.approveEvent.and.returnValue(
+      of({ statusCode: 200, message: 'ok', messageDetails: null, data: fakeStatusChange }),
+    );
+    adminApiServiceSpy.requestEventRevision.and.returnValue(
+      of({ statusCode: 200, message: 'ok', messageDetails: null, data: fakeStatusChange }),
+    );
+    adminApiServiceSpy.completeEventMapBuilding.and.returnValue(
+      of({ statusCode: 200, message: 'ok', messageDetails: null, data: fakeStatusChange }),
+    );
+    adminApiServiceSpy.confirmEventUnpublish.and.returnValue(
+      of({ statusCode: 200, message: 'ok', messageDetails: null, data: fakeStatusChange }),
+    );
+
+    alertServiceSpy = jasmine.createSpyObj('AlertService', ['confirm', 'success', 'error', 'custom']);
+    alertServiceSpy.confirm.and.resolveTo(true);
+    alertServiceSpy.success.and.resolveTo({} as any);
+    alertServiceSpy.error.and.resolveTo({} as any);
+    alertServiceSpy.custom.and.resolveTo({ isConfirmed: false } as any);
 
     await TestBed.configureTestingModule({
       imports: [AdminDashboardMarketDetail],
       providers: [
         provideRouter([]),
         { provide: AdminApiService, useValue: adminApiServiceSpy },
+        { provide: AlertService, useValue: alertServiceSpy },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { params: { id: '1' } } },
@@ -132,5 +167,92 @@ describe('AdminDashboardMarketDetail', () => {
     const navigateSpy = spyOn(router, 'navigate');
     component.goBack();
     expect(navigateSpy).toHaveBeenCalledWith(['/admin/dash-board/activity']);
+  });
+
+  it('onApproveHandler 取消確認時不應呼叫 API', async () => {
+    alertServiceSpy.confirm.and.resolveTo(false);
+
+    await component.onApproveHandler();
+
+    expect(adminApiServiceSpy.approveEvent).not.toHaveBeenCalled();
+  });
+
+  it('onApproveHandler 確認後應呼叫 approveEvent 並重新載入詳細資料', async () => {
+    await component.onApproveHandler();
+
+    expect(adminApiServiceSpy.approveEvent).toHaveBeenCalledWith(1);
+    expect(alertServiceSpy.success).toHaveBeenCalled();
+    expect(adminApiServiceSpy.getEventDetail).toHaveBeenCalledTimes(2);
+  });
+
+  it('onMapBuildingDoneHandler 確認後應呼叫 completeEventMapBuilding', async () => {
+    await component.onMapBuildingDoneHandler();
+
+    expect(adminApiServiceSpy.completeEventMapBuilding).toHaveBeenCalledWith(1);
+    expect(alertServiceSpy.success).toHaveBeenCalled();
+  });
+
+  it('onRequireSupplementHandler 送出補件原因後應帶 isUnpublish:false 呼叫 requestEventRevision', async () => {
+    alertServiceSpy.custom.and.resolveTo({ isConfirmed: true, value: '資料不齊全' } as any);
+
+    await component.onRequireSupplementHandler();
+
+    expect(adminApiServiceSpy.requestEventRevision).toHaveBeenCalledWith(1, {
+      note: '資料不齊全',
+      isUnpublish: false,
+    });
+  });
+
+  it('下架駁回時找不到下架申請單 id 應顯示錯誤，不呼叫 API', async () => {
+    alertServiceSpy.custom.and.resolveTo({
+      isConfirmed: true,
+      value: { approved: false, reason: '資料不齊全' },
+    } as any);
+
+    await component.onUnpublishHandler();
+
+    expect(adminApiServiceSpy.requestEventRevision).not.toHaveBeenCalled();
+    expect(alertServiceSpy.error).toHaveBeenCalledWith('下架審核失敗', '找不到下架申請單，請重新整理頁面。');
+  });
+
+  it('下架駁回時應帶下架申請單 id 與 isUnpublish:true 呼叫 requestEventRevision', async () => {
+    adminApiServiceSpy.getEventDetail.and.returnValue(of({
+      statusCode: 200,
+      message: 'ok',
+      messageDetails: null,
+      data: { ...fakeEventDetail, eventStatus: 'pendingUnpublish', unpublishRequestId: 42, unpublishReason: '主辦方申請下架', unpublishRequestedAt: '2026/06/25 09:00' },
+    }));
+    component.ngOnInit();
+
+    alertServiceSpy.custom.and.resolveTo({
+      isConfirmed: true,
+      value: { approved: false, reason: '資料不齊全' },
+    } as any);
+
+    await component.onUnpublishHandler();
+
+    expect(adminApiServiceSpy.requestEventRevision).toHaveBeenCalledWith(42, {
+      note: '資料不齊全',
+      isUnpublish: true,
+    });
+  });
+
+  it('下架同意時應呼叫 confirmEventUnpublish', async () => {
+    adminApiServiceSpy.getEventDetail.and.returnValue(of({
+      statusCode: 200,
+      message: 'ok',
+      messageDetails: null,
+      data: { ...fakeEventDetail, eventStatus: 'pendingUnpublish', unpublishRequestId: 42, unpublishReason: '主辦方申請下架', unpublishRequestedAt: '2026/06/25 09:00' },
+    }));
+    component.ngOnInit();
+
+    alertServiceSpy.custom.and.resolveTo({
+      isConfirmed: true,
+      value: { approved: true, reason: '' },
+    } as any);
+
+    await component.onUnpublishHandler();
+
+    expect(adminApiServiceSpy.confirmEventUnpublish).toHaveBeenCalledWith(1);
   });
 });

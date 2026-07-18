@@ -54,5 +54,7 @@ export interface AdminEventDetailDto {
   unpublishRequestId: number | null;
   /** 下架申請原因，僅當 eventStatus 為下架申請中時有值 */
   unpublishReason: string | null;
+  /** 下架申請時間，僅當 eventStatus 為下架申請中時有值 */
+  unpublishRequestedAt: string | null;
   logs: AdminEventStatusLogPage;
 }
