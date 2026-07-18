@@ -61,4 +61,31 @@ export class ActivityStatus {
   static getClass(status: string): string {
     return ActivityStatus.classMap[status] ?? 'tag-grey';
   }
+
+  /** 後端 EventStatus 的 API 值（英文 key）對應到前端顯示用的中文標籤。 */
+  static readonly apiStatusMap: Record<string, string> = {
+    draft: ActivityStatus.draft,
+    pendingReview: ActivityStatus.pendingReview,
+    revisionRequired: ActivityStatus.revisionRequired,
+    mapBuilding: ActivityStatus.mapBuilding,
+    readyToPublish: ActivityStatus.readyToPublish,
+    registrationOpen: ActivityStatus.registrationOpen,
+    full: ActivityStatus.full,
+    published: ActivityStatus.published,
+    active: ActivityStatus.active,
+    ended: ActivityStatus.ended,
+    pendingUnpublish: ActivityStatus.unpublishRequested,
+    unpublished: ActivityStatus.unpublished,
+  };
+
+  /** 把後端回傳的 EventStatus API 值轉成畫面用的中文標籤。 */
+  static fromApiStatus(status: string): string {
+    return ActivityStatus.apiStatusMap[status] ?? status;
+  }
+
+  /** 把畫面上的中文狀態標籤轉成要送給後端的 EventStatus API 值。 */
+  static toApiStatus(label: string): string | null {
+    const entry = Object.entries(ActivityStatus.apiStatusMap).find(([, value]) => value === label);
+    return entry ? entry[0] : null;
+  }
 }
