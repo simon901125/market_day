@@ -16,7 +16,7 @@ export interface VendorMarketDetail {
   baseFee: number;
   coverImageUrl: string | null;
   mapImageUrl: string | null;
-  categoryName: string;
+  categories: VendorMarketCategory[];
   organizerName: string | null;
   companyName: string | null;
   serviceDays: string | null;
@@ -32,6 +32,12 @@ export interface VendorMarketDetail {
   dailyAvailability: VendorMarketDailyAvailability[];
   equipments: VendorMarketEquipment[];
   trafficInfos: VendorMarketTrafficInfo[];
+}
+
+export interface VendorMarketCategory {
+  id: number;
+  name: string;
+  slug: string;
 }
 
 export interface VendorMarketDailyAvailability {

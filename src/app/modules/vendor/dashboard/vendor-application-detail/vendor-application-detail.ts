@@ -72,7 +72,12 @@ export class VendorApplicationDetail implements OnInit {
 
   /** 讀取路由中的 applicationId，並向 StallController 取得詳情。 */
   ngOnInit(): void {
-    const applicationId = Number(this.route.snapshot.paramMap.get('id'));
+    const routeApplicationId = Number(this.route.snapshot.paramMap.get('id'));
+    const queryApplicationId = Number(this.route.snapshot.queryParamMap.get('applicationId'));
+    const applicationId =
+      Number.isInteger(routeApplicationId) && routeApplicationId > 0
+        ? routeApplicationId
+        : queryApplicationId;
     if (!Number.isInteger(applicationId) || applicationId < 1) {
       this.isLoading = false;
       this.loadError = '報名 ID 不正確，無法載入報名詳情。';
@@ -252,11 +257,10 @@ export class VendorApplicationDetail implements OnInit {
     ];
     const paymentRows = createPaymentRows(api);
     const refundRows = createRefundRows(api);
-    const statusProgress = api.status
-      .filter((step) => Boolean(step.value || step.createdAt))
-      .map((step) => ({
+    // 保留後端回傳的完整流程骨架，未到達的步驟依 main 版面顯示「尚未完成」。
+    const statusProgress = api.status.map((step) => ({
         label: step.label,
-        value: [step.value, step.createdAt].filter(Boolean).join('　'),
+        value: [step.value, step.createdAt].filter(Boolean).join('　') || '尚未完成',
       }));
     const boothSelected = selectedStalls.length > 0;
     const boothActionLabel = boothSelected

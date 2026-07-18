@@ -6,6 +6,7 @@ import { Router, provideRouter } from '@angular/router';
 import { AlertService } from '../../../../core/services/alert.service';
 import { VendorAccessService } from '../../../../core/Vendor/dashboardApi/vendor-access.service';
 import { VendorMarketSignupDetail } from './vendor-market-signup-detail';
+import { VendorMarketDetail } from '../../../../models/interface/vendor/VendorMarketDetail';
 
 describe('VendorMarketSignupDetail', () => {
   let component: VendorMarketSignupDetail;
@@ -36,6 +37,27 @@ describe('VendorMarketSignupDetail', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should map every API category to a visible market tag', () => {
+    const detail = {
+      categories: [
+        { id: 1, name: '文創手作', slug: 'handmade' },
+        { id: 2, name: '甜點飲品', slug: 'dessert' },
+      ],
+      registrationStatus: 'OPEN',
+      trafficInfos: [],
+      dailyAvailability: [],
+    } as unknown as VendorMarketDetail;
+
+    const market = (
+      component as unknown as {
+        toMarketCard(value: VendorMarketDetail): { tags: string[]; category: string };
+      }
+    ).toMarketCard(detail);
+
+    expect(market.tags).toEqual(['文創手作', '甜點飲品']);
+    expect(market.category).toBe('文創手作、甜點飲品');
   });
 
   it('should show setup alert and stop signup when vendor profile is required', async () => {

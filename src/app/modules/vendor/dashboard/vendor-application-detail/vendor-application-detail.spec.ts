@@ -74,6 +74,10 @@ describe('VendorApplicationDetail', () => {
       label: '報名日期',
       value: '已報名　2026/07/01 10:30',
     });
+    expect(component.statusProgress[1]).toEqual({
+      label: '審核時間',
+      value: '尚未完成',
+    });
   });
 });
 
@@ -178,6 +182,12 @@ function createApiDetail(): VendorApplicationApiDetail {
         label: '報名日期',
         value: '已報名',
         createdAt: '2026/07/01 10:30',
+      },
+      {
+        key: 'REVIEWED',
+        label: '審核時間',
+        value: null,
+        createdAt: null,
       },
     ],
   };

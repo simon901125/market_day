@@ -32,6 +32,11 @@ interface UploadGuide {
   text: string;
 }
 
+interface StallCategoryOption {
+  id: number;
+  name: string;
+}
+
 @Component({
   selector: 'app-vendor-dashboard-stall',
   imports: [FormsModule, Dropdown, VendorProductModal],
@@ -41,6 +46,15 @@ interface UploadGuide {
 export class VendorDashboardStall implements OnInit {
   readonly maxProducts = 3;
   readonly invalidFields = new Set<string>();
+  private readonly categoryOptions: StallCategoryOption[] = [
+    { id: 1, name: '餐飲美食' },
+    { id: 2, name: '文創手作' },
+    { id: 3, name: '親子家庭' },
+    { id: 4, name: '寵物生活' },
+    { id: 5, name: '植物選物' },
+    { id: 6, name: '服飾配件' },
+    { id: 7, name: '玩具選物' },
+  ];
   avatarPreview = '';
   coverPreview = '';
   private avatarFile: File | null = null;
@@ -99,7 +113,8 @@ export class VendorDashboardStall implements OnInit {
   brandInfo = {
     description: '',
     category: '玩具選物',
-    categories: ['餐飲美食', '文創手作', '親子家庭', '寵物生活', '植物選物', '服飾配件', '玩具選物'],
+    categoryId: 7 as number | null,
+    categories: this.categoryOptions.map((category) => category.name),
     maxDescriptionLength: 500,
   };
 
@@ -171,6 +186,7 @@ export class VendorDashboardStall implements OnInit {
     this.persistedCoverImageUrl = null;
     this.brandInfo.description = '';
     this.brandInfo.category = '';
+    this.brandInfo.categoryId = null;
     this.products = [];
   }
 
@@ -238,7 +254,9 @@ export class VendorDashboardStall implements OnInit {
     this.avatarFile = null;
     this.coverFile = null;
     this.brandInfo.description = data.brandDescription || data.brandSummary || '';
-    this.brandInfo.category = data.brandType ?? '';
+    const selectedCategory = data.categories?.[0];
+    this.brandInfo.category = selectedCategory?.name ?? '';
+    this.brandInfo.categoryId = selectedCategory?.id ?? null;
     this.products = (data.products ?? []).map((product) => ({
       id: product.id,
       name: product.productName,
@@ -318,6 +336,7 @@ export class VendorDashboardStall implements OnInit {
 
   updateCategory(value: string): void {
     this.brandInfo.category = value;
+    this.brandInfo.categoryId = this.categoryOptions.find((category) => category.name === value)?.id ?? null;
     this.clearInvalid('category');
   }
 
@@ -422,7 +441,7 @@ export class VendorDashboardStall implements OnInit {
       this.invalidFields.add('description');
       missingRequiredLabels.push('品牌簡介');
     }
-    if (!this.brandInfo.category.trim()) {
+    if (!this.brandInfo.category.trim() || this.brandInfo.categoryId === null) {
       this.invalidFields.add('category');
       missingRequiredLabels.push('品牌類型');
     }
@@ -520,7 +539,7 @@ export class VendorDashboardStall implements OnInit {
       coverImageUrl: this.persistedCoverImageUrl,
       brandSummary: description,
       brandDescription: description,
-      brandType: this.brandInfo.category.trim(),
+      categoryId: this.brandInfo.categoryId ?? 0,
       products: this.products.map((product) => ({
         ...(product.id && product.id > 0 ? { id: product.id } : {}),
         productName: product.name.trim(),

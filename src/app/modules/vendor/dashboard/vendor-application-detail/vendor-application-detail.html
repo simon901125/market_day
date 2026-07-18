@@ -4,7 +4,7 @@
     <p class="notice-box" role="status">報名詳情載入中…</p>
   } @else if (loadError) {
     <p class="notice-box" role="alert">{{ loadError }}</p>
-  }
+  } @else {
 
   <header class="page-title app-page-header vendor-detail-header">
     <div>
@@ -416,4 +416,5 @@
     </div>
   </section>
   </div>
+  }
 </main>

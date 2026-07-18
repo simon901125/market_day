@@ -164,6 +164,8 @@ export class VendorMarketSignupDetail implements OnInit {
     };
     const status = statusMap[detail.registrationStatus];
 
+    const categoryNames = detail.categories.map((category) => category.name).filter(Boolean);
+
     return {
       id: String(detail.eventId),
       title: detail.eventTitle,
@@ -178,8 +180,8 @@ export class VendorMarketSignupDetail implements OnInit {
       image: detail.coverImageUrl || 'assets/images/market/cards/market-card-01.png',
       status,
       statusClass: MarketStatus.getClass(status),
-      tags: detail.categoryName ? [detail.categoryName] : [],
-      category: detail.categoryName,
+      tags: categoryNames,
+      category: categoryNames.join('、'),
       organizer: detail.organizerName || detail.companyName || '',
       transportation: detail.trafficInfos.flatMap((item) =>
         [item.trafficTitle, item.trafficDetails].filter(Boolean),

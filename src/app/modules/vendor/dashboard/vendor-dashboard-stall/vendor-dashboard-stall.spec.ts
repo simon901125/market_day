@@ -32,7 +32,7 @@ describe('VendorDashboardStall', () => {
     coverImageUrl: 'cover.png',
     brandSummary: '品牌簡介',
     brandDescription: '品牌介紹',
-    brandType: '玩具收藏',
+    categories: [{ id: 7, name: '玩具選物', slug: 'toys' }],
     products: [
       {
         id: 1,
@@ -199,6 +199,7 @@ describe('VendorDashboardStall', () => {
 
     expect(request.avatarImageUrl).toBe('avatar.png');
     expect(request.coverImageUrl).toBe('cover.png');
+    expect(request.categoryId).toBe(7);
   });
 
   it('should show warning instead of form when product limit is reached', async () => {

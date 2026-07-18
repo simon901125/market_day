@@ -6,6 +6,12 @@ export interface VendorStallProduct {
   productImageUrl: string | null;
 }
 
+export interface VendorStallCategory {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 /** 攤主後台攤位資料，欄位名稱與 StallController 回傳內容一致。 */
 export interface VendorStallInfo {
   brandName: string;
@@ -22,11 +28,13 @@ export interface VendorStallInfo {
   coverImageUrl: string | null;
   brandSummary: string;
   brandDescription: string;
-  brandType: string;
+  categories: VendorStallCategory[];
   products: VendorStallProduct[];
 }
 
-export type VendorStallSaveRequest = VendorStallInfo;
+export type VendorStallSaveRequest = Omit<VendorStallInfo, 'categories'> & {
+  categoryId: number;
+};
 
 export type VendorImagePurpose = 'vendor-avatar' | 'vendor-cover';
 

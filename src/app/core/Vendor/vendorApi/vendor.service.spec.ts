@@ -83,7 +83,7 @@ describe('VendorService', () => {
       coverImageUrl: null,
       brandSummary: '品牌簡介',
       brandDescription: '品牌介紹',
-      brandType: '文創手作',
+      categoryId: 2,
       products: [],
     };
 
