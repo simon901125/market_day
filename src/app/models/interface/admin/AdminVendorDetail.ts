@@ -9,8 +9,6 @@ export interface AdminVendorDetail {
       username: string;
       /** 使用者角色：攤主 */
       role: string;
-      /** 電子信箱 */
-      email: string;
       /** 是否已綁定 Google 帳號 */
       googleLinked: boolean;
       /** 帳號狀態（啟用/停用） */
@@ -47,10 +45,6 @@ export interface AdminVendorDetail {
       items: {
         /** 活動名稱 */
         activityName: string;
-        /** 報名日期 */
-        registrationDate: string;
-        /** 活動日期區間 */
-        activityDate: string;
         /** 攤主實際選擇的報名日期，可為一天或多天。 */
         registrationDates: string[];
         /** 報名狀態 */

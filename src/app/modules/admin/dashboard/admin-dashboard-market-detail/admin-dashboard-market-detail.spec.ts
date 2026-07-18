@@ -34,7 +34,7 @@ const fakeEventDetail: AdminEventDetailDto = {
   locationName: '勤美綠原道',
   addr: '台北市信義區君悅大道1號',
   eventStatus: 'pendingReview',
-  eventType: '文創手作',
+  categories: [{ id: 1, name: '文創手作', slug: 'handmade' }],
   description: '夏天市集介紹',
   registrationStartTime: '2026/05/01 10:00',
   registrationEndTime: '2026/05/15 23:59',
@@ -143,7 +143,7 @@ describe('AdminDashboardMarketDetail', () => {
     expect(component.detail?.activityInfo).toEqual(jasmine.objectContaining({
       image: 'assets/images/market/cards/market-card-01.png',
       name: '夏日綠意市集',
-      type: '文創手作',
+      types: ['文創手作'],
     }));
     expect(component.detail?.organizerInfo.email).toBe('forest@marketday.com');
     expect(component.detail?.boothInfo.boothZones).toEqual(['A區：50攤', 'B區：20攤']);

@@ -40,4 +40,21 @@ export class PaymentStatus {
   static getClass(status: string): string {
     return PaymentStatus.classMap[status] ?? 'tag-grey';
   }
+
+  /** 後端 PaymentStatus/RefundStatus 的 API 值（英文 key）對應到前端顯示用的中文標籤。 */
+  static readonly apiStatusMap: Record<string, string> = {
+    pending: PaymentStatus.pending,
+    paid: PaymentStatus.paid,
+    failed: PaymentStatus.failed,
+    expired: PaymentStatus.expired,
+    refundRequested: PaymentStatus.refundRequested,
+    refunding: PaymentStatus.refunding,
+    refundFailed: PaymentStatus.refundFailed,
+    refunded: PaymentStatus.refunded,
+  };
+
+  /** 把後端回傳的 PaymentStatus/RefundStatus API 值轉成畫面用的中文標籤。 */
+  static fromApiStatus(status: string): string {
+    return PaymentStatus.apiStatusMap[status] ?? status;
+  }
 }

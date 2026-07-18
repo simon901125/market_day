@@ -9,8 +9,6 @@ export interface AdminOrganizerDetail {
       username: string;
       /** 使用者角色：主辦方 */
       role: string;
-      /** 電子信箱 */
-      email: string;
       /** 是否已綁定 Google 帳號 */
       googleLinked: boolean;
       /** 帳號狀態（啟用/停用） */
@@ -42,8 +40,6 @@ export interface AdminOrganizerDetail {
       companyName: string;
       /** 統一編號 */
       taxId: string;
-      /** 主辦方狀態 */
-      organizerStatus: string;
     };
     /** 活動管理紀錄 */
     activityManagementRecords: {

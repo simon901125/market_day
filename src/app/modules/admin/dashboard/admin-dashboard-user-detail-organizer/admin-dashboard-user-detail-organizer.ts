@@ -1,84 +1,18 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { firstValueFrom, Observable } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
+import { AdminApiService } from '../../../../core/services/admin-api.service';
 import { UserStatus } from '../../../../models/status/UserStatus';
+import { UserType } from '../../../../models/type/UserType';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
-import { UserListItem } from '../../../../models/interface/admin/UserListItem';
 import { AdminOrganizerDetail } from '../../../../models/interface/admin/AdminOrganizerDetail';
+import { AdminOrgDetailDto, AdminOrgEventManagementDto } from '../../../../models/interface/admin/AdminOrgDetail';
+import { AdminUserLoginDto } from '../../../../models/interface/admin/AdminUserLoginLog';
+import { UserStatusChangeDto } from '../../../../models/interface/admin/AdminUserAction';
+import { ApiResult, isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
-
-/** 模擬後端回傳的主辦方列表，串接 API 後可移除 */
-const MOCK_ORGANIZER_USERS: UserListItem[] = [
-  { id: 3,  name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2026/05/30', status: '正常' },
-  { id: 7,  name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2026/05/30', status: '正常' },
-  { id: 11, name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2026/05/30', status: '正常' },
-  { id: 15, name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2026/05/30', status: '正常' },
-  { id: 19, name: '王曉三', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2026/05/30', status: '正常' },
-  { id: 4,  name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2024/05/30', status: '已停用' },
-  { id: 8,  name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2024/05/30', status: '已停用' },
-  { id: 12, name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2024/05/30', status: '已停用' },
-  { id: 16, name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2024/05/30', status: '已停用' },
-  { id: 20, name: '王曉四', email: 'Test@gmail.com', role: 'organizer', createdAt: '2020/01/01', lastLoginAt: '2024/05/30', status: '已停用' },
-];
-
-/** 模擬後端回傳的主辦方詳情，串接 API 後可移除 */
-const MOCK_DETAIL: AdminOrganizerDetail = {
-  userId: 3,
-  detail: {
-    userInfo: {
-      username: '王曉三',
-      role: 'organizer',
-      email: 'wang3@example.com',
-      googleLinked: false,
-      accountStatus: UserStatus.active,
-      registeredAt: '2020/01/01 10:00',
-      lastLoginAt: '2026/06/20 09:15',
-      createdActivityCount: 8,
-      ongoingActivityCount: 2,
-      endedActivityCount: 6,
-    },
-    organizerInfo: {
-      organizerName: '春語市集',
-      contactPerson: '王曉三',
-      contactPhone: '0912-345-678',
-      contactEmail: 'wang3@example.com',
-      contactAddress: '台北市大安區忠孝東路四段127號8樓',
-      companyName: '春語文化有限公司',
-      taxId: '12345678',
-      organizerStatus: '審核通過',
-    },
-    activityManagementRecords: {
-      total: 9,
-      items: [
-        { activityName: '春語花市', activityTime: '2026/05/01 - 2026/05/02 10:00 - 19:00', activityStatus: '已結束', registrationCount: '150/150' },
-        { activityName: '楓糖森活市集', activityTime: '2026/06/05 - 2026/06/06 10:00 - 19:00', activityStatus: '進行中', registrationCount: '88/120' },
-        { activityName: '月光甜點市集', activityTime: '2026/11/12 - 2026/11/13 10:00 - 19:00', activityStatus: '待審核', registrationCount: '0/100' },
-        { activityName: '春語花市', activityTime: '2026/05/01 - 2026/05/02 10:00 - 19:00', activityStatus: '已結束', registrationCount: '150/150' },
-        { activityName: '楓糖森活市集', activityTime: '2026/06/05 - 2026/06/06 10:00 - 19:00', activityStatus: '進行中', registrationCount: '88/120' },
-        { activityName: '月光甜點市集', activityTime: '2026/11/12 - 2026/11/13 10:00 - 19:00', activityStatus: '待審核', registrationCount: '0/100' },
-        { activityName: '春語花市', activityTime: '2026/05/01 - 2026/05/02 10:00 - 19:00', activityStatus: '已結束', registrationCount: '150/150' },
-        { activityName: '楓糖森活市集', activityTime: '2026/06/05 - 2026/06/06 10:00 - 19:00', activityStatus: '進行中', registrationCount: '88/120' },
-        { activityName: '月光甜點市集', activityTime: '2026/11/12 - 2026/11/13 10:00 - 19:00', activityStatus: '待審核', registrationCount: '0/100' },
-      ],
-    },
-    loginRecords: {
-      total: 10,
-      items: [
-        { loginTime: '2026/06/20 09:15', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026/06/18 14:32', loginMethod: 'Google', loginStatus: '成功' },
-        { loginTime: '2026/06/15 08:00', loginMethod: 'Email', loginStatus: '失敗' },
-        { loginTime: '2026/06/10 20:45', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026/06/05 11:00', loginMethod: 'Google', loginStatus: '成功' },
-        { loginTime: '2026/06/20 09:15', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026/06/18 14:32', loginMethod: 'Google', loginStatus: '成功' },
-        { loginTime: '2026/06/15 08:00', loginMethod: 'Email', loginStatus: '失敗' },
-        { loginTime: '2026/06/10 20:45', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026/06/05 11:00', loginMethod: 'Google', loginStatus: '成功' },
-      ],
-    },
-  },
-};
 
 @Component({
   selector: 'app-admin-dashboard-user-detail-organizer',
@@ -91,12 +25,13 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private alert: AlertService,
+    private readonly adminApiService: AdminApiService,
   ) {}
 
   readonly UserStatus = UserStatus;
 
-  user: UserListItem | null = null;
   detail: AdminOrganizerDetail | null = null;
+  private userId: number | null = null;
 
   loginCurrentPage = 1;
   readonly loginPageSize = 5;
@@ -106,13 +41,28 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   }
 
   get paginatedLoginRecords(): AdminOrganizerDetail['detail']['loginRecords']['items'] {
-    const items = this.detail?.detail.loginRecords.items ?? [];
-    const start = (this.loginCurrentPage - 1) * this.loginPageSize;
-    return items.slice(start, start + this.loginPageSize);
+    return this.detail?.detail.loginRecords.items ?? [];
   }
 
   onLoginPageChange(page: number): void {
     this.loginCurrentPage = page;
+    if (!this.userId || !this.detail) return;
+
+    this.adminApiService.getUserLoginLogs(this.userId, page, this.loginPageSize).subscribe({
+      next: async (res) => {
+        if (!isApiSuccessStatus(res.statusCode)) {
+          await this.alert.error('查詢失敗', res.message);
+          return;
+        }
+        this.detail!.detail.loginRecords = {
+          total: res.data.totalItems,
+          items: res.data.items.map((item) => this.mapLoginItem(item)),
+        };
+      },
+      error: async (error) => {
+        await this.alert.error('查詢失敗', error.error?.message || '請稍後再試。');
+      },
+    });
   }
 
   activityCurrentPage = 1;
@@ -123,29 +73,103 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   }
 
   get paginatedActivityRecords(): AdminOrganizerDetail['detail']['activityManagementRecords']['items'] {
-    const items = this.detail?.detail.activityManagementRecords.items ?? [];
-    const start = (this.activityCurrentPage - 1) * this.activityPageSize;
-    return items.slice(start, start + this.activityPageSize);
+    return this.detail?.detail.activityManagementRecords.items ?? [];
   }
 
   onActivityPageChange(page: number): void {
     this.activityCurrentPage = page;
+    if (!this.userId || !this.detail) return;
+
+    this.adminApiService.getOrgEventLogs(this.userId, page, this.activityPageSize).subscribe({
+      next: async (res) => {
+        if (!isApiSuccessStatus(res.statusCode)) {
+          await this.alert.error('查詢失敗', res.message);
+          return;
+        }
+        this.detail!.detail.activityManagementRecords = {
+          total: res.data.totalItems,
+          items: res.data.items.map((item) => this.mapEventItem(item)),
+        };
+      },
+      error: async (error) => {
+        await this.alert.error('查詢失敗', error.error?.message || '請稍後再試。');
+      },
+    });
   }
 
   ngOnInit(): void {
-    const stateUser: UserListItem | undefined = history.state?.user;
+    const id = Number(this.route.snapshot.params['id']);
+    this.userId = id;
+    this.loadDetail(id);
+  }
 
-    if (stateUser) {
-      this.user = stateUser;
-    } else {
-      const id = Number(this.route.snapshot.params['id']);
-      this.user = MOCK_ORGANIZER_USERS.find(u => u.id === id) ?? null;
-    }
+  /** 串接 API："/api/admin/users/{id}?role=organizer"，依網址上的 id 查詢主辦方詳細資料 */
+  private loadDetail(id: number): void {
+    this.adminApiService.getOrganizerDetail(id, this.loginPageSize).subscribe({
+      next: async (res) => {
+        if (!isApiSuccessStatus(res.statusCode)) {
+          await this.alert.error('查詢失敗', res.message);
+          return;
+        }
+        this.detail = this.mapDetail(res.data);
+      },
+      error: async (error) => {
+        await this.alert.error('查詢失敗', error.error?.message || '請稍後再試。');
+      },
+    });
+  }
 
-    // 取得 userId 後呼叫 API，目前以假資料替代
-    if (this.user?.id === MOCK_DETAIL.userId) {
-      this.detail = MOCK_DETAIL;
-    }
+  private mapDetail(data: AdminOrgDetailDto): AdminOrganizerDetail {
+    return {
+      userId: data.userId,
+      detail: {
+        userInfo: {
+          username: data.userName,
+          role: UserType.fromApiRole(data.role),
+          accountStatus: UserStatus.fromApiStatus(data.accountStatus),
+          googleLinked: data.isGoogleBound,
+          registeredAt: data.regAt,
+          lastLoginAt: data.lastLoginAt ?? '-',
+          createdActivityCount: data.createdEventCount,
+          ongoingActivityCount: data.ongoingEventCount,
+          endedActivityCount: data.endedEventCount,
+        },
+        organizerInfo: {
+          organizerName: data.organizerName,
+          contactPerson: data.contactPerson,
+          contactPhone: data.contactPhone,
+          contactEmail: data.contactEmail,
+          contactAddress: data.contactAddress,
+          companyName: data.companyName,
+          taxId: data.taxId,
+        },
+        activityManagementRecords: {
+          total: data.eventLogs.totalItems,
+          items: data.eventLogs.items.map((item) => this.mapEventItem(item)),
+        },
+        loginRecords: {
+          total: data.loginLogs.totalItems,
+          items: data.loginLogs.items.map((item) => this.mapLoginItem(item)),
+        },
+      },
+    };
+  }
+
+  private mapEventItem(item: AdminOrgEventManagementDto): AdminOrganizerDetail['detail']['activityManagementRecords']['items'][number] {
+    return {
+      activityName: item.eventName,
+      activityTime: item.eventDate,
+      activityStatus: ActivityStatus.fromApiStatus(item.eventStatus),
+      registrationCount: item.registrationCount,
+    };
+  }
+
+  private mapLoginItem(item: AdminUserLoginDto): AdminOrganizerDetail['detail']['loginRecords']['items'][number] {
+    return {
+      loginTime: item.loginTime,
+      loginMethod: item.loginMethod,
+      loginStatus: item.loginStatus,
+    };
   }
 
   get accountStatus(): string {
@@ -157,9 +181,7 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   }
 
   getStatusClass(status: string): string {
-    if (status === UserStatus.active) return 'green';
-    if (status === UserStatus.disabled) return 'red';
-    return 'grey';
+    return UserStatus.getClass(status);
   }
 
   getLoginStatusClass(status: string): string {
@@ -177,8 +199,9 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   }
 
   async toggleAccountStatus(): Promise<void> {
-    const username = this.detail?.detail.userInfo.username ?? '';
-    const email = this.detail?.detail.userInfo.email ?? '';
+    if (!this.detail || !this.userId) return;
+    const username = this.detail.detail.userInfo.username;
+    const email = this.detail.detail.organizerInfo.contactEmail;
 
     if (this.isAccountActive) {
       const confirmed = await this.alert.confirmHtml({
@@ -201,11 +224,10 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
         popupClass: 'restore-confirm-swal',
       });
       if (!confirmed) return;
-      // TODO: 呼叫後端 API 將帳號狀態改為「已停用」
-      this.detail!.detail.userInfo.accountStatus = UserStatus.disabled;
-      this.alert.success(
+      await this.runAccountStatusChange(
+        this.adminApiService.disableUserAccount(this.userId),
         '帳號已停用',
-        `使用者「${username}」 的帳號已成功停用。 <br />停用期間將無法登入系統，且無法進行報名、付款及其他操作。`,
+        (result) => `使用者「${result.userName}」 的帳號已成功停用。 <br />停用期間將無法登入系統，且無法進行報名、付款及其他操作。`,
       );
     } else {
       const confirmed = await this.alert.confirmHtml({
@@ -228,12 +250,29 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
         popupClass: 'restore-confirm-swal',
       });
       if (!confirmed) return;
-      // TODO: 呼叫後端 API 將帳號狀態改為「正常」
-      this.detail!.detail.userInfo.accountStatus = UserStatus.active;
-      this.alert.success(
+      await this.runAccountStatusChange(
+        this.adminApiService.restoreUserAccount(this.userId),
         '帳號已恢復',
-        `使用者「${username}」 的帳號已成功恢復。<br />該帳號可重新登入系統並使用原本角色的相關功能。`,
+        (result) => `使用者「${result.userName}」 的帳號已成功恢復。<br />該帳號可重新登入系統並使用原本角色的相關功能。`,
       );
+    }
+  }
+
+  private async runAccountStatusChange(
+    request$: Observable<ApiResult<UserStatusChangeDto>>,
+    successTitle: string,
+    successMessage: (result: UserStatusChangeDto) => string,
+  ): Promise<void> {
+    try {
+      const res = await firstValueFrom(request$);
+      if (!isApiSuccessStatus(res.statusCode)) {
+        await this.alert.error('操作失敗', res.message);
+        return;
+      }
+      if (this.userId) this.loadDetail(this.userId);
+      await this.alert.success(successTitle, successMessage(res.data));
+    } catch (error: any) {
+      await this.alert.error('操作失敗', error.error?.message || '請稍後再試。');
     }
   }
 
@@ -242,4 +281,3 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
   }
 
 }
-

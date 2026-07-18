@@ -1,74 +1,19 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { firstValueFrom, Observable } from 'rxjs';
 import { AlertService } from '../../../../core/services/alert.service';
+import { AdminApiService } from '../../../../core/services/admin-api.service';
 import { UserStatus } from '../../../../models/status/UserStatus';
+import { UserType } from '../../../../models/type/UserType';
 import { ApplicationStatus } from '../../../../models/status/ApplicationStatus';
 import { PaymentStatus } from '../../../../models/status/PaymentStatus';
-import { UserListItem } from '../../../../models/interface/admin/UserListItem';
 import { AdminVendorDetail } from '../../../../models/interface/admin/AdminVendorDetail';
+import { AdminVenderDetailDto, AdminVenderRegDto } from '../../../../models/interface/admin/AdminVenderDetail';
+import { AdminUserLoginDto } from '../../../../models/interface/admin/AdminUserLoginLog';
+import { UserStatusChangeDto } from '../../../../models/interface/admin/AdminUserAction';
+import { ApiResult, isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
-
-/** 模擬後端回傳的攤主列表，串接 API 後可移除 */
-const MOCK_VENDOR_USERS: UserListItem[] = [
-  { id: 1, name: '李小花', email: 'flower@example.com', role: 'vendor', createdAt: '2021/03/15', lastLoginAt: '2026/06/20', status: '正常' },
-  { id: 2, name: '陳阿明', email: 'aming@example.com', role: 'vendor', createdAt: '2022/07/01', lastLoginAt: '2025/12/01', status: '已停用' },
-];
-
-/** 模擬後端回傳的攤主詳情，串接 API 後可移除 */
-const MOCK_DETAIL: AdminVendorDetail = {
-  userId: 1,
-  detail: {
-    userInfo: {
-      username: '李小花',
-      role: 'vendor',
-      email: 'flower@example.com',
-      googleLinked: true,
-      accountStatus: UserStatus.active,
-      registeredAt: '2021/03/15 10:00',
-      lastLoginAt: '2026/06/20 14:30',
-      registrationCount: 0,
-      completedEventCount: 3,
-    },
-    vendorInfo: {
-      brandName: '小花手作',
-      brandType: '手作',
-      owner: '李小花',
-      contactPhone: '0912-111-222',
-      contactEmail: 'flower@example.com',
-      contactAddress: '台中市西區民生路100號',
-    },
-    activityRegistrationRecords: {
-      total: 9,
-      items: [
-        { activityName: '春語花市', registrationDate: '2026/04/01', activityDate: '2026/05/01 - 2026/05/02', registrationDates: ['2026/05/01', '2026/05/02'], registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booths: [{ date: '2026/05/01', code: 'A01' }, { date: '2026/05/02', code: 'A02' }] },
-        { activityName: '楓糖森活市集', registrationDate: '2026/05/10', activityDate: '2026/06/13 - 2026/06/14', registrationDates: ['2026/06/13'], registrationStatus: ApplicationStatus.pendingPayment, paymentStatus: PaymentStatus.pending, booths: [] },
-        { activityName: '月光甜點市集', registrationDate: '2026/06/01', activityDate: '2026/07/18 - 2026/07/19', registrationDates: ['2026/07/18', '2026/07/19'], registrationStatus: ApplicationStatus.pendingReview, paymentStatus: PaymentStatus.pending, booths: [] },
-        { activityName: '夏日手作市集', registrationDate: '2026/03/20', activityDate: '2026/07/01 - 2026/07/02', registrationDates: ['2026/07/02'], registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booths: [{ date: '2026/07/02', code: 'B06' }] },
-        { activityName: '秋風文創節', registrationDate: '2026/02/14', activityDate: '2026/03/14 - 2026/03/15', registrationDates: ['2026/03/14'], registrationStatus: ApplicationStatus.cancelled, paymentStatus: PaymentStatus.refunded, booths: [] },
-        { activityName: '冬暖聖誕市集', registrationDate: '2025/11/01', activityDate: '2025/12/24 - 2025/12/25', registrationDates: ['2025/12/24', '2025/12/25'], registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booths: [{ date: '2025/12/24', code: 'C03' }, { date: '2025/12/25', code: 'C03' }] },
-        { activityName: '新年好市集', registrationDate: '2025/12/05', activityDate: '2026/01/10 - 2026/01/11', registrationDates: ['2026/01/11'], registrationStatus: ApplicationStatus.reviewRejected, paymentStatus: PaymentStatus.pending, booths: [] },
-        { activityName: '綠意農夫市集', registrationDate: '2025/09/10', activityDate: '2025/10/18 - 2025/10/19', registrationDates: ['2025/10/18', '2025/10/19'], registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booths: [{ date: '2025/10/18', code: 'A08' }, { date: '2025/10/19', code: 'A09' }] },
-        { activityName: '草地音樂節', registrationDate: '2025/08/01', activityDate: '2025/09/06 - 2025/09/07', registrationDates: ['2025/09/06'], registrationStatus: ApplicationStatus.completed, paymentStatus: PaymentStatus.paid, booths: [{ date: '2025/09/06', code: 'D02' }] },
-      ],
-    },
-    loginRecords: {
-      total: 10,
-      items: [
-        { loginTime: '2026/06/20 14:30', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026/06/18 09:12', loginMethod: 'Google', loginStatus: '成功' },
-        { loginTime: '2026/06/15 22:05', loginMethod: 'Email', loginStatus: '失敗' },
-        { loginTime: '2026/06/10 11:00', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026/06/05 08:45', loginMethod: 'Google', loginStatus: '成功' },
-        { loginTime: '2026/05/30 17:20', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026/05/25 13:55', loginMethod: 'Google', loginStatus: '成功' },
-        { loginTime: '2026/05/20 10:30', loginMethod: 'Email', loginStatus: '失敗' },
-        { loginTime: '2026/05/15 16:00', loginMethod: 'Email', loginStatus: '成功' },
-        { loginTime: '2026/05/10 07:50', loginMethod: 'Google', loginStatus: '成功' },
-      ],
-    },
-  },
-};
 
 @Component({
   selector: 'app-admin-dashboard-user-detail-vender',
@@ -81,12 +26,13 @@ export class AdminDashboardUserDetailVender implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private alert: AlertService,
+    private readonly adminApiService: AdminApiService,
   ) {}
 
   readonly UserStatus = UserStatus;
 
-  user: UserListItem | null = null;
   detail: AdminVendorDetail | null = null;
+  private userId: number | null = null;
 
   loginCurrentPage = 1;
   readonly loginPageSize = 5;
@@ -96,13 +42,28 @@ export class AdminDashboardUserDetailVender implements OnInit {
   }
 
   get paginatedLoginRecords(): AdminVendorDetail['detail']['loginRecords']['items'] {
-    const items = this.detail?.detail.loginRecords.items ?? [];
-    const start = (this.loginCurrentPage - 1) * this.loginPageSize;
-    return items.slice(start, start + this.loginPageSize);
+    return this.detail?.detail.loginRecords.items ?? [];
   }
 
   onLoginPageChange(page: number): void {
     this.loginCurrentPage = page;
+    if (!this.userId || !this.detail) return;
+
+    this.adminApiService.getUserLoginLogs(this.userId, page, this.loginPageSize).subscribe({
+      next: async (res) => {
+        if (!isApiSuccessStatus(res.statusCode)) {
+          await this.alert.error('查詢失敗', res.message);
+          return;
+        }
+        this.detail!.detail.loginRecords = {
+          total: res.data.totalItems,
+          items: res.data.items.map((item) => this.mapLoginItem(item)),
+        };
+      },
+      error: async (error) => {
+        await this.alert.error('查詢失敗', error.error?.message || '請稍後再試。');
+      },
+    });
   }
 
   registrationCurrentPage = 1;
@@ -113,28 +74,103 @@ export class AdminDashboardUserDetailVender implements OnInit {
   }
 
   get paginatedRegistrationRecords(): AdminVendorDetail['detail']['activityRegistrationRecords']['items'] {
-    const items = this.detail?.detail.activityRegistrationRecords.items ?? [];
-    const start = (this.registrationCurrentPage - 1) * this.registrationPageSize;
-    return items.slice(start, start + this.registrationPageSize);
+    return this.detail?.detail.activityRegistrationRecords.items ?? [];
   }
 
   onRegistrationPageChange(page: number): void {
     this.registrationCurrentPage = page;
+    if (!this.userId || !this.detail) return;
+
+    this.adminApiService.getVenderRegLogs(this.userId, page, this.registrationPageSize).subscribe({
+      next: async (res) => {
+        if (!isApiSuccessStatus(res.statusCode)) {
+          await this.alert.error('查詢失敗', res.message);
+          return;
+        }
+        this.detail!.detail.activityRegistrationRecords = {
+          total: res.data.totalItems,
+          items: res.data.items.map((item) => this.mapRegItem(item)),
+        };
+      },
+      error: async (error) => {
+        await this.alert.error('查詢失敗', error.error?.message || '請稍後再試。');
+      },
+    });
   }
 
   ngOnInit(): void {
-    const stateUser: UserListItem | undefined = history.state?.user;
+    const id = Number(this.route.snapshot.params['id']);
+    this.userId = id;
+    this.loadDetail(id);
+  }
 
-    if (stateUser) {
-      this.user = stateUser;
-    } else {
-      const id = Number(this.route.snapshot.params['id']);
-      this.user = MOCK_VENDOR_USERS.find(u => u.id === id) ?? null;
-    }
+  /** 串接 API："/api/admin/users/{id}?role=vender"，依網址上的 id 查詢攤主詳細資料 */
+  private loadDetail(id: number): void {
+    this.adminApiService.getVenderDetail(id, this.loginPageSize).subscribe({
+      next: async (res) => {
+        if (!isApiSuccessStatus(res.statusCode)) {
+          await this.alert.error('查詢失敗', res.message);
+          return;
+        }
+        this.detail = this.mapDetail(res.data);
+      },
+      error: async (error) => {
+        await this.alert.error('查詢失敗', error.error?.message || '請稍後再試。');
+      },
+    });
+  }
 
-    if (this.user?.id === MOCK_DETAIL.userId) {
-      this.detail = MOCK_DETAIL;
-    }
+  private mapDetail(data: AdminVenderDetailDto): AdminVendorDetail {
+    return {
+      userId: data.userId,
+      detail: {
+        userInfo: {
+          username: data.userName,
+          role: UserType.fromApiRole(data.role),
+          accountStatus: UserStatus.fromApiStatus(data.accountStatus),
+          googleLinked: data.isGoogleBound,
+          registeredAt: data.regAt,
+          lastLoginAt: data.lastLoginAt ?? '-',
+          registrationCount: data.ongoingEventCount,
+          completedEventCount: data.endedEventCount,
+        },
+        vendorInfo: {
+          brandName: data.brandName,
+          brandType: data.brandType,
+          owner: data.owner,
+          contactPhone: data.contactPhone,
+          contactEmail: data.contactEmail,
+          contactAddress: data.contactAddress,
+        },
+        activityRegistrationRecords: {
+          total: data.eventRegLogs.totalItems,
+          items: data.eventRegLogs.items.map((item) => this.mapRegItem(item)),
+        },
+        loginRecords: {
+          total: data.loginLogs.totalItems,
+          items: data.loginLogs.items.map((item) => this.mapLoginItem(item)),
+        },
+      },
+    };
+  }
+
+  private mapRegItem(item: AdminVenderRegDto): AdminVendorDetail['detail']['activityRegistrationRecords']['items'][number] {
+    const booths = item.regBooths.map((booth) => ({ date: booth.regDate, code: booth.boothNo }));
+    return {
+      activityName: item.eventName,
+      registrationDates: booths.map((booth) => booth.date),
+      registrationStatus: item.regStatus,
+      paymentStatus: PaymentStatus.fromApiStatus(item.paymentStatus),
+      booths,
+    };
+  }
+
+  private mapLoginItem(item: AdminUserLoginDto): AdminVendorDetail['detail']['loginRecords']['items'][number] {
+    return {
+      loginTime: item.loginTime,
+      loginMethod: item.loginMethod,
+      loginStatus: item.loginStatus,
+    };
   }
 
   get accountStatus(): string {
@@ -146,9 +182,7 @@ export class AdminDashboardUserDetailVender implements OnInit {
   }
 
   getStatusClass(status: string): string {
-    if (status === UserStatus.active) return 'green';
-    if (status === UserStatus.disabled) return 'red';
-    return 'grey';
+    return UserStatus.getClass(status);
   }
 
   getLoginStatusClass(status: string): string {
@@ -170,8 +204,9 @@ export class AdminDashboardUserDetailVender implements OnInit {
   }
 
   async toggleAccountStatus(): Promise<void> {
-    const username = this.detail?.detail.userInfo.username ?? '';
-    const email = this.detail?.detail.userInfo.email ?? '';
+    if (!this.detail || !this.userId) return;
+    const username = this.detail.detail.userInfo.username;
+    const email = this.detail.detail.vendorInfo.contactEmail;
 
     if (this.isAccountActive) {
       const confirmed = await this.alert.confirmHtml({
@@ -194,11 +229,10 @@ export class AdminDashboardUserDetailVender implements OnInit {
         popupClass: 'restore-confirm-swal',
       });
       if (!confirmed) return;
-      // TODO: 呼叫後端 API 將帳號狀態改為「已停用」
-      this.detail!.detail.userInfo.accountStatus = UserStatus.disabled;
-      this.alert.success(
+      await this.runAccountStatusChange(
+        this.adminApiService.disableUserAccount(this.userId),
         '帳號已停用',
-        `使用者「${username}」 的帳號已成功停用。 <br />停用期間將無法登入系統，且無法進行報名、付款及其他操作。`,
+        (result) => `使用者「${result.userName}」 的帳號已成功停用。 <br />停用期間將無法登入系統，且無法進行報名、付款及其他操作。`,
       );
     } else {
       const confirmed = await this.alert.confirmHtml({
@@ -221,12 +255,29 @@ export class AdminDashboardUserDetailVender implements OnInit {
         popupClass: 'restore-confirm-swal',
       });
       if (!confirmed) return;
-      // TODO: 呼叫後端 API 將帳號狀態改為「正常」
-      this.detail!.detail.userInfo.accountStatus = UserStatus.active;
-      this.alert.success(
+      await this.runAccountStatusChange(
+        this.adminApiService.restoreUserAccount(this.userId),
         '帳號已恢復',
-        `使用者「${username}」 的帳號已成功恢復。<br />該帳號可重新登入系統並使用原本角色的相關功能。`,
+        (result) => `使用者「${result.userName}」 的帳號已成功恢復。<br />該帳號可重新登入系統並使用原本角色的相關功能。`,
       );
+    }
+  }
+
+  private async runAccountStatusChange(
+    request$: Observable<ApiResult<UserStatusChangeDto>>,
+    successTitle: string,
+    successMessage: (result: UserStatusChangeDto) => string,
+  ): Promise<void> {
+    try {
+      const res = await firstValueFrom(request$);
+      if (!isApiSuccessStatus(res.statusCode)) {
+        await this.alert.error('操作失敗', res.message);
+        return;
+      }
+      if (this.userId) this.loadDetail(this.userId);
+      await this.alert.success(successTitle, successMessage(res.data));
+    } catch (error: any) {
+      await this.alert.error('操作失敗', error.error?.message || '請稍後再試。');
     }
   }
 
@@ -234,4 +285,3 @@ export class AdminDashboardUserDetailVender implements OnInit {
     // TODO: 導向活動報名詳情頁
   }
 }
-
