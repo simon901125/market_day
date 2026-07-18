@@ -29,38 +29,43 @@ export interface OrganizerEventEquipmentItem {
 
 export interface OrganizerEventDetail {
   eventId: number;
-  eventTitle: string;
-  summary: string;
-  description: string;
+  eventTitle: string | null;
+  summary: string | null;
+  description: string | null;
   categories: OrganizerEventDetailCategory[];
   coverImageUrl: string | null;
   schedule: {
-    startAt: string;
-    endAt: string;
-    registrationStartAt: string;
-    registrationEndAt: string;
+    startAt: string | null;
+    endAt: string | null;
+    registrationStartAt: string | null;
+    registrationEndAt: string | null;
     publicInfoAt: string | null;
     brandsPublicAt: string | null;
   };
   location: {
-    locationName: string;
-    city: string;
+    locationName: string | null;
+    city: string | null;
     district: string | null;
-    address: string;
+    address: string | null;
     trafficInfoMetro: string | null;
     trafficInfoBus: string | null;
     trafficInfoDriving: string | null;
   };
   booth: {
-    maxBooths: number;
+    maxBooths: number | null;
     stallWidth: number | null;
     stallLength: number | null;
-    baseFee: number;
-    depositAmount: number;
+    baseFee: number | null;
+    depositAmount: number | null;
     mapImageUrl: string | null;
     zones: OrganizerEventDetailZone[];
   };
-  equipment: { items: OrganizerEventEquipmentItem[] };
+  equipment: {
+    providesEquipmentRental: boolean | null;
+    providesBasicPower: boolean | null;
+    allowsExtraPower: boolean | null;
+    items: OrganizerEventEquipmentItem[];
+  };
   workflowStatus: string;
   status: string;
   statusText: string;

@@ -5,12 +5,14 @@ import { ApplicationStatus } from '../../../../models/status/ApplicationStatus';
 export interface DashboardTableColumn {
   key: string;
   label: string;
-  type?: 'text' | 'imageText' | 'status' | 'progress' | 'action';
+  type?: 'text' | 'imageText' | 'status' | 'progress' | 'multiValue' | 'action';
   align?: 'start' | 'center' | 'end';
   width?: string;
   minWidth?: string;
   nowrap?: boolean;
   actionMinWidth?: string;
+  valueKeys?: string[];
+  valueLabels?: string[];
 }
 
 export interface DashboardTableAction {
@@ -40,16 +42,39 @@ export class DashboardDataTable {
   @Input() columns: DashboardTableColumn[] = [];
   @Input() rows: Record<string, any>[] = [];
   @Input() tableMinWidth = '960px';
+  @Input() minimumRows = 0;
   @Input() emptyText = '目前沒有資料';
+  @Input() emptyHint = '';
 
   @Output() actionClick = new EventEmitter<DashboardTableAction>();
+
+  get fillerRows(): number[] {
+    return Array.from({ length: Math.max(0, this.minimumRows - this.rows.length) }, (_, index) => index);
+  }
 
   getStatusClass(value: string): string {
     return ActivityStatus.classMap[value] ?? ApplicationStatus.getClass(value);
   }
 
+  getDisplayValue(row: Record<string, any>, key: string): unknown {
+    const value = row[key];
+    return value === null || value === undefined || (typeof value === 'string' && value.trim() === '')
+      ? '-'
+      : value;
+  }
+
   getProgressCurrent(column: DashboardTableColumn, row: Record<string, any>): number {
     return Number(row[`${column.key}Current`]) || 0;
+  }
+
+  hasProgress(column: DashboardTableColumn, row: Record<string, any>): boolean {
+    const displayValue = row[column.key];
+    const hasDisplayValue = displayValue !== null
+      && displayValue !== undefined
+      && String(displayValue).trim() !== ''
+      && String(displayValue).trim() !== '-';
+
+    return hasDisplayValue && this.getProgressTotal(column, row) > 0;
   }
 
   getProgressTotal(column: DashboardTableColumn, row: Record<string, any>): number {

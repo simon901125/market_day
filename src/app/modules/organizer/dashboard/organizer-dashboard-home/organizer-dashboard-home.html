@@ -31,8 +31,21 @@
   <div class="dashboard-overview-grid">
     <section class="registration-overview-card" aria-labelledby="registration-overview-title">
       <div class="registration-overview-header">
-        <div>
+        <div class="registration-overview-title">
           <h2 id="registration-overview-title">活動報名概況</h2>
+          <span class="registration-overview-info">
+            <button
+              type="button"
+              class="registration-overview-info-button"
+              aria-label="查看活動報名概況統計說明"
+              aria-describedby="registration-overview-help"
+            >
+              <i class="bi bi-info-circle" aria-hidden="true"></i>
+            </button>
+            <span id="registration-overview-help" class="registration-overview-help" role="tooltip">
+              僅統計已發布及進入報名流程的活動。草稿、待審核、補件中、地圖建置中與待發布不列入統計。
+            </span>
+          </span>
         </div>
         <a routerLink="/organizer/dash-board/activity" class="view-all-link">
           查看全部活動 <i class="bi bi-arrow-right" aria-hidden="true"></i>
@@ -54,7 +67,7 @@
       } @else {
         <div class="registration-overview-empty" role="status">
           <i class="bi bi-calendar2-x" aria-hidden="true"></i>
-          <span>目前尚無活動</span>
+          <span>目前沒有可統計的活動</span>
         </div>
       }
     </section>

@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 import { OrganizerEventRow } from '../../../../models/interface/organizer/OrganizerEventRow';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
@@ -54,15 +55,22 @@ export class OrganizerDashboardEventManagement implements OnInit {
 
   /** 活動管理列表欄位設定。 */
   columns: DashboardTableColumn[] = [
-    { key: 'name', label: '活動名稱', type: 'imageText', width: '15%' },
-    { key: 'date', label: '活動日期', nowrap: true, width: '14%' },
+    { key: 'name', label: '活動名稱', type: 'imageText', width: '14%' },
+    { key: 'date', label: '活動日期', nowrap: true, width: '18%' },
     { key: 'status', label: '活動狀態', type: 'status', align: 'center', width: '9%' },
     { key: 'location', label: '活動地點', width: '17%' },
-    { key: 'signupProgress', label: '報名人數', type: 'progress', align: 'center', nowrap: true, width: '9%' },
-    { key: 'pendingReviewCount', label: '待審核', align: 'center', nowrap: true, width: '8%' },
-    { key: 'paidCount', label: '付款人數', align: 'center', nowrap: true, width: '8%' },
-    { key: 'selectedCount', label: '已選位', align: 'center', nowrap: true, width: '8%' },
-    { key: 'action', label: '', type: 'action', align: 'end', width: '12%' },
+    { key: 'signupProgress', label: '報名人數', type: 'progress', align: 'center', nowrap: true, width: '8%' },
+    {
+      key: 'applicationProgress',
+      label: '報名處理進度',
+      type: 'multiValue',
+      align: 'center',
+      nowrap: true,
+      width: '18%',
+      valueKeys: ['pendingReviewCount', 'paidCount', 'selectedCount'],
+      valueLabels: ['待審核', '已付款', '已選位'],
+    },
+    { key: 'action', label: '', type: 'action', align: 'end', width: '16%' },
   ];
 
   /**
@@ -387,7 +395,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
           `確定要送出「${activity.name}」進行審核嗎？<br>送出後將暫時無法編輯活動內容，需等待審核結果。`,
           '確定送出',
         )) return true;
-        this.updateActivityStatus(activity.id, ActivityStatus.pendingReview);
+        if (!await this.submitReviewFromList(activity)) return true;
         await this.alert.success(
           '送出審核成功',
           `活動「${activity.name}」已送出審核，審核結果將透過通知中心告知。`,
@@ -413,7 +421,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
           `確定要重新送審「${activity.name}」嗎？<br>送出後將再次進入審核流程。`,
           '確定重新送審',
         )) return true;
-        this.updateActivityStatus(activity.id, ActivityStatus.pendingReview);
+        if (!await this.submitReviewFromList(activity)) return true;
         await this.alert.success(
           '重新送審成功',
           `活動「${activity.name}」已重新送出審核。`,
@@ -436,6 +444,48 @@ export class OrganizerDashboardEventManagement implements OnInit {
       default:
         return false;
     }
+  }
+
+  private async submitReviewFromList(activity: OrganizerEventRow): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApi.submitOrganizerEventReview(activity.id),
+      );
+      if (isApiSuccessStatus(response.statusCode)) {
+        this.updateActivityStatus(activity.id, ActivityStatus.pendingReview);
+        return true;
+      }
+
+      const missingFields = response.data?.missingFields ?? [];
+      await this.alert.error(
+        '無法送出審核',
+        missingFields.length > 0
+          ? `${response.message}，請完成 ${missingFields.length} 項必要資料。`
+          : response.message || '送出審核失敗。',
+      );
+      if (missingFields.length > 0) {
+        this.router.navigate(['/organizer/dash-board/activity/detail'], {
+          queryParams: {
+            edit: activity.id,
+            step: this.reviewStepForMissingFields(missingFields) + 1,
+            validation: 'review',
+            returnPage: this.currentPage,
+            returnStatus: this.selectedStatus || null,
+          },
+        });
+      }
+      return false;
+    } catch {
+      await this.alert.error('無法送出審核', '送出審核失敗，請稍後再試。');
+      return false;
+    }
+  }
+
+  private reviewStepForMissingFields(fields: string[]): number {
+    if (fields.some((field) => /^(eventTitle|summary|description|categoryIds|coverImage)/.test(field))) return 0;
+    if (fields.some((field) => field.startsWith('schedule.') || field.startsWith('location.traffic'))) return 1;
+    if (fields.some((field) => field.startsWith('location.') || field.startsWith('booth.'))) return 2;
+    return 3;
   }
 
   private updateActivityStatus(
@@ -510,14 +560,14 @@ export class OrganizerDashboardEventManagement implements OnInit {
       this.serverTotalItems = response.data.totalCount;
       this.rows = response.data.events.items.map((event) => ({
         id: event.eventId,
-        name: event.eventTitle,
+        name: event.eventTitle ?? '',
         nameImage: event.coverImageUrl || 'assets/images/shared/no-image-placeholder.svg',
         date: `${this.formatApiDate(event.eventStartAt)} - ${this.formatApiDate(event.eventEndAt)}`,
         location: [event.city, event.district, event.locationName].filter(Boolean).join(' '),
         status: event.statusText,
-        signupProgress: `${event.registeredCount} / ${event.capacity}`,
+        signupProgress: `${event.registeredCount} / ${event.capacity ?? 0}`,
         signupProgressCurrent: event.registeredCount,
-        signupProgressTotal: event.capacity,
+        signupProgressTotal: event.capacity ?? 0,
         pendingReviewCount: String(event.pendingReviewCount),
         paidCount: String(event.paidCount),
         selectedCount: String(event.selectedCount),
@@ -545,7 +595,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
     return mapping.get(status);
   }
 
-  private formatApiDate(value: string): string {
+  private formatApiDate(value: string | null): string {
     const date = value?.slice(0, 10);
     return date ? date.replaceAll('-', '/') : '';
   }
@@ -571,8 +621,6 @@ export class OrganizerDashboardEventManagement implements OnInit {
             key: 'submit',
             label: '送出審核',
             variant: 'primary',
-            disabled: !row.canSubmitReview,
-            hint: row.canSubmitReview ? undefined : '請先完成所有必填資料後再送出審核',
           },
         ];
       case ActivityStatus.pendingReview:
@@ -582,7 +630,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
         ];
       case ActivityStatus.revisionRequired:
         return [
-          { key: 'edit', label: '編輯', variant: 'outline' },
+          { key: 'view', label: '查看', variant: 'outline' },
           { key: 'resubmit', label: '重新送審', variant: 'primary' },
         ];
       case ActivityStatus.mapBuilding:

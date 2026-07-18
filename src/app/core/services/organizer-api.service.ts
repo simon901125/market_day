@@ -10,6 +10,11 @@ import { ApiResult } from '../../models/interface/shared/ApiResult';
 import { OrganizerEventSearchResponse } from '../../models/interface/organizer/OrganizerEventSearch';
 import { OrganizerApplicationSearchResponse } from '../../models/interface/organizer/OrganizerApplicationSearch';
 import { OrganizerEventDetail } from '../../models/interface/organizer/OrganizerEventDetail';
+import {
+  OrganizerEventSaveRequest,
+  OrganizerEventSubmitReviewResponse,
+  StoredEventImage,
+} from '../../models/interface/organizer/OrganizerEventEditor';
 import { HttpService } from '../http/http.service';
 
 @Injectable({
@@ -30,6 +35,7 @@ export class OrganizerApiService {
     sort?: 'DEFAULT' | 'UPCOMING_FIRST';
     page?: number;
     pageSize?: number;
+    registrationOverview?: boolean;
   } = {}): Observable<ApiResult<OrganizerEventSearchResponse>> {
     const query = new URLSearchParams();
     if (params.keyword) query.set('keyword', params.keyword);
@@ -39,13 +45,42 @@ export class OrganizerApiService {
     query.set('sort', params.sort ?? 'DEFAULT');
     query.set('page', String(params.page ?? 1));
     query.set('pageSize', String(params.pageSize ?? 6));
+    if (params.registrationOverview) query.set('registrationOverview', 'true');
     return this.httpService.get<OrganizerEventSearchResponse>(
       `api/organizer/events/search?${query.toString()}`,
     );
   }
 
   getOrganizerEventDetail(eventId: number): Observable<ApiResult<OrganizerEventDetail>> {
-    return this.httpService.get<OrganizerEventDetail>(`api/organizer/events/${eventId}`);
+    return this.httpService.get<OrganizerEventDetail>(
+      `api/organizer/events/${eventId}`,
+      { skipLoading: true, timeoutMs: 15000 },
+    );
+  }
+
+  saveOrganizerEvent(payload: OrganizerEventSaveRequest): Observable<ApiResult<OrganizerEventDetail>> {
+    return this.httpService.post<OrganizerEventDetail>('api/organizer/events', payload);
+  }
+
+  submitOrganizerEventReview(
+    eventId: number,
+  ): Observable<ApiResult<OrganizerEventSubmitReviewResponse>> {
+    return this.httpService.post<OrganizerEventSubmitReviewResponse>(
+      `api/organizer/events/${eventId}/submit-review`,
+      null,
+    );
+  }
+
+  uploadOrganizerEventImage(
+    eventId: number,
+    purpose: 'EVENT_COVER' | 'EVENT_MAP',
+    file: File,
+  ): Observable<ApiResult<StoredEventImage>> {
+    const formData = new FormData();
+    formData.append('purpose', purpose);
+    formData.append('eventId', String(eventId));
+    formData.append('file', file);
+    return this.httpService.upload<StoredEventImage>('api/images', formData);
   }
 
   searchOrganizerApplications(params: { page?: number; pageSize?: number } = {}): Observable<ApiResult<OrganizerApplicationSearchResponse>> {

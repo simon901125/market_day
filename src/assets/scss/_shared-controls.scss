@@ -86,7 +86,7 @@
     color: var(--primary-hover);
   }
 
-  input {
+  > input {
     width: 100%;
     min-width: 0;
     height: 100%;
@@ -99,6 +99,14 @@
 
     &::placeholder {
       color: var(--text-normal);
+    }
+
+    &:hover,
+    &:focus,
+    &:focus-visible {
+      border: 0;
+      outline: 0;
+      box-shadow: none;
     }
   }
 }
