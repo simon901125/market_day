@@ -2,105 +2,18 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AlertService } from '../../../../core/services/alert.service';
+import { AdminApiService } from '../../../../core/services/admin-api.service';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
-import { ActivityListItem } from '../../../../models/interface/admin/ActivityListItem';
 import { AdminMarketDetail } from '../../../../models/interface/admin/AdminMarketDetail';
+import { AdminEventDetailDto, AdminEventStatusLog } from '../../../../models/interface/admin/AdminEventDetail';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 
-/** 模擬後端列表資料，串接 API 後可移除 */
-const MOCK_ACTIVITIES: ActivityListItem[] = [
-  { id: 1, image: 'assets/images/market/cards/market-card-01.png', name: '夏日綠意市集', organizer: '森林生活市集', startDate: '2026/07/01', endDate: '2026/07/02', status: ActivityStatus.pendingReview, createdAt: '2026/05/28 14:30' },
-  { id: 2, image: 'assets/images/market/cards/market-card-02.png', name: '秋季手作市集', organizer: '日日好市', startDate: '2026/09/15', endDate: '2026/09/16', status: ActivityStatus.unpublishRequested, createdAt: '2026/05/27 10:00' },
-  { id: 3, image: 'assets/images/market/cards/market-card-03.png', name: '春語花市', organizer: '春語市集', startDate: '2026/05/01', endDate: '2026/05/02', status: ActivityStatus.full, createdAt: '2026/04/25 18:00' },
-  { id: 4, image: 'assets/images/market/cards/market-card-04.png', name: '星光夜市集', organizer: '歡樂市集團隊', startDate: '2026/08/20', endDate: '2026/08/21', status: ActivityStatus.mapBuilding, createdAt: '2026/05/26 16:00' },
-  { id: 5, image: 'assets/images/market/cards/market-card-05.png', name: '寵物歡聚市集', organizer: '森林生活市集', startDate: '2026/12/24', endDate: '2026/12/25', status: ActivityStatus.revisionRequired, createdAt: '2026/05/19 10:15' },
-  { id: 6, image: 'assets/images/market/cards/market-card-06.png', name: '丹丹香農市集', organizer: '日日好市', startDate: '2026/10/05', endDate: '2026/10/06', status: ActivityStatus.registrationOpen, createdAt: '2026/05/18 15:00' },
-  { id: 7, image: 'assets/images/market/cards/market-card-07.png', name: '楓糖森活市集', organizer: '春語市集', startDate: '2026/06/05', endDate: '2026/06/06', status: ActivityStatus.published, createdAt: '2026/05/20 09:30' },
-  { id: 8, image: 'assets/images/market/cards/market-card-08.png', name: '海福生活市集', organizer: '歡樂市集團隊', startDate: '2026/07/18', endDate: '2026/07/19', status: ActivityStatus.unpublished, createdAt: '2026/05/17 15:30' },
-  { id: 9, image: 'assets/images/market/cards/market-card-09.png', name: '晨光手作市集', organizer: '森林生活市集', startDate: '2026/06/20', endDate: '2026/06/21', status: ActivityStatus.active, createdAt: '2026/05/10 11:00' },
-  { id: 10, image: 'assets/images/market/cards/market-card-10.png', name: '暖陽農夫市集', organizer: '日日好市', startDate: '2026/04/10', endDate: '2026/04/11', status: ActivityStatus.ended, createdAt: '2026/03/01 09:00' },
-  { id: 11, image: 'assets/images/market/cards/market-card-01.png', name: '月光甜點市集', organizer: '春語市集', startDate: '2026/11/12', endDate: '2026/11/13', status: ActivityStatus.readyToPublish, createdAt: '2026/05/29 13:20' },
-  { id: 12, image: 'assets/images/market/cards/market-card-02.png', name: '城市綠洲市集', organizer: '歡樂市集團隊', startDate: '2026/09/01', endDate: '2026/09/02', status: ActivityStatus.pendingReview, createdAt: '2026/05/30 09:00' },
-  { id: 13, image: 'assets/images/market/cards/market-card-03.png', name: '海岸風情市集', organizer: '森林生活市集', startDate: '2026/08/08', endDate: '2026/08/09', status: ActivityStatus.registrationOpen, createdAt: '2026/05/15 10:00' },
-  { id: 14, image: 'assets/images/market/cards/market-card-04.png', name: '童趣手作市集', organizer: '日日好市', startDate: '2026/07/25', endDate: '2026/07/26', status: ActivityStatus.full, createdAt: '2026/05/14 14:00' },
-  { id: 15, image: 'assets/images/market/cards/market-card-05.png', name: '山林野營市集', organizer: '春語市集', startDate: '2026/10/20', endDate: '2026/10/21', status: ActivityStatus.mapBuilding, createdAt: '2026/05/25 11:30' },
-  { id: 16, image: 'assets/images/market/cards/market-card-06.png', name: '老街懷舊市集', organizer: '歡樂市集團隊', startDate: '2026/06/13', endDate: '2026/06/14', status: ActivityStatus.revisionRequired, createdAt: '2026/05/22 17:00' },
-  { id: 17, image: 'assets/images/market/cards/market-card-07.png', name: '花漾市集', organizer: '森林生活市集', startDate: '2026/05/30', endDate: '2026/05/31', status: ActivityStatus.published, createdAt: '2026/05/12 08:45' },
-  { id: 18, image: 'assets/images/market/cards/market-card-08.png', name: '夜光氣球市集', organizer: '日日好市', startDate: '2026/08/30', endDate: '2026/08/31', status: ActivityStatus.unpublished, createdAt: '2026/04/28 13:00' },
-  { id: 19, image: 'assets/images/market/cards/market-card-09.png', name: '早晨咖啡市集', organizer: '春語市集', startDate: '2026/06/01', endDate: '2026/06/02', status: ActivityStatus.active, createdAt: '2026/05/05 09:10' },
-  { id: 20, image: 'assets/images/market/cards/market-card-10.png', name: '冬季暖心市集', organizer: '歡樂市集團隊', startDate: '2026/01/10', endDate: '2026/01/11', status: ActivityStatus.ended, createdAt: '2025/12/01 10:00' },
-  { id: 21, image: 'assets/images/market/cards/market-card-01.png', name: '文創手作市集', organizer: '森林生活市集', startDate: '2026/11/01', endDate: '2026/11/02', status: ActivityStatus.readyToPublish, createdAt: '2026/05/31 16:40' },
-  { id: 22, image: 'assets/images/market/cards/market-card-02.png', name: '寶寶用品市集', organizer: '日日好市', startDate: '2026/09/20', endDate: '2026/09/21', status: ActivityStatus.pendingReview, createdAt: '2026/06/01 09:00' },
-  { id: 23, image: 'assets/images/market/cards/market-card-03.png', name: '復古玩具市集', organizer: '春語市集', startDate: '2026/07/10', endDate: '2026/07/11', status: ActivityStatus.registrationOpen, createdAt: '2026/05/23 14:50' },
-  { id: 24, image: 'assets/images/market/cards/market-card-04.png', name: '手沖咖啡市集', organizer: '歡樂市集團隊', startDate: '2026/08/15', endDate: '2026/08/16', status: ActivityStatus.full, createdAt: '2026/05/21 10:25' },
-];
-
-/** 模擬後端詳細資料，串接 API 後可移除 */
-const MOCK_DETAIL: AdminMarketDetail = {
-  activityId: 1,
-  activityStatus: ActivityStatus.pendingReview,
-  activityInfo: {
-    name: '夏日綠意市集',
-    type: '文創手作',
-    tags: ['戶外市集', '親子友善'],
-    time: '2026/07/01 - 2026/08/02 10:00 - 19:00',
-    location: '台北市信義區君悅大道1號',
-    locationName: '勤美綠原道',
-    description: '夏天，是感受夏天好精選的季節。我們誠摯邀請一起品嚐這裡—在林蔭散策散步中，整城市到土地與人們的距離與共鳴。\n\n現場有豐富音樂現場演出和手作攤位，探索自然蔬食品和真實農夫，美食飲品音樂和演奏，適合全家人一起感受豐盛的美好時光。',
-  },
-  timeline: {
-    registrationStartTime: '2026/05/01  10:00',
-    registrationEndTime: '2026/05/15  23:59',
-    finalListConfirmation: '2026/05/29  12:00',
-    activityTime: '2026/07/01 - 2026/07/02 10:00 - 19:00',
-  },
-  organizerInfo: {
-    organizerName: '森林生活市集',
-    contactPerson: '林子庭',
-    contactPhone: '0912-345-678',
-    email: 'forest@marketday.com',
-    address: '台北市大安區忠孝東路四段127號8樓',
-    taxId: '98765432',
-    serviceHours: '週一 - 週五 09:00 - 18:00',
-  },
-  transportation: {
-    mrt: '捷運忠孝3號出口步行5分鐘',
-    bus: '藍5・紅12・北新幹線',
-    drivingDirections: '市政府地下停車場（步行約6分鐘）',
-  },
-  boothInfo: {
-    boothSpec: '3m × 3m',
-    boothCount: 90,
-    boothPrice: 2500,
-    boothZones: ['A區：50攤', 'B區：20攤', 'C區：20攤'],
-  },
-  boothLayoutImage: 'assets/images/organizer/booth/booth-layout-example.svg',
-  statusLogs: [
-    {
-      dateTime: '2026/06/20  10:15',
-      status: ActivityStatus.pendingReview,
-      description: '主辦方已送出活動申請，等待審核。',
-      operator: { role: '主辦方', operatorName: '森林生活市集（林子庭）' },
-    },
-    {
-      dateTime: '2026/05/21  11:30',
-      status: ActivityStatus.revisionRequired,
-      description: '審核中發現問題，通知主辦方補件，請重新上傳資料。',
-      operator: { role: '管理員', operatorName: 'Admin' },
-    },
-    {
-      dateTime: '2026/05/22  14:00',
-      status: ActivityStatus.pendingReview,
-      description: '主辦方已完成補件，重新送出申請，等待審核。',
-      operator: { role: '主辦方', operatorName: '森林生活市集（林子庭）' },
-    },
-    {
-      dateTime: '2026/06/23  10:03',
-      status: ActivityStatus.pendingReview,
-      description: '主辦方已送出活動申請，等待管理員審核。',
-      operator: { role: '管理員', operatorName: 'Admin' },
-    },
-  ],
+/** 後端 Role 的 API 值對應到畫面顯示用的中文角色名稱 */
+const OPERATOR_ROLE_LABEL: Record<string, string> = {
+  admin: '管理員',
+  organizer: '主辦方',
+  vender: '攤主',
 };
 
 @Component({
@@ -114,73 +27,133 @@ export class AdminDashboardMarketDetail implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private alert: AlertService,
+    private readonly adminApiService: AdminApiService,
   ) { }
 
-  activity: ActivityListItem | null = null;
   detail: AdminMarketDetail | null = null;
   readonly ActivityStatus = ActivityStatus;
-  readonly statusLogPageSize = 5;
+  readonly statusLogPageSize = 6;
   statusLogCurrentPage = 1;
+  statusLogTotalItems = 0;
 
-  get pagedStatusLogs(): AdminMarketDetail['statusLogs'] {
-    const logs = this.detail?.statusLogs ?? [];
-    const start = (this.statusLogCurrentPage - 1) * this.statusLogPageSize;
-    return logs.slice(start, start + this.statusLogPageSize);
-  }
+  private eventId: number | null = null;
 
   onStatusLogPageChange(page: number): void {
+    if (!this.eventId) return;
+
     this.statusLogCurrentPage = page;
+    this.loadStatusLogs(this.eventId, page);
   }
 
   ngOnInit(): void {
-    const stateActivity: ActivityListItem | undefined = history.state?.activity;
-
-    if (stateActivity) {
-      this.activity = stateActivity;
-    } else {
-      const id = Number(this.route.snapshot.params['id']);
-      this.activity = MOCK_ACTIVITIES.find(a => a.id === id) ?? null;
+    const id = Number(this.route.snapshot.params['id']);
+    if (!id) {
+      this.detail = null;
+      return;
     }
 
-    this.detail = this.activity ? this.buildMockDetail(this.activity) : null;
+    this.eventId = id;
+    this.loadDetail(id);
   }
 
   /**
-   * 依列表活動建立完整假詳細資料，讓每一筆活動及重新整理後的路由都能正常顯示。
-   * 正式串接後改由 GET /api/admin/activities/:id 回傳 AdminMarketDetail。
+   * 串接 API："GET /api/admin/events/{id}"，取得活動詳細資料（含第一頁狀態紀錄）
    */
-  private buildMockDetail(activity: ActivityListItem): AdminMarketDetail {
-    const dateRange = `${activity.startDate.replaceAll('-', '/')} - ${activity.endDate.replaceAll('-', '/')}`;
+  private loadDetail(id: number): void {
+    this.adminApiService.getEventDetail(id).subscribe({
+      next: async (res) => {
+        if (!isApiSuccessStatus(res.statusCode)) {
+          await this.alert.error('讀取失敗', res.message);
+          return;
+        }
 
+        this.detail = this.mapDetail(res.data);
+        this.statusLogCurrentPage = res.data.logs.page;
+        this.statusLogTotalItems = res.data.logs.totalItems;
+      },
+      error: async (error) => {
+        await this.alert.error('讀取失敗', error.error?.message || '請稍後再試。');
+      },
+    });
+  }
+
+  /**
+   * 串接 API："GET /api/admin/events/{id}?page=&size="，換頁時只重新查詢狀態紀錄
+   */
+  private loadStatusLogs(id: number, page: number): void {
+    this.adminApiService.getEventStatusLogs(id, page, this.statusLogPageSize).subscribe({
+      next: async (res) => {
+        if (!isApiSuccessStatus(res.statusCode)) {
+          await this.alert.error('讀取失敗', res.message);
+          return;
+        }
+
+        if (this.detail) {
+          this.detail = { ...this.detail, statusLogs: res.data.items.map((log) => this.mapStatusLog(log)) };
+        }
+        this.statusLogTotalItems = res.data.totalItems;
+      },
+      error: async (error) => {
+        await this.alert.error('讀取失敗', error.error?.message || '請稍後再試。');
+      },
+    });
+  }
+
+  /** 把 API 回傳的活動詳細資料轉成畫面用的 AdminMarketDetail */
+  private mapDetail(data: AdminEventDetailDto): AdminMarketDetail {
     return {
-      ...MOCK_DETAIL,
-      activityId: activity.id,
-      activityStatus: activity.status,
+      activityId: data.eventId,
+      activityStatus: ActivityStatus.fromApiStatus(data.eventStatus),
       activityInfo: {
-        ...MOCK_DETAIL.activityInfo,
-        name: activity.name,
-        time: `${dateRange} 10:00 - 19:00`,
-        tags: [...MOCK_DETAIL.activityInfo.tags],
+        image: data.coverImg,
+        name: data.eventName,
+        type: data.eventType,
+        time: data.eventTime,
+        locationName: data.locationName,
+        location: data.addr,
+        description: data.description,
       },
       timeline: {
-        ...MOCK_DETAIL.timeline,
-        activityTime: `${dateRange} 10:00 - 19:00`,
+        registrationStartTime: data.registrationStartTime,
+        registrationEndTime: data.registrationEndTime,
+        finalListConfirmation: data.finalListCfmTime ?? '尚未確認',
+        activityTime: data.eventTime,
       },
       organizerInfo: {
-        ...MOCK_DETAIL.organizerInfo,
-        organizerName: activity.organizer,
+        organizerName: data.organizerName,
+        contactPerson: data.contactPerson,
+        contactPhone: data.contactPhone,
+        email: data.contactEmail,
+        address: data.contactAddr,
+        taxId: data.taxId,
+        serviceHours: data.serviceHours,
+      },
+      transportation: {
+        mrt: data.mrt,
+        bus: data.bus,
+        drivingDirections: data.driving,
       },
       boothInfo: {
-        ...MOCK_DETAIL.boothInfo,
-        boothZones: [...MOCK_DETAIL.boothInfo.boothZones],
+        boothSpec: data.boothSpec,
+        boothCount: data.boothCount,
+        boothPrice: data.boothPrice,
+        boothZones: data.boothZones.map((zone) => `${zone.name}：${zone.qty}攤`),
       },
-      statusLogs: MOCK_DETAIL.statusLogs.map((log, index) => ({
-        ...log,
-        status: index === 0 ? activity.status : log.status,
-        operator: index === 0
-          ? { role: '主辦方', operatorName: activity.organizer }
-          : { ...log.operator },
-      })),
+      boothLayoutImage: data.boothLayoutImage,
+      statusLogs: data.logs.items.map((log) => this.mapStatusLog(log)),
+    };
+  }
+
+  /** 把 API 回傳的狀態紀錄轉成畫面用的 StatusLog */
+  private mapStatusLog(log: AdminEventStatusLog): AdminMarketDetail['statusLogs'][number] {
+    return {
+      dateTime: log.dateTime,
+      status: ActivityStatus.fromWorkflowApiStatus(log.status),
+      description: log.description,
+      operator: {
+        role: OPERATOR_ROLE_LABEL[log.operatorRole] ?? log.operatorRole,
+        operatorName: log.operator,
+      },
     };
   }
 

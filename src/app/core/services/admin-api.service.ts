@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { AdminDashboardOverview } from '../../models/interface/admin/AdminDashboardOverview';
+import { AdminEventDetailDto, AdminEventStatusLogPage } from '../../models/interface/admin/AdminEventDetail';
 import { AdminEventPage, AdminEventSearchRequest } from '../../models/interface/admin/AdminEventSearch';
 import { AdminNoticePage, AdminNoticeSearchRequest } from '../../models/interface/admin/AdminNoticeSearch';
 import { ApiResult } from '../../models/interface/shared/ApiResult';
@@ -29,5 +30,21 @@ export class AdminApiService {
     options: HttpRequestOptions = {},
   ): Observable<ApiResult<AdminEventPage>> {
     return this.httpService.post<AdminEventPage>('api/admin/events/search', request, options);
+  }
+
+  getEventDetail(id: number): Observable<ApiResult<AdminEventDetailDto>> {
+    return this.httpService.get<AdminEventDetailDto>(`api/admin/events/${id}`);
+  }
+
+  getEventStatusLogs(
+    id: number,
+    page: number,
+    size: number,
+    options: HttpRequestOptions = {},
+  ): Observable<ApiResult<AdminEventStatusLogPage>> {
+    return this.httpService.get<AdminEventStatusLogPage>(
+      `api/admin/events/${id}?page=${page}&size=${size}`,
+      options,
+    );
   }
 }

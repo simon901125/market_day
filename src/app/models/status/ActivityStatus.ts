@@ -19,6 +19,11 @@ export class ActivityStatus {
   static readonly unpublishRequested = '下架申請中';
   static readonly unpublished = '已下架';
 
+  /** 只會出現在活動狀態紀錄（WorkflowStatus）的狀態，EventStatus 沒有對應值。 */
+  static readonly workflowPublished = '已發布';
+  static readonly workflowFinalReview = '參與品牌名單確認';
+  static readonly cancelled = '已取消';
+
   /** 所有可顯示的活動狀態。 */
   static readonly list: string[] = [
     ActivityStatus.draft,
@@ -55,6 +60,9 @@ export class ActivityStatus {
     [ActivityStatus.ended]: 'tag-grey',
     [ActivityStatus.unpublishRequested]: 'tag-orange',
     [ActivityStatus.unpublished]: 'tag-red',
+    [ActivityStatus.workflowPublished]: 'tag-green',
+    [ActivityStatus.workflowFinalReview]: 'tag-teal',
+    [ActivityStatus.cancelled]: 'tag-red',
   };
 
   /** 取得活動狀態標籤樣式。 */
@@ -87,5 +95,29 @@ export class ActivityStatus {
   static toApiStatus(label: string): string | null {
     const entry = Object.entries(ActivityStatus.apiStatusMap).find(([, value]) => value === label);
     return entry ? entry[0] : null;
+  }
+
+  /**
+   * 後端 WorkflowStatus 的 API 值對應到前端顯示用的中文標籤。
+   *
+   * 用於活動詳細頁的狀態紀錄，跟活動列表用的 EventStatus 是不同的後端 enum，
+   * 沒有「報名中/已額滿/進行中/已結束」這幾個算出來的狀態，但多了「已發布/品牌確認中/已取消」。
+   */
+  static readonly workflowApiStatusMap: Record<string, string> = {
+    draft: ActivityStatus.draft,
+    pendingReview: ActivityStatus.pendingReview,
+    revisionRequired: ActivityStatus.revisionRequired,
+    mapBuilding: ActivityStatus.mapBuilding,
+    readyToPublish: ActivityStatus.readyToPublish,
+    published: ActivityStatus.workflowPublished,
+    finalReview: ActivityStatus.workflowFinalReview,
+    pendingUnpublish: ActivityStatus.unpublishRequested,
+    unpublished: ActivityStatus.unpublished,
+    cancelled: ActivityStatus.cancelled,
+  };
+
+  /** 把後端回傳的 WorkflowStatus API 值轉成畫面用的中文標籤。 */
+  static fromWorkflowApiStatus(status: string): string {
+    return ActivityStatus.workflowApiStatusMap[status] ?? status;
   }
 }
