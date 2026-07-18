@@ -16,8 +16,6 @@ export interface EventTimeForm {
   registrationStartTime: string;
   registrationEndDate: string;
   registrationEndTime: string;
-  confirmationDate: string;
-  confirmationTime: string;
   metro: string;
   bus: string;
   driving: string;

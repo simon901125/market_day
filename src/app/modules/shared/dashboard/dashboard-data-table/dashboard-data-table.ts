@@ -5,7 +5,7 @@ import { ApplicationStatus } from '../../../../models/status/ApplicationStatus';
 export interface DashboardTableColumn {
   key: string;
   label: string;
-  type?: 'text' | 'imageText' | 'status' | 'action';
+  type?: 'text' | 'imageText' | 'status' | 'progress' | 'action';
   align?: 'start' | 'center' | 'end';
   width?: string;
   minWidth?: string;
@@ -46,6 +46,20 @@ export class DashboardDataTable {
 
   getStatusClass(value: string): string {
     return ActivityStatus.classMap[value] ?? ApplicationStatus.getClass(value);
+  }
+
+  getProgressCurrent(column: DashboardTableColumn, row: Record<string, any>): number {
+    return Number(row[`${column.key}Current`]) || 0;
+  }
+
+  getProgressTotal(column: DashboardTableColumn, row: Record<string, any>): number {
+    return Number(row[`${column.key}Total`]) || 0;
+  }
+
+  getProgressPercent(column: DashboardTableColumn, row: Record<string, any>): number {
+    const total = this.getProgressTotal(column, row);
+    if (total <= 0) return 0;
+    return Math.min(100, Math.round(this.getProgressCurrent(column, row) / total * 100));
   }
 
   getRowActions(column: DashboardTableColumn, row: Record<string, any>): DashboardTableRowAction[] {

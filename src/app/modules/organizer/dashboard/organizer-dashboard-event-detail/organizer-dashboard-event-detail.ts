@@ -25,6 +25,8 @@ import {
 } from '../../../../models/interface/organizer/OrganizerEventEditor';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { AddressApiService } from '../../../../core/services/address-api.service';
+import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
+import { OrganizerEventDetail } from '../../../../models/interface/organizer/OrganizerEventDetail';
 import { AlertService } from '../../../../core/services/alert.service';
 import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
@@ -67,6 +69,9 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
 
   /** 顯示在頁面上的操作回饋訊息。 */
   feedbackMessage = '';
+  isDetailLoading = false;
+  detailLoadError = '';
+  private serverAvailableActions: string[] = [];
 
   /** 建立／編輯活動目前所在步驟。 */
   currentStep = 0;
@@ -200,6 +205,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly addressApiService: AddressApiService,
+    private readonly organizerApiService: OrganizerApiService,
     private readonly alert: AlertService,
   ) {
     this.activityId = Number(this.route.snapshot.paramMap.get('id')) || 0;
@@ -211,9 +217,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     const stateActivity = history.state?.activity as OrganizerEventRow | undefined;
     this.activity = stateActivity ?? this.getFallbackActivity(this.activityId);
 
-    if (this.isViewMode || this.isEditMode) {
-      this.loadActivityIntoEditor();
-    }
+    if (this.isViewMode || this.isEditMode) void this.loadOrganizerEventDetail();
 
     if (!this.isViewMode) {
       void this.loadCityOptions();
@@ -222,26 +226,12 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   }
 
   private getFallbackActivity(activityId: number): OrganizerEventRow {
-    if (activityId === 15) {
-      return {
-        id: 15,
-        name: '草稿測試市集',
-        nameImage: 'assets/images/shared/no-image-placeholder.svg',
-        date: '-',
-        location: '尚未填寫',
-        status: ActivityStatus.draft,
-        signupProgress: '-',
-        paidCount: '-',
-        actionLabel: '查看詳情',
-      };
-    }
-
     return {
       id: activityId || 1,
-      name: '夏日綠意市集',
-      nameImage: 'assets/images/market/cards/market-card-01.png',
-      date: '2026/06/15 - 2026/06/21',
-      location: '台北市 信義區 草悟廣場',
+      name: '',
+      nameImage: 'assets/images/shared/no-image-placeholder.svg',
+      date: '-',
+      location: '',
       status: ActivityStatus.draft,
       signupProgress: '-',
       paidCount: '-',
@@ -280,25 +270,6 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     );
   }
 
-  get confirmationBeforeRegistrationEnd(): boolean {
-    return this.isDateTimeBefore(
-      this.timeForm.confirmationDate,
-      this.timeForm.confirmationTime,
-      this.timeForm.registrationEndDate,
-      this.timeForm.registrationEndTime,
-    );
-  }
-
-  get confirmationAfterEventStart(): boolean {
-    return this.isDateTimeAfter(
-      this.timeForm.confirmationDate,
-      this.timeForm.confirmationTime,
-      this.timeForm.eventStartDate,
-      this.timeForm.eventStartTime,
-      true,
-    );
-  }
-
   get boothZoneTotal(): number {
     return this.boothZones.reduce((total, zone) => total + Number(zone.count || 0), 0);
   }
@@ -316,30 +287,15 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   }
 
   get availableActions(): StatusAction[] {
-    switch (this.activity.status) {
-      case ActivityStatus.draft:
-        return [
-          { key: 'edit', label: '編輯', variant: 'outline' },
-          { key: 'submit', label: '送出審核', variant: 'primary' },
-          { key: 'delete', label: '刪除', variant: 'danger' },
-        ];
-      case ActivityStatus.pendingReview:
-        return [{ key: 'withdraw', label: '撤回申請', variant: 'outline' }];
-      case ActivityStatus.revisionRequired:
-        return [
-          { key: 'edit', label: '編輯', variant: 'outline' },
-          { key: 'resubmit', label: '重新送審', variant: 'primary' },
-        ];
-      case ActivityStatus.mapBuilding:
-        return [];
-      case ActivityStatus.readyToPublish:
-        return [{ key: 'publish', label: '發布活動', variant: 'primary' }];
-      case ActivityStatus.registrationOpen:
-      case ActivityStatus.full:
-        return [{ key: 'unpublish', label: '下架活動', variant: 'outline' }];
-      default:
-        return [];
-    }
+    const definitions: Record<string, StatusAction> = {
+      EDIT: { key: 'edit', label: '編輯', variant: 'outline' },
+      SUBMIT_REVIEW: { key: 'submit', label: '送出審核', variant: 'primary' },
+      DELETE: { key: 'delete', label: '刪除', variant: 'danger' },
+      RESUBMIT_REVIEW: { key: 'resubmit', label: '重新送審', variant: 'primary' },
+      PUBLISH: { key: 'publish', label: '發布活動', variant: 'primary' },
+      REQUEST_UNPUBLISH: { key: 'unpublish', label: '下架活動', variant: 'outline' },
+    };
+    return this.serverAvailableActions.map((action) => definitions[action]).filter(Boolean);
   }
 
   /** 依據狀態按鈕執行送審、發布、下架、刪除等操作。 */
@@ -519,8 +475,6 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     registrationStartTime: '',
     registrationEndDate: '',
     registrationEndTime: '',
-    confirmationDate: '',
-    confirmationTime: '',
     metro: '',
     bus: '',
     driving: '',
@@ -569,8 +523,6 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       this.timeForm.registrationStartTime,
       this.timeForm.registrationEndDate,
       this.timeForm.registrationEndTime,
-      this.timeForm.confirmationDate,
-      this.timeForm.confirmationTime,
     ];
     const hasTransportation = [this.timeForm.metro, this.timeForm.bus, this.timeForm.driving]
       .every((value) => value.trim());
@@ -578,9 +530,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     return requiredTimes.every(Boolean) && hasTransportation &&
       !this.eventDateTimeOrderInvalid &&
       !this.registrationDateTimeOrderInvalid &&
-      !this.registrationEndAfterEventStart &&
-      !this.confirmationBeforeRegistrationEnd &&
-      !this.confirmationAfterEventStart;
+      !this.registrationEndAfterEventStart;
   }
 
   /** 第三步必填欄位是否都已完成，並檢查分區總數是否吻合攤位總數。 */
@@ -632,8 +582,6 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         this.timeForm.registrationStartTime,
         this.timeForm.registrationEndDate,
         this.timeForm.registrationEndTime,
-        this.timeForm.confirmationDate,
-        this.timeForm.confirmationTime,
       ];
       const missingTimes = requiredTimes.filter((value) => !value).length;
       const missingTransportation = [this.timeForm.metro, this.timeForm.bus, this.timeForm.driving]
@@ -642,8 +590,6 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         this.eventDateTimeOrderInvalid,
         this.registrationDateTimeOrderInvalid,
         this.registrationEndAfterEventStart,
-        this.confirmationBeforeRegistrationEnd,
-        this.confirmationAfterEventStart,
       ].filter(Boolean).length;
       return missingTimes + missingTransportation + dateLogicErrors;
     }
@@ -1349,6 +1295,127 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.venueForm.layoutPreviewUrl = file.type.startsWith('image/') ? URL.createObjectURL(file) : '';
   }
 
+  private async loadOrganizerEventDetail(): Promise<void> {
+    const eventId = this.isViewMode ? this.activityId : this.editActivityId;
+    this.isDetailLoading = true;
+    this.detailLoadError = '';
+    try {
+      const response = await firstValueFrom(this.organizerApiService.getOrganizerEventDetail(eventId));
+      if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+        this.detailLoadError = response.message || '無法取得活動詳情';
+        return;
+      }
+      this.applyOrganizerEventDetail(response.data);
+      this.initialEditorSnapshot = this.getEditorSnapshot();
+    } catch {
+      this.detailLoadError = '無法取得活動詳情，請稍後再試。';
+    } finally {
+      this.isDetailLoading = false;
+    }
+  }
+
+  private applyOrganizerEventDetail(detail: OrganizerEventDetail): void {
+    const start = this.splitDateTime(detail.schedule.startAt);
+    const end = this.splitDateTime(detail.schedule.endAt);
+    const registrationStart = this.splitDateTime(detail.schedule.registrationStartAt);
+    const registrationEnd = this.splitDateTime(detail.schedule.registrationEndAt);
+    const cover = detail.coverImageUrl || 'assets/images/shared/no-image-placeholder.svg';
+    this.activity = {
+      id: detail.eventId,
+      name: detail.eventTitle,
+      nameImage: cover,
+      date: `${start.date || '-'} - ${end.date || '-'}`,
+      location: [detail.location.city, detail.location.district, detail.location.locationName].filter(Boolean).join(' '),
+      status: detail.statusText,
+      signupProgress: '-',
+      paidCount: '-',
+      actionLabel: '查看詳情',
+    };
+    this.serverAvailableActions = detail.availableActions;
+    this.detailCategories = detail.categories.map((category) => category.categoryName);
+    this.form = {
+      name: detail.eventTitle,
+      coverFileName: detail.coverImageUrl?.split('/').pop() ?? '',
+      coverPreviewUrl: detail.coverImageUrl ?? '',
+      categories: [...this.detailCategories],
+      description: detail.summary,
+      introduction: detail.description,
+    };
+    this.timeForm = {
+      eventStartDate: start.date,
+      eventEndDate: end.date,
+      eventStartTime: start.time,
+      eventEndTime: end.time,
+      registrationStartDate: registrationStart.date,
+      registrationStartTime: registrationStart.time,
+      registrationEndDate: registrationEnd.date,
+      registrationEndTime: registrationEnd.time,
+      metro: detail.location.trafficInfoMetro ?? '',
+      bus: detail.location.trafficInfoBus ?? '',
+      driving: detail.location.trafficInfoDriving ?? '',
+    };
+    this.venueForm = {
+      city: detail.location.city,
+      district: detail.location.district ?? '',
+      address: detail.location.address,
+      venueName: detail.location.locationName,
+      boothWidth: detail.booth.stallWidth,
+      boothLength: detail.booth.stallLength,
+      totalBooths: detail.booth.maxBooths,
+      boothPrice: detail.booth.baseFee,
+      layoutFileName: detail.booth.mapImageUrl?.split('/').pop() ?? '',
+      layoutPreviewUrl: detail.booth.mapImageUrl ?? '',
+    };
+    this.boothZones = detail.booth.zones.map((zone, index) => ({
+      name: zone.zoneName,
+      color: zone.colorCode ?? this.zoneColors[index % this.zoneColors.length],
+      count: zone.stallCount,
+    }));
+    this.mapEquipmentItems(detail);
+  }
+
+  private mapEquipmentItems(detail: OrganizerEventDetail): void {
+    const equipment = detail.equipment.items.filter((item) => item.itemType === 'EQUIPMENT');
+    const equipmentGroups = new Map<string, typeof equipment>();
+    equipment.forEach((item) => {
+      const key = item.equipmentGroupKey || item.name;
+      equipmentGroups.set(key, [...(equipmentGroups.get(key) ?? []), item]);
+    });
+    this.equipmentItems = [...equipmentGroups.values()].map((group) => {
+      const free = group.find((item) => item.chargeType === 'FREE');
+      const paid = group.find((item) => item.chargeType === 'PAID');
+      const source = free ?? paid!;
+      return {
+        name: source.name,
+        specification: source.description ?? '',
+        unit: source.unit ?? '',
+        freeQuantity: free?.stockQuantity ?? 0,
+        rentable: Boolean(paid),
+        rentalPrice: paid?.rentalFee ?? null,
+        rentalLimit: paid?.perStallRentalLimit ?? null,
+        dailyRentalQuantity: paid?.stockQuantity ?? null,
+      };
+    });
+    const power = detail.equipment.items.filter((item) => item.itemType === 'POWER');
+    const toPowerPlan = (item: typeof power[number]): EventPowerPlan => ({
+      voltage: item.name,
+      wattage: item.wattageLimit,
+      fee: item.chargeType === 'PAID' ? item.rentalFee : null,
+      description: item.description ?? '',
+    });
+    this.basicPowerPlans = power.filter((item) => item.chargeType === 'FREE').map(toPowerPlan);
+    this.extraPowerPlans = power.filter((item) => item.chargeType === 'PAID').map(toPowerPlan);
+    this.providesEquipmentRental = this.equipmentItems.length > 0;
+    this.providesBasicPower = this.basicPowerPlans.length > 0;
+    this.allowsExtraPower = this.extraPowerPlans.length > 0;
+  }
+
+  private splitDateTime(value: string | null): { date: string; time: string } {
+    if (!value) return { date: '', time: '' };
+    const [date, time = ''] = value.split('T');
+    return { date, time: time.slice(0, 5) };
+  }
+
   /** 編輯模式下，將既有活動資料帶入三步驟表單。 */
   private loadActivityIntoEditor(): void {
     if (this.activity.id === 15) {
@@ -1376,8 +1443,6 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       registrationStartTime: '10:00',
       registrationEndDate: '2026-05-31',
       registrationEndTime: '23:59',
-      confirmationDate: '2026-06-10',
-      confirmationTime: '12:00',
       metro: '捷運站步行約 8 分鐘',
       bus: '公車站下車後步行約 3 分鐘',
       driving: '附近設有收費停車場，請依現場指示停放',
@@ -1432,8 +1497,6 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       registrationStartTime: '',
       registrationEndDate: '',
       registrationEndTime: '',
-      confirmationDate: '',
-      confirmationTime: '',
       metro: '',
       bus: '',
       driving: '',
