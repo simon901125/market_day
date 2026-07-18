@@ -1,4 +1,9 @@
-<section class="notification-page" [class.home-mode]="limitItems" [class.dashboard-list-page]="!limitItems">
+<section
+  class="notification-page"
+  [class.home-mode]="limitItems"
+  [class.dashboard-list-page]="!limitItems"
+  [class.is-loading]="loading"
+>
   <div class="page-header">
     <h1>{{ title }}</h1>
 
@@ -55,7 +60,7 @@
       class="dashboard-list-pagination"
       [currentPage]="currentPage"
       [pageSize]="pageSize"
-      [totalItems]="filteredNotifications.length"
+      [totalItems]="pageTotalItems"
       (pageChange)="setPage($event)"
     ></app-dashboard-pagination>
   }
