@@ -2,6 +2,10 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { AdminDashboardNotification } from '../admin-dashboard-notification/admin-dashboard-notification';
 import { DashboardHomeTodoCard } from '../../../shared/dashboard/dashboard-home-todo-card/dashboard-home-todo-card';
 import { DashboardNotification } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
+import { AdminApiService } from '../../../../core/services/admin-api.service';
+import { AlertService } from '../../../../core/services/alert.service';
+import { AdminDashboardOverview } from '../../../../models/interface/admin/AdminDashboardOverview';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
 /**
  * 管理員首頁待處理事項資料格式
@@ -41,11 +45,19 @@ export class AdminDashboardHome extends AdminDashboardNotification implements On
    */
   homeNotificationMaxItems = 4;
 
+  constructor(
+    private readonly adminApiService: AdminApiService,
+    private readonly alert: AlertService,
+  ) {
+    super();
+  }
+
   /**
-   * 元件初始化時，先依照目前畫面高度決定最新通知顯示筆數
+   * 元件初始化時，先依照目前畫面高度決定最新通知顯示筆數，並讀取後台概況資料
    */
   ngOnInit(): void {
     this.updateHomeNotificationMaxItems();
+    this.loadDashboardOverview();
   }
 
   /**
@@ -62,7 +74,7 @@ export class AdminDashboardHome extends AdminDashboardNotification implements On
    * 依照視窗高度更新首頁最新通知顯示筆數
    *
    * 最少顯示 2 筆
-   * 最多顯示 8 筆
+   * 最多顯示 6 筆
    */
   private updateHomeNotificationMaxItems(): void {
     const height = window.innerHeight;
@@ -73,54 +85,84 @@ export class AdminDashboardHome extends AdminDashboardNotification implements On
     const availableHeight = height - usedHeight;
     const count = Math.floor(availableHeight / notificationItemHeight);
 
-    this.homeNotificationMaxItems = Math.min(8, Math.max(4, count));
+    this.homeNotificationMaxItems = Math.min(6, Math.max(4, count));
   }
 
   /**
    * 待處理事項卡片資料
    */
-  todoItems: TodoItem[] = [
-    {
-      icon: 'bi-calendar-event',
-      count: 5,
-      unit: '筆',
-      label: '活動審核',
-      path: '/admin/dash-board/activity',
-      iconColor: 'orange',
-    },
-    {
-      icon: 'bi-map',
-      count: 2,
-      unit: '筆',
-      label: '活動地圖建置',
-      path: '/admin/dash-board/activity',
-      iconColor: 'orange',
-    },
-    {
-      icon: 'bi-arrow-down',
-      count: 2,
-      unit: '筆',
-      label: '活動下架申請',
-      path: '/admin/dash-board/activity',
-      iconColor: 'orange',
-    },
-    {
-      icon: 'bi-exclamation-triangle',
-      count: 1,
-      unit: '筆',
-      label: '異常提醒',
-      path: '/admin/dash-board/logs',
-      iconColor: 'red',
-    },
-  ];
+  todoItems: TodoItem[] = [];
 
   /**
    * 平台概況卡片資料
    */
-  platformStats: StatItem[] = [
-    { icon: 'bi-people', value: 32, unit: '位', label: '主辦方總數', iconColor: 'teal' },
-    { icon: 'bi-shop', value: 126, unit: '位', label: '攤主總數', iconColor: 'blue' },
-    { icon: 'bi-calendar-check', value: 18, unit: '場', label: '活動總數', iconColor: 'purple' },
-    { icon: 'bi-flag', value: 7, unit: '場', label: '進行中活動', iconColor: 'green' },
-  ];
+  platformStats: StatItem[] = [];
+
+  /**
+   * 串接 API："/api/admin/dashboard/overview"，取得後台概況資料並更新待處理事項與平台概況卡片
+   */
+  private loadDashboardOverview(): void {
+    this.adminApiService.getDashboardOverview().subscribe({
+      next: async (res) => {
+        if (!isApiSuccessStatus(res.statusCode)) {
+          await this.alert.error('讀取失敗', res.message);
+          return;
+        }
+
+        this.applyOverview(res.data);
+      },
+      error: async (error) => {
+        await this.alert.error('讀取失敗', error.error?.message || '請稍後再試。');
+      },
+    });
+  }
+
+  /**
+   * 將 API 回傳的後台概況資料轉換成待處理事項與平台概況卡片資料
+   */
+  private applyOverview(data: AdminDashboardOverview): void {
+    this.todoItems = [
+      {
+        icon: 'bi-calendar-event',
+        count: data.pendingReview,
+        unit: '筆',
+        label: '活動審核',
+        path: '/admin/dash-board/activity',
+        iconColor: 'orange',
+      },
+      {
+        icon: 'bi-map',
+        count: data.mapBuilding,
+        unit: '筆',
+        label: '活動地圖建置',
+        path: '/admin/dash-board/activity',
+        iconColor: 'orange',
+      },
+      {
+        icon: 'bi-arrow-down',
+        count: data.pendingUnpublish,
+        unit: '筆',
+        label: '活動下架申請',
+        path: '/admin/dash-board/activity',
+        iconColor: 'orange',
+      },
+      {
+        icon: 'bi-exclamation-triangle',
+        count: data.systemWarning,
+        unit: '筆',
+        label: '異常提醒',
+        path: '/admin/dash-board/logs',
+        iconColor: 'red',
+      },
+    ];
+
+    this.platformStats = [
+      { icon: 'bi-people', value: data.totalOrganizer, unit: '位', label: '主辦方總數', iconColor: 'teal' },
+      { icon: 'bi-shop', value: data.totalVender, unit: '位', label: '攤主總數', iconColor: 'blue' },
+      { icon: 'bi-calendar-check', value: data.totalActivity, unit: '場', label: '活動總數', iconColor: 'purple' },
+      { icon: 'bi-flag', value: data.active, unit: '場', label: '進行中活動', iconColor: 'green' },
+    ];
+
+    this.notifications = this.mapNotices(data.notices);
+  }
 }
