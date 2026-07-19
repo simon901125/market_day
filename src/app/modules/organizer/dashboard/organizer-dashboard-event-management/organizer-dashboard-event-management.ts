@@ -346,6 +346,10 @@ export class OrganizerDashboardEventManagement implements OnInit {
   }
 
   /** 點擊列表操作按鈕，帶著返回列表所需狀態前往活動詳情。 */
+  onTableRowClick(row: Record<string, unknown>): void {
+    void this.onTableAction({ key: 'view', label: '查看', variant: 'outline', row });
+  }
+
   async onTableAction(action: DashboardTableAction): Promise<void> {
     const activity = action.row as unknown as OrganizerEventRow;
     if (action.key === 'unpublish') {
@@ -434,7 +438,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
           `確定要發布「${activity.name}」嗎？<br>發布後活動將對外公開並開放瀏覽與報名。`,
           '確定發布',
         )) return true;
-        this.updateActivityStatus(activity.id, ActivityStatus.registrationOpen);
+        if (!await this.publishEventFromList(activity)) return true;
         await this.alert.success(
           '發布活動成功',
           `活動「${activity.name}」已發布並進入「報名中」狀態。`,
@@ -503,6 +507,45 @@ export class OrganizerDashboardEventManagement implements OnInit {
       this.loadEvents();
       return false;
     }
+  }
+
+  private async publishEventFromList(activity: OrganizerEventRow): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApi.publishOrganizerEvent(activity.id),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) {
+        this.loadEvents();
+        return true;
+      }
+      await this.alert.error(
+        '無法發布活動',
+        response.statusCode === 409
+          ? '活動狀態已變更，系統將重新載入最新資料。'
+          : this.publishFailureMessage(response.data?.missingFields, response.message),
+      );
+      this.loadEvents();
+      return false;
+    } catch {
+      await this.alert.error('無法發布活動', '發布活動失敗，請稍後再試。');
+      this.loadEvents();
+      return false;
+    }
+  }
+
+  private publishFailureMessage(fields: string[] | undefined, fallback: string): string {
+    if (!fields?.length) return fallback || '活動尚未符合發布條件。';
+    const labels: Record<string, string> = {
+      coverImage: '活動封面圖片',
+      categoryIds: '活動類型',
+      'booth.mapImage': '攤位配置圖片',
+      'booth.zones': '攤位分區',
+      'booth.stalls': '互動式攤位數量',
+      'schedule.startAt': '活動開始時間',
+      'schedule.endAt': '活動結束時間',
+      'schedule.registrationEndAt': '報名截止時間',
+    };
+    return `請確認：${fields.map((field) => labels[field] ?? field).join('、')}。`;
   }
 
   private reviewStepForMissingFields(fields: string[]): number {
@@ -611,6 +654,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       [ActivityStatus.registrationOpen, 'REGISTRATION_OPEN'],
       [ActivityStatus.full, 'FULL'],
       [ActivityStatus.published, 'PUBLISHED'],
+      [ActivityStatus.finalConfirmation, 'FINAL_CONFIRMATION'],
       [ActivityStatus.active, 'ACTIVE'],
       [ActivityStatus.ended, 'ENDED'],
       [ActivityStatus.unpublishRequested, 'UNPUBLISH_REQUESTED'],
@@ -654,7 +698,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
         ];
       case ActivityStatus.revisionRequired:
         return [
-          { key: 'view', label: '查看', variant: 'outline' },
+          { key: 'edit', label: '編輯', variant: 'outline' },
           { key: 'resubmit', label: '重新送審', variant: 'primary' },
         ];
       case ActivityStatus.mapBuilding:
@@ -666,6 +710,9 @@ export class OrganizerDashboardEventManagement implements OnInit {
         ];
       case ActivityStatus.registrationOpen:
       case ActivityStatus.full:
+      case ActivityStatus.published:
+      case ActivityStatus.finalConfirmation:
+      case ActivityStatus.active:
         return [
           { key: 'unpublish', label: '下架活動', variant: 'danger' },
           { key: 'view', label: '查看', variant: 'outline' },

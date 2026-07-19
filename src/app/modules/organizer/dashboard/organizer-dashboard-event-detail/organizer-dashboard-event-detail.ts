@@ -91,6 +91,8 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   feedbackMessage = '';
   isDetailLoading = false;
   detailLoadError = '';
+  isRevisionRequired = false;
+  reviewNote = '';
   private serverAvailableActions: string[] = [];
 
   /** 建立／編輯活動目前所在步驟。 */
@@ -481,7 +483,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         )) {
           return;
         }
-        this.activity = { ...this.activity, status: ActivityStatus.registrationOpen };
+        if (!await this.publishOrganizerEvent()) return;
         await this.alert.success(
           '發布活動成功',
           `活動「${this.activity.name}」已成功發布。<br>活動現已對外公開，所有人皆可瀏覽與報名。`,
@@ -1061,6 +1063,48 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       await this.loadOrganizerEventDetail();
       return false;
     }
+  }
+
+  private async publishOrganizerEvent(): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApiService.publishOrganizerEvent(this.activity.id),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) {
+        await this.loadOrganizerEventDetail();
+        return true;
+      }
+      await this.alert.error(
+        '無法發布活動',
+        response.statusCode === 409
+          ? '活動狀態已變更，系統將重新載入最新資料。'
+          : this.publishFailureMessage(response.data?.missingFields, response.message),
+      );
+      await this.loadOrganizerEventDetail();
+      return false;
+    } catch (error) {
+      await this.alert.error(
+        '無法發布活動',
+        this.getRequestErrorMessage(error, '發布活動失敗，請稍後再試。'),
+      );
+      await this.loadOrganizerEventDetail();
+      return false;
+    }
+  }
+
+  private publishFailureMessage(fields: string[] | undefined, fallback: string): string {
+    if (!fields?.length) return fallback || '活動尚未符合發布條件。';
+    const labels: Record<string, string> = {
+      coverImage: '活動封面圖片',
+      categoryIds: '活動類型',
+      'booth.mapImage': '攤位配置圖片',
+      'booth.zones': '攤位分區',
+      'booth.stalls': '互動式攤位數量',
+      'schedule.startAt': '活動開始時間',
+      'schedule.endAt': '活動結束時間',
+      'schedule.registrationEndAt': '報名截止時間',
+    };
+    return `請確認：${fields.map((field) => labels[field] ?? field).join('、')}。`;
   }
 
   private async handleReviewSubmissionFailure(
@@ -1647,6 +1691,8 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       actionLabel: '查看詳情',
     };
     this.serverAvailableActions = detail.availableActions;
+    this.isRevisionRequired = detail.workflowStatus === 'REVISION_REQUIRED';
+    this.reviewNote = detail.reviewNote?.trim() || '請依照審核通知補齊活動資料。';
     detail.categories.forEach((category) => this.categoryIdByName.set(category.categoryName, category.categoryId));
     this.detailCategories = detail.categories.map((category) => category.categoryName);
     this.form = {

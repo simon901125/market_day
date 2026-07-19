@@ -29,6 +29,19 @@
       </div>
     </header>
 
+    @if (isRevisionRequired) {
+      <section class="revision-notice revision-notice--detail" role="alert" aria-labelledby="revision-notice-title">
+        <div class="revision-notice-heading">
+          <h2 id="revision-notice-title">
+            <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+            活動需要補件
+          </h2>
+        </div>
+        <p class="revision-notice-detail"><strong>補件原因：</strong>{{ reviewNote }}</p>
+        <span class="revision-action-hint">請點選「編輯」補齊資料，儲存完成後再重新送審。</span>
+      </section>
+    }
+
     @if (feedbackMessage) {
       <div class="detail-feedback" role="status"><i class="bi bi-check-circle"></i>{{ feedbackMessage }}</div>
     }
@@ -303,10 +316,23 @@
       <button type="button" class="app-btn neutral app-create-btn" (click)="cancelEditor()">取消</button>
       <button type="button" class="app-btn secondary app-create-btn" (click)="saveDraft()">儲存草稿</button>
       <button type="button" class="app-btn primary app-create-btn" (click)="currentStep === 3 ? submitForReview() : goNext()">
-        {{ currentStep === 3 ? '送出審核' : '下一步' }}
+        {{ currentStep === 3 ? (isRevisionRequired ? '重新送審' : '送出審核') : '下一步' }}
       </button>
     </div>
   </header>
+
+  @if (isRevisionRequired) {
+    <section class="revision-notice" role="alert" aria-labelledby="revision-editor-notice-title">
+      <div class="revision-notice-heading">
+        <h2 id="revision-editor-notice-title">
+          <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+          活動需要補件
+        </h2>
+        <small>請依照補件原因修改資料；可先儲存草稿，完成後再重新送審。</small>
+      </div>
+      <p><strong>補件原因：</strong>{{ reviewNote }}</p>
+    </section>
+  }
 
   <section class="event-editor-card">
     <aside class="event-stepper" aria-label="建立活動步驟">

@@ -61,6 +61,16 @@
     &.empty-row:hover {
       background: transparent;
     }
+
+    &.clickable-row {
+      cursor: pointer;
+
+      &:focus-visible {
+        outline: 2px solid var(--primary-color);
+        outline-offset: -2px;
+        background: var(--primary-soft);
+      }
+    }
   }
 }
 

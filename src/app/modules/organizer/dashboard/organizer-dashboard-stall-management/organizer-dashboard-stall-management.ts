@@ -110,6 +110,10 @@ export class OrganizerDashboardStallManagement implements OnInit {
     this.search();
   }
 
+  onTableRowClick(row: Record<string, unknown>): void {
+    this.onTableAction({ key: 'view', label: '查看', variant: 'outline', row });
+  }
+
   onTableAction(action: DashboardTableAction): void {
     this.viewDetail(action.row as unknown as StallEvent);
   }

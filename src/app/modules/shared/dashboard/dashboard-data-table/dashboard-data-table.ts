@@ -45,8 +45,10 @@ export class DashboardDataTable {
   @Input() minimumRows = 0;
   @Input() emptyText = '目前沒有資料';
   @Input() emptyHint = '';
+  @Input() rowClickable = false;
 
   @Output() actionClick = new EventEmitter<DashboardTableAction>();
+  @Output() rowClick = new EventEmitter<Record<string, unknown>>();
 
   get fillerRows(): number[] {
     return Array.from({ length: Math.max(0, this.minimumRows - this.rows.length) }, (_, index) => index);
@@ -113,11 +115,22 @@ export class DashboardDataTable {
     });
   }
 
+  emitRowClick(row: Record<string, unknown>, event: Event): void {
+    if (!this.rowClickable || this.isInteractiveTarget(event)) return;
+    this.rowClick.emit(row);
+  }
+
   emitAction(column: DashboardTableColumn, row: Record<string, unknown>): void {
     this.actionClick.emit({
       label: String(row[`${column.key}Label`] ?? '查看'),
       variant: (row[`${column.key}Variant`] as DashboardTableAction['variant']) ?? 'outline',
       row,
     });
+  }
+
+  private isInteractiveTarget(event: Event): boolean {
+    if (!(event.target instanceof Element)) return false;
+    const interactiveElement = event.target.closest('button, a, input, select, textarea, [role="button"], [role="link"]');
+    return interactiveElement !== null && interactiveElement !== event.currentTarget;
   }
 }

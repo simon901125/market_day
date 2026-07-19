@@ -119,6 +119,16 @@ export interface OrganizerEventWithdrawResponse {
   availableActions: string[];
 }
 
+export interface OrganizerEventPublishResponse {
+  eventId: number;
+  workflowStatus: string;
+  status: string;
+  statusText: string;
+  publicInfoAt: string | null;
+  availableActions: string[];
+  missingFields: string[];
+}
+
 export interface BoothZone {
   name: string;
   color: string;

@@ -34,6 +34,8 @@
       [rows]="displayRows"
       tableMinWidth="100%"
       emptyText="目前沒有符合條件的帳務資料"
+      [rowClickable]="true"
+      (rowClick)="onTableRowClick($event)"
       (actionClick)="onTableAction($event)"
     ></app-dashboard-data-table>
   </div>

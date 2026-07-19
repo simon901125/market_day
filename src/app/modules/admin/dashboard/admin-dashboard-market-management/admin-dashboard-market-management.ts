@@ -9,6 +9,7 @@ import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResul
 import { AdminApiService } from '../../../../core/services/admin-api.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
+import { ClickableTableRowDirective } from '../../../shared/dashboard/clickable-table-row/clickable-table-row.directive';
 
 @Component({
   selector: 'app-admin-dashboard-market-management',
@@ -16,6 +17,7 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
     Dropdown,
     DateRangeSelector,
     DashboardPagination,
+    ClickableTableRowDirective,
   ],
   templateUrl: './admin-dashboard-market-management.html',
   styleUrl: './admin-dashboard-market-management.scss',

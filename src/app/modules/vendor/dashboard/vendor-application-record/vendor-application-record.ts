@@ -19,6 +19,7 @@ import type {
 import type { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
+import { ClickableTableRowDirective } from '../../../shared/dashboard/clickable-table-row/clickable-table-row.directive';
 
 const DETAIL_LINK = '/vendor/dash-board/application-record/detail';
 
@@ -336,7 +337,7 @@ export const VENDOR_APPLICATION_RECORDS: ApplicationRecord[] = VENDOR_APPLICATIO
 
 @Component({
   selector: 'app-vendor-application-record',
-  imports: [CommonModule, RouterLink, DashboardPagination, Dropdown, DateRangeSelector],
+  imports: [CommonModule, RouterLink, DashboardPagination, Dropdown, DateRangeSelector, ClickableTableRowDirective],
   templateUrl: './vendor-application-record.html',
   styleUrl: './vendor-application-record.scss',
 })

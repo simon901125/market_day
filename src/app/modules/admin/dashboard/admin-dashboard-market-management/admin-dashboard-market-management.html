@@ -58,7 +58,10 @@
         </thead>
         <tbody>
           @for (activity of activities; track activity.id) {
-            <tr>
+            <tr
+              [appTableRowLink]="['/admin/dash-board/activity/detail', activity.id]"
+              [appTableRowNavigationExtras]="{ state: { activity } }"
+            >
               <td class="activity-name">
                 <div class="activity-name-cell">
                   <img [src]="activity.image" [alt]="activity.name" />

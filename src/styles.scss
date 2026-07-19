@@ -108,6 +108,17 @@ body.market-loading-lock {
   border-radius: 4px;
 }
 
+/* 後台管理列表中可前往詳情的資料列。 */
+.app-clickable-table-row {
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: -2px;
+    background: var(--primary-soft);
+  }
+}
+
 /* 攤主報名詳細：活動下架申請提示（報名狀態維持原狀）。 */
 .activity-unpublish-notice {
   align-items: flex-start;
