@@ -105,7 +105,7 @@ export class AdminApiService {
   }
 
   getOrgEventLogs(id: number, page: number, size: number): Observable<ApiResult<AdminOrgEventPage>> {
-    return this.httpService.get<AdminOrgEventPage>(`api/admin/users/${id}/OrgEvent?page=${page}&size=${size}`);
+    return this.httpService.get<AdminOrgEventPage>(`api/admin/users/${id}/orgEvent?page=${page}&size=${size}`);
   }
 
   getVenderRegLogs(id: number, page: number, size: number): Observable<ApiResult<AdminVenderRegPage>> {

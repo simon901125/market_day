@@ -6,6 +6,7 @@ import { AdminDashboardNotice } from '../../../../models/interface/admin/AdminDa
 import { AdminNoticeSearchRequest } from '../../../../models/interface/admin/AdminNoticeSearch';
 import { AdminApiService } from '../../../../core/services/admin-api.service';
 import { AlertService } from '../../../../core/services/alert.service';
+import { NotificationApiService } from '../../../../core/services/notification-api.service';
 import { DashboardNotification } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
 import { getNoticeStatusClass, getNoticeTypeDisplay } from '../../../shared/dashboard/dashboard-notification/notice-type-display';
 import { NotificationCategory } from '../../../shared/dashboard/dashboard-notification/notification-category';
@@ -38,6 +39,7 @@ export class AdminDashboardNotification implements OnInit {
   constructor(
     protected readonly adminApiService: AdminApiService,
     protected readonly alert: AlertService,
+    protected readonly notificationApiService: NotificationApiService,
   ) {}
 
   ngOnInit(): void {
@@ -104,6 +106,7 @@ export class AdminDashboardNotification implements OnInit {
       const display = getNoticeTypeDisplay(notice.type);
 
       return {
+        id: notice.id,
         icon: display.icon,
         iconClass: display.iconClass,
         title: notice.title,
@@ -113,6 +116,27 @@ export class AdminDashboardNotification implements OnInit {
         unread: !notice.isRead,
         type: notice.type,
       };
+    });
+  }
+
+  /**
+   * 串接 API："/api/notification/{id}/isRead"，把通知標記為已讀
+   *
+   * 畫面已由共用元件先本地把該筆設為已讀，這裡只需要背景同步到後端；
+   * 屬於區域性操作，同樣跳過全螢幕 Loading。
+   */
+  protected onMarkRead(item: { id?: number }): void {
+    if (item.id == null) return;
+
+    this.notificationApiService.markAsRead(item.id, { skipLoading: true }).subscribe({
+      next: async (res) => {
+        if (!isApiSuccessStatus(res.statusCode)) {
+          await this.alert.error('標記已讀失敗', res.message);
+        }
+      },
+      error: async (error) => {
+        await this.alert.error('標記已讀失敗', error.error?.message || '請稍後再試。');
+      },
     });
   }
 }

@@ -64,7 +64,6 @@ describe('AdminDashboardMarketManagement', () => {
     fixture.detectChanges();
 
     component.timeSelectorRef = { getTimeRange: () => ({ startDate: null, endDate: null }), reset: () => {} } as any;
-    component.organizerDropdownRef = { reset: () => {} } as any;
     component.statusDropdownRef = { reset: () => {} } as any;
     component.tableWrapperRef = { nativeElement: document.createElement('div') } as any;
   });
@@ -115,15 +114,6 @@ describe('AdminDashboardMarketManagement', () => {
       status: ActivityStatus.pendingReview,
       submittedAt: '2026/05/28 14:30',
     }));
-  });
-
-  it('選擇主辦方後搜尋，應把主辦方帶入查詢條件', () => {
-    component.onOrganizerSelected('森林生活市集');
-    component.onSearch();
-
-    expect(adminApiServiceSpy.searchEvents).toHaveBeenCalledWith(
-      jasmine.objectContaining({ organizer: '森林生活市集' }),
-    );
   });
 
   it('選擇狀態後搜尋，應把狀態轉成後端 API 值帶入查詢條件', () => {

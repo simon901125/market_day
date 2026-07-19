@@ -4,6 +4,7 @@ import { DashboardHomeTodoCard } from '../../../shared/dashboard/dashboard-home-
 import { DashboardNotification } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
 import { AdminApiService } from '../../../../core/services/admin-api.service';
 import { AlertService } from '../../../../core/services/alert.service';
+import { NotificationApiService } from '../../../../core/services/notification-api.service';
 import { AdminDashboardOverview } from '../../../../models/interface/admin/AdminDashboardOverview';
 import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
@@ -45,8 +46,12 @@ export class AdminDashboardHome extends AdminDashboardNotification implements On
    */
   homeNotificationMaxItems = 4;
 
-  constructor(adminApiService: AdminApiService, alert: AlertService) {
-    super(adminApiService, alert);
+  constructor(
+    adminApiService: AdminApiService,
+    alert: AlertService,
+    notificationApiService: NotificationApiService,
+  ) {
+    super(adminApiService, alert, notificationApiService);
   }
 
   /**
