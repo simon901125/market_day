@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import type {
   ApplicationDetail,
   ApplicationStatus,
@@ -33,6 +35,7 @@ export class VendorApplicationDetail implements OnInit {
   market: MarketCardItem = createEmptyMarket();
   eventDateText = '';
   isLoading = true;
+  isCancelling = false;
   loadError = '';
 
   /** 是否顯示頁內彈窗；退款成功提示改由共用 SweetAlert 顯示。 */
@@ -421,6 +424,10 @@ export class VendorApplicationDetail implements OnInit {
 
   /** 待審核、待付款狀態取消報名前的二次確認。 */
   async cancelRegistration(): Promise<void> {
+    if (this.isCancelling) {
+      return;
+    }
+
     const confirmed = await this.alert.confirmNotice({
       title: '確認取消報名？',
       description: '取消報名後，將失去本次活動報名資格。請確認是否要取消報名。',
@@ -437,12 +444,39 @@ export class VendorApplicationDetail implements OnInit {
       return;
     }
 
-    this.setStatus('cancelled');
-    await this.alert.success(
-      '取消報名成功',
-      '本次活動報名已取消，您可於「我的報名紀錄」中查看紀錄。',
-      '確認',
-    );
+    this.isCancelling = true;
+
+    try {
+      const response = await firstValueFrom(
+        this.vendorDashboardService.cancelVendorApplication(this.currentApplicationId),
+      );
+
+      if (!isApiSuccessStatus(response.statusCode)) {
+        await this.alert.error('取消報名失敗', response.message || '請稍後再試。');
+        return;
+      }
+
+      this.setStatus('cancelled');
+      await this.alert.success(
+        '取消報名成功',
+        '本次活動報名已取消，您可於「我的報名紀錄」中查看紀錄。',
+        '確認',
+      );
+    } catch (error) {
+      await this.alert.error('取消報名失敗', this.getCancelErrorMessage(error));
+    } finally {
+      this.isCancelling = false;
+    }
+  }
+
+  private getCancelErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      return error.error?.message ?? error.message ?? '無法連線至伺服器，請稍後再試。';
+    }
+    if (error instanceof Error) {
+      return error.message;
+    }
+    return '無法連線至伺服器，請稍後再試。';
   }
 
   /** 進入獨立付款頁，並以報名編號載入對應的付款資料。 */

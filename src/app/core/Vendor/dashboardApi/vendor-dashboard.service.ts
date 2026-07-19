@@ -75,6 +75,12 @@ export class VendorDashboardService {
     return this.http.get<ApiResult<VendorApplicationApiDetail>>(url);
   }
 
+  /** 取消待審核或待付款的活動報名。 */
+  cancelVendorApplication(applicationId: number): Observable<ApiResult<void>> {
+    const url = `${environment.apiBaseUrl}api/vendor/CancelApplication/${applicationId}`;
+    return this.http.post<ApiResult<void>>(url, null);
+  }
+
   /** 由後端建立藍新 MPG 交易資料；金額一律由後端依報名資料決定。 */
   createNewebPayPayment(
     applicationNo: string,

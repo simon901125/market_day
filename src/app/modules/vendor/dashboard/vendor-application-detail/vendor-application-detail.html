@@ -36,10 +36,11 @@
           <button
             type="button"
             class="header-action app-btn secondary"
+            [disabled]="isCancelling"
             (click)="cancelRegistration()"
           >
             <i class="bi bi-x-circle"></i>
-            取消報名
+            {{ isCancelling ? '取消中…' : '取消報名' }}
           </button>
         }
 

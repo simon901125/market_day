@@ -130,6 +130,25 @@ describe('VendorDashboardService', () => {
     });
   });
 
+  it('should cancel a vendor application by application id', () => {
+    service.cancelVendorApplication(25).subscribe((response) => {
+      expect(response.statusCode).toBe(200);
+      expect(response.message).toBe('報名取消成功');
+    });
+
+    const request = httpTesting.expectOne(
+      `${environment.apiBaseUrl}api/vendor/CancelApplication/25`,
+    );
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toBeNull();
+    request.flush({
+      statusCode: 200,
+      message: '報名取消成功',
+      messageDetails: null,
+      data: null,
+    });
+  });
+
   it('should get a vendor stall map by application number and apply date', () => {
     service.getVendorStallMap('MD 2026/001', '2026-07-18').subscribe((response) => {
       expect(response.data.application.selectedStalls[0].stallNo).toBe('A12');

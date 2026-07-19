@@ -3,6 +3,7 @@ import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/route
 import { of } from 'rxjs';
 
 import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
+import { AlertService } from '../../../../core/services/alert.service';
 import type { VendorApplicationApiDetail } from '../../../../models/interface/vendor/VendorApplicationApiDetail';
 import { VendorApplicationDetail } from './vendor-application-detail';
 
@@ -10,12 +11,14 @@ describe('VendorApplicationDetail', () => {
   let component: VendorApplicationDetail;
   let fixture: ComponentFixture<VendorApplicationDetail>;
   let dashboardService: jasmine.SpyObj<VendorDashboardService>;
+  let alertService: jasmine.SpyObj<AlertService>;
 
   beforeEach(async () => {
     // 模擬詳情端點，驗證頁面不再依賴 VENDOR_APPLICATION_RECORDS 假資料。
     dashboardService = jasmine.createSpyObj<VendorDashboardService>('VendorDashboardService', [
       'getVendorApplicationDetail',
       'getVendorStallMap',
+      'cancelVendorApplication',
     ]);
     dashboardService.getVendorApplicationDetail.and.returnValue(of({
       statusCode: 200,
@@ -54,12 +57,27 @@ describe('VendorApplicationDetail', () => {
         stalls: [],
       },
     }));
+    dashboardService.cancelVendorApplication.and.returnValue(of({
+      statusCode: 200,
+      message: '報名取消成功',
+      messageDetails: null,
+      data: undefined,
+    }));
+    alertService = jasmine.createSpyObj<AlertService>('AlertService', [
+      'confirmNotice',
+      'success',
+      'error',
+    ]);
+    alertService.confirmNotice.and.resolveTo(true);
+    alertService.success.and.resolveTo({} as never);
+    alertService.error.and.resolveTo({} as never);
 
     await TestBed.configureTestingModule({
       imports: [VendorApplicationDetail],
       providers: [
         provideRouter([]),
         { provide: VendorDashboardService, useValue: dashboardService },
+        { provide: AlertService, useValue: alertService },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -111,6 +129,15 @@ describe('VendorApplicationDetail', () => {
       label: '審核時間',
       value: '尚未完成',
     });
+  });
+
+  it('should call the cancel API before changing the application status', async () => {
+    await component.cancelRegistration();
+
+    expect(dashboardService.cancelVendorApplication).toHaveBeenCalledOnceWith(25);
+    expect(component.currentStatus).toBe('cancelled');
+    expect(alertService.success).toHaveBeenCalled();
+    expect(alertService.error).not.toHaveBeenCalled();
   });
 });
 
