@@ -119,6 +119,11 @@ export interface OrganizerEventWithdrawResponse {
   availableActions: string[];
 }
 
+export interface OrganizerEventDeleteResponse {
+  eventId: number;
+  eventTitle: string;
+}
+
 export interface OrganizerEventPublishResponse {
   eventId: number;
   workflowStatus: string;

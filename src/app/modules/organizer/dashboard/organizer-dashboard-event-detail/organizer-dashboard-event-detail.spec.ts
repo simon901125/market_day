@@ -1,8 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
+import { of } from 'rxjs';
 
 import { OrganizerDashboardEventDetail } from './organizer-dashboard-event-detail';
+import { AlertService } from '../../../../core/services/alert.service';
+import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
 
 describe('OrganizerDashboardEventDetail', () => {
   let component: OrganizerDashboardEventDetail;
@@ -49,5 +52,38 @@ describe('OrganizerDashboardEventDetail', () => {
     expect(notice).toBeTruthy();
     expect(notice.textContent).toContain('活動需要補件');
     expect(notice.textContent).toContain('請補上完整的交通資訊');
+  });
+
+  it('取消刪除確認時不應呼叫刪除 API', async () => {
+    const alert = TestBed.inject(AlertService);
+    const organizerApiService = TestBed.inject(OrganizerApiService);
+    spyOn(alert, 'confirm').and.resolveTo(false);
+    const deleteSpy = spyOn(organizerApiService, 'deleteOrganizerEvent');
+
+    await component.handleStatusAction({ key: 'delete', label: '刪除', variant: 'danger' });
+
+    expect(deleteSpy).not.toHaveBeenCalled();
+  });
+
+  it('刪除成功後應呼叫 API 並返回活動列表', async () => {
+    component.activity = { ...component.activity, id: 21, name: '測試活動' };
+    const alert = TestBed.inject(AlertService);
+    const organizerApiService = TestBed.inject(OrganizerApiService);
+    const router = TestBed.inject(Router);
+    spyOn(alert, 'confirm').and.resolveTo(true);
+    spyOn(alert, 'success').and.resolveTo(undefined);
+    const deleteSpy = spyOn(organizerApiService, 'deleteOrganizerEvent').and.returnValue(of({
+      statusCode: 200,
+      message: '活動已刪除',
+      messageDetails: null,
+      data: { eventId: 21, eventTitle: '測試活動' },
+    }));
+    const navigateSpy = spyOn(router, 'navigate').and.resolveTo(true);
+
+    await component.handleStatusAction({ key: 'delete', label: '刪除', variant: 'danger' });
+
+    expect(deleteSpy).toHaveBeenCalledOnceWith(21);
+    expect(navigateSpy).toHaveBeenCalled();
+    expect(component.isStatusActionLoading).toBeFalse();
   });
 });

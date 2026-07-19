@@ -23,6 +23,7 @@
             [class.primary]="action.variant === 'primary'"
             [class.secondary]="action.variant === 'outline'"
             [class.danger]="action.variant === 'danger'"
+            [disabled]="isStatusActionLoading"
             (click)="handleStatusAction(action)"
           >{{ action.label }}</button>
         }

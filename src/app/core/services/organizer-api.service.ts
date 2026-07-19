@@ -13,6 +13,7 @@ import { OrganizerEventDetail } from '../../models/interface/organizer/Organizer
 import {
   OrganizerEventSaveRequest,
   OrganizerEventSubmitReviewResponse,
+  OrganizerEventDeleteResponse,
   OrganizerEventWithdrawResponse,
   OrganizerEventPublishResponse,
   OrganizerEventUnpublishRequestResponse,
@@ -63,6 +64,14 @@ export class OrganizerApiService {
 
   saveOrganizerEvent(payload: OrganizerEventSaveRequest): Observable<ApiResult<OrganizerEventDetail>> {
     return this.httpService.post<OrganizerEventDetail>('api/organizer/events', payload);
+  }
+
+  deleteOrganizerEvent(
+    eventId: number,
+  ): Observable<ApiResult<OrganizerEventDeleteResponse>> {
+    return this.httpService.delete<OrganizerEventDeleteResponse>(
+      `api/organizer/events/${eventId}`,
+    );
   }
 
   submitOrganizerEventReview(

@@ -92,6 +92,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   feedbackMessage = '';
   isDetailLoading = false;
   detailLoadError = '';
+  isStatusActionLoading = false;
   isRevisionRequired = false;
   reviewNote = '';
   private serverAvailableActions: string[] = [];
@@ -403,6 +404,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
 
   /** 依據狀態按鈕執行送審、發布、下架、刪除等操作。 */
   async handleStatusAction(action: StatusAction): Promise<void> {
+    if (this.isStatusActionLoading) return;
     this.feedbackMessage = '';
     if ((action.key === 'submit' || action.key === 'resubmit') && !await this.ensureReviewSubmissionIsValid()) {
       return;
@@ -416,20 +418,13 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         return;
       case 'delete':
         if (!await this.alert.confirm(
-          '刪除活動確認',
-          `確定要刪除「${this.activity.name}」嗎？<br>此操作無法復原，所有活動資料將永久刪除。`,
+          '刪除活動',
+          `確定要刪除「${this.activity.name}」嗎？<br>刪除後將不會出現在活動管理列表中，且無法繼續編輯或送審。`,
           '確定刪除',
         )) {
           return;
         }
-        await this.alert.success(
-          '刪除活動成功',
-          `活動「${this.activity.name}」已成功刪除。<br>所有資料將無法復原，感謝您的使用。`,
-          '知道了',
-        );
-        this.router.navigate(['/organizer/dash-board/activity'], {
-          queryParams: { page: this.returnPage, status: this.returnStatus || null },
-        });
+        await this.deleteOrganizerEvent();
         return;
       case 'submit':
         if (!await this.alert.confirm(
@@ -1069,6 +1064,40 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       );
       await this.loadOrganizerEventDetail();
       return false;
+    }
+  }
+
+  private async deleteOrganizerEvent(): Promise<void> {
+    this.isStatusActionLoading = true;
+    try {
+      const response = await firstValueFrom(
+        this.organizerApiService.deleteOrganizerEvent(this.activity.id),
+      );
+      if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+        const message = response.messageDetails
+          ? `${response.message}：${response.messageDetails}`
+          : response.message || '刪除活動失敗。';
+        await this.alert.error('無法刪除活動', message);
+        if (response.statusCode === 409) await this.loadOrganizerEventDetail();
+        return;
+      }
+
+      await this.alert.success(
+        '活動已刪除',
+        `活動「${response.data.eventTitle}」已刪除，將不再顯示於活動管理列表。`,
+        '知道了',
+      );
+      this.navigationAllowed = true;
+      await this.router.navigate(['/organizer/dash-board/activity'], {
+        queryParams: { page: this.returnPage, status: this.returnStatus || null },
+      });
+    } catch (error) {
+      await this.alert.error(
+        '無法刪除活動',
+        this.getRequestErrorMessage(error, '刪除活動失敗，請稍後再試。'),
+      );
+    } finally {
+      this.isStatusActionLoading = false;
     }
   }
 
