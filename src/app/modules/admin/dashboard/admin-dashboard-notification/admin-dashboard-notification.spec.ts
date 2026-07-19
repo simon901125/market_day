@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 
 import { AdminDashboardNotification } from './admin-dashboard-notification';
 import { AdminApiService } from '../../../../core/services/admin-api.service';
+import { NotificationApiService } from '../../../../core/services/notification-api.service';
 import { AdminNoticePage } from '../../../../models/interface/admin/AdminNoticeSearch';
 
 const fakeNoticePage: AdminNoticePage = {
@@ -26,9 +27,14 @@ describe('AdminDashboardNotification', () => {
       of({ statusCode: 200, message: 'ok', messageDetails: null, data: fakeNoticePage }),
     );
 
+    const notificationApiServiceSpy = jasmine.createSpyObj('NotificationApiService', ['markAsRead']);
+
     await TestBed.configureTestingModule({
       imports: [AdminDashboardNotification],
-      providers: [{ provide: AdminApiService, useValue: adminApiServiceSpy }],
+      providers: [
+        { provide: AdminApiService, useValue: adminApiServiceSpy },
+        { provide: NotificationApiService, useValue: notificationApiServiceSpy },
+      ],
     })
     .compileComponents();
 

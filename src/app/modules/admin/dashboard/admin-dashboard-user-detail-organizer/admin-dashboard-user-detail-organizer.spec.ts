@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { AdminDashboardUserDetailOrganizer } from './admin-dashboard-user-detail-organizer';
 import { AdminApiService } from '../../../../core/services/admin-api.service';
 import { AlertService } from '../../../../core/services/alert.service';
-import { AdminOrgDetailDto } from '../../../../models/interface/admin/AdminOrgDetail';
+import { AdminOrgDetailDto } from '../../../../models/interface/admin/AdminOrganizerDetail';
 import { AdminUserLoginPage } from '../../../../models/interface/admin/AdminUserLoginLog';
 import { UserStatusChangeDto } from '../../../../models/interface/admin/AdminUserAction';
 import { UserStatus } from '../../../../models/status/UserStatus';
@@ -45,7 +45,7 @@ const fakeOrgDetail: AdminOrgDetailDto = {
   taxId: '12345678',
   eventLogs: {
     items: [
-      { eventName: '春語花市', eventDate: '2026/05/01 - 2026/05/02 10:00-19:00', eventStatus: 'ended', registrationCount: '150/150' },
+      { eventId: 21, eventName: '春語花市', eventDate: '2026/05/01 - 2026/05/02 10:00-19:00', eventStatus: 'ended', registrationCount: '150/150' },
     ],
     page: 1,
     pageSize: 5,
@@ -129,6 +129,7 @@ describe('AdminDashboardUserDetailOrganizer', () => {
       accountStatus: UserStatus.active,
     }));
     expect(component.detail?.detail.activityManagementRecords.items[0]).toEqual(jasmine.objectContaining({
+      activityId: 21,
       activityName: '春語花市',
       activityStatus: ActivityStatus.ended,
     }));
@@ -148,6 +149,12 @@ describe('AdminDashboardUserDetailOrganizer', () => {
 
     expect(adminApiServiceSpy.getOrgEventLogs).toHaveBeenCalledWith(3, 2, component.activityPageSize);
     expect(component.activityCurrentPage).toBe(2);
+  });
+
+  it('onViewActivity 應帶入活動 id 導向活動詳細頁', () => {
+    const navigateSpy = spyOn(router, 'navigate');
+    component.onViewActivity(component.detail!.detail.activityManagementRecords.items[0]);
+    expect(navigateSpy).toHaveBeenCalledWith(['/admin/dash-board/activity/detail', 21]);
   });
 
   it('goBack 應導向使用者管理列表頁', () => {

@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 
 import { AdminDashboardHome } from './admin-dashboard-home';
 import { AdminApiService } from '../../../../core/services/admin-api.service';
+import { NotificationApiService } from '../../../../core/services/notification-api.service';
 import { AdminDashboardOverview } from '../../../../models/interface/admin/AdminDashboardOverview';
 
 const fakeOverview: AdminDashboardOverview = {
@@ -29,9 +30,15 @@ describe('AdminDashboardHome', () => {
       of({ statusCode: 200, message: 'ok', messageDetails: null, data: fakeOverview }),
     );
 
+    const notificationApiServiceSpy = jasmine.createSpyObj('NotificationApiService', ['markAsRead']);
+
     await TestBed.configureTestingModule({
       imports: [AdminDashboardHome],
-      providers: [provideRouter([]), { provide: AdminApiService, useValue: adminApiServiceSpy }],
+      providers: [
+        provideRouter([]),
+        { provide: AdminApiService, useValue: adminApiServiceSpy },
+        { provide: NotificationApiService, useValue: notificationApiServiceSpy },
+      ],
     })
     .compileComponents();
 

@@ -518,13 +518,54 @@ export class AdminDashboardMarketDetail implements OnInit {
     );
   }
 
-  downloadImg = (): void => {
-    // TODO: 呼叫後端 API，下載圖片
+  downloadImg = async (): Promise<void> => {
+    const imageUrl = this.detail?.boothLayoutImage;
+    if (!imageUrl) {
+      await this.alert.error('下載失敗', '找不到攤位配置圖。');
+      return;
+    }
+
+    try {
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error('圖片下載失敗');
+      }
+
+      const blob = await response.blob();
+      const fileName = `${this.sanitizeFileName(this.detail?.activityInfo.name ?? '活動')}-攤位配置圖${this.resolveImageExtension(response, imageUrl)}`;
+
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      await this.alert.error('下載失敗', '攤位配置圖下載失敗，請稍後再試。');
+    }
   };
 
+  /** 依回應的 Content-Type 或網址副檔名判斷下載檔案的副檔名，皆判斷不到時預設為 .png */
+  private resolveImageExtension(response: Response, imageUrl: string): string {
+    const contentType = response.headers.get('Content-Type');
+    const extensionByContentType: Record<string, string> = {
+      'image/png': '.png',
+      'image/jpeg': '.jpg',
+      'image/webp': '.webp',
+      'image/gif': '.gif',
+    };
+    if (contentType && extensionByContentType[contentType]) {
+      return extensionByContentType[contentType];
+    }
 
+    const match = imageUrl.match(/\.([a-zA-Z0-9]+)(?:\?.*)?$/);
+    return match ? `.${match[1]}` : '.png';
+  }
 
-
+  /** 把檔名中作業系統不允許的字元替換掉，避免下載時因特殊符號失敗 */
+  private sanitizeFileName(name: string): string {
+    return name.replace(/[\\/:*?"<>|]/g, '_');
+  }
 
 
 

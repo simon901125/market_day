@@ -30,7 +30,6 @@ export class AdminDashboardMarketManagement implements AfterViewInit {
   ) {}
 
   @ViewChild(DateRangeSelector) timeSelectorRef!: DateRangeSelector;
-  @ViewChild('organizerDropdown') organizerDropdownRef!: Dropdown;
   @ViewChild('statusDropdown') statusDropdownRef!: Dropdown;
   @ViewChild('tableWrapper') tableWrapperRef!: ElementRef<HTMLDivElement>;
   @ViewChild('resultSection') resultSectionRef!: ElementRef<HTMLDivElement>;
@@ -67,8 +66,6 @@ export class AdminDashboardMarketManagement implements AfterViewInit {
     ActivityStatus.unpublishRequested,
   ];
 
-  /** 目前篩選條件：主辦方 */
-  private selectedOrganizer = '';
   /** 目前篩選條件：狀態 */
   private selectedStatus = '';
   /** 目前輸入的搜尋關鍵字 */
@@ -101,10 +98,6 @@ export class AdminDashboardMarketManagement implements AfterViewInit {
       this.currentPage = 1;
       this.fetchActivities();
     }
-  }
-
-  onOrganizerSelected(value: string): void {
-    this.selectedOrganizer = value === '全部' ? '' : value;
   }
 
   onStatusSelected(value: string): void {
@@ -151,7 +144,7 @@ export class AdminDashboardMarketManagement implements AfterViewInit {
 
     const request: AdminEventSearchRequest = {
       keyword: keyword || null,
-      organizer: this.selectedOrganizer || null,
+      organizer: null,
       status: this.selectedStatus ? ActivityStatus.toApiStatus(this.selectedStatus) : null,
       startDate: this.toRequestDateTime(startDate),
       endDate: this.toRequestDateTime(endDate),

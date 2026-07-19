@@ -1,9 +1,9 @@
-import { NotificationCategory } from '../../../modules/shared/dashboard/dashboard-notification/notification-category';
 import { AdminDashboardNotice } from './AdminDashboardOverview';
 
 export interface AdminNoticeSearchRequest {
   isOnlyUnread?: boolean | null;
-  category?: NotificationCategory | null;
+  /** 後端 NotificationCategory 的 API 值，參考 NotificationCategory.apiCategoryMap 的 key */
+  category?: string | null;
   pageNumber?: number | null;
   pageSize?: number | null;
 }
