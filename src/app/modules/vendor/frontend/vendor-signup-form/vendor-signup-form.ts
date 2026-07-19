@@ -252,7 +252,17 @@ export class VendorSignupForm implements OnInit {
   }
 
   get showVehicleNumberError(): boolean {
-    return this.validationAttempted && this.formData.hasVehicle && !this.formData.vehicleNumber.trim();
+    return (
+      this.validationAttempted &&
+      this.formData.hasVehicle &&
+      !this.isValidVehicleNumber(this.formData.vehicleNumber)
+    );
+  }
+
+  get vehicleNumberErrorMessage(): string {
+    return this.formData.vehicleNumber.trim()
+      ? '車牌格式不正確，請輸入如 ABC-1234 或 1234-AB。'
+      : '有車輛進場時，請填寫車牌號碼。';
   }
 
   get registrationPeriod(): string {
@@ -299,6 +309,30 @@ export class VendorSignupForm implements OnInit {
 
     item.quantity = nextQuantity;
     item.selected = nextQuantity > 0;
+  }
+
+  normalizeVehicleNumber(value: string): void {
+    this.formData.vehicleNumber = value
+      .toUpperCase()
+      .replace(/\s+/g, '')
+      .replace(/[–—]/g, '-');
+  }
+
+  equipmentLineSubtotal(item: RentalEquipment): number {
+    return item.price * item.quantity * this.rentalUnits(item.pricingUnit);
+  }
+
+  powerLineSubtotal(option: PowerOption): number {
+    return option.price * this.rentalUnits(option.pricingUnit);
+  }
+
+  rentalUnits(pricingUnit?: string | null): number {
+    return this.isDailyRental(pricingUnit) ? this.selectedDays : 1;
+  }
+
+  isDailyRental(pricingUnit?: string | null): boolean {
+    const normalizedUnit = pricingUnit?.toUpperCase();
+    return normalizedUnit !== 'EVENT' && normalizedUnit !== 'UNIT';
   }
 
   formatSlotDate(date: string): string {
@@ -434,8 +468,9 @@ export class VendorSignupForm implements OnInit {
     return [item.name, wattage].filter(Boolean).join(' / ');
   }
 
-  private rentalUnits(pricingUnit?: string | null): number {
-    return pricingUnit?.toUpperCase() === 'EVENT' ? 1 : this.selectedDays;
+  private isValidVehicleNumber(value: string): boolean {
+    const normalizedValue = value.trim().toUpperCase();
+    return /^(?:[A-Z]{2,3}-\d{3,4}|\d{2,4}-[A-Z]{2,3})$/.test(normalizedValue);
   }
 
   private toApiDate(value: string): string {

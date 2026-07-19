@@ -1,5 +1,5 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AlertService } from '../../../../core/services/alert.service';
@@ -44,6 +44,12 @@ export class VendorPaymentPage implements OnInit {
       return;
     }
     this.loadPaymentStatus();
+  }
+
+  /** 從藍新金流按上一頁返回時，瀏覽器可能直接還原 BFCache 中的元件狀態。 */
+  @HostListener('window:pageshow')
+  onPageShow(): void {
+    this.isSubmitting = false;
   }
 
   get feeItems() {

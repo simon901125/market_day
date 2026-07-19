@@ -49,6 +49,38 @@ describe('VendorSignupForm', () => {
       '05/30': true,
       '05/31': true,
     };
+    component.equipment = [
+      {
+        id: 'table',
+        name: '桌子',
+        detail: '',
+        price: 100,
+        pricingUnit: 'EVENT',
+        selected: true,
+        quantity: 1,
+        maxQuantity: 3,
+      },
+      {
+        id: 'chair',
+        name: '椅子',
+        detail: '',
+        price: 50,
+        pricingUnit: 'EVENT',
+        selected: true,
+        quantity: 2,
+        maxQuantity: 6,
+      },
+      {
+        id: 'extension',
+        name: '延長線',
+        detail: '',
+        price: 50,
+        pricingUnit: 'EVENT',
+        selected: false,
+        quantity: 0,
+        maxQuantity: 2,
+      },
+    ];
     fixture.detectChanges();
   });
 
@@ -86,6 +118,34 @@ describe('VendorSignupForm', () => {
     expect(extension.quantity).toBe(1);
     expect(extension.selected).toBeTrue();
     expect(component.equipmentSubtotal).toBe(250);
+  });
+
+  it('should reject an invalid vehicle number and normalize valid input', () => {
+    const navigateSpy = spyOn(router, 'navigate');
+    component.equipment = [];
+    component.requiresExtraPower = false;
+    component.formData.vehicleNumber = 'ABC1234';
+
+    component.goToConfirm();
+
+    expect(component.showVehicleNumberError).toBeTrue();
+    expect(navigateSpy).not.toHaveBeenCalled();
+
+    component.normalizeVehicleNumber(' abc–1234 ');
+    expect(component.formData.vehicleNumber).toBe('ABC-1234');
+    expect(component.showVehicleNumberError).toBeFalse();
+  });
+
+  it('should limit daily rental units to the number of selected dates', () => {
+    expect(component.rentalUnits('DAY')).toBe(2);
+
+    component.toggleDate(market.slots![1]);
+
+    expect(component.selectedDays).toBe(1);
+    expect(component.rentalUnits('DAY')).toBe(1);
+    expect(component.rentalUnits(null)).toBe(1);
+    expect(component.rentalUnits('EVENT')).toBe(1);
+    expect(component.rentalUnits('UNIT')).toBe(1);
   });
 
   it('should navigate to confirmation with the complete signup payload', () => {

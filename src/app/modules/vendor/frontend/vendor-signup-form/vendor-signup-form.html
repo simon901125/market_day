@@ -182,6 +182,9 @@
 
                   <strong class="row-price">
                     ${{ item.price | number }} / {{ rentalUnitLabel(item.pricingUnit) }}
+                    @if (isDailyRental(item.pricingUnit)) {
+                      <small>租借 {{ selectedDays }} 天（依已選日期）</small>
+                    }
                   </strong>
                 </div>
               }
@@ -280,10 +283,14 @@
                 [attr.aria-invalid]="showVehicleNumberError"
                 [attr.data-validation-error]="showVehicleNumberError ? 'true' : null"
                 [(ngModel)]="formData.vehicleNumber"
+                (ngModelChange)="normalizeVehicleNumber($event)"
+                maxlength="8"
+                autocomplete="off"
+                autocapitalize="characters"
                 placeholder="請輸入車牌號碼（範例：ABC-1234）"
               />
               @if (showVehicleNumberError) {
-                <span class="validation-error">有車輛進場時，請填寫車牌號碼。</span>
+                <span class="validation-error">{{ vehicleNumberErrorMessage }}</span>
               }
             </label>
           </section>
@@ -331,7 +338,10 @@
                       }
                       　× {{ item.quantity }}</span
                     >
-                    <strong>${{ item.price * item.quantity | number }}</strong>
+                    <strong>${{ equipmentLineSubtotal(item) | number }}</strong>
+                    @if (isDailyRental(item.pricingUnit)) {
+                      <small>數量 {{ item.quantity }} × {{ selectedDays }} 天</small>
+                    }
                   </li>
                 }
               </ul>
@@ -347,7 +357,10 @@
                 @for (option of selectedPowerOptions; track option.id) {
                   <li>
                     <span>{{ option.label }}</span>
-                    <strong>${{ option.price | number }}</strong>
+                    <strong>${{ powerLineSubtotal(option) | number }}</strong>
+                    @if (isDailyRental(option.pricingUnit)) {
+                      <small>{{ selectedDays }} 天（依已選日期）</small>
+                    }
                   </li>
                 }
               </ul>

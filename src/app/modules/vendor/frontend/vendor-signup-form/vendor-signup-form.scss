@@ -366,6 +366,14 @@
 .row-price {
   font-size: 13px;
   text-align: right;
+
+  small {
+    display: block;
+    margin-top: 4px;
+    color: var(--text-light);
+    font-size: 11px;
+    font-weight: 700;
+  }
 }
 
 .radio-stack {
@@ -599,6 +607,14 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 10px;
+
+    small {
+      grid-column: 1 / -1;
+      margin-top: -8px;
+      color: var(--text-light);
+      font-size: 11px;
+      font-weight: 600;
+    }
   }
 }
 
