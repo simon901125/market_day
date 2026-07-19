@@ -121,6 +121,16 @@
     background: var(--status-blue-bg);
     color: var(--status-blue-text);
   }
+
+  &.system {
+    background: var(--status-grey-bg);
+    color: var(--status-grey-text);
+  }
+
+  &.event {
+    background: var(--status-teal-bg);
+    color: var(--status-teal-text);
+  }
 }
 
 .actionType-tag {
@@ -160,6 +170,21 @@
 .admin-purple {
   background-color: var(--status-purple-bg);
   color: var(--status-purple-text);
+}
+
+.admin-teal {
+  background-color: var(--status-teal-bg);
+  color: var(--status-teal-text);
+}
+
+.admin-yellow {
+  background-color: var(--status-yellow-bg);
+  color: var(--status-yellow-text);
+}
+
+.admin-grey {
+  background-color: var(--status-grey-bg);
+  color: var(--status-grey-text);
 }
 
 @media (max-width: 1200px) {

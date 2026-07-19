@@ -4,6 +4,10 @@ import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { UserStatus } from '../../../../models/status/UserStatus';
 import { UserType } from '../../../../models/type/UserType';
 import { UserListItem } from '../../../../models/interface/admin/UserListItem';
+import { AdminUserListDto, AdminUserSearchRequest } from '../../../../models/interface/admin/AdminUserSearch';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { AdminApiService } from '../../../../core/services/admin-api.service';
+import { AlertService } from '../../../../core/services/alert.service';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 
 @Component({
@@ -16,8 +20,12 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
   styleUrl: './admin-dashboard-user-management.scss',
 })
 export class AdminDashboardUserManagement implements AfterViewInit{
-  
-  constructor(private router: Router) {}
+
+  constructor(
+    private router: Router,
+    private readonly adminApiService: AdminApiService,
+    private readonly alert: AlertService,
+  ) {}
 
   @ViewChild('roleDropdown') roleDropdownRef!: Dropdown;
   @ViewChild('statusDropdown') statusDropdownRef!: Dropdown;
@@ -37,47 +45,11 @@ export class AdminDashboardUserManagement implements AfterViewInit{
     UserStatus.disabled,
   ];
 
-  /** 使用者帳號狀態 -> 標籤顏色 class 對應 */
-  private readonly userStatusColorMap: Record<string, string> = {
-    [UserStatus.active]: 'green',
-    [UserStatus.disabled]: 'red',
-  };
-
   /** 帳號角色下拉選單 */
   roleOptions: string[] = [
     '全部',
     UserType.vendor,
     UserType.organizer,
-  ];
-
-  /** 帳號角色 -> 標籤顏色 class 對應 */
-  private readonly roleColorMap: Record<string, string> = {
-    [UserType.vendor]: 'purple',
-    [UserType.organizer]: 'blue',
-  };
-
-  /** 假資料：模擬後端回傳的使用者列表，之後可替換成真正的 API 呼叫結果 */
-  private readonly mockUsers: UserListItem[] = [
-    {id:1, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
-    {id:2, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled },
-    {id:3, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
-    {id:4, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled }, 
-    {id:5, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
-    {id:6, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled },
-    {id:7, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
-    {id:8, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled }, 
-    {id:9, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
-    {id:10, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled },
-    {id:11, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
-    {id:12, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled }, 
-    {id:13, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
-    {id:14, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled },
-    {id:15, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
-    {id:16, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled }, 
-    {id:17, name:"王曉一", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
-    {id:18, name:"王曉二", email:"Test@gmail.com", role:UserType.vendor, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled },
-    {id:19, name:"王曉三", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2026/05/30", status:UserStatus.active },
-    {id:20, name:"王曉四", email:"Test@gmail.com", role:UserType.organizer, createdAt:"2020/01/01", lastLoginAt:"2024/05/30", status:UserStatus.disabled }, 
   ];
 
   /** 目前篩選條件：帳號角色 */
@@ -159,41 +131,46 @@ export class AdminDashboardUserManagement implements AfterViewInit{
     }
 
   /**
-   * 取得活動列表（目前為假資料模擬，之後請替換成真正的後端 API 呼叫）
-   *
-   * 之後串接 API 時，請求需帶入：
-   *   - page：目前頁碼（this.currentPage）
-   *   - pageSize：每頁筆數（this.pageSize，依畫面剩餘高度動態算出，每次都可能不同）
-   *   - keyword／organizer／status／startDate／endDate：搜尋列篩選條件
-   *
-   * 後端需要做的事：
-   *   1. 用 page + pageSize 算 offset，只回傳「該頁」的資料（data）
-   *   2. 依篩選條件做查詢／過濾
-   *   3. 回傳符合篩選條件後的「總筆數」(totalItems)，前端會用它換算總頁數與「共 N 筆」文字
-   *      → 預期回應格式：{ data: UserListItem[]; totalItems: number }
-   *
-   * 範例（替換時的寫法）：
-   *   this.http.get<{ data: UserListItem[]; totalItems: number }>('/api/admin/users', {
-   *     params: { page: this.currentPage, pageSize: this.pageSize, keyword, organizer: this.selectedRole, status: this.selectedStatus, startDate, endDate }
-   *   }).subscribe(res => {
-   *     this.users = res.data;
-   *     this.totalItems = res.totalItems;
-   *   });
+   * 串接 API："/api/admin/users/search"，依搜尋列篩選條件與目前頁碼查詢使用者列表
    */
   private fetchUsers(): void {
     const keyword = this.searchKeyword.trim();
 
-    const filtered = this.mockUsers.filter((item) => {
-      const matchKeyword = !keyword || item.name.includes(keyword);
-      const matchRole = !this.selectedRole || item.role === this.selectedRole;
-      const matchStatus = !this.selectedStatus || item.status === this.selectedStatus;
-      return matchKeyword && matchRole && matchStatus;
+    const request: AdminUserSearchRequest = {
+      keyWord: keyword || null,
+      role: this.selectedRole ? UserType.toApiRole(this.selectedRole) : null,
+      status: this.selectedStatus ? UserStatus.toApiStatus(this.selectedStatus) : null,
+      pageNumber: this.currentPage,
+      pageSize: this.pageSize,
+    };
+
+    this.adminApiService.searchUsers(request).subscribe({
+      next: async (res) => {
+        if (!isApiSuccessStatus(res.statusCode)) {
+          await this.alert.error('查詢失敗', res.message);
+          return;
+        }
+
+        this.users = res.data.items.map((item) => this.mapUserListItem(item));
+        this.totalItems = res.data.totalItems;
+      },
+      error: async (error) => {
+        await this.alert.error('查詢失敗', error.error?.message || '請稍後再試。');
+      },
     });
+  }
 
-    this.totalItems = filtered.length;
-
-    const start = (this.currentPage - 1) * this.pageSize;
-    this.users = filtered.slice(start, start + this.pageSize);
+  /** 把 API 回傳的使用者列表項目轉成畫面用的 UserListItem */
+  private mapUserListItem(item: AdminUserListDto): UserListItem {
+    return {
+      id: item.id,
+      name: item.name,
+      email: item.email,
+      role: UserType.fromApiRole(item.role),
+      createdAt: item.regAt,
+      lastLoginAt: item.lastLoginAt,
+      status: UserStatus.fromApiStatus(item.status),
+    };
   }
 
   /** 依表格容器目前的高度，重新計算一頁可顯示的列數 */
@@ -202,18 +179,18 @@ export class AdminDashboardUserManagement implements AfterViewInit{
   }
 
   /** 取得角色的標籤顏色 class */
-  getRoleClass(status: string): string {
-    return this.roleColorMap[status] ?? 'grey';
+  getRoleClass(role: string): string {
+    return UserType.getClass(role);
   }
 
   /** 取得帳號狀態對應的標籤顏色 class */
   getStatusClass(status: string): string {
-    return this.userStatusColorMap[status] ?? 'grey';
+    return UserStatus.getClass(status);
   }
 
-  /** 統一管理列表日期時間格式；API 僅回傳日期時補上 00:00。 */
+  /** 統一管理列表日期時間格式；API 已回傳 yyyy/MM/dd HH:mm 格式，僅補上缺漏時間。 */
   formatDateTime(value: string): string {
-    const normalized = value.trim().replace('T', ' ');
+    const normalized = (value ?? '').trim().replace('T', ' ');
     if (!normalized) return '-';
 
     const [date, time = '00:00'] = normalized.split(/\s+/, 2);

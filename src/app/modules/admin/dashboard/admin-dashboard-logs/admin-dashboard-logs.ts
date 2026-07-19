@@ -3,7 +3,12 @@ import { Router } from '@angular/router';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { OperationType } from '../../../../models/type/OperationType';
+import { LogTargetType } from '../../../../models/type/LogTargetType';
 import { AdminLogItem } from '../../../../models/interface/admin/AdminLogItem';
+import { AdminLogsSearchRequest, AdminOperationLogDto } from '../../../../models/interface/admin/AdminLogSearch';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { AdminApiService } from '../../../../core/services/admin-api.service';
+import { AlertService } from '../../../../core/services/alert.service';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
 
 @Component({
@@ -17,7 +22,11 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
   styleUrl: './admin-dashboard-logs.scss',
 })
 export class AdminDashboardLogs implements AfterViewInit {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private readonly adminApiService: AdminApiService,
+    private readonly alert: AlertService,
+  ) {}
 
   @ViewChild(DateRangeSelector) timeSelectorRef!: DateRangeSelector;
   @ViewChild('operationDropdown') operationDropdownRef!: Dropdown;
@@ -35,50 +44,21 @@ export class AdminDashboardLogs implements AfterViewInit {
     "全部",
     OperationType.activityReview,
     OperationType.requestRevision,
+    OperationType.mapBuildCompleted,
+    OperationType.eventUnpublishReview,
     OperationType.accountRestored,
     OperationType.accountDisabled,
     OperationType.systemSetting,
   ];
 
   /** 操作對象角色篩選選項。 */
-  targetRoleOptions: string[] = ['全部', '主辦方', '攤主'];
-
-  /** 操作類型 -> 標籤顏色 class 對應 */
-  private readonly operationColorMap: Record<string, string> = {
-    [OperationType.activityReview]: 'admin-blue',
-    [OperationType.requestRevision]: 'admin-orange',
-    [OperationType.accountRestored]: 'admin-green',
-    [OperationType.accountDisabled]: 'admin-red',
-    [OperationType.systemSetting]: 'admin-purple',
-  };
-
-  /** 假資料：操作對象統一使用攤主姓名或主辦方名稱。 */
-  private readonly mockLogs: AdminLogItem[] = ([
-    { id: 1, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '森林生活市集', details: '操作內容'},
-    { id: 2, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.accountRestored, target: '王曉明', details: '操作內容'},
-    { id: 3, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '日日好市', details: '操作內容'},
-    { id: 4, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.requestRevision, target: '春光小日子', details: '操作內容'},
-    { id: 5, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '陳怡君', details: '操作內容'},
-    { id: 6, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '歡樂市集團隊', details: '操作內容'},
-    { id: 7, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.requestRevision, target: '森林生活市集', details: '操作內容'},
-    { id: 8, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.systemSetting, target: '林美玲', details: '操作內容'},
-    { id: 9, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.accountRestored, target: '張家豪', details: '操作內容'},
-    { id: 10, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '日日好市', details: '操作內容'},
-    { id: 11, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '春光小日子', details: '操作內容'},
-    { id: 12, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.requestRevision, target: '歡樂市集團隊', details: '操作內容'},
-    { id: 13, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '森林生活市集', details: '操作內容'},
-    { id: 14, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.systemSetting, target: '李佳穎', details: '操作內容'},
-    { id: 15, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '日日好市', details: '操作內容'},
-    { id: 16, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.requestRevision, target: '春光小日子', details: '操作內容'},
-    { id: 17, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.activityReview, target: '歡樂市集團隊', details: '操作內容'},
-    { id: 18, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '黃筱雯', details: '操作內容'},
-    { id: 19, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '周承恩', details: '操作內容'},
-    { id: 20, createdAt: '2026/01/01', operator: '管理員A', actionType: OperationType.accountDisabled, target: '吳品妍', details: '操作內容'},
-    
-  ] as Array<Omit<AdminLogItem, 'targetRole' | 'targetEmail'>>).map((log) => ({
-    ...log,
-    ...this.getMockTargetIdentity(log.target),
-  }));
+  targetRoleOptions: string[] = [
+    '全部',
+    LogTargetType.system,
+    LogTargetType.event,
+    LogTargetType.organizer,
+    LogTargetType.vendor,
+  ];
 
   /** 目前篩選條件：操作類型 */
   private selectedOperation = '';
@@ -121,7 +101,7 @@ export class AdminDashboardLogs implements AfterViewInit {
   }
 
   onTargetRoleSelected(value: string): void {
-    this.selectedTargetRole = value === '主辦方' || value === '攤主' ? value : '';
+    this.selectedTargetRole = value === '全部' ? '' : (value as AdminLogItem['targetRole']);
   }
 
   /** 更新搜尋關鍵字 */
@@ -143,20 +123,7 @@ export class AdminDashboardLogs implements AfterViewInit {
   }
 
   /**
-   * 取得Log紀錄（目前為假資料模擬，之後請替換成真正的後端 API 呼叫）
-   *
-   * 之後串接 API 時，請求需帶入：
-   *   - page：目前頁碼（this.currentPage）
-   *   - pageSize：每頁筆數（this.pageSize，依畫面剩餘高度動態算出，每次都可能不同）
-   *   - keyword／actionType／targetRole／startDate／endDate：搜尋列篩選條件
-   *   - target 必須是攤主姓名或主辦方名稱，不使用活動名稱或泛稱
-   *   - targetRole 回傳「主辦方」或「攤主」；targetEmail 回傳操作當下的 Email 快照
-   *
-   * 後端需要做的事：
-   *   1. 用 page + pageSize 算 offset，只回傳「該頁」的資料（data）
-   *   2. 依篩選條件做查詢／過濾
-   *   3. 回傳符合篩選條件後的「總筆數」(totalItems)，前端會用它換算總頁數與「共 N 筆」文字
-   *      → 預期回應格式：{ data: AdminLogItem[]; totalItems: number }
+   * 串接 API："/api/admin/logs/search"，依搜尋列篩選條件與目前頁碼查詢操作紀錄
    */
   private fetchLogs(): void {
     const keyword = this.searchKeyword.trim();
@@ -165,21 +132,49 @@ export class AdminDashboardLogs implements AfterViewInit {
       endDate: null,
     };
 
-    const filtered = this.mockLogs.filter((item) => {
-      const matchKeyword = !keyword
-        || item.operator.includes(keyword)
-        || item.target.includes(keyword)
-        || item.targetEmail.includes(keyword)
-        || item.details.includes(keyword);
-      const matchOperationType = !this.selectedOperation || item.actionType === this.selectedOperation;
-      const matchTargetRole = !this.selectedTargetRole || item.targetRole === this.selectedTargetRole;
-      return matchKeyword && matchOperationType && matchTargetRole;
+    const request: AdminLogsSearchRequest = {
+      keyWord: keyword || null,
+      operationType: this.selectedOperation ? OperationType.toApiOperationType(this.selectedOperation) : null,
+      targetType: this.selectedTargetRole ? LogTargetType.toApiTargetType(this.selectedTargetRole) : null,
+      startAt: this.toRequestDateTime(startDate),
+      endAt: this.toRequestDateTime(endDate),
+      pageNumber: this.currentPage,
+      pageSize: this.pageSize,
+    };
+
+    this.adminApiService.searchLogs(request).subscribe({
+      next: async (res) => {
+        if (!isApiSuccessStatus(res.statusCode)) {
+          await this.alert.error('查詢失敗', res.message);
+          return;
+        }
+
+        this.logs = res.data.items.map((item) => this.mapLogItem(item));
+        this.totalItems = res.data.totalItems;
+      },
+      error: async (error) => {
+        await this.alert.error('查詢失敗', error.error?.message || '請稍後再試。');
+      },
     });
+  }
 
-    this.totalItems = filtered.length;
+  /** 把日期選擇器的 yyyy-MM-dd 轉成後端 LocalDateTime 需要的格式 */
+  private toRequestDateTime(date: string | null): string | null {
+    return date ? `${date}T00:00:00` : null;
+  }
 
-    const start = (this.currentPage - 1) * this.pageSize;
-    this.logs = filtered.slice(start, start + this.pageSize);
+  /** 把 API 回傳的操作紀錄項目轉成畫面用的 AdminLogItem */
+  private mapLogItem(item: AdminOperationLogDto): AdminLogItem {
+    return {
+      id: item.id,
+      createdAt: item.createdAt,
+      operator: item.operator,
+      actionType: OperationType.fromApiOperationType(item.operationType),
+      target: item.targetName,
+      targetRole: LogTargetType.fromApiTargetType(item.targetType) as AdminLogItem['targetRole'],
+      targetEmail: item.email ?? '-',
+      details: item.content,
+    };
   }
 
   /** 依表格容器目前的高度，重新計算一頁可顯示的列數 */
@@ -187,9 +182,14 @@ export class AdminDashboardLogs implements AfterViewInit {
     this.pageSize = 6;
   }
 
-  /** 取得狀態對應的標籤顏色 class */
-  getOperationClass(status: string): string {
-    return this.operationColorMap[status] ?? 'grey';
+  /** 取得操作類型對應的標籤顏色 class */
+  getOperationClass(type: string): string {
+    return OperationType.getClass(type);
+  }
+
+  /** 取得操作對象類型對應的標籤顏色 class */
+  getTargetRoleClass(role: string): string {
+    return LogTargetType.getClass(role);
   }
 
   /** 統一操作時間格式；API 僅回傳日期時補上 00:00。 */
@@ -199,32 +199,6 @@ export class AdminDashboardLogs implements AfterViewInit {
 
     const [date, time = '00:00'] = normalized.split(/\s+/, 2);
     return `${date.replaceAll('-', '/')} ${time.slice(0, 5)}`;
-  }
-
-  /** 假資料用身分快照；正式 API 應直接回傳 targetRole 與 targetEmail。 */
-  private getMockTargetIdentity(target: string): Pick<AdminLogItem, 'targetRole' | 'targetEmail'> {
-    const vendorEmails: Record<string, string> = {
-      王曉明: 'xiaoming.wang@example.com',
-      陳怡君: 'yijun.chen@example.com',
-      林美玲: 'meiling.lin@example.com',
-      張家豪: 'jiahao.zhang@example.com',
-      李佳穎: 'jiaying.li@example.com',
-      黃筱雯: 'xiaowen.huang@example.com',
-      周承恩: 'chengen.zhou@example.com',
-      吳品妍: 'pinyan.wu@example.com',
-    };
-
-    if (vendorEmails[target]) {
-      return { targetRole: '攤主', targetEmail: vendorEmails[target] };
-    }
-
-    const organizerEmails: Record<string, string> = {
-      森林生活市集: 'forest.market@example.com',
-      日日好市: 'daily.market@example.com',
-      春光小日子: 'spring.market@example.com',
-      歡樂市集團隊: 'happy.market@example.com',
-    };
-    return { targetRole: '主辦方', targetEmail: organizerEmails[target] ?? '-' };
   }
 
 }
