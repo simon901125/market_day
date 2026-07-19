@@ -16,7 +16,10 @@ export interface VendorMarketDetail {
   baseFee: number;
   coverImageUrl: string | null;
   mapImageUrl: string | null;
-  categories: VendorMarketCategory[];
+  /** 活動可複選的招商類別；目前詳情 API 使用此欄位回傳。 */
+  categories?: VendorMarketCategory[];
+  /** 相容舊版 API 的單一類別欄位。 */
+  categoryName?: string | null;
   organizerName: string | null;
   companyName: string | null;
   serviceDays: string | null;
@@ -28,7 +31,7 @@ export interface VendorMarketDetail {
   stallWidth: number | null;
   stallLength: number | null;
   stallHeight: number | null;
-  registrationStatus: 'OPEN' | 'UPCOMING' | 'CLOSED';
+  registrationStatus: 'OPEN' | 'FULL';
   dailyAvailability: VendorMarketDailyAvailability[];
   equipments: VendorMarketEquipment[];
   trafficInfos: VendorMarketTrafficInfo[];

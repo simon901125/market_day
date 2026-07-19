@@ -111,6 +111,42 @@ export interface OrganizerEventSubmitReviewResponse {
   missingFields: string[];
 }
 
+export interface OrganizerEventWithdrawResponse {
+  eventId: number;
+  workflowStatus: string;
+  status: string;
+  statusText: string;
+  availableActions: string[];
+}
+
+export interface OrganizerEventDeleteResponse {
+  eventId: number;
+  eventTitle: string;
+}
+
+export interface OrganizerEventPublishResponse {
+  eventId: number;
+  workflowStatus: string;
+  status: string;
+  statusText: string;
+  publicInfoAt: string | null;
+  availableActions: string[];
+  expectedStallCount: number | null;
+  actualStallCount: number;
+  missingFields: string[];
+}
+
+export interface OrganizerEventUnpublishRequestResponse {
+  eventId: number;
+  unpublishRequestId: number;
+  workflowStatus: 'UNPUBLISH_REQUESTED';
+  status: string;
+  statusText: string;
+  reason: string;
+  requestedAt: string;
+  availableActions: string[];
+}
+
 export interface BoothZone {
   name: string;
   color: string;

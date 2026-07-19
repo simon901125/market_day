@@ -9,6 +9,12 @@ import { BoothZoneDraft } from '../../../../../models/interface/organizer/BoothZ
   styleUrl: './booth-zone-modal.scss',
 })
 export class BoothZoneModal {
+  /** 分區名稱固定為 A 區至 Z 區，並直接作為攤位編號前綴。 */
+  readonly zoneNameOptions = Array.from(
+    { length: 26 },
+    (_, index) => `${String.fromCharCode(65 + index)} 區`,
+  );
+
   /** 目前正在新增或編輯的攤位分區暫存資料。 */
   @Input({ required: true }) draft!: BoothZoneDraft;
 
@@ -41,13 +47,21 @@ export class BoothZoneModal {
 
   /** 分區名稱為必填。 */
   get nameInvalid(): boolean {
-    return !this.draft.name.trim();
+    return !this.zoneNameOptions.includes(this.draft.name.trim());
   }
 
   /** 檢查分區名稱是否已經存在。 */
   get nameDuplicate(): boolean {
     const currentName = this.normalizeZoneName(this.draft.name);
     return Boolean(currentName) && this.existingZoneNames.some((name) => this.normalizeZoneName(name) === currentName);
+  }
+
+  /** 已被其他分區使用的名稱不再提供選擇。 */
+  isZoneNameUsed(name: string): boolean {
+    const normalizedName = this.normalizeZoneName(name);
+    return this.existingZoneNames.some(
+      (existingName) => this.normalizeZoneName(existingName) === normalizedName,
+    );
   }
 
   /** 分區顏色為必填。 */
@@ -111,6 +125,6 @@ export class BoothZoneModal {
 
   /** 移除使用者可能輸入的「區」尾字，讓重複檢查更準確。 */
   private normalizeZoneName(name: string): string {
-    return name.trim().replace(/\s*區$/, '').trim().toLocaleLowerCase();
+    return name.trim().toUpperCase();
   }
 }

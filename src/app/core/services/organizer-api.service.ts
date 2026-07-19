@@ -13,6 +13,10 @@ import { OrganizerEventDetail } from '../../models/interface/organizer/Organizer
 import {
   OrganizerEventSaveRequest,
   OrganizerEventSubmitReviewResponse,
+  OrganizerEventDeleteResponse,
+  OrganizerEventWithdrawResponse,
+  OrganizerEventPublishResponse,
+  OrganizerEventUnpublishRequestResponse,
   StoredEventImage,
 } from '../../models/interface/organizer/OrganizerEventEditor';
 import { HttpService } from '../http/http.service';
@@ -62,12 +66,48 @@ export class OrganizerApiService {
     return this.httpService.post<OrganizerEventDetail>('api/organizer/events', payload);
   }
 
+  deleteOrganizerEvent(
+    eventId: number,
+  ): Observable<ApiResult<OrganizerEventDeleteResponse>> {
+    return this.httpService.delete<OrganizerEventDeleteResponse>(
+      `api/organizer/events/${eventId}`,
+    );
+  }
+
   submitOrganizerEventReview(
     eventId: number,
   ): Observable<ApiResult<OrganizerEventSubmitReviewResponse>> {
     return this.httpService.post<OrganizerEventSubmitReviewResponse>(
       `api/organizer/events/${eventId}/submit-review`,
       null,
+    );
+  }
+
+  withdrawOrganizerEventReview(
+    eventId: number,
+  ): Observable<ApiResult<OrganizerEventWithdrawResponse>> {
+    return this.httpService.post<OrganizerEventWithdrawResponse>(
+      `api/organizer/events/${eventId}/withdraw`,
+      null,
+    );
+  }
+
+  publishOrganizerEvent(
+    eventId: number,
+  ): Observable<ApiResult<OrganizerEventPublishResponse>> {
+    return this.httpService.post<OrganizerEventPublishResponse>(
+      `api/organizer/events/${eventId}/publish`,
+      null,
+    );
+  }
+
+  requestOrganizerEventUnpublish(
+    eventId: number,
+    reason: string,
+  ): Observable<ApiResult<OrganizerEventUnpublishRequestResponse>> {
+    return this.httpService.post<OrganizerEventUnpublishRequestResponse>(
+      `api/organizer/events/${eventId}/unpublish-request`,
+      { reason },
     );
   }
 

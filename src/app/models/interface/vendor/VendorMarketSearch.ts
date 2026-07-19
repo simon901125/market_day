@@ -1,5 +1,5 @@
 /** 後端回傳的報名開放狀態。 */
-export type MarketRegistrationStatus = 'OPEN' | 'UPCOMING' | 'CLOSED';
+export type MarketRegistrationStatus = 'OPEN' | 'FULL';
 
 /** 市集搜尋 API 回傳的單筆活動摘要。 */
 export interface VendorMarketSearchItem {
@@ -20,7 +20,10 @@ export interface VendorMarketSearchItem {
   baseFee: number;
   trafficTitle: string | null;
   trafficDetail: string | null;
-  categoryName: string | null;
+  /** 活動可複選的招商類別；目前搜尋 API 使用此欄位回傳。 */
+  categories?: Array<{ id: number; name: string; slug: string }>;
+  /** 相容舊版 API 的單一類別欄位。 */
+  categoryName?: string | null;
   organizerName: string | null;
   imageUrl: string | null;
   registrationStatus: MarketRegistrationStatus;

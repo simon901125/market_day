@@ -42,6 +42,8 @@
       [minimumRows]="pageSize"
       emptyText="目前沒有活動資料"
       emptyHint="點選右上角「建立活動」開始新增活動"
+      [rowClickable]="true"
+      (rowClick)="onTableRowClick($event)"
       (actionClick)="onTableAction($event)"
     ></app-dashboard-data-table>
   </div>

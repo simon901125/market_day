@@ -163,6 +163,19 @@ export interface ApplicationDetail {
   marketUnpublishPending?: boolean;
 }
 
+/** GET /api/vendor/applications/{id} 中與活動下架狀態相關的欄位。 */
+export interface VendorApplicationDetailApiResponse {
+  event: {
+    eventId: number;
+    eventTitle: string;
+    workflowStatus: string;
+    unpublishRequested: boolean;
+    unpublished: boolean;
+    eventStatus: string;
+  };
+  [key: string]: unknown;
+}
+
 /** 清單進入詳細頁時，用報名編號覆蓋的活動摘要資料。 */
 export interface ApplicationSummary {
   /** 活動名稱。 */

@@ -18,6 +18,12 @@ export interface VendorApplicationApiEvent {
   eventTitle: string;
   /** 依目前時間計算的活動狀態。 */
   eventStatus: string;
+  /** 活動上／下架工作流程狀態。 */
+  workflowStatus?: string;
+  /** 活動是否正在申請下架。 */
+  unpublishRequested?: boolean;
+  /** 活動是否已下架。 */
+  unpublished?: boolean;
   /** 報名階段的輔助說明。 */
   statusNote: string | null;
   /** 後端已格式化的活動日期區間。 */

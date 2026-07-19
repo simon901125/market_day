@@ -157,6 +157,26 @@ describe('VendorApplicationDetail', () => {
     });
   });
 
+  it('should display an unpublish request notice without suspending the existing application flow', () => {
+    component.marketWorkflowStatus = 'UNPUBLISH_REQUESTED';
+    (component as unknown as { marketWorkflowLoaded: boolean }).marketWorkflowLoaded = true;
+    fixture.detectChanges();
+
+    const textContent: string = fixture.nativeElement.textContent;
+    expect(textContent).toContain('活動目前處於下架申請中');
+    expect(textContent).toContain('原有報名流程維持正常');
+  });
+
+  it('should tell a paid vendor that an unpublished event will enter the refund process', () => {
+    component.marketWorkflowStatus = 'UNPUBLISHED';
+    (component as unknown as { marketWorkflowLoaded: boolean }).marketWorkflowLoaded = true;
+    fixture.detectChanges();
+
+    const textContent: string = fixture.nativeElement.textContent;
+    expect(textContent).toContain('活動已下架');
+    expect(textContent).toContain('平台將進行後續退款流程');
+  });
+
   it('should call the cancel API before changing the application status', async () => {
     await component.cancelRegistration();
 

@@ -16,6 +16,7 @@ import {
   StoredVendorImage,
   VendorImagePurpose,
 } from '../../../models/interface/vendor/VendorStallInfo';
+import { VendorApplicationDetailApiResponse } from '../../../models/interface/vendor/VendorApplicationDetail';
 
 @Injectable({
   providedIn: 'root',
@@ -88,6 +89,14 @@ export class VendorService {
   ): Observable<ApiResult<VendorApplicationSubmitResponse>> {
     const url = `${environment.apiBaseUrl}api/vendor/applications`;
     return this.http.post<ApiResult<VendorApplicationSubmitResponse>>(url, data);
+  }
+
+  /** 取得目前登入攤主的報名詳情。 */
+  getVendorApplicationDetail(
+    applicationId: number,
+  ): Observable<ApiResult<VendorApplicationDetailApiResponse>> {
+    const url = `${environment.apiBaseUrl}api/vendor/applications/${applicationId}`;
+    return this.http.get<ApiResult<VendorApplicationDetailApiResponse>>(url);
   }
 
   /** 取得目前登入攤主的攤位資料。Authorization 由 authInterceptor 自動附加。 */

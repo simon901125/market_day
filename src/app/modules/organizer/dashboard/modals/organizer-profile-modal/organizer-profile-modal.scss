@@ -166,8 +166,7 @@
     font-weight: 700;
   }
 
-  input,
-  select {
+  input {
     width: 100%;
     height: 40px;
     min-width: 0;
@@ -190,13 +189,8 @@
     }
   }
 
-  select {
-    cursor: pointer;
-  }
-
   &.has-error {
-    input,
-    select {
+    input {
       border-color: #ef4444;
       box-shadow: none;
     }
@@ -206,6 +200,14 @@
 .required-mark {
   color: #ef4444;
   font: inherit;
+}
+
+.dropdown-field app-dropdown {
+  --dropdown-control-height: 40px;
+  --dropdown-control-padding: 0 12px;
+  --dropdown-control-radius: var(--radius-tag);
+  --dropdown-control-font-size: 13px;
+  --dropdown-control-font-weight: 700;
 }
 
 .field-error {

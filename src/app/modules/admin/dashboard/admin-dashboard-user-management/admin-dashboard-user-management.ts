@@ -9,12 +9,14 @@ import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResul
 import { AdminApiService } from '../../../../core/services/admin-api.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
+import { ClickableTableRowDirective } from '../../../shared/dashboard/clickable-table-row/clickable-table-row.directive';
 
 @Component({
   selector: 'app-admin-dashboard-user-management',
   imports: [
     Dropdown,
     DashboardPagination,
+    ClickableTableRowDirective,
   ],
   templateUrl: './admin-dashboard-user-management.html',
   styleUrl: './admin-dashboard-user-management.scss',
@@ -116,6 +118,11 @@ export class AdminDashboardUserManagement implements AfterViewInit{
     /** 產生操作欄位按鈕的點擊處理函式，導向使用者詳細頁 */
     getDetailHandler(user: UserListItem): () => void {
       return () => this.goToDetail(user, user.role);
+    }
+
+    getDetailRoute(user: UserListItem): any[] {
+      const detailType = user.role === UserType.organizer ? 'organizer' : 'vender';
+      return ['/admin/dash-board/user/detail', detailType, user.id];
     }
   
     private goToDetail(user: UserListItem, role: String): void {

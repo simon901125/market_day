@@ -44,6 +44,8 @@ export class VendorApplicationDetail implements OnInit {
   /** 付款結果假資料；之後串接金流 API 時可由後端回傳決定 success 或 failed。 */
   mockPaymentResult: 'success' | 'failed' = 'success';
   refundReason = '';
+  marketWorkflowStatus = '';
+  private marketWorkflowLoaded = false;
 
   /** 下列明細均由詳情 API 的 equipmentRentals、stall 與 feedetail 轉換。 */
   basicEquipment: Array<{ name: string; spec: string; quantity: number; unit: string }> = [];
@@ -91,6 +93,16 @@ export class VendorApplicationDetail implements OnInit {
 
     this.currentApplicationId = applicationId;
     this.loadApplicationDetail(applicationId);
+  }
+
+  get marketUnpublishPending(): boolean {
+    return this.marketWorkflowLoaded
+      ? this.marketWorkflowStatus === 'UNPUBLISH_REQUESTED'
+      : Boolean(this.detail.marketUnpublishPending);
+  }
+
+  get marketUnpublished(): boolean {
+    return this.marketWorkflowStatus === 'UNPUBLISHED';
   }
 
   /** 目前展示的報名狀態。 */
@@ -227,6 +239,11 @@ export class VendorApplicationDetail implements OnInit {
 
     this.currentApplicationId = api.application.applicationId;
     this.currentApplicationNo = api.application.applicationNo;
+    this.marketWorkflowStatus = api.event.workflowStatus
+      ?? (api.event.unpublished ? 'UNPUBLISHED' : api.event.unpublishRequested ? 'UNPUBLISH_REQUESTED' : '');
+    this.marketWorkflowLoaded = Boolean(
+      api.event.workflowStatus || api.event.unpublished || api.event.unpublishRequested,
+    );
     this.eventDateText = api.event.eventTime;
     this.market = {
       id: String(api.event.eventId),

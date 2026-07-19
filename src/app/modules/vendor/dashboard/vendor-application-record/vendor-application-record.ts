@@ -22,6 +22,7 @@ import { DashboardPagination } from '../../../shared/dashboard/dashboard-paginat
 import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
 import type { VendorApplicationSummary } from '../../../../models/interface/vendor/VendorApplicationSearch';
 import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { ClickableTableRowDirective } from '../../../shared/dashboard/clickable-table-row/clickable-table-row.directive';
 
 const DETAIL_LINK = '/vendor/dash-board/application-record/detail';
 
@@ -413,7 +414,7 @@ const API_STATUS_CONFIG: Record<string, ApiStatusConfig> = {
 
 @Component({
   selector: 'app-vendor-application-record',
-  imports: [CommonModule, RouterLink, DashboardPagination, Dropdown, DateRangeSelector],
+  imports: [CommonModule, RouterLink, DashboardPagination, Dropdown, DateRangeSelector, ClickableTableRowDirective],
   templateUrl: './vendor-application-record.html',
   styleUrl: './vendor-application-record.scss',
 })

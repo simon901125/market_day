@@ -271,6 +271,10 @@ export class OrganizerDashboardCollectionManagement implements OnInit {
     this.updateDisplayRows();
   }
 
+  onTableRowClick(row: Record<string, unknown>): void {
+    this.onTableAction({ key: 'view', label: '查看', variant: 'outline', row });
+  }
+
   onTableAction(action: DashboardTableAction): void {
     const row = action.row as unknown as CollectionRow;
     this.router.navigate(['/organizer/dash-board/collection/detail', row.id], {

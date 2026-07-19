@@ -4,6 +4,8 @@ import { RouterLink } from '@angular/router';
 import { DashboardPagination } from '../dashboard-pagination/dashboard-pagination';
 
 export interface NotificationItem {
+  /** 通知 id，標記已讀時需要 */
+  id?: number;
   status: string;
   title: string;
   date: string;
@@ -29,6 +31,7 @@ export class DashboardNotification {
   @Input() showPagination = true;
   @Input() viewAllLink = '';
   @Input() viewAllText = '查看全部';
+  @Input() emptyText = '目前沒有通知';
 
   /**
    * 是否由外部（父元件）控制分頁與篩選
@@ -53,6 +56,9 @@ export class DashboardNotification {
 
   /** 換頁時觸發，serverMode 下父元件需依此重新呼叫 API */
   @Output() pageChange = new EventEmitter<number>();
+
+  /** 把未讀通知標記為已讀時觸發（僅在該筆原本是未讀時才會觸發），父元件可依此呼叫標記已讀 API */
+  @Output() markRead = new EventEmitter<NotificationItem>();
 
   activeTab = '全部';
   currentPage = 1;
@@ -112,6 +118,9 @@ export class DashboardNotification {
   }
 
   markAsRead(item: NotificationItem): void {
+    if (!item.unread) return;
+
     item.unread = false;
+    this.markRead.emit(item);
   }
 }

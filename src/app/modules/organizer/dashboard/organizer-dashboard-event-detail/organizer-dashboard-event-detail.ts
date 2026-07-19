@@ -23,6 +23,7 @@ import {
   FormStep,
   OrganizerEventSaveEquipmentItem,
   OrganizerEventSaveRequest,
+  OrganizerEventPublishResponse,
   OrganizerEventSubmitReviewResponse,
   StatusAction,
   VenueBoothForm,
@@ -91,6 +92,9 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   feedbackMessage = '';
   isDetailLoading = false;
   detailLoadError = '';
+  isStatusActionLoading = false;
+  isRevisionRequired = false;
+  reviewNote = '';
   private serverAvailableActions: string[] = [];
 
   /** 建立／編輯活動目前所在步驟。 */
@@ -328,6 +332,12 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       this.boothZoneTotal !== Number(this.venueForm.totalBooths);
   }
 
+  get boothZoneNamesInvalid(): boolean {
+    if (this.boothZones.length > 26) return true;
+    const names = this.boothZones.map((zone) => zone.name.trim().toUpperCase());
+    return names.some((name) => !/^[A-Z] 區$/.test(name)) || new Set(names).size !== names.length;
+  }
+
   get eventNameInvalid(): boolean {
     const value = this.form.name.trim();
     return !value || value.length > 50;
@@ -384,6 +394,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       EDIT: { key: 'edit', label: '編輯', variant: 'outline' },
       SUBMIT_REVIEW: { key: 'submit', label: '送出審核', variant: 'primary' },
       DELETE: { key: 'delete', label: '刪除', variant: 'danger' },
+      WITHDRAW_REVIEW: { key: 'withdraw', label: '撤回申請', variant: 'outline' },
       RESUBMIT_REVIEW: { key: 'resubmit', label: '重新送審', variant: 'primary' },
       PUBLISH: { key: 'publish', label: '發布活動', variant: 'primary' },
       REQUEST_UNPUBLISH: { key: 'unpublish', label: '下架活動', variant: 'outline' },
@@ -393,6 +404,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
 
   /** 依據狀態按鈕執行送審、發布、下架、刪除等操作。 */
   async handleStatusAction(action: StatusAction): Promise<void> {
+    if (this.isStatusActionLoading) return;
     this.feedbackMessage = '';
     if ((action.key === 'submit' || action.key === 'resubmit') && !await this.ensureReviewSubmissionIsValid()) {
       return;
@@ -406,20 +418,13 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         return;
       case 'delete':
         if (!await this.alert.confirm(
-          '刪除活動確認',
-          `確定要刪除「${this.activity.name}」嗎？<br>此操作無法復原，所有活動資料將永久刪除。`,
+          '刪除活動',
+          `確定要刪除「${this.activity.name}」嗎？<br>刪除後將不會出現在活動管理列表中，且無法繼續編輯或送審。`,
           '確定刪除',
         )) {
           return;
         }
-        await this.alert.success(
-          '刪除活動成功',
-          `活動「${this.activity.name}」已成功刪除。<br>所有資料將無法復原，感謝您的使用。`,
-          '知道了',
-        );
-        this.router.navigate(['/organizer/dash-board/activity'], {
-          queryParams: { page: this.returnPage, status: this.returnStatus || null },
-        });
+        await this.deleteOrganizerEvent();
         return;
       case 'submit':
         if (!await this.alert.confirm(
@@ -465,7 +470,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         )) {
           return;
         }
-        this.activity = { ...this.activity, status: ActivityStatus.draft };
+        if (!await this.withdrawOrganizerEventReview()) return;
         await this.alert.success(
           '撤回申請成功',
           `已成功撤回「${this.activity.name}」的審核申請。<br>您現在可以進行編輯並重新送出審核。`,
@@ -480,7 +485,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         )) {
           return;
         }
-        this.activity = { ...this.activity, status: ActivityStatus.registrationOpen };
+        if (!await this.publishOrganizerEvent()) return;
         await this.alert.success(
           '發布活動成功',
           `活動「${this.activity.name}」已成功發布。<br>活動現已對外公開，所有人皆可瀏覽與報名。`,
@@ -493,6 +498,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
           description: `請填寫「${this.activity.name}」的下架原因，送出後將由管理員審核。`,
           fieldLabel: '下架原因',
           placeholder: '請說明申請下架活動的原因',
+          maxLength: 500,
           confirmButtonText: '下一步',
         });
         if (!reason) return;
@@ -508,11 +514,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         });
         if (!confirmed) return;
 
-        this.activity = {
-          ...this.activity,
-          status: ActivityStatus.unpublishRequested,
-          unpublishReason: reason,
-        };
+        if (!await this.requestOrganizerEventUnpublish(reason)) return;
         await this.alert.success(
           '下架申請已送出',
           `活動「${this.activity.name}」已進入下架審核流程。<br>審核完成前，活動狀態為「下架申請中」。`,
@@ -635,6 +637,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       this.isNonNegativeNumber(this.venueForm.boothPrice) &&
       this.isNonNegativeNumber(this.venueForm.depositAmount) &&
       this.boothZones.length > 0 &&
+      !this.boothZoneNamesInvalid &&
       !this.boothZoneCountMismatch &&
       this.venueForm.layoutFileName
     );
@@ -698,6 +701,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         !this.isNonNegativeNumber(this.venueForm.boothPrice),
         !this.isNonNegativeNumber(this.venueForm.depositAmount),
         this.boothZones.length === 0,
+        this.boothZoneNamesInvalid,
         this.boothZoneCountMismatch,
         !this.venueForm.layoutFileName,
       ].filter(Boolean).length;
@@ -727,6 +731,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
 
   /** 開啟新增攤位分區 Modal，並清空暫存資料。 */
   openAddZoneDialog(): void {
+    if (this.boothZones.length >= 26) return;
     this.editingZoneIndex = null;
     this.isZoneDialogClosing = false;
     this.zoneDraft = {
@@ -743,7 +748,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.editingZoneIndex = index;
     this.isZoneDialogClosing = false;
     this.zoneDraft = {
-      name: zone.name.replace(/\s*區$/, ''),
+      name: zone.name,
       color: zone.color,
       count: zone.count,
     };
@@ -1035,6 +1040,147 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
   }
 
+  private async withdrawOrganizerEventReview(): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApiService.withdrawOrganizerEventReview(this.activity.id),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) {
+        await this.loadOrganizerEventDetail();
+        return true;
+      }
+      await this.alert.error(
+        '無法撤回申請',
+        response.statusCode === 409
+          ? '活動狀態已變更，可能已由管理員完成審核，系統將重新載入最新資料。'
+          : response.message || '撤回審核申請失敗。',
+      );
+      await this.loadOrganizerEventDetail();
+      return false;
+    } catch (error) {
+      await this.alert.error(
+        '無法撤回申請',
+        this.getRequestErrorMessage(error, '撤回審核申請失敗，請稍後再試。'),
+      );
+      await this.loadOrganizerEventDetail();
+      return false;
+    }
+  }
+
+  private async deleteOrganizerEvent(): Promise<void> {
+    this.isStatusActionLoading = true;
+    try {
+      const response = await firstValueFrom(
+        this.organizerApiService.deleteOrganizerEvent(this.activity.id),
+      );
+      if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+        const message = response.messageDetails
+          ? `${response.message}：${response.messageDetails}`
+          : response.message || '刪除活動失敗。';
+        await this.alert.error('無法刪除活動', message);
+        if (response.statusCode === 409) await this.loadOrganizerEventDetail();
+        return;
+      }
+
+      await this.alert.success(
+        '活動已刪除',
+        `活動「${response.data.eventTitle}」已刪除，將不再顯示於活動管理列表。`,
+        '知道了',
+      );
+      this.navigationAllowed = true;
+      await this.router.navigate(['/organizer/dash-board/activity'], {
+        queryParams: { page: this.returnPage, status: this.returnStatus || null },
+      });
+    } catch (error) {
+      await this.alert.error(
+        '無法刪除活動',
+        this.getRequestErrorMessage(error, '刪除活動失敗，請稍後再試。'),
+      );
+    } finally {
+      this.isStatusActionLoading = false;
+    }
+  }
+
+  private async publishOrganizerEvent(): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApiService.publishOrganizerEvent(this.activity.id),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) {
+        await this.loadOrganizerEventDetail();
+        return true;
+      }
+      await this.alert.error(
+        '無法發布活動',
+        response.statusCode === 409
+          ? '活動狀態已變更，系統將重新載入最新資料。'
+          : this.publishFailureMessage(response.data, response.message),
+      );
+      await this.loadOrganizerEventDetail();
+      return false;
+    } catch (error) {
+      await this.alert.error(
+        '無法發布活動',
+        this.getRequestErrorMessage(error, '發布活動失敗，請稍後再試。'),
+      );
+      await this.loadOrganizerEventDetail();
+      return false;
+    }
+  }
+
+  private async requestOrganizerEventUnpublish(reason: string): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApiService.requestOrganizerEventUnpublish(this.activity.id, reason),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) {
+        await this.loadOrganizerEventDetail();
+        return true;
+      }
+      await this.alert.error(
+        '無法送出下架申請',
+        response.statusCode === 409
+          ? '活動狀態已變更，或已有待審核的下架申請，系統將重新載入最新資料。'
+          : response.message || '下架申請送出失敗。',
+      );
+      await this.loadOrganizerEventDetail();
+      return false;
+    } catch (error) {
+      await this.alert.error(
+        '無法送出下架申請',
+        this.getRequestErrorMessage(error, '下架申請送出失敗，請稍後再試。'),
+      );
+      await this.loadOrganizerEventDetail();
+      return false;
+    }
+  }
+
+  private publishFailureMessage(
+    publishResult: OrganizerEventPublishResponse | null | undefined,
+    fallback: string,
+  ): string {
+    const fields = publishResult?.missingFields;
+    if (!fields?.length) return fallback || '活動尚未符合發布條件。';
+    if (fields.includes('booth.stalls')) {
+      const expected = publishResult?.expectedStallCount;
+      const actual = publishResult?.actualStallCount;
+      if (expected !== null && expected !== undefined && actual !== undefined) {
+        return `攤位地圖尚未建置完成，目前已建立 ${actual} / ${expected} 個攤位。`;
+      }
+    }
+    const labels: Record<string, string> = {
+      coverImage: '活動封面圖片',
+      categoryIds: '活動類型',
+      'booth.mapImage': '攤位配置圖片',
+      'booth.zones': '攤位分區',
+      'booth.stalls': '互動式攤位數量',
+      'schedule.startAt': '活動開始時間',
+      'schedule.endAt': '活動結束時間',
+      'schedule.registrationEndAt': '報名截止時間',
+    };
+    return `請確認：${fields.map((field) => labels[field] ?? field).join('、')}。`;
+  }
+
   private async handleReviewSubmissionFailure(
     response: ApiResult<OrganizerEventSubmitReviewResponse>,
     eventId: number,
@@ -1106,15 +1252,16 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     const normalizedColor = this.zoneDraft.color.trim();
 
     const normalizedCount = Number(this.zoneDraft.count);
-    const normalizedZoneName = normalizedName.replace(/\s*區$/, '').trim().toLocaleLowerCase();
+    const normalizedZoneName = normalizedName.toUpperCase();
     const hasDuplicateName = this.zoneNamesForValidation.some(
-      (name) => name.replace(/\s*區$/, '').trim().toLocaleLowerCase() === normalizedZoneName
+      (name) => name.trim().toUpperCase() === normalizedZoneName
     );
     const hasDuplicateColor = this.zoneColorsForValidation.some(
       (color) => color.trim().toUpperCase() === normalizedColor.toUpperCase()
     );
     if (
       !normalizedName ||
+      !/^[A-Z] 區$/.test(normalizedName) ||
       !Number.isInteger(normalizedCount) ||
       normalizedCount < 1 ||
       !/^#[0-9A-Fa-f]{6}$/.test(normalizedColor) ||
@@ -1125,7 +1272,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
 
     const nextZone: BoothZone = {
-      name: normalizedName.endsWith('區') ? normalizedName : `${normalizedName} 區`,
+      name: normalizedName,
       color: normalizedColor.toUpperCase(),
       count: normalizedCount,
     };
@@ -1619,6 +1766,8 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       actionLabel: '查看詳情',
     };
     this.serverAvailableActions = detail.availableActions;
+    this.isRevisionRequired = detail.workflowStatus === 'REVISION_REQUIRED';
+    this.reviewNote = detail.reviewNote?.trim() || '請依照審核通知補齊活動資料。';
     detail.categories.forEach((category) => this.categoryIdByName.set(category.categoryName, category.categoryId));
     this.detailCategories = detail.categories.map((category) => category.categoryName);
     this.form = {

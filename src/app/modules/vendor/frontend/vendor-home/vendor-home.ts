@@ -35,16 +35,23 @@ export class VendorHome implements OnInit {
     this.isLoadingMarkets = true;
     this.marketLoadError = '';
 
-    this.vendorService
-      .searchMarkets({
-        status: 'OPEN',
-        eventStartAt: new Date(),
-        page: 1,
-        pageSize: 3,
-      })
+    const recentMarketSearch = {
+      eventStartAt: new Date(),
+      page: 1,
+      pageSize: 3,
+    };
+
+    this.vendorService.searchMarkets(recentMarketSearch)
       .subscribe({
         next: (response) => {
-          this.markets = response.data.markets.items.map((item) => this.toMarketCard(item));
+          const recentMarkets = response.data.markets.items
+            .sort(
+              (left, right) =>
+                new Date(left.startAt).getTime() - new Date(right.startAt).getTime(),
+            )
+            .slice(0, 3);
+
+          this.markets = recentMarkets.map((item) => this.toMarketCard(item));
           this.isLoadingMarkets = false;
         },
         error: () => {
@@ -59,6 +66,13 @@ export class VendorHome implements OnInit {
     const startAt = new Date(item.startAt);
     const endAt = new Date(item.endAt);
     const status = this.toMarketStatus(item.registrationStatus);
+    const categoryNames = (item.categories ?? [])
+      .map((category) => category.name?.trim())
+      .filter((name): name is string => Boolean(name));
+
+    if (categoryNames.length === 0 && item.categoryName?.trim()) {
+      categoryNames.push(item.categoryName.trim());
+    }
 
     return {
       id: String(item.eventId),
@@ -74,8 +88,8 @@ export class VendorHome implements OnInit {
       image: item.imageUrl || 'assets/images/market/cards/market-card-01.png',
       status,
       statusClass: MarketStatus.getClass(status),
-      tags: item.categoryName ? [item.categoryName] : [],
-      category: item.categoryName ?? '',
+      tags: categoryNames,
+      category: categoryNames.join('、'),
       organizer: item.organizerName ?? '',
       transportation: [item.trafficTitle, item.trafficDetail].filter(
         (value): value is string => Boolean(value),
@@ -92,9 +106,8 @@ export class VendorHome implements OnInit {
 
   private toMarketStatus(status: MarketRegistrationStatus): string {
     const statusMap: Record<MarketRegistrationStatus, string> = {
-      OPEN: MarketStatus.active,
-      UPCOMING: MarketStatus.preview,
-      CLOSED: MarketStatus.ended,
+      OPEN: MarketStatus.registrationOpen,
+      FULL: MarketStatus.full,
     };
     return statusMap[status];
   }

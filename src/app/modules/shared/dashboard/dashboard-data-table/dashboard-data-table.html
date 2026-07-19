@@ -28,7 +28,13 @@
     <tbody>
       @if (rows.length > 0) {
         @for (row of rows; track row['id']) {
-        <tr>
+        <tr
+          [class.clickable-row]="rowClickable"
+          [attr.tabindex]="rowClickable ? 0 : null"
+          [attr.role]="rowClickable ? 'link' : null"
+          (click)="emitRowClick(row, $event)"
+          (keydown.enter)="emitRowClick(row, $event)"
+        >
           @for (column of columns; track column.key) {
             <td
               [attr.data-column]="column.key"

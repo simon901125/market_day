@@ -59,6 +59,30 @@ describe('VendorService', () => {
     });
   });
 
+  it('should get vendor application detail with event workflow flags', () => {
+    service.getVendorApplicationDetail(8).subscribe();
+
+    const request = httpTesting.expectOne(
+      `${environment.apiBaseUrl}api/vendor/applications/8`,
+    );
+    expect(request.request.method).toBe('GET');
+    request.flush({
+      statusCode: 200,
+      message: 'ok',
+      messageDetails: null,
+      data: {
+        event: {
+          eventId: 3,
+          eventTitle: '測試活動',
+          workflowStatus: 'UNPUBLISH_REQUESTED',
+          unpublishRequested: true,
+          unpublished: false,
+          eventStatus: 'OPEN',
+        },
+      },
+    });
+  });
+
   it('should get vendor stall info', () => {
     service.getVendorStallInfo().subscribe();
 

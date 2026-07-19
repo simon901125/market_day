@@ -52,6 +52,8 @@
       [rows]="displayRows"
       tableMinWidth="1180px"
       emptyText="目前沒有報名資料"
+      [rowClickable]="true"
+      (rowClick)="onTableRowClick($event)"
       (actionClick)="onTableAction($event)"
     ></app-dashboard-data-table>
   </div>

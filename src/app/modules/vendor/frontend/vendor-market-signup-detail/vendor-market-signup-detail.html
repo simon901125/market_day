@@ -55,6 +55,8 @@
             <dd class="tag-list">
               @for (tag of market.tags; track tag) {
                 <span class="app-tag">{{ tag }}</span>
+              } @empty {
+                <span>-</span>
               }
             </dd>
           </div>
@@ -81,7 +83,6 @@
             立即報名
             <i class="bi bi-arrow-right-circle-fill"></i>
           </button>
-          <p class="signup-hint">報名資料約需 3–5 分鐘完成，送出後將進入主辦方審核流程。</p>
         </div>
       </div>
     </section>
@@ -134,28 +135,34 @@
     <div class="two-column-grid">
       <section class="content-card compact-card">
         <h2 class="green"><i class="bi bi-gift"></i>設備提供 <small>（免費提供）</small></h2>
-        <ul class="plain-list">
-          @for (equipment of freeEquipments; track equipment.eventEquipmentId) {
-            <li>{{ equipmentDescription(equipment) }}</li>
-          } @empty {
-            <li>本活動未提供免費設備</li>
-          }
-        </ul>
+        @if (freeEquipments.length > 0) {
+          <ul class="plain-list">
+            @for (equipment of freeEquipments; track equipment.eventEquipmentId) {
+              <li>{{ equipmentDescription(equipment) }}</li>
+            }
+          </ul>
+        } @else {
+          <p class="unavailable-message">本活動未提供免費設備</p>
+        }
       </section>
 
       <section class="content-card compact-card">
         <h2><i class="bi bi-camera"></i>可租借設備 <small>（每日計費）</small></h2>
-        <ul class="price-list">
-          @for (equipment of rentalEquipments; track equipment.eventEquipmentId) {
-            <li>
-              <span>{{ equipmentDescription(equipment) }}</span>
-              <strong>{{ equipmentPrice(equipment) }}</strong>
-            </li>
-          } @empty {
-            <li><span>本活動未提供租借設備</span></li>
-          }
-        </ul>
-        <p class="card-footnote">* 租借設備數量有限，報名送出時會保留數量，額滿後即不可租借。</p>
+        @if (rentalEquipments.length > 0) {
+          <ul class="price-list">
+            @for (equipment of rentalEquipments; track equipment.eventEquipmentId) {
+              <li>
+                <span>{{ equipmentDescription(equipment) }}</span>
+                <strong>{{ equipmentPrice(equipment) }}</strong>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="unavailable-message">本活動未提供租借設備</p>
+        }
+        @if (rentalEquipments.length > 0) {
+          <p class="card-footnote">* 租借設備數量有限，報名送出時會保留數量，額滿後即不可租借。</p>
+        }
       </section>
     </div>
 
@@ -168,7 +175,7 @@
             <div><strong>{{ power.name }}（免費提供）</strong><span>{{ powerDescription(power) }}</span></div>
           </div>
         } @empty {
-          <p class="card-footnote">本活動未提供免費用電方案。</p>
+          <p class="unavailable-message">本活動未提供免費用電方案</p>
         }
       </section>
 
@@ -193,15 +200,15 @@
             <dd>{{ market.organizer }}</dd>
           </div>
           <div>
-            <dt>聯絡信箱：</dt>
+            <dt>聯絡信箱</dt>
             <dd>{{ detail?.contactEmail || '-' }}</dd>
           </div>
           <div>
-            <dt>聯絡電話：</dt>
+            <dt>聯絡電話</dt>
             <dd>{{ detail?.contactPhone || '-' }}</dd>
           </div>
           <div>
-            <dt>服務時間：</dt>
+            <dt>服務時間</dt>
             <dd>{{ serviceTimeText }}</dd>
           </div>
         </dl>
@@ -210,16 +217,17 @@
       <section class="content-card compact-card">
         <h2><i class="bi bi-bus-front"></i>交通方式</h2>
         <dl class="detail-list transportation-list">
-          @for (transport of market.transportation; track transport) {
+          @for (transport of detail?.trafficInfos ?? []; track transport.id) {
             <div>
-              <dt>{{ transportationLabel(transport) }}</dt>
-              <dd>{{ transportationContent(transport) }}</dd>
+              <dt>{{ transport.trafficTitle }}</dt>
+              <dd>{{ transport.trafficDetails }}</dd>
+            </div>
+          } @empty {
+            <div>
+              <dt>交通</dt>
+              <dd>未提供交通資訊</dd>
             </div>
           }
-          <div>
-            <dt>開車</dt>
-            <dd>可使用鄰近付費停車場</dd>
-          </div>
         </dl>
       </section>
     </div>

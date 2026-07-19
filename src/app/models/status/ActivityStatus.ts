@@ -13,14 +13,14 @@ export class ActivityStatus {
   /** 活動公開後狀態。 */
   static readonly registrationOpen = '報名中';
   static readonly full = '已額滿';
-  static readonly published = '品牌已公開';
+  static readonly published = '已發布';
   static readonly active = '進行中';
+  static readonly finalConfirmation = '最終確認';
   static readonly ended = '已結束';
   static readonly unpublishRequested = '下架申請中';
   static readonly unpublished = '已下架';
 
   /** 只會出現在活動狀態紀錄（WorkflowStatus）的狀態，EventStatus 沒有對應值。 */
-  static readonly workflowPublished = '已發布';
   static readonly workflowFinalReview = '參與品牌名單確認';
   static readonly cancelled = '已取消';
 
@@ -35,6 +35,7 @@ export class ActivityStatus {
     ActivityStatus.full,
     ActivityStatus.published,
     ActivityStatus.active,
+    ActivityStatus.finalConfirmation,
     ActivityStatus.ended,
     ActivityStatus.unpublishRequested,
     ActivityStatus.unpublished,
@@ -57,10 +58,10 @@ export class ActivityStatus {
     [ActivityStatus.full]: 'tag-orange',
     [ActivityStatus.published]: 'tag-teal',
     [ActivityStatus.active]: 'tag-blue',
+    [ActivityStatus.finalConfirmation]: 'tag-teal',
     [ActivityStatus.ended]: 'tag-grey',
     [ActivityStatus.unpublishRequested]: 'tag-orange',
     [ActivityStatus.unpublished]: 'tag-red',
-    [ActivityStatus.workflowPublished]: 'tag-green',
     [ActivityStatus.workflowFinalReview]: 'tag-teal',
     [ActivityStatus.cancelled]: 'tag-red',
   };
@@ -81,6 +82,7 @@ export class ActivityStatus {
     full: ActivityStatus.full,
     published: ActivityStatus.published,
     active: ActivityStatus.active,
+    finalConfirmation: ActivityStatus.finalConfirmation,
     ended: ActivityStatus.ended,
     pendingUnpublish: ActivityStatus.unpublishRequested,
     unpublished: ActivityStatus.unpublished,
@@ -109,7 +111,7 @@ export class ActivityStatus {
     revisionRequired: ActivityStatus.revisionRequired,
     mapBuilding: ActivityStatus.mapBuilding,
     readyToPublish: ActivityStatus.readyToPublish,
-    published: ActivityStatus.workflowPublished,
+    published: ActivityStatus.published,
     finalReview: ActivityStatus.workflowFinalReview,
     pendingUnpublish: ActivityStatus.unpublishRequested,
     unpublished: ActivityStatus.unpublished,

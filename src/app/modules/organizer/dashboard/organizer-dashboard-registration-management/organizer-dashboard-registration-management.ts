@@ -317,6 +317,10 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
   }
 
   // 退款相關操作直接導到收款詳情；其他操作仍導到報名詳情。
+  onTableRowClick(row: Record<string, unknown>): void {
+    this.onTableAction({ key: 'view', label: '查看', variant: 'outline', row });
+  }
+
   onTableAction(action: DashboardTableAction): void {
     const registration = action.row as unknown as OrganizerRegistrationRow;
 

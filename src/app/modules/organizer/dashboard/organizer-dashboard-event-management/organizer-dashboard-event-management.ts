@@ -346,6 +346,10 @@ export class OrganizerDashboardEventManagement implements OnInit {
   }
 
   /** 點擊列表操作按鈕，帶著返回列表所需狀態前往活動詳情。 */
+  onTableRowClick(row: Record<string, unknown>): void {
+    void this.onTableAction({ key: 'view', label: '查看', variant: 'outline', row });
+  }
+
   async onTableAction(action: DashboardTableAction): Promise<void> {
     const activity = action.row as unknown as OrganizerEventRow;
     if (action.key === 'unpublish') {
@@ -408,7 +412,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
           `確定要撤回「${activity.name}」的審核申請嗎？<br>撤回後活動將回到草稿狀態，可再次編輯與送審。`,
           '確定撤回',
         )) return true;
-        this.updateActivityStatus(activity.id, ActivityStatus.draft, { canSubmitReview: true });
+        if (!await this.withdrawReviewFromList(activity)) return true;
         await this.alert.success(
           '申請已撤回',
           `活動「${activity.name}」已回到草稿狀態。`,
@@ -434,7 +438,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
           `確定要發布「${activity.name}」嗎？<br>發布後活動將對外公開並開放瀏覽與報名。`,
           '確定發布',
         )) return true;
-        this.updateActivityStatus(activity.id, ActivityStatus.registrationOpen);
+        if (!await this.publishEventFromList(activity)) return true;
         await this.alert.success(
           '發布活動成功',
           `活動「${activity.name}」已發布並進入「報名中」狀態。`,
@@ -481,6 +485,69 @@ export class OrganizerDashboardEventManagement implements OnInit {
     }
   }
 
+  private async withdrawReviewFromList(activity: OrganizerEventRow): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApi.withdrawOrganizerEventReview(activity.id),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) {
+        this.loadEvents();
+        return true;
+      }
+      await this.alert.error(
+        '無法撤回申請',
+        response.statusCode === 409
+          ? '活動狀態已變更，可能已由管理員完成審核，系統將重新載入最新資料。'
+          : response.message || '撤回審核申請失敗。',
+      );
+      this.loadEvents();
+      return false;
+    } catch {
+      await this.alert.error('無法撤回申請', '撤回審核申請失敗，請稍後再試。');
+      this.loadEvents();
+      return false;
+    }
+  }
+
+  private async publishEventFromList(activity: OrganizerEventRow): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApi.publishOrganizerEvent(activity.id),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) {
+        this.loadEvents();
+        return true;
+      }
+      await this.alert.error(
+        '無法發布活動',
+        response.statusCode === 409
+          ? '活動狀態已變更，系統將重新載入最新資料。'
+          : this.publishFailureMessage(response.data?.missingFields, response.message),
+      );
+      this.loadEvents();
+      return false;
+    } catch {
+      await this.alert.error('無法發布活動', '發布活動失敗，請稍後再試。');
+      this.loadEvents();
+      return false;
+    }
+  }
+
+  private publishFailureMessage(fields: string[] | undefined, fallback: string): string {
+    if (!fields?.length) return fallback || '活動尚未符合發布條件。';
+    const labels: Record<string, string> = {
+      coverImage: '活動封面圖片',
+      categoryIds: '活動類型',
+      'booth.mapImage': '攤位配置圖片',
+      'booth.zones': '攤位分區',
+      'booth.stalls': '互動式攤位數量',
+      'schedule.startAt': '活動開始時間',
+      'schedule.endAt': '活動結束時間',
+      'schedule.registrationEndAt': '報名截止時間',
+    };
+    return `請確認：${fields.map((field) => labels[field] ?? field).join('、')}。`;
+  }
+
   private reviewStepForMissingFields(fields: string[]): number {
     if (fields.some((field) => /^(eventTitle|summary|description|categoryIds|coverImage)/.test(field))) return 0;
     if (fields.some((field) => field.startsWith('schedule.') || field.startsWith('location.traffic'))) return 1;
@@ -503,6 +570,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       description: `請填寫「${activity.name}」的下架原因，送出後將由管理員審核。`,
       fieldLabel: '下架原因',
       placeholder: '請說明申請下架活動的原因',
+      maxLength: 500,
       confirmButtonText: '下一步',
     });
     if (!reason) return;
@@ -518,16 +586,40 @@ export class OrganizerDashboardEventManagement implements OnInit {
     });
     if (!confirmed) return;
 
-    this.rows = this.rows.map((row) => row.id === activity.id
-      ? { ...row, status: ActivityStatus.unpublishRequested, unpublishReason: reason }
-      : row);
-    this.updateDisplayRows();
+    if (!await this.requestUnpublishFromList(activity, reason)) return;
 
     await this.alert.success(
       '下架申請已送出',
       `活動「${activity.name}」已進入下架審核流程。<br>審核完成前，活動狀態為「下架申請中」。`,
       '知道了',
     );
+  }
+
+  private async requestUnpublishFromList(
+    activity: OrganizerEventRow,
+    reason: string,
+  ): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApi.requestOrganizerEventUnpublish(activity.id, reason),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) {
+        this.loadEvents();
+        return true;
+      }
+      await this.alert.error(
+        '無法送出下架申請',
+        response.statusCode === 409
+          ? '活動狀態已變更，或已有待審核的下架申請，系統將重新載入最新資料。'
+          : response.message || '下架申請送出失敗。',
+      );
+      this.loadEvents();
+      return false;
+    } catch {
+      await this.alert.error('無法送出下架申請', '下架申請送出失敗，請稍後再試。');
+      this.loadEvents();
+      return false;
+    }
   }
 
   /** 同步列表狀態到 query params，讓返回頁面時可以還原目前篩選條件。 */
@@ -587,6 +679,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       [ActivityStatus.registrationOpen, 'REGISTRATION_OPEN'],
       [ActivityStatus.full, 'FULL'],
       [ActivityStatus.published, 'PUBLISHED'],
+      [ActivityStatus.finalConfirmation, 'FINAL_CONFIRMATION'],
       [ActivityStatus.active, 'ACTIVE'],
       [ActivityStatus.ended, 'ENDED'],
       [ActivityStatus.unpublishRequested, 'UNPUBLISH_REQUESTED'],
@@ -630,7 +723,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
         ];
       case ActivityStatus.revisionRequired:
         return [
-          { key: 'view', label: '查看', variant: 'outline' },
+          { key: 'edit', label: '編輯', variant: 'outline' },
           { key: 'resubmit', label: '重新送審', variant: 'primary' },
         ];
       case ActivityStatus.mapBuilding:
@@ -642,6 +735,9 @@ export class OrganizerDashboardEventManagement implements OnInit {
         ];
       case ActivityStatus.registrationOpen:
       case ActivityStatus.full:
+      case ActivityStatus.published:
+      case ActivityStatus.finalConfirmation:
+      case ActivityStatus.active:
         return [
           { key: 'unpublish', label: '下架活動', variant: 'danger' },
           { key: 'view', label: '查看', variant: 'outline' },

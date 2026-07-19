@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { AdminDashboardUserDetailVender } from './admin-dashboard-user-detail-vender';
 import { AdminApiService } from '../../../../core/services/admin-api.service';
 import { AlertService } from '../../../../core/services/alert.service';
-import { AdminVenderDetailDto } from '../../../../models/interface/admin/AdminVenderDetail';
+import { AdminVenderDetailDto } from '../../../../models/interface/admin/AdminVendorDetail';
 import { AdminUserLoginPage } from '../../../../models/interface/admin/AdminUserLoginLog';
 import { UserStatusChangeDto } from '../../../../models/interface/admin/AdminUserAction';
 import { UserStatus } from '../../../../models/status/UserStatus';
@@ -44,6 +44,7 @@ const fakeVenderDetail: AdminVenderDetailDto = {
   eventRegLogs: {
     items: [
       {
+        eventId: 21,
         eventName: '春語花市',
         regStatus: '報名完成',
         paymentStatus: 'paid',
@@ -139,6 +140,7 @@ describe('AdminDashboardUserDetailVender', () => {
 
   it('活動報名紀錄應把後端付款狀態轉成中文、攤位與報名日期正確轉換', () => {
     const record = component.detail?.detail.activityRegistrationRecords.items[0];
+    expect(record?.activityId).toBe(21);
     expect(record?.registrationStatus).toBe('報名完成');
     expect(record?.paymentStatus).toBe(PaymentStatus.paid);
     expect(record?.booths).toEqual([
@@ -165,6 +167,12 @@ describe('AdminDashboardUserDetailVender', () => {
 
     expect(adminApiServiceSpy.getVenderRegLogs).toHaveBeenCalledWith(1, 2, component.registrationPageSize);
     expect(component.registrationCurrentPage).toBe(2);
+  });
+
+  it('onViewRecord 應帶入活動 id 導向活動詳細頁', () => {
+    const navigateSpy = spyOn(router, 'navigate');
+    component.onViewRecord(component.detail!.detail.activityRegistrationRecords.items[0]);
+    expect(navigateSpy).toHaveBeenCalledWith(['/admin/dash-board/activity/detail', 21]);
   });
 
   it('goBack 應導向使用者管理列表頁', () => {
