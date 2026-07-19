@@ -36,6 +36,7 @@ export class VendorApplicationDetail implements OnInit {
   eventDateText = '';
   isLoading = true;
   isCancelling = false;
+  isRequestingRefund = false;
   loadError = '';
 
   /** 是否顯示頁內彈窗；退款成功提示改由共用 SweetAlert 顯示。 */
@@ -65,6 +66,7 @@ export class VendorApplicationDetail implements OnInit {
   equipmentSubtotal = formatCurrency(0);
   extraPowerSubtotal = formatCurrency(0);
   totalFee = formatCurrency(0);
+  refundableAmount = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -363,6 +365,13 @@ export class VendorApplicationDetail implements OnInit {
     this.totalFee = formatCurrency(
       api.feedetail.find((item) => item.item === '總計')?.amount ?? api.fee.paymentAmount,
     );
+    const paidAmount = api.fee.paymentAmount
+      ?? api.feedetail.find((item) => item.item === '總計')?.amount
+      ?? 0;
+    const depositAmount = api.feedetail
+      .filter((item) => item.item.includes('保證金'))
+      .reduce((sum, item) => sum + (item.amount ?? 0), 0);
+    this.refundableAmount = Math.max(0, paidAmount - depositAmount);
   }
 
   /** 以選位地圖 API 的已選攤位資料更新 booth-information 區塊。 */
@@ -403,22 +412,45 @@ export class VendorApplicationDetail implements OnInit {
 
   /** 執行頁面主要操作。 */
   async handleAction(action: string): Promise<void> {
-    if (action === 'requestRefund') {
-      const reason = await this.requestRefundReason();
+    if (action !== 'requestRefund' || this.isRequestingRefund) {
+      return;
+    }
 
-      if (!reason) {
-        return;
-      }
+    const reason = await this.requestRefundReason();
 
-      const confirmed = await this.openRefundConfirm(reason);
+    if (!reason) {
+      return;
+    }
 
-      if (!confirmed) {
+    const confirmed = await this.openRefundConfirm(reason);
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.isRequestingRefund = true;
+    try {
+      const response = await firstValueFrom(
+        this.vendorDashboardService.requestVendorRefund({
+          applicationNo: this.currentApplicationNo,
+          reason,
+        }),
+      );
+
+      if (!isApiSuccessStatus(response.statusCode)) {
+        await this.alert.error('退款申請失敗', response.message || '請稍後再試。');
         return;
       }
 
       this.refundReason = reason;
       this.setStatus('refundApplying');
+      this.detail = { ...this.detail, actionButton: undefined };
       await this.openRefundSuccess();
+      this.loadApplicationDetail(this.currentApplicationId);
+    } catch (error) {
+      await this.alert.error('退款申請失敗', this.getApiErrorMessage(error));
+    } finally {
+      this.isRequestingRefund = false;
     }
   }
 
@@ -463,13 +495,13 @@ export class VendorApplicationDetail implements OnInit {
         '確認',
       );
     } catch (error) {
-      await this.alert.error('取消報名失敗', this.getCancelErrorMessage(error));
+      await this.alert.error('取消報名失敗', this.getApiErrorMessage(error));
     } finally {
       this.isCancelling = false;
     }
   }
 
-  private getCancelErrorMessage(error: unknown): string {
+  private getApiErrorMessage(error: unknown): string {
     if (error instanceof HttpErrorResponse) {
       return error.error?.message ?? error.message ?? '無法連線至伺服器，請稍後再試。';
     }
@@ -537,11 +569,11 @@ export class VendorApplicationDetail implements OnInit {
       placeholder: '請輸入退款原因',
       confirmButtonText: '下一步',
       cancelButtonText: '取消',
-      maxLength: 300,
+      maxLength: 255,
       summaryItems: [
         {
           label: '退款金額',
-          value: 'NT$1,700',
+          value: formatCurrency(this.refundableAmount),
           note: '（保證金不退還）',
           highlight: true,
         },
@@ -563,7 +595,7 @@ export class VendorApplicationDetail implements OnInit {
       summaryItems: [
         {
           label: '退款金額',
-          value: 'NT$1,700',
+          value: formatCurrency(this.refundableAmount),
           note: '（保證金不退還）',
           highlight: true,
         },

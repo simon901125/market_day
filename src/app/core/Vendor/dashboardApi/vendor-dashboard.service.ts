@@ -15,6 +15,10 @@ import {
   VendorPaymentStatus,
 } from '../../../models/interface/vendor/VendorPayment';
 import {
+  VendorRefundRequest,
+  VendorRefundResult,
+} from '../../../models/interface/vendor/VendorRefund';
+import {
   VendorStallSelectionRequest,
   VendorStallSelectionResult,
 } from '../../../models/interface/vendor/VendorStallSelection';
@@ -98,6 +102,17 @@ export class VendorDashboardService {
     const encodedApplicationNo = encodeURIComponent(applicationNo.trim());
     const url = `${environment.apiBaseUrl}api/vendor/payments/${encodedApplicationNo}/status`;
     return this.http.get<ApiResult<VendorPaymentStatus>>(url);
+  }
+
+  /** 送出攤主退款申請；主辦方核准後才會另外呼叫藍新退款。 */
+  requestVendorRefund(
+    request: VendorRefundRequest,
+  ): Observable<ApiResult<VendorRefundResult>> {
+    const url = `${environment.apiBaseUrl}api/vendor/refunds`;
+    return this.http.post<ApiResult<VendorRefundResult>>(url, {
+      applicationNo: request.applicationNo.trim(),
+      reason: request.reason.trim(),
+    });
   }
 
   /** 依報名編號取得目前登入攤主的選位地圖。 */

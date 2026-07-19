@@ -19,6 +19,7 @@ describe('VendorApplicationDetail', () => {
       'getVendorApplicationDetail',
       'getVendorStallMap',
       'cancelVendorApplication',
+      'requestVendorRefund',
     ]);
     dashboardService.getVendorApplicationDetail.and.returnValue(of({
       statusCode: 200,
@@ -63,12 +64,37 @@ describe('VendorApplicationDetail', () => {
       messageDetails: null,
       data: undefined,
     }));
+    dashboardService.requestVendorRefund.and.returnValue(of({
+      statusCode: 200,
+      message: '退款申請送出成功',
+      messageDetails: null,
+      data: {
+        refundId: 9,
+        refundNo: 'REF2026071900001',
+        applicationId: 25,
+        applicationNo: 'MD202607170025',
+        paymentId: 7,
+        paymentNo: 'PAY2026071900001',
+        merchantOrderNo: 'PAY2026071900001',
+        providerTradeNo: 'NP123',
+        refundAmount: 2800,
+        depositAmount: 1000,
+        refundMethod: 'NEWEBPAY',
+        refundStatus: 'REFUND_REQUESTED',
+        reason: '行程異動',
+        requestedAt: '2026-07-19T20:00:00',
+      },
+    }));
     alertService = jasmine.createSpyObj<AlertService>('AlertService', [
       'confirmNotice',
+      'requiredReason',
+      'confirmReason',
       'success',
       'error',
     ]);
     alertService.confirmNotice.and.resolveTo(true);
+    alertService.requiredReason.and.resolveTo('行程異動');
+    alertService.confirmReason.and.resolveTo(true);
     alertService.success.and.resolveTo({} as never);
     alertService.error.and.resolveTo({} as never);
 
@@ -136,6 +162,17 @@ describe('VendorApplicationDetail', () => {
 
     expect(dashboardService.cancelVendorApplication).toHaveBeenCalledOnceWith(25);
     expect(component.currentStatus).toBe('cancelled');
+    expect(alertService.success).toHaveBeenCalled();
+    expect(alertService.error).not.toHaveBeenCalled();
+  });
+
+  it('should submit a vendor refund request after the two confirmations', async () => {
+    await component.handleAction('requestRefund');
+
+    expect(dashboardService.requestVendorRefund).toHaveBeenCalledOnceWith({
+      applicationNo: 'MD202607170025',
+      reason: '行程異動',
+    });
     expect(alertService.success).toHaveBeenCalled();
     expect(alertService.error).not.toHaveBeenCalled();
   });

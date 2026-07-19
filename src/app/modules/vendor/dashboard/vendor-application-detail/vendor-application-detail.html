@@ -59,10 +59,11 @@
           <button
             type="button"
             class="header-action app-btn secondary"
+            [disabled]="detail.actionButton.action === 'requestRefund' && isRequestingRefund"
             (click)="handleAction(detail.actionButton.action)"
           >
             <i class="bi" [ngClass]="getHeaderActionIcon(detail.actionButton.action)"></i>
-            {{ detail.actionButton.label }}
+            {{ detail.actionButton.action === 'requestRefund' && isRequestingRefund ? '送出中…' : detail.actionButton.label }}
           </button>
         }
       </div>
