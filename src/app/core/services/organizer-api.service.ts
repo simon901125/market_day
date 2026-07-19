@@ -15,6 +15,7 @@ import {
   OrganizerEventSubmitReviewResponse,
   OrganizerEventWithdrawResponse,
   OrganizerEventPublishResponse,
+  OrganizerEventUnpublishRequestResponse,
   StoredEventImage,
 } from '../../models/interface/organizer/OrganizerEventEditor';
 import { HttpService } from '../http/http.service';
@@ -88,6 +89,16 @@ export class OrganizerApiService {
     return this.httpService.post<OrganizerEventPublishResponse>(
       `api/organizer/events/${eventId}/publish`,
       null,
+    );
+  }
+
+  requestOrganizerEventUnpublish(
+    eventId: number,
+    reason: string,
+  ): Observable<ApiResult<OrganizerEventUnpublishRequestResponse>> {
+    return this.httpService.post<OrganizerEventUnpublishRequestResponse>(
+      `api/organizer/events/${eventId}/unpublish-request`,
+      { reason },
     );
   }
 

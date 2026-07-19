@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import type {
   ApplicationDetail,
@@ -10,6 +10,8 @@ import type { MarketCardItem } from '../../../../models/interface/shared/MarketC
 import { AlertService } from '../../../../core/services/alert.service';
 import { VendorStatus } from '../../../../models/status/VendorStatus';
 import { VENDOR_APPLICATION_RECORDS } from '../vendor-application-record/vendor-application-record';
+import { VendorService } from '../../../../core/Vendor/vendorApi/vendor.service';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 
 @Component({
   selector: 'app-vendor-application-detail',
@@ -17,7 +19,7 @@ import { VENDOR_APPLICATION_RECORDS } from '../vendor-application-record/vendor-
   templateUrl: './vendor-application-detail.html',
   styleUrl: './vendor-application-detail.scss',
 })
-export class VendorApplicationDetail {
+export class VendorApplicationDetail implements OnInit {
   readonly vendorStatus = VendorStatus;
   /** 目前報名編號，由 application-record 點擊查看時透過 route param 帶入。 */
   currentApplicationNo = VENDOR_APPLICATION_RECORDS[0].applicationNo;
@@ -26,6 +28,8 @@ export class VendorApplicationDetail {
   /** 付款結果假資料；之後串接金流 API 時可由後端回傳決定 success 或 failed。 */
   mockPaymentResult: 'success' | 'failed' = 'success';
   refundReason = '';
+  marketWorkflowStatus = '';
+  private marketWorkflowLoaded = false;
 
   readonly basicEquipment = [
     { name: '桌子（基本）', spec: '180 × 60 公分', quantity: 1, unit: '張' },
@@ -82,6 +86,7 @@ export class VendorApplicationDetail {
     private route: ActivatedRoute,
     private router: Router,
     private alert: AlertService,
+    private vendorService: VendorService,
   ) {
     const applicationNo = this.route.snapshot.paramMap.get('applicationNo');
     const matchedRecord = VENDOR_APPLICATION_RECORDS.find(
@@ -93,6 +98,30 @@ export class VendorApplicationDetail {
     }
 
     this.showDialog = false;
+  }
+
+  ngOnInit(): void {
+    this.vendorService.getVendorApplicationDetail(this.currentRecord.id).subscribe({
+      next: (response) => {
+        if (isApiSuccessStatus(response.statusCode) && response.data?.event) {
+          this.marketWorkflowStatus = response.data.event.workflowStatus;
+          this.marketWorkflowLoaded = true;
+        }
+      },
+      error: () => {
+        this.marketWorkflowStatus = '';
+      },
+    });
+  }
+
+  get marketUnpublishPending(): boolean {
+    return this.marketWorkflowLoaded
+      ? this.marketWorkflowStatus === 'UNPUBLISH_REQUESTED'
+      : Boolean(this.detail.marketUnpublishPending);
+  }
+
+  get marketUnpublished(): boolean {
+    return this.marketWorkflowStatus === 'UNPUBLISHED';
   }
 
   /** 目前展示的報名狀態，直接由 records 裡的 detail 決定。 */

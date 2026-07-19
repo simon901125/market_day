@@ -97,6 +97,13 @@ export class VendorMarketSignupList implements OnInit {
     /** 結束日期 原 >> yyyy-MM-dd hh:mm */
     const endAt = new Date(item.endAt);
     const status = this.toMarketStatus(item.registrationStatus);
+    const categoryNames = (item.categories ?? [])
+      .map((category) => category.name?.trim())
+      .filter((name): name is string => Boolean(name));
+
+    if (categoryNames.length === 0 && item.categoryName?.trim()) {
+      categoryNames.push(item.categoryName.trim());
+    }
 
     return {
       id: String(item.eventId),
@@ -112,8 +119,8 @@ export class VendorMarketSignupList implements OnInit {
       image: item.imageUrl || 'assets/images/market/cards/market-card-01.png',
       status,
       statusClass: MarketStatus.getClass(status),
-      tags: item.categoryName ? [item.categoryName] : [],
-      category: item.categoryName ?? '',
+      tags: categoryNames,
+      category: categoryNames.join('、'),
       organizer: item.organizerName ?? '',
       transportation: [item.trafficTitle, item.trafficDetail].filter(
         (value): value is string => Boolean(value),
@@ -131,9 +138,8 @@ export class VendorMarketSignupList implements OnInit {
   /** 將後端狀態轉成卡片元件使用的中文狀態。 */
   private toMarketStatus(status: MarketRegistrationStatus): string {
     const statusMap: Record<MarketRegistrationStatus, string> = {
-      OPEN: MarketStatus.active,
-      UPCOMING: MarketStatus.preview,
-      CLOSED: MarketStatus.ended,
+      OPEN: MarketStatus.registrationOpen,
+      FULL: MarketStatus.full,
     };
     return statusMap[status];
   }

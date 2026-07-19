@@ -10,6 +10,7 @@ import { AdminEventDetailDto, AdminEventStatusLog } from '../../../../models/int
 import { EventStatusChangeDto } from '../../../../models/interface/admin/AdminEventAction';
 import { ApiResult, isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
+import { formatCombinedServiceHours } from '../../../../core/utils/service-time.util';
 
 /** 後端 Role 的 API 值對應到畫面顯示用的中文角色名稱 */
 const OPERATOR_ROLE_LABEL: Record<string, string> = {
@@ -130,7 +131,7 @@ export class AdminDashboardMarketDetail implements OnInit {
         email: data.contactEmail,
         address: data.contactAddr,
         taxId: data.taxId,
-        serviceHours: data.serviceHours,
+        serviceHours: formatCombinedServiceHours(data.serviceHours),
       },
       transportation: {
         mrt: data.mrt,
@@ -138,7 +139,7 @@ export class AdminDashboardMarketDetail implements OnInit {
         drivingDirections: data.driving,
       },
       boothInfo: {
-        boothSpec: data.boothSpec,
+        boothSpec: this.formatBoothSpec(data.boothSpec),
         boothCount: data.boothCount,
         boothPrice: data.boothPrice,
         boothZones: data.boothZones.map((zone) => `${zone.name}：${zone.qty}攤`),
@@ -162,6 +163,18 @@ export class AdminDashboardMarketDetail implements OnInit {
         operatorName: log.operator,
       },
     };
+  }
+
+  /** 管理員活動詳情的攤位規格由前端統一補上乘號與公尺單位。 */
+  private formatBoothSpec(boothSpec: string | null | undefined): string {
+    if (!boothSpec?.trim()) return '-';
+
+    const value = boothSpec.trim().replace(/\s*[*xX]\s*/g, ' × ');
+    if (/公尺|\bm\b/i.test(value)) return value;
+
+    return /^\d+(?:\.\d+)?\s*×\s*\d+(?:\.\d+)?$/.test(value)
+      ? `${value} 公尺`
+      : value;
   }
 
   /**

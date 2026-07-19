@@ -52,10 +52,15 @@
           </article>
         }
       </div>
+    } @else if (!loading) {
+      <div class="notification-empty-state" role="status">
+        <i class="bi bi-bell" aria-hidden="true"></i>
+        <strong>{{ emptyText }}</strong>
+      </div>
     }
   </div>
 
-  @if (showPagination) {
+  @if (showPagination && pageTotalItems > 0) {
     <app-dashboard-pagination
       class="dashboard-list-pagination"
       [currentPage]="currentPage"

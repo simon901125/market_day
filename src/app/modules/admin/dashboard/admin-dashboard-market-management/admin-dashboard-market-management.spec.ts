@@ -200,8 +200,8 @@ describe('AdminDashboardMarketManagement', () => {
     fixture.detectChanges();
 
     const el: HTMLElement = fixture.nativeElement;
-    const emptyCell = el.querySelector('tbody tr td.empty-row');
-    expect(emptyCell?.textContent).toContain('查無符合條件的活動');
+    const emptyCell = el.querySelector('tbody tr.empty-row td');
+    expect(emptyCell?.textContent).toContain('目前沒有活動資料');
   });
 
   it('formatDateTime 對後端「活動尚未送審」等純文字提示應原樣顯示', () => {

@@ -570,6 +570,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       description: `請填寫「${activity.name}」的下架原因，送出後將由管理員審核。`,
       fieldLabel: '下架原因',
       placeholder: '請說明申請下架活動的原因',
+      maxLength: 500,
       confirmButtonText: '下一步',
     });
     if (!reason) return;
@@ -585,16 +586,40 @@ export class OrganizerDashboardEventManagement implements OnInit {
     });
     if (!confirmed) return;
 
-    this.rows = this.rows.map((row) => row.id === activity.id
-      ? { ...row, status: ActivityStatus.unpublishRequested, unpublishReason: reason }
-      : row);
-    this.updateDisplayRows();
+    if (!await this.requestUnpublishFromList(activity, reason)) return;
 
     await this.alert.success(
       '下架申請已送出',
       `活動「${activity.name}」已進入下架審核流程。<br>審核完成前，活動狀態為「下架申請中」。`,
       '知道了',
     );
+  }
+
+  private async requestUnpublishFromList(
+    activity: OrganizerEventRow,
+    reason: string,
+  ): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApi.requestOrganizerEventUnpublish(activity.id, reason),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) {
+        this.loadEvents();
+        return true;
+      }
+      await this.alert.error(
+        '無法送出下架申請',
+        response.statusCode === 409
+          ? '活動狀態已變更，或已有待審核的下架申請，系統將重新載入最新資料。'
+          : response.message || '下架申請送出失敗。',
+      );
+      this.loadEvents();
+      return false;
+    } catch {
+      await this.alert.error('無法送出下架申請', '下架申請送出失敗，請稍後再試。');
+      this.loadEvents();
+      return false;
+    }
   }
 
   /** 同步列表狀態到 query params，讓返回頁面時可以還原目前篩選條件。 */

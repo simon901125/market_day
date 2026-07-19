@@ -52,18 +52,21 @@
         <label class="field">
           <span>分區名稱 <b>*</b></span>
           <span class="text-control zone-dialog-name-input" [class.invalid]="submitted && (nameInvalid || nameDuplicate)">
-            <input
-              type="text"
-              maxlength="12"
-              placeholder="例如：A"
+            <select
               [(ngModel)]="draft.name"
               name="zoneDialogName"
               [attr.aria-invalid]="submitted && (nameInvalid || nameDuplicate)"
-            />
-            <small>區</small>
+            >
+              <option value="" disabled>請選擇分區</option>
+              @for (zoneName of zoneNameOptions; track zoneName) {
+                <option [value]="zoneName" [disabled]="isZoneNameUsed(zoneName)">
+                  {{ zoneName }}
+                </option>
+              }
+            </select>
           </span>
           @if (submitted && nameInvalid) {
-            <small class="field-error">請輸入分區名稱</small>
+            <small class="field-error">請選擇 A 區至 Z 區</small>
           } @else if (submitted && nameDuplicate) {
             <small class="field-error">此分區名稱已存在，請使用其他名稱</small>
           }

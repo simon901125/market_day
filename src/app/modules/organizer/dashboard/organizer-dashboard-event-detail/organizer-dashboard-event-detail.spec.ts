@@ -24,6 +24,21 @@ describe('OrganizerDashboardEventDetail', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should display the actual and expected stall counts when publishing fails', () => {
+    const message = (component as unknown as {
+      publishFailureMessage: (result: unknown, fallback: string) => string;
+    }).publishFailureMessage(
+      {
+        missingFields: ['booth.stalls'],
+        expectedStallCount: 20,
+        actualStallCount: 0,
+      },
+      '活動尚未符合發布條件',
+    );
+
+    expect(message).toBe('攤位地圖尚未建置完成，目前已建立 0 / 20 個攤位。');
+  });
+
   it('補件中應顯示補件原因', () => {
     component.isRevisionRequired = true;
     component.reviewNote = '請補上完整的交通資訊';

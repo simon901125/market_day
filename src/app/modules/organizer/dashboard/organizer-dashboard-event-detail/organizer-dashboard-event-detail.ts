@@ -23,6 +23,7 @@ import {
   FormStep,
   OrganizerEventSaveEquipmentItem,
   OrganizerEventSaveRequest,
+  OrganizerEventPublishResponse,
   OrganizerEventSubmitReviewResponse,
   StatusAction,
   VenueBoothForm,
@@ -330,6 +331,12 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       this.boothZoneTotal !== Number(this.venueForm.totalBooths);
   }
 
+  get boothZoneNamesInvalid(): boolean {
+    if (this.boothZones.length > 26) return true;
+    const names = this.boothZones.map((zone) => zone.name.trim().toUpperCase());
+    return names.some((name) => !/^[A-Z] 區$/.test(name)) || new Set(names).size !== names.length;
+  }
+
   get eventNameInvalid(): boolean {
     const value = this.form.name.trim();
     return !value || value.length > 50;
@@ -496,6 +503,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
           description: `請填寫「${this.activity.name}」的下架原因，送出後將由管理員審核。`,
           fieldLabel: '下架原因',
           placeholder: '請說明申請下架活動的原因',
+          maxLength: 500,
           confirmButtonText: '下一步',
         });
         if (!reason) return;
@@ -511,11 +519,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         });
         if (!confirmed) return;
 
-        this.activity = {
-          ...this.activity,
-          status: ActivityStatus.unpublishRequested,
-          unpublishReason: reason,
-        };
+        if (!await this.requestOrganizerEventUnpublish(reason)) return;
         await this.alert.success(
           '下架申請已送出',
           `活動「${this.activity.name}」已進入下架審核流程。<br>審核完成前，活動狀態為「下架申請中」。`,
@@ -638,6 +642,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       this.isNonNegativeNumber(this.venueForm.boothPrice) &&
       this.isNonNegativeNumber(this.venueForm.depositAmount) &&
       this.boothZones.length > 0 &&
+      !this.boothZoneNamesInvalid &&
       !this.boothZoneCountMismatch &&
       this.venueForm.layoutFileName
     );
@@ -701,6 +706,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         !this.isNonNegativeNumber(this.venueForm.boothPrice),
         !this.isNonNegativeNumber(this.venueForm.depositAmount),
         this.boothZones.length === 0,
+        this.boothZoneNamesInvalid,
         this.boothZoneCountMismatch,
         !this.venueForm.layoutFileName,
       ].filter(Boolean).length;
@@ -730,6 +736,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
 
   /** 開啟新增攤位分區 Modal，並清空暫存資料。 */
   openAddZoneDialog(): void {
+    if (this.boothZones.length >= 26) return;
     this.editingZoneIndex = null;
     this.isZoneDialogClosing = false;
     this.zoneDraft = {
@@ -746,7 +753,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.editingZoneIndex = index;
     this.isZoneDialogClosing = false;
     this.zoneDraft = {
-      name: zone.name.replace(/\s*區$/, ''),
+      name: zone.name,
       color: zone.color,
       count: zone.count,
     };
@@ -1078,7 +1085,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         '無法發布活動',
         response.statusCode === 409
           ? '活動狀態已變更，系統將重新載入最新資料。'
-          : this.publishFailureMessage(response.data?.missingFields, response.message),
+          : this.publishFailureMessage(response.data, response.message),
       );
       await this.loadOrganizerEventDetail();
       return false;
@@ -1092,8 +1099,46 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
   }
 
-  private publishFailureMessage(fields: string[] | undefined, fallback: string): string {
+  private async requestOrganizerEventUnpublish(reason: string): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApiService.requestOrganizerEventUnpublish(this.activity.id, reason),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) {
+        await this.loadOrganizerEventDetail();
+        return true;
+      }
+      await this.alert.error(
+        '無法送出下架申請',
+        response.statusCode === 409
+          ? '活動狀態已變更，或已有待審核的下架申請，系統將重新載入最新資料。'
+          : response.message || '下架申請送出失敗。',
+      );
+      await this.loadOrganizerEventDetail();
+      return false;
+    } catch (error) {
+      await this.alert.error(
+        '無法送出下架申請',
+        this.getRequestErrorMessage(error, '下架申請送出失敗，請稍後再試。'),
+      );
+      await this.loadOrganizerEventDetail();
+      return false;
+    }
+  }
+
+  private publishFailureMessage(
+    publishResult: OrganizerEventPublishResponse | null | undefined,
+    fallback: string,
+  ): string {
+    const fields = publishResult?.missingFields;
     if (!fields?.length) return fallback || '活動尚未符合發布條件。';
+    if (fields.includes('booth.stalls')) {
+      const expected = publishResult?.expectedStallCount;
+      const actual = publishResult?.actualStallCount;
+      if (expected !== null && expected !== undefined && actual !== undefined) {
+        return `攤位地圖尚未建置完成，目前已建立 ${actual} / ${expected} 個攤位。`;
+      }
+    }
     const labels: Record<string, string> = {
       coverImage: '活動封面圖片',
       categoryIds: '活動類型',
@@ -1178,15 +1223,16 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     const normalizedColor = this.zoneDraft.color.trim();
 
     const normalizedCount = Number(this.zoneDraft.count);
-    const normalizedZoneName = normalizedName.replace(/\s*區$/, '').trim().toLocaleLowerCase();
+    const normalizedZoneName = normalizedName.toUpperCase();
     const hasDuplicateName = this.zoneNamesForValidation.some(
-      (name) => name.replace(/\s*區$/, '').trim().toLocaleLowerCase() === normalizedZoneName
+      (name) => name.trim().toUpperCase() === normalizedZoneName
     );
     const hasDuplicateColor = this.zoneColorsForValidation.some(
       (color) => color.trim().toUpperCase() === normalizedColor.toUpperCase()
     );
     if (
       !normalizedName ||
+      !/^[A-Z] 區$/.test(normalizedName) ||
       !Number.isInteger(normalizedCount) ||
       normalizedCount < 1 ||
       !/^#[0-9A-Fa-f]{6}$/.test(normalizedColor) ||
@@ -1197,7 +1243,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
 
     const nextZone: BoothZone = {
-      name: normalizedName.endsWith('區') ? normalizedName : `${normalizedName} 區`,
+      name: normalizedName,
       color: normalizedColor.toUpperCase(),
       count: normalizedCount,
     };

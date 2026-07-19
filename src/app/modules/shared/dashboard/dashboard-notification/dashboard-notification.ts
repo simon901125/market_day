@@ -29,6 +29,7 @@ export class DashboardNotification {
   @Input() showPagination = true;
   @Input() viewAllLink = '';
   @Input() viewAllText = '查看全部';
+  @Input() emptyText = '目前沒有通知';
 
   /**
    * 是否由外部（父元件）控制分頁與篩選

@@ -2040,6 +2040,13 @@ textarea {
   &:hover {
     background: var(--bg-primary);
   }
+
+  &:disabled {
+    border-color: var(--border-soft);
+    background: var(--event-disabled-bg);
+    color: var(--event-disabled-text);
+    cursor: not-allowed;
+  }
 }
 
 .layout-upload-panel .form-section-title {

@@ -74,8 +74,13 @@
               </td>
             </tr>
           } @empty {
-            <tr>
-              <td colspan="7" class="empty-row">查無符合條件的使用者</td>
+            <tr class="empty-row">
+              <td colspan="7">
+                <div class="app-table-empty-state" role="status">
+                  <i class="bi bi-people" aria-hidden="true"></i>
+                  <strong>目前沒有使用者資料</strong>
+                </div>
+              </td>
             </tr>
           }
         </tbody>
@@ -83,13 +88,15 @@
     </div>
   </div>
 
-  <app-dashboard-pagination
-    class="dashboard-list-pagination"
-    [currentPage]="currentPage"
-    [pageSize]="pageSize"
-    [totalItems]="totalItems"
-    (pageChange)="onPageChange($event)"
-  ></app-dashboard-pagination>
+  @if (totalItems > 0) {
+    <app-dashboard-pagination
+      class="dashboard-list-pagination"
+      [currentPage]="currentPage"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems"
+      (pageChange)="onPageChange($event)"
+    ></app-dashboard-pagination>
+  }
 </section>
 
 

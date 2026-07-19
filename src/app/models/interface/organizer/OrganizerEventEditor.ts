@@ -126,7 +126,20 @@ export interface OrganizerEventPublishResponse {
   statusText: string;
   publicInfoAt: string | null;
   availableActions: string[];
+  expectedStallCount: number | null;
+  actualStallCount: number;
   missingFields: string[];
+}
+
+export interface OrganizerEventUnpublishRequestResponse {
+  eventId: number;
+  unpublishRequestId: number;
+  workflowStatus: 'UNPUBLISH_REQUESTED';
+  status: string;
+  statusText: string;
+  reason: string;
+  requestedAt: string;
+  availableActions: string[];
 }
 
 export interface BoothZone {

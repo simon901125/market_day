@@ -799,13 +799,23 @@
               </article>
             }
 
-            <button type="button" class="add-zone-btn" [class.invalid]="submitAttempted && boothZones.length === 0" [attr.data-invalid]="submitAttempted && boothZones.length === 0" (click)="openAddZoneDialog()">
+            <button
+              type="button"
+              class="add-zone-btn"
+              [class.invalid]="submitAttempted && boothZones.length === 0"
+              [attr.data-invalid]="submitAttempted && boothZones.length === 0"
+              [disabled]="boothZones.length >= 26"
+              (click)="openAddZoneDialog()"
+            >
               <i class="bi bi-plus-lg"></i>
-              新增分區
+              {{ boothZones.length >= 26 ? '已達 26 個分區上限' : '新增分區' }}
             </button>
           </div>
           @if (submitAttempted && boothZones.length === 0) {
             <small class="field-error">請至少新增一個攤位分區</small>
+          }
+          @if (submitAttempted && boothZones.length > 0 && boothZoneNamesInvalid) {
+            <small class="field-error section-error" data-invalid="true">分區名稱僅能使用 A 區至 Z 區，且不可重複</small>
           }
           @if (submitAttempted && boothZoneCountMismatch) {
             <small class="field-error section-error" data-invalid="true">分區攤位數量合計為 {{ boothZoneTotal }} 攤，必須等於攤位總數 {{ venueForm.totalBooths }} 攤</small>

@@ -53,6 +53,10 @@
     background: var(--market-status-active-overlay-bg) !important;
   }
 
+  &.status-full {
+    background: var(--primary-color) !important;
+  }
+
   &.upcoming,
   &.status-upcoming {
     background: var(--market-status-upcoming-overlay-bg) !important;

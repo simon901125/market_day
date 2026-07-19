@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { formatServiceTime } from '../../../../core/utils/service-time.util';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AlertService } from '../../../../core/services/alert.service';
 import { VendorAccessService } from '../../../../core/services/vendor-access.service';
@@ -158,11 +159,17 @@ export class VendorMarketSignupDetail implements OnInit {
 
   private toMarketCard(detail: VendorMarketDetail): MarketCardItem {
     const statusMap: Record<VendorMarketDetail['registrationStatus'], string> = {
-      OPEN: MarketStatus.active,
-      UPCOMING: MarketStatus.preview,
-      CLOSED: MarketStatus.ended,
+      OPEN: MarketStatus.registrationOpen,
+      FULL: MarketStatus.full,
     };
     const status = statusMap[detail.registrationStatus];
+    const categoryNames = (detail.categories ?? [])
+      .map((category) => category.name?.trim())
+      .filter((name): name is string => Boolean(name));
+
+    if (categoryNames.length === 0 && detail.categoryName?.trim()) {
+      categoryNames.push(detail.categoryName.trim());
+    }
 
     return {
       id: String(detail.eventId),
@@ -178,8 +185,8 @@ export class VendorMarketSignupDetail implements OnInit {
       image: detail.coverImageUrl || 'assets/images/market/cards/market-card-01.png',
       status,
       statusClass: MarketStatus.getClass(status),
-      tags: detail.categoryName ? [detail.categoryName] : [],
-      category: detail.categoryName,
+      tags: categoryNames,
+      category: categoryNames.join('、'),
       organizer: detail.organizerName || detail.companyName || '',
       transportation: detail.trafficInfos.flatMap((item) =>
         [item.trafficTitle, item.trafficDetails].filter(Boolean),
@@ -281,10 +288,11 @@ export class VendorMarketSignupDetail implements OnInit {
 
   get serviceTimeText(): string {
     if (!this.detail) return '-';
-    const time = [this.detail.serviceStartTime, this.detail.serviceEndTime]
-      .filter(Boolean)
-      .join(' - ');
-    return [this.detail.serviceDays, time].filter(Boolean).join(' ') || '-';
+    return formatServiceTime(
+      this.detail.serviceDays,
+      this.detail.serviceStartTime,
+      this.detail.serviceEndTime,
+    );
   }
 
   equipmentDescription(item: VendorMarketEquipment): string {
@@ -353,28 +361,6 @@ export class VendorMarketSignupDetail implements OnInit {
 
     const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
     return `${date}（${weekdays[parsedDate.getDay()]}）`;
-  }
-
-  transportationLabel(transportation: string): string {
-    const [rawLabel] = transportation.split(/[：:]/, 1);
-    const label = rawLabel.trim();
-
-    if (label.startsWith('捷運')) return '捷運';
-    return label || '交通方式';
-  }
-
-  transportationContent(transportation: string): string {
-    const [rawLabel, ...contentParts] = transportation.split(/[：:]/);
-    const content = contentParts.join('：').trim();
-    const label = rawLabel.trim();
-
-    if (!content) return transportation;
-    if (label.startsWith('捷運')) {
-      const line = label.replace(/^捷運/, '').trim();
-      return line ? `${line} ${content}` : content;
-    }
-
-    return content;
   }
 
   get vendorProfileRequired(): boolean {

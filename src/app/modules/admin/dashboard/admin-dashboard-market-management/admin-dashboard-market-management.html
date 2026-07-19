@@ -91,8 +91,13 @@
               </td>
             </tr>
           } @empty {
-            <tr>
-              <td colspan="6" class="empty-row">查無符合條件的活動</td>
+            <tr class="empty-row">
+              <td colspan="6">
+                <div class="app-table-empty-state" role="status">
+                  <i class="bi bi-calendar2-x" aria-hidden="true"></i>
+                  <strong>目前沒有活動資料</strong>
+                </div>
+              </td>
             </tr>
           }
         </tbody>
@@ -100,13 +105,15 @@
     </div>
   </div>
 
-  <app-dashboard-pagination
-    class="dashboard-list-pagination"
-    [currentPage]="currentPage"
-    [pageSize]="pageSize"
-    [totalItems]="totalItems"
-    (pageChange)="onPageChange($event)"
-  ></app-dashboard-pagination>
+  @if (totalItems > 0) {
+    <app-dashboard-pagination
+      class="dashboard-list-pagination"
+      [currentPage]="currentPage"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems"
+      (pageChange)="onPageChange($event)"
+    ></app-dashboard-pagination>
+  }
 </section>
 
 

@@ -72,8 +72,13 @@
               <td class="log-details">{{ log.details }}</td>
             </tr>
           } @empty {
-            <tr>
-              <td colspan="7" class="empty-row">查無符合條件的操作紀錄</td>
+            <tr class="empty-row">
+              <td colspan="7">
+                <div class="app-table-empty-state" role="status">
+                  <i class="bi bi-clock-history" aria-hidden="true"></i>
+                  <strong>目前沒有操作紀錄</strong>
+                </div>
+              </td>
             </tr>
           }
         </tbody>
@@ -81,13 +86,15 @@
     </div>
   </div>
 
-  <app-dashboard-pagination
-    class="dashboard-list-pagination"
-    [currentPage]="currentPage"
-    [pageSize]="pageSize"
-    [totalItems]="totalItems"
-    (pageChange)="onPageChange($event)"
-  ></app-dashboard-pagination>
+  @if (totalItems > 0) {
+    <app-dashboard-pagination
+      class="dashboard-list-pagination"
+      [currentPage]="currentPage"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems"
+      (pageChange)="onPageChange($event)"
+    ></app-dashboard-pagination>
+  }
 </section>
 
 

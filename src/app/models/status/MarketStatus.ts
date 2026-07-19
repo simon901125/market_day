@@ -1,4 +1,10 @@
 export class MarketStatus {
+  /** 目前在報名期間內且仍有可用攤位。 */
+  static readonly registrationOpen = '報名中';
+
+  /** 目前在報名期間內，但所有活動日皆已無剩餘攤位。 */
+  static readonly full = '已額滿';
+
   /** 活動開始前 8 天以上，僅顯示活動基本資訊。 */
   static readonly preview = '活動預告';
 
@@ -22,6 +28,8 @@ export class MarketStatus {
 
   /** 狀態對應的 CSS class。 */
   static readonly classMap: Record<string, string> = {
+    [MarketStatus.registrationOpen]: 'status-active',
+    [MarketStatus.full]: 'status-full',
     [MarketStatus.preview]: 'preview',
     [MarketStatus.upcoming]: 'upcoming',
     [MarketStatus.active]: 'active',

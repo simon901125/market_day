@@ -31,8 +31,8 @@ export class VendorMarketSearchPanel implements OnInit {
   areaLoadFailed = false;
   private districtLoadId = 0;
 
-  /** 後端目前支援的三種報名狀態。 */
-  statuses: string[] = ['報名中', '即將開放', '已截止'];
+  /** 可報名活動列表只區分尚有名額與已額滿。 */
+  statuses: string[] = ['報名中', '已額滿'];
 
   get areaOptions(): string[] {
     return ['選擇區域', ...this.areas];
@@ -154,8 +154,7 @@ export class VendorMarketSearchPanel implements OnInit {
   private toApiStatus(status: string): MarketRegistrationStatus | undefined {
     const statusMap: Record<string, MarketRegistrationStatus> = {
       報名中: 'OPEN',
-      即將開放: 'UPCOMING',
-      已截止: 'CLOSED',
+      已額滿: 'FULL',
     };
     return statusMap[status];
   }
