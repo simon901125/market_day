@@ -11,6 +11,7 @@ import {
   OrganizerProfileSaveRequest,
 } from '../../../../../models/interface/organizer/OrganizerProfile';
 import { isApiSuccessStatus } from '../../../../../models/interface/shared/ApiResult';
+import { Dropdown } from '../../../../shared/dropdown/dropdown';
 
 type OrganizerProfileField =
   | 'organizerName'
@@ -26,7 +27,7 @@ type OrganizerProfileField =
 
 @Component({
   selector: 'app-organizer-profile-modal',
-  imports: [FormsModule],
+  imports: [FormsModule, Dropdown],
   templateUrl: './organizer-profile-modal.html',
   styleUrl: './organizer-profile-modal.scss',
 })
@@ -97,6 +98,11 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
     void this.loadDistrictOptions(city);
   }
 
+  onDistrictChange(district: string): void {
+    this.form.district = district;
+    this.clearValidationError('district');
+  }
+
   clearValidationError(field: OrganizerProfileField): void {
     if (!this.validationErrors[field]) {
       return;
@@ -118,7 +124,7 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
     if (!this.validateForm()) {
       window.setTimeout(() => {
         const firstInvalidControl = document.querySelector<HTMLElement>(
-          '.organizer-profile-modal .has-error input, .organizer-profile-modal .has-error select',
+          '.organizer-profile-modal .has-error input, .organizer-profile-modal .has-error button',
         );
         firstInvalidControl?.focus();
         firstInvalidControl?.scrollIntoView({ behavior: 'smooth', block: 'center' });

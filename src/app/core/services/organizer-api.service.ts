@@ -13,6 +13,7 @@ import { OrganizerEventDetail } from '../../models/interface/organizer/Organizer
 import {
   OrganizerEventSaveRequest,
   OrganizerEventSubmitReviewResponse,
+  OrganizerEventWithdrawResponse,
   StoredEventImage,
 } from '../../models/interface/organizer/OrganizerEventEditor';
 import { HttpService } from '../http/http.service';
@@ -67,6 +68,15 @@ export class OrganizerApiService {
   ): Observable<ApiResult<OrganizerEventSubmitReviewResponse>> {
     return this.httpService.post<OrganizerEventSubmitReviewResponse>(
       `api/organizer/events/${eventId}/submit-review`,
+      null,
+    );
+  }
+
+  withdrawOrganizerEventReview(
+    eventId: number,
+  ): Observable<ApiResult<OrganizerEventWithdrawResponse>> {
+    return this.httpService.post<OrganizerEventWithdrawResponse>(
+      `api/organizer/events/${eventId}/withdraw`,
       null,
     );
   }

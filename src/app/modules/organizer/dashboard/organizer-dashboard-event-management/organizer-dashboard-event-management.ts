@@ -408,7 +408,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
           `確定要撤回「${activity.name}」的審核申請嗎？<br>撤回後活動將回到草稿狀態，可再次編輯與送審。`,
           '確定撤回',
         )) return true;
-        this.updateActivityStatus(activity.id, ActivityStatus.draft, { canSubmitReview: true });
+        if (!await this.withdrawReviewFromList(activity)) return true;
         await this.alert.success(
           '申請已撤回',
           `活動「${activity.name}」已回到草稿狀態。`,
@@ -477,6 +477,30 @@ export class OrganizerDashboardEventManagement implements OnInit {
       return false;
     } catch {
       await this.alert.error('無法送出審核', '送出審核失敗，請稍後再試。');
+      return false;
+    }
+  }
+
+  private async withdrawReviewFromList(activity: OrganizerEventRow): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApi.withdrawOrganizerEventReview(activity.id),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) {
+        this.loadEvents();
+        return true;
+      }
+      await this.alert.error(
+        '無法撤回申請',
+        response.statusCode === 409
+          ? '活動狀態已變更，可能已由管理員完成審核，系統將重新載入最新資料。'
+          : response.message || '撤回審核申請失敗。',
+      );
+      this.loadEvents();
+      return false;
+    } catch {
+      await this.alert.error('無法撤回申請', '撤回審核申請失敗，請稍後再試。');
+      this.loadEvents();
       return false;
     }
   }

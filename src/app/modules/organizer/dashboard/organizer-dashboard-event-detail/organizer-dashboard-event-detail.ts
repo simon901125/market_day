@@ -384,6 +384,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
       EDIT: { key: 'edit', label: '編輯', variant: 'outline' },
       SUBMIT_REVIEW: { key: 'submit', label: '送出審核', variant: 'primary' },
       DELETE: { key: 'delete', label: '刪除', variant: 'danger' },
+      WITHDRAW_REVIEW: { key: 'withdraw', label: '撤回申請', variant: 'outline' },
       RESUBMIT_REVIEW: { key: 'resubmit', label: '重新送審', variant: 'primary' },
       PUBLISH: { key: 'publish', label: '發布活動', variant: 'primary' },
       REQUEST_UNPUBLISH: { key: 'unpublish', label: '下架活動', variant: 'outline' },
@@ -465,7 +466,7 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
         )) {
           return;
         }
-        this.activity = { ...this.activity, status: ActivityStatus.draft };
+        if (!await this.withdrawOrganizerEventReview()) return;
         await this.alert.success(
           '撤回申請成功',
           `已成功撤回「${this.activity.name}」的審核申請。<br>您現在可以進行編輯並重新送出審核。`,
@@ -1032,6 +1033,33 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     } catch (error) {
       await this.alert.error('無法送出審核', this.getRequestErrorMessage(error, '送出審核失敗。'));
       return null;
+    }
+  }
+
+  private async withdrawOrganizerEventReview(): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApiService.withdrawOrganizerEventReview(this.activity.id),
+      );
+      if (isApiSuccessStatus(response.statusCode) && response.data) {
+        await this.loadOrganizerEventDetail();
+        return true;
+      }
+      await this.alert.error(
+        '無法撤回申請',
+        response.statusCode === 409
+          ? '活動狀態已變更，可能已由管理員完成審核，系統將重新載入最新資料。'
+          : response.message || '撤回審核申請失敗。',
+      );
+      await this.loadOrganizerEventDetail();
+      return false;
+    } catch (error) {
+      await this.alert.error(
+        '無法撤回申請',
+        this.getRequestErrorMessage(error, '撤回審核申請失敗，請稍後再試。'),
+      );
+      await this.loadOrganizerEventDetail();
+      return false;
     }
   }
 

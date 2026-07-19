@@ -65,29 +65,33 @@
           </label>
 
           <div class="field-grid location">
-            <label class="field" [class.has-error]="validationErrors.city">
+            <div class="field dropdown-field" [class.has-error]="validationErrors.city">
               <span>縣市 <b class="required-mark">*</b></span>
-              <select name="city" [ngModel]="form.city" (ngModelChange)="onCityChange($event)" [attr.aria-invalid]="!!validationErrors.city">
-                @for (city of cityOptions; track city) {
-                  <option [value]="city">{{ city }}</option>
-                }
-              </select>
+              <app-dropdown
+                [options]="cityOptions"
+                [selectedValue]="form.city"
+                placeholder="請選擇縣市"
+                [invalid]="!!validationErrors.city"
+                (optionSelected)="onCityChange($event)"
+              ></app-dropdown>
               @if (validationErrors.city) {
                 <small class="field-error">{{ validationErrors.city }}</small>
               }
-            </label>
+            </div>
 
-            <label class="field" [class.has-error]="validationErrors.district">
+            <div class="field dropdown-field" [class.has-error]="validationErrors.district">
               <span>區 <b class="required-mark">*</b></span>
-              <select name="district" [(ngModel)]="form.district" (ngModelChange)="clearValidationError('district')" [attr.aria-invalid]="!!validationErrors.district">
-                @for (district of districtOptions; track district) {
-                  <option [value]="district">{{ district }}</option>
-                }
-              </select>
+              <app-dropdown
+                [options]="districtOptions"
+                [selectedValue]="form.district"
+                placeholder="請選擇區域"
+                [invalid]="!!validationErrors.district"
+                (optionSelected)="onDistrictChange($event)"
+              ></app-dropdown>
               @if (validationErrors.district) {
                 <small class="field-error">{{ validationErrors.district }}</small>
               }
-            </label>
+            </div>
 
             <label class="field" [class.has-error]="validationErrors.address">
               <span>地址 <b class="required-mark">*</b></span>

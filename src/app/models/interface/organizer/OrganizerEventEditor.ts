@@ -111,6 +111,14 @@ export interface OrganizerEventSubmitReviewResponse {
   missingFields: string[];
 }
 
+export interface OrganizerEventWithdrawResponse {
+  eventId: number;
+  workflowStatus: string;
+  status: string;
+  statusText: string;
+  availableActions: string[];
+}
+
 export interface BoothZone {
   name: string;
   color: string;
