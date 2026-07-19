@@ -5,125 +5,68 @@
         <a routerLink="/vendor/dash-board/application-record">我的報名紀錄</a>
         <i class="bi bi-chevron-right"></i>
         <a [routerLink]="['/vendor/dash-board/application-record/detail', detailRouteId]">報名詳情</a>
-        <i class="bi bi-chevron-right"></i>
-        <span>付款頁面</span>
+        <i class="bi bi-chevron-right"></i><span>付款頁面</span>
       </nav>
-
       <div class="app-page-title-wrap title-row">
-        <a
-          [routerLink]="['/vendor/dash-board/application-record/detail', detailRouteId]"
-          class="app-back-link"
-          aria-label="返回報名詳情"
-        >
-          <i class="bi bi-arrow-left"></i>
-        </a>
+        <a [routerLink]="['/vendor/dash-board/application-record/detail', detailRouteId]" class="app-back-link" aria-label="返回報名詳情"><i class="bi bi-arrow-left"></i></a>
         <h1 class="app-page-title">付款頁面</h1>
       </div>
     </div>
   </header>
 
-  <section class="application-summary">
-    <div class="activity-summary">
-      <h2 class="activity-summary-title"><i class="bi bi-calendar-event"></i>活動資訊</h2>
-
-      <div class="activity-summary-content">
-        <img [src]="detail.image" [alt]="detail.title" />
-
-        <div class="application-info">
-          <h3>{{ detail.title }}</h3>
-          <p><span class="info-label">活動狀態</span><span class="status-badge" [ngClass]="market.statusClass">{{ market.status }}</span></p>
-          <p><span class="info-label">活動時間</span>{{ eventDateText }}</p>
-          <p><span class="info-label">活動地點</span>{{ detail.location }}</p>
-          <p><span class="info-label">活動地址</span>{{ market.address }}</p>
+  @if (isLoading) {
+    <section class="payment-card"><p>付款資料載入中…</p></section>
+  } @else if (loadError || !application) {
+    <section class="payment-card"><h2><i class="bi bi-exclamation-circle"></i>無法載入付款資料</h2><p>{{ loadError }}</p></section>
+  } @else {
+    <section class="application-summary">
+      <div class="activity-summary">
+        <h2 class="activity-summary-title"><i class="bi bi-calendar-event"></i>活動資訊</h2>
+        <div class="activity-summary-content">
+          <img [src]="application.event.eventCoverImageUrl || 'assets/images/market/cards/market-card-01.png'" [alt]="application.event.eventTitle" />
+          <div class="application-info">
+            <h3>{{ application.event.eventTitle }}</h3>
+            <p><span class="info-label">活動狀態</span><span class="status-badge">{{ application.event.eventStatus }}</span></p>
+            <p><span class="info-label">活動時間</span>{{ application.event.eventTime }}</p>
+            <p><span class="info-label">活動地點</span>{{ application.event.locationName }}</p>
+            <p><span class="info-label">活動地址</span>{{ application.event.address }}</p>
+          </div>
         </div>
       </div>
+      <aside class="registration-summary">
+        <h2 class="section-heading"><i class="bi bi-clipboard-check"></i>報名資訊</h2>
+        <dl class="payment-status">
+          <div><dt>報名編號</dt><dd class="application-number">{{ applicationNo }}</dd></div>
+          <div><dt>付款狀態</dt><dd><span class="status-tag payment">{{ isPaid ? '已付款' : '待付款' }}</span></dd></div>
+        </dl>
+      </aside>
+    </section>
+
+    <div class="payment-layout">
+      <section class="payment-card fee-card">
+        <h2><i class="bi bi-receipt"></i>付款明細</h2>
+        <dl class="fee-list">
+          @for (item of feeItems; track item.item) {
+            <div><dt>{{ item.item }}<small *ngIf="item.content">（{{ item.content }}）</small></dt><dd>${{ (item.amount ?? 0) | number }}</dd></div>
+          }
+        </dl>
+        <div class="total-row"><span>總計</span><strong>${{ total | number }}</strong></div>
+        <p class="deposit-inline-note"><i class="bi bi-info-circle"></i>實際付款金額以後端核定的報名費用為準。</p>
+      </section>
+
+      <section class="payment-card credit-card">
+        <h2><i class="bi bi-credit-card"></i>信用卡付款資訊</h2>
+        <div class="credit-intro"><span><i class="bi bi-credit-card"></i></span><div class="credit-intro-copy"><strong>藍新金流安全付款</strong><p>點擊下方按鈕後，將離開本站並前往藍新金流完成信用卡付款。</p><p>本站不會接觸或儲存您的信用卡卡號。</p></div></div>
+        <dl class="credit-summary">
+          <div><dt>付款方式</dt><dd>藍新金流／信用卡</dd></div>
+          <div><dt>付款金額</dt><dd>${{ total | number }}</dd></div>
+          <div><dt>付款期限</dt><dd>{{ paymentDeadline }}</dd></div>
+        </dl>
+        <button type="button" class="app-btn primary" [disabled]="isSubmitting || isPaid" (click)="continueToCreditCard()">
+          {{ isPaid ? '已完成付款' : isSubmitting ? '正在前往藍新金流…' : '前往藍新金流付款' }}
+        </button>
+        <p class="security-note"><i class="bi bi-lock"></i>交易結果將由後端向藍新驗證後更新。</p>
+      </section>
     </div>
-
-    <aside class="registration-summary">
-      <h2 class="section-heading"><i class="bi bi-clipboard-check"></i>報名資訊</h2>
-      <dl class="payment-status">
-        <div>
-          <dt>報名編號</dt>
-          <dd class="application-number">{{ detail.applicationNo }}</dd>
-        </div>
-        <div>
-          <dt>報名狀態</dt>
-          <dd><span class="status-tag payment">待付款</span></dd>
-        </div>
-      </dl>
-    </aside>
-  </section>
-
-  <div class="payment-layout">
-    <section class="payment-card fee-card">
-      <h2><i class="bi bi-receipt"></i>付款明細</h2>
-
-      <dl class="fee-list">
-        <div>
-          <dt>攤位費用</dt>
-          <dd>${{ boothFee | number }}</dd>
-        </div>
-        <div>
-          <dt>設備租借費用</dt>
-          <dd>${{ equipmentRentalFee | number }}</dd>
-        </div>
-        <div>
-          <dt>額外用電申請</dt>
-          <dd>${{ extraPowerFee | number }}</dd>
-        </div>
-        <div>
-          <dt>保證金（活動結束後退還）</dt>
-          <dd>${{ deposit | number }}</dd>
-        </div>
-      </dl>
-
-      <div class="total-row">
-        <span>總計</span>
-        <strong>${{ total | number }}</strong>
-      </div>
-
-      <p class="deposit-inline-note">
-        <i class="bi bi-info-circle"></i>
-        活動結束後，若無違規或設備損壞，保證金將於現場全額退還。
-      </p>
-
-    </section>
-
-    <section class="payment-card credit-card">
-      <h2><i class="bi bi-credit-card"></i>信用卡付款資訊</h2>
-
-      <div class="credit-intro">
-        <span><i class="bi bi-credit-card"></i></span>
-        <div class="credit-intro-copy">
-          <strong>安全信用卡付款</strong>
-          <p>點擊下方按鈕後，將前往安全的金流平台完成信用卡付款。</p>
-          <p>付款完成後，系統將自動更新付款狀態，並於通知中心提醒。</p>
-        </div>
-      </div>
-
-      <dl class="credit-summary">
-        <div>
-          <dt>付款方式</dt>
-          <dd>信用卡</dd>
-        </div>
-        <div>
-          <dt>付款金額</dt>
-          <dd>${{ total | number }}</dd>
-        </div>
-        <div>
-          <dt>付款期限</dt>
-          <dd>{{ paymentDeadline }}</dd>
-        </div>
-      </dl>
-
-      <button type="button" class="app-btn primary" (click)="continueToCreditCard()">
-        前往信用卡付款
-      </button>
-
-      <p class="security-note">
-        <i class="bi bi-lock"></i>
-        我們不會在此網站儲存您的信用卡資訊，請安心使用。
-      </p>
-    </section>
-  </div>
+  }
 </main>

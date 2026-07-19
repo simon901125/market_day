@@ -11,6 +11,10 @@ import {
 import { VendorApplicationApiDetail } from '../../../models/interface/vendor/VendorApplicationApiDetail';
 import { VendorStallMap } from '../../../models/interface/vendor/VendorStallMap';
 import {
+  NewebPayPaymentForm,
+  VendorPaymentStatus,
+} from '../../../models/interface/vendor/VendorPayment';
+import {
   VendorStallSelectionRequest,
   VendorStallSelectionResult,
 } from '../../../models/interface/vendor/VendorStallSelection';
@@ -69,6 +73,25 @@ export class VendorDashboardService {
   ): Observable<ApiResult<VendorApplicationApiDetail>> {
     const url = `${environment.apiBaseUrl}api/vendor/applications/${applicationId}`;
     return this.http.get<ApiResult<VendorApplicationApiDetail>>(url);
+  }
+
+  /** 由後端建立藍新 MPG 交易資料；金額一律由後端依報名資料決定。 */
+  createNewebPayPayment(
+    applicationNo: string,
+  ): Observable<ApiResult<NewebPayPaymentForm>> {
+    const url = `${environment.apiBaseUrl}api/vendor/payments/newebpay`;
+    return this.http.post<ApiResult<NewebPayPaymentForm>>(url, {
+      applicationNo: applicationNo.trim(),
+    });
+  }
+
+  /** 取得後端保存的付款狀態，不採信瀏覽器回傳的金流結果。 */
+  getVendorPaymentStatus(
+    applicationNo: string,
+  ): Observable<ApiResult<VendorPaymentStatus>> {
+    const encodedApplicationNo = encodeURIComponent(applicationNo.trim());
+    const url = `${environment.apiBaseUrl}api/vendor/payments/${encodedApplicationNo}/status`;
+    return this.http.get<ApiResult<VendorPaymentStatus>>(url);
   }
 
   /** 依報名編號取得目前登入攤主的選位地圖。 */
