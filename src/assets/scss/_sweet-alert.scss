@@ -836,13 +836,20 @@
       appearance: none;
       width: 1em;
       height: 1em;
+      margin: 0;
+      flex: 0 0 1em;
       border: 2px solid var(--text-light);
       border-radius: 50%;
+      background-color: #fff;
 
       &:checked {
-        border-color: #fff;
-        background-color: var(--primary-color);
-        outline: 2px solid var(--primary-color);
+        border-color: var(--primary-color);
+        background: radial-gradient(
+          circle,
+          var(--primary-color) 0 3px,
+          transparent 3.5px
+        );
+        outline: none;
       }
     }
   }
