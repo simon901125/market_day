@@ -7,11 +7,11 @@ import { AdminEventDetailDto, AdminEventStatusLogPage } from '../../models/inter
 import { AdminEventPage, AdminEventSearchRequest } from '../../models/interface/admin/AdminEventSearch';
 import { AdminLogPage, AdminLogsSearchRequest } from '../../models/interface/admin/AdminLogSearch';
 import { AdminNoticePage, AdminNoticeSearchRequest } from '../../models/interface/admin/AdminNoticeSearch';
-import { AdminOrgDetailDto, AdminOrgEventPage } from '../../models/interface/admin/AdminOrgDetail';
+import { AdminOrgDetailDto, AdminOrgEventPage } from '../../models/interface/admin/AdminOrganizerDetail';
 import { UserStatusChangeDto } from '../../models/interface/admin/AdminUserAction';
 import { AdminUserLoginPage } from '../../models/interface/admin/AdminUserLoginLog';
 import { AdminUserPage, AdminUserSearchRequest } from '../../models/interface/admin/AdminUserSearch';
-import { AdminVenderDetailDto, AdminVenderRegPage } from '../../models/interface/admin/AdminVenderDetail';
+import { AdminVenderDetailDto, AdminVenderRegPage } from '../../models/interface/admin/AdminVendorDetail';
 import { ApiResult } from '../../models/interface/shared/ApiResult';
 import { HttpRequestOptions, HttpService } from '../http/http.service';
 

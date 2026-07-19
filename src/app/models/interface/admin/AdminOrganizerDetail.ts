@@ -1,3 +1,48 @@
+import { AdminUserLoginPage } from './AdminUserLoginLog';
+
+/** 後端回傳的主辦方活動管理紀錄項目 */
+export interface AdminOrgEventManagementDto {
+  eventId: number;
+  eventName: string;
+  eventDate: string;
+  eventStatus: string;
+  registrationCount: string;
+}
+
+export interface AdminOrgEventPage {
+  items: AdminOrgEventManagementDto[];
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+}
+
+/** 後端回傳的主辦方詳細資料 */
+export interface AdminOrgDetailDto {
+  userId: number;
+  userName: string;
+  role: string;
+  accountStatus: string;
+  isGoogleBound: boolean;
+  regAt: string;
+  lastLoginAt: string | null;
+  createdEventCount: number;
+  ongoingEventCount: number;
+  endedEventCount: number;
+  organizerName: string;
+  serviceHours: string;
+  companyName: string;
+  contactPerson: string;
+  contactPhone: string;
+  contactEmail: string;
+  contactAddress: string;
+  taxId: string;
+  eventLogs: AdminOrgEventPage;
+  loginLogs: AdminUserLoginPage;
+}
+
 /** 管理員-主辦方使用者詳情 */
 export interface AdminOrganizerDetail {
   /** 使用者唯一識別碼 */
@@ -47,6 +92,8 @@ export interface AdminOrganizerDetail {
       total: number;
       /** 紀錄列表 */
       items: {
+        /** 活動編號 */
+        activityId: number;
         /** 活動名稱 */
         activityName: string;
         /** 活動日期與每日時間 */

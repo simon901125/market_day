@@ -153,7 +153,7 @@ export class AdminDashboardHome extends AdminDashboardNotification implements On
         count: data.systemWarning,
         unit: '筆',
         label: '異常提醒',
-        path: '/admin/dash-board/logs',
+        path: '/admin/dash-board/notification',
         iconColor: 'red',
       },
     ];

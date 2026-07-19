@@ -8,8 +8,7 @@ import { UserStatus } from '../../../../models/status/UserStatus';
 import { UserType } from '../../../../models/type/UserType';
 import { ApplicationStatus } from '../../../../models/status/ApplicationStatus';
 import { PaymentStatus } from '../../../../models/status/PaymentStatus';
-import { AdminVendorDetail } from '../../../../models/interface/admin/AdminVendorDetail';
-import { AdminVenderDetailDto, AdminVenderRegDto } from '../../../../models/interface/admin/AdminVenderDetail';
+import { AdminVendorDetail, AdminVenderDetailDto, AdminVenderRegDto } from '../../../../models/interface/admin/AdminVendorDetail';
 import { AdminUserLoginDto } from '../../../../models/interface/admin/AdminUserLoginLog';
 import { UserStatusChangeDto } from '../../../../models/interface/admin/AdminUserAction';
 import { ApiResult, isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
@@ -157,6 +156,7 @@ export class AdminDashboardUserDetailVender implements OnInit {
   private mapRegItem(item: AdminVenderRegDto): AdminVendorDetail['detail']['activityRegistrationRecords']['items'][number] {
     const booths = item.regBooths.map((booth) => ({ date: booth.regDate, code: booth.boothNo }));
     return {
+      activityId: item.eventId,
       activityName: item.eventName,
       registrationDates: booths.map((booth) => booth.date),
       registrationStatus: item.regStatus,
@@ -281,7 +281,7 @@ export class AdminDashboardUserDetailVender implements OnInit {
     }
   }
 
-  onViewRecord(_record: AdminVendorDetail['detail']['activityRegistrationRecords']['items'][number]): void {
-    // TODO: 導向活動報名詳情頁
+  onViewRecord(record: AdminVendorDetail['detail']['activityRegistrationRecords']['items'][number]): void {
+    this.router.navigate(['/admin/dash-board/activity/detail', record.activityId]);
   }
 }

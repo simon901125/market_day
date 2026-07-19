@@ -7,8 +7,7 @@ import { AdminApiService } from '../../../../core/services/admin-api.service';
 import { UserStatus } from '../../../../models/status/UserStatus';
 import { UserType } from '../../../../models/type/UserType';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
-import { AdminOrganizerDetail } from '../../../../models/interface/admin/AdminOrganizerDetail';
-import { AdminOrgDetailDto, AdminOrgEventManagementDto } from '../../../../models/interface/admin/AdminOrgDetail';
+import { AdminOrganizerDetail, AdminOrgDetailDto, AdminOrgEventManagementDto } from '../../../../models/interface/admin/AdminOrganizerDetail';
 import { AdminUserLoginDto } from '../../../../models/interface/admin/AdminUserLoginLog';
 import { UserStatusChangeDto } from '../../../../models/interface/admin/AdminUserAction';
 import { ApiResult, isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
@@ -157,6 +156,7 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
 
   private mapEventItem(item: AdminOrgEventManagementDto): AdminOrganizerDetail['detail']['activityManagementRecords']['items'][number] {
     return {
+      activityId: item.eventId,
       activityName: item.eventName,
       activityTime: item.eventDate,
       activityStatus: ActivityStatus.fromApiStatus(item.eventStatus),
@@ -276,8 +276,8 @@ export class AdminDashboardUserDetailOrganizer implements OnInit {
     }
   }
 
-  onViewActivity(_record: AdminOrganizerDetail['detail']['activityManagementRecords']['items'][number]): void {
-    // TODO: 導向活動詳情頁
+  onViewActivity(record: AdminOrganizerDetail['detail']['activityManagementRecords']['items'][number]): void {
+    this.router.navigate(['/admin/dash-board/activity/detail', record.activityId]);
   }
 
 }
