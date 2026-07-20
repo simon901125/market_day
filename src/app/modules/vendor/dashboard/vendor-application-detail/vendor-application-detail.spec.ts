@@ -149,12 +149,37 @@ describe('VendorApplicationDetail', () => {
     ]);
     expect(component.statusProgress[0]).toEqual({
       label: '報名日期',
-      value: '已報名　2026/07/01 10:30',
+      value: '2026/07/01 10:30',
     });
     expect(component.statusProgress[1]).toEqual({
       label: '審核時間',
       value: '尚未完成',
     });
+    expect(component.statusProgress).toEqual([
+      { label: '報名日期', value: '2026/07/01 10:30' },
+      { label: '審核時間', value: '尚未完成' },
+      { label: '取消時間', value: '尚未完成' },
+      { label: '付款時間', value: '尚未完成' },
+      { label: '退款申請時間', value: '尚未完成' },
+      { label: '退款審核時間', value: '尚未完成' },
+      { label: '已退款時間', value: '尚未完成' },
+      { label: '選位時間', value: '尚未完成' },
+      { label: '保證金退還時間', value: '尚未完成' },
+    ]);
+  });
+
+  it('should format registration periods consistently', () => {
+    const registrationPeriods = component.detail.applicationRows.find(
+      (row) => row.label === '報名場次',
+    );
+
+    expect(registrationPeriods?.value).toBe(
+      '2026/07/18 10:00 - 18:00、 2026/07/19 09:00 - 17:00',
+    );
+  });
+
+  it('should display the rental fee returned by the equipment API as unit price', () => {
+    expect(component.rentalEquipment[0].price).toBe('NT$150 / 張');
   });
 
   it('should display an unpublish request notice without suspending the existing application flow', () => {
@@ -229,7 +254,7 @@ function createApiDetail(): VendorApplicationApiDetail {
       brandDescription: '手作商品',
     },
     applicationdetail: {
-      registrationPeriods: '2026/07/18 10:00-18:00',
+      registrationPeriods: '2026-07-18 10:00-18:00 - 2026/07/19 9:00至17:00',
       width: 3,
       length: 3,
       stallZone: 'A 區',
@@ -287,6 +312,8 @@ function createApiDetail(): VendorApplicationApiDetail {
           specification: '180 × 60 公分',
           quantity: 1,
           unit: '張',
+          unitPrice: 150,
+          pricingUnit: 'DAY',
           subtotal: 150,
           total: 150,
         },

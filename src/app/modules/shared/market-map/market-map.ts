@@ -186,7 +186,6 @@ export class MarketMap implements OnInit {
   zoom = 1;
   readonly organizerDates = ['2026/07/18', '2026/07/19'];
   selectedOrganizerDate = this.organizerDates[0];
-  private readonly organizerSelectedCodes = ['A02', 'A03', 'A10', 'A12', 'B01', 'B03', 'B10', 'B13', 'C03'];
   private hoverPreviewTimer: ReturnType<typeof setTimeout> | null = null;
   private previewCloseTimer: ReturnType<typeof setTimeout> | null = null;
   private fullscreenCloseTimer: ReturnType<typeof setTimeout> | null = null;
@@ -208,8 +207,7 @@ export class MarketMap implements OnInit {
       return;
     }
 
-    this.selectedBooth = this.mapData.booths.find((booth) => booth.code === 'B13')
-      ?? this.mapData.booths.find((booth) => this.isOrganizerBoothSelected(booth))
+    this.selectedBooth = this.mapData.booths.find((booth) => this.isOrganizerBoothSelected(booth))
       ?? null;
   }
 
@@ -313,7 +311,7 @@ export class MarketMap implements OnInit {
   }
 
   isOrganizerBoothSelected(booth: MarketMapBooth): boolean {
-    return this.organizerSelectedCodes.includes(booth.code);
+    return booth.status === 'selected' || booth.status === 'mine';
   }
 
   selectBooth(booth: MarketMapBooth): void {

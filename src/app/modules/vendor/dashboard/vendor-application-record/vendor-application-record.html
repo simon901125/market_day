@@ -61,7 +61,9 @@
               <tr [appTableRowLink]="['/vendor/dash-board/application-record/detail', item.applicationNo]">
                 <td>
                   <div class="event-info">
-                    <img [src]="item.image" [alt]="item.marketName" />
+                    @if (item.image) {
+                      <img [src]="item.image" [alt]="item.marketName" />
+                    }
                     <strong>{{ item.marketName }}</strong>
                   </div>
                 </td>
@@ -82,13 +84,8 @@
                       @if (action.link) {
                         <!-- 詳情 API 使用 applicationId；付款與選位頁仍使用 applicationNo。 -->
                         <a
-                          [routerLink]="[
-                            action.link,
-                            action.label === '查看' ? item.id : item.applicationNo
-                          ]"
-                          [queryParams]="
-                            action.label === '查看' ? null : { applicationId: item.id }
-                          "
+                          [routerLink]="getActionRoute(action, item)"
+                          [queryParams]="getActionQueryParams(action, item)"
                           class="app-btn"
                           [class.long-label]="action.label.length > 4"
                           [class.primary]="action.style === 'primary'"
@@ -96,17 +93,6 @@
                         >
                           {{ action.label }}
                         </a>
-                      } @else {
-                        <button
-                          type="button"
-                          class="app-btn"
-                          [class.long-label]="action.label.length > 4"
-                          [class.primary]="action.style === 'primary'"
-                          [class.secondary]="action.style === 'outline'"
-                          (click)="handleRecordAction(action, item)"
-                        >
-                          {{ action.label }}
-                        </button>
                       }
                     }
                   </div>

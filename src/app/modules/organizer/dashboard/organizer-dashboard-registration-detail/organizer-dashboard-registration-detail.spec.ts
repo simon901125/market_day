@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { NEVER } from 'rxjs';
 
+import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
 import { OrganizerDashboardRegistrationDetail } from './organizer-dashboard-registration-detail';
 
 describe('OrganizerDashboardRegistrationDetail', () => {
@@ -20,6 +22,10 @@ describe('OrganizerDashboardRegistrationDetail', () => {
               queryParamMap: convertToParamMap({}),
             },
           },
+        },
+        {
+          provide: OrganizerApiService,
+          useValue: { getOrganizerApplicationDetail: () => NEVER },
         },
       ],
     }).compileComponents();

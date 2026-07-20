@@ -56,6 +56,13 @@ export class HttpService {
     );
   }
 
+  download(api: string, options: HttpRequestOptions = {}): Observable<Blob> {
+    return this.withOptionalLoading(
+      this.http.get(this.getUrl(api), { responseType: 'blob' }),
+      options
+    );
+  }
+
   private getUrl(api: string): string {
     return `${environment.apiBaseUrl}${api.replace(/^\/+/, '')}`;
   }

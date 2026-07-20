@@ -73,4 +73,8 @@ describe('OrganizerDashboardHome', () => {
   it('should provide three activities for the registration overview', () => {
     expect(component.activityRegistrationOverview.length).toBe(3);
   });
+
+  it('should load todo card counts from the application task summary', () => {
+    expect(component.todoItems.map((item) => item.count)).toEqual([12, 3, 50]);
+  });
 });

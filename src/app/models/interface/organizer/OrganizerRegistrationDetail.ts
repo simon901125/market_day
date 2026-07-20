@@ -60,9 +60,12 @@ export interface OrganizerRegistrationDetail {
   status: string;
   registrationNo: string;
   activity: {
+    eventId: number;
     name: string;
     image: string;
     date: string;
+    startAt: string | null;
+    endAt: string | null;
     status: string;
     location: string;
     address: string;
@@ -74,6 +77,7 @@ export interface OrganizerRegistrationDetail {
     address: string;
   };
   brand: {
+    id: number | null;
     name: string;
     type: string;
     image: string;

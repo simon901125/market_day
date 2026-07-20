@@ -70,11 +70,11 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
     this.loadDashboardData();
   }
 
-  /** 主辦方後台首頁待辦展示資料；待報名列表統計 API 完成後再串接。 */
+  /** 主辦方後台首頁待辦展示資料，由報名管理 API 的 taskSummary 更新。 */
   todoItems: TodoItem[] = [
     {
       icon: 'bi-clipboard-heart',
-      count: 12,
+      count: 0,
       unit: '筆',
       label: '待審核報名',
       path: '/organizer/dash-board/register',
@@ -82,7 +82,7 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
     },
     {
       icon: 'bi-wallet2',
-      count: 3,
+      count: 0,
       unit: '筆',
       label: '退款待確認',
       path: '/organizer/dash-board/collection',
@@ -90,7 +90,7 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
     },
     {
       icon: 'bi-shop-window',
-      count: 50,
+      count: 0,
       unit: '位',
       label: '待完成選位',
       path: '/organizer/dash-board/stall',
@@ -102,12 +102,31 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
   activityRegistrationOverview: ActivityRegistrationOverview[] = [];
 
   private loadDashboardData(): void {
+    this.organizerApi
+      .searchOrganizerApplications({ page: 1, pageSize: 1 })
+      .subscribe((applications) => {
+        if (!isApiSuccessStatus(applications.statusCode) || !applications.data?.taskSummary) {
+          return;
+        }
+
+        const summary = applications.data.taskSummary;
+        const countByLabel: Record<string, number> = {
+          待審核報名: summary.pendingReviewCount,
+          退款待確認: summary.pendingRefundConfirmationCount,
+          待完成選位: summary.pendingStallSelectionCount,
+        };
+        this.todoItems = this.todoItems.map((item) => ({
+          ...item,
+          count: countByLabel[item.label] ?? item.count,
+        }));
+      });
+
     this.organizerApi.searchOrganizerEvents({
-        sort: 'UPCOMING_FIRST',
-        page: 1,
-        pageSize: 3,
-        registrationOverview: true,
-      }).subscribe((events) => {
+      sort: 'UPCOMING_FIRST',
+      page: 1,
+      pageSize: 3,
+      registrationOverview: true,
+    }).subscribe((events) => {
         if (!isApiSuccessStatus(events.statusCode) || !events.data) return;
         this.activityRegistrationOverview = events.data.events.items.map((event) => ({
           eventId: event.eventId,
