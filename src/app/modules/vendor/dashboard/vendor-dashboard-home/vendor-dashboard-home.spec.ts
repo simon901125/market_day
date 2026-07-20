@@ -14,7 +14,7 @@ describe('VendorDashboardHome', () => {
   beforeEach(async () => {
     vendorDashboardService = jasmine.createSpyObj<VendorDashboardService>(
       'VendorDashboardService',
-      ['getVendorFirstLogin'],
+      ['getVendorFirstLogin', 'searchVendorApplications'],
     );
     vendorDashboardService.getVendorFirstLogin.and.returnValue(of({
       statusCode: 200,
@@ -28,6 +28,23 @@ describe('VendorDashboardHome', () => {
         pendingPaymentCount: 0,
         pendingStallSelectionCount: 0,
         notifications: [],
+      },
+    }));
+    vendorDashboardService.searchVendorApplications.and.returnValue(of({
+      statusCode: 200,
+      message: 'ok',
+      messageDetails: null,
+      data: {
+        totalCount: 0,
+        applications: {
+          items: [],
+          page: 1,
+          pageSize: 1,
+          totalItems: 0,
+          totalPages: 0,
+          hasPrevious: false,
+          hasNext: false,
+        },
       },
     }));
 
@@ -57,6 +74,23 @@ describe('VendorDashboardHome', () => {
   });
 
   it('should bind dashboard counts, vendor name and notifications', () => {
+    vendorDashboardService.searchVendorApplications.and.returnValue(of({
+      statusCode: 200,
+      message: 'ok',
+      messageDetails: null,
+      data: {
+        totalCount: 27,
+        applications: {
+          items: [],
+          page: 1,
+          pageSize: 1,
+          totalItems: 27,
+          totalPages: 27,
+          hasPrevious: false,
+          hasNext: true,
+        },
+      },
+    }));
     vendorDashboardService.getVendorFirstLogin.and.returnValue(of({
       statusCode: 200,
       message: 'ok',
@@ -92,14 +126,18 @@ describe('VendorDashboardHome', () => {
       jasmine.objectContaining({ label: '待付款報名', count: 6 }),
       jasmine.objectContaining({ label: '待選擇攤位', count: 2 }),
       jasmine.objectContaining({
-        icon: 'bi-arrow-counterclockwise',
-        label: '退款處理中',
-        count: 1,
+        icon: 'bi-journal-check',
+        label: '我的報名紀錄',
+        count: 27,
         unit: '筆',
         path: '/vendor/dash-board/application-record',
         iconColor: 'purple',
       }),
     ]);
+    expect(vendorDashboardService.searchVendorApplications).toHaveBeenCalledOnceWith({
+      page: 1,
+      pageSize: 1,
+    });
     expect(component.notifications[0]).toEqual(jasmine.objectContaining({
       status: '待審核',
       title: '報名已送出',
