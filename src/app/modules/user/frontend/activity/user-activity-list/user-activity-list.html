@@ -36,6 +36,7 @@
         [selectedCategory]="selectedCategory"
         [startDate]="startDate"
         [endDate]="endDate"
+        (searchSubmit)="onSearch($event)"
       ></app-user-market-search-panel>
 
       <div class="market-grid">
@@ -50,7 +51,7 @@
       <app-pagination
         [currentPage]="currentPage"
         [pageSize]="pageSize"
-        [totalItems]="markets.length"
+        [totalItems]="totalItems"
         (pageChange)="changePage($event)">
       </app-pagination>
     } @else {
@@ -66,7 +67,7 @@
       <app-pagination
         [currentPage]="currentPage"
         [pageSize]="pageSize"
-        [totalItems]="historyMarkets.length"
+        [totalItems]="totalItems"
         (pageChange)="changePage($event)">
       </app-pagination>
     }

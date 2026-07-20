@@ -6,11 +6,17 @@ import { MarketCardItem } from '../../../../../models/interface/shared/MarketCar
 import { HistoryMarketCardItem } from '../../../../../models/interface/user/HistoryMarketCardItem';
 import { BrandType } from '../../../../../models/type/BrandType ';
 import { MarketStatus } from '../../../../../models/status/MarketStatus';
+import { UserMarketCardApi } from '../../../../../models/interface/user/UserPublicApi';
+import { AlertService } from '../../../../../core/services/alert.service';
 
-import { UserMarketSearchPanel } from '../../shared/user-market-search-panel/user-market-search-panel';
+import {
+  UserMarketSearchPanel,
+  UserMarketSearchParams as UserMarketPanelSearchParams,
+} from '../../shared/user-market-search-panel/user-market-search-panel';
 import { Pagination } from '../../../../shared/pagination/pagination';
 import { UserMarketCard } from '../../shared/user-market-card/user-market-card';
 import { UserHistoryMarketCard } from '../../shared/user-history-market-card/user-history-market-card';
+import { UserMarketApiService } from '../../../services/user-market-api.service';
 
 type MarketSample = Omit<MarketCardItem, 'status' | 'statusClass'> &
   Partial<Pick<MarketCardItem, 'status'>>;
@@ -30,6 +36,43 @@ const withEndedStatus = (market: HistoryMarketSample): HistoryMarketCardItem => 
   ...market,
   status: MarketStatus.ended,
   statusClass: MarketStatus.getClass(MarketStatus.ended),
+});
+
+const formatApiDate = (value: string | null | undefined): string =>
+  value ? value.replace(/-/g, '/') : '';
+
+const categoryNames = (market: UserMarketCardApi): string[] =>
+  (market.categories ?? []).map((category) => category.name).filter(Boolean);
+
+const mapMarketCard = (market: UserMarketCardApi): MarketCardItem => {
+  const status = market.eventStatus || MarketStatus.upcoming;
+  const startDate = formatApiDate(market.startDate);
+  const endDate = formatApiDate(market.endDate);
+
+  return {
+    id: String(market.id),
+    title: market.title,
+    start_date: startDate,
+    end_date: endDate,
+    description: market.summary ?? '',
+    time: '',
+    location: [market.city, market.district, market.locationName].filter(Boolean).join(' '),
+    address: market.address ?? '',
+    city: market.city ?? '',
+    area: market.district ?? '',
+    category: categoryNames(market)[0] ?? '',
+    image: market.coverImageUrl ?? 'assets/images/market/cards/market-card-01.png',
+    status,
+    statusClass: MarketStatus.getClass(status),
+    tags: categoryNames(market),
+    organizer: '',
+    transportation: [],
+  };
+};
+
+const mapHistoryMarketCard = (market: UserMarketCardApi): HistoryMarketCardItem => ({
+  ...mapMarketCard(market),
+  desc: market.summary ?? '',
 });
 
 @Component({
@@ -61,7 +104,7 @@ export class UserActivityList {
   /** 搜尋活動狀態。 */
   selectedStatus = '';
   /** 搜尋活動分類。 */
-  selectedCategory = BrandType.food;
+  selectedCategory = '';
   /** 搜尋日期起日。 */
   startDate = '';
   /** 搜尋日期迄日。 */
@@ -331,10 +374,19 @@ export class UserActivityList {
     },
   ];
 
+  private apiMarkets: MarketCardItem[] = [];
+  private apiHistoryMarkets: HistoryMarketCardItem[] = [];
+  private marketTotal = 0;
+  private historyMarketTotal = 0;
+  private currentLoadedFromApi = false;
+  private historyLoadedFromApi = false;
+
   /** 依照目前路由與 query params 初始化頁籤、頁碼與搜尋條件。 */
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
+    private readonly marketApi: UserMarketApiService,
+    private readonly alert: AlertService,
   ) {
     this.activeTab = this.router.url.includes('/activity-list/history') ? 'history' : 'current';
 
@@ -345,32 +397,57 @@ export class UserActivityList {
         this.keyword = params.get('keyword') ?? '';
         this.selectedCity = params.get('city') ?? '';
         this.selectedStatus = params.get('status') ?? '';
-        this.selectedCategory = params.get('category') ?? BrandType.food;
+        this.selectedCategory = params.get('category') ?? '';
         this.startDate = params.get('startDate') ?? '';
         this.endDate = params.get('endDate') ?? '';
+        this.loadMarkets();
       });
   }
 
   /** 套用前端狀態後的目前活動列表。 */
   get markets(): MarketCardItem[] {
+    if (this.currentLoadedFromApi) {
+      return this.apiMarkets;
+    }
+
     return this.marketSamples.map(withCurrentStatus);
   }
 
   /** 套用已結束狀態後的歷史活動列表。 */
   get historyMarkets(): HistoryMarketCardItem[] {
+    if (this.historyLoadedFromApi) {
+      return this.apiHistoryMarkets;
+    }
+
     return this.historyMarketSamples.map(withEndedStatus);
   }
 
   /** 目前頁碼要顯示的活動卡片。 */
   get pagedMarkets(): MarketCardItem[] {
+    if (this.currentLoadedFromApi) {
+      return this.markets;
+    }
+
     const startIndex = (this.currentPage - 1) * this.pageSize;
     return this.markets.slice(startIndex, startIndex + this.pageSize);
   }
 
   /** 目前頁碼要顯示的歷史活動卡片。 */
   get pagedHistoryMarkets(): HistoryMarketCardItem[] {
+    if (this.historyLoadedFromApi) {
+      return this.historyMarkets;
+    }
+
     const startIndex = (this.currentPage - 1) * this.pageSize;
     return this.historyMarkets.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  get totalItems(): number {
+    if (this.activeTab === 'history') {
+      return this.historyLoadedFromApi ? this.historyMarketTotal : this.historyMarkets.length;
+    }
+
+    return this.currentLoadedFromApi ? this.marketTotal : this.markets.length;
   }
 
   /** 切換目前/歷史活動分頁，並保留搜尋條件。 */
@@ -394,6 +471,16 @@ export class UserActivityList {
     });
   }
 
+  onSearch(params: UserMarketPanelSearchParams): void {
+    this.currentPage = 1;
+    this.keyword = params.keyword ?? '';
+    this.selectedCity = params.city ?? '';
+    this.selectedStatus = params.status ?? '';
+    this.selectedCategory = params.category ?? '';
+    this.startDate = params.startDate ?? '';
+    this.endDate = params.endDate ?? '';
+  }
+
   /** 前往活動詳情，透過 marketId 支援重新整理還原資料。 */
   goToActivityDetail(market: MarketCardItem): void {
     this.router.navigate(['/user/activity-detail'], {
@@ -413,5 +500,43 @@ export class UserActivityList {
       startDate: this.startDate || null,
       endDate: this.endDate || null,
     };
+  }
+
+  private loadMarkets(): void {
+    this.marketApi.searchMarkets({
+      eventType: this.activeTab === 'history' ? '歷史活動' : '目前活動',
+      keyword: this.keyword,
+      city: this.selectedCity,
+      eventStatus: this.selectedStatus,
+      categoryNames: this.selectedCategory,
+      startDate: this.startDate,
+      endDate: this.endDate,
+      page: this.currentPage,
+      pageSize: this.pageSize,
+    }).subscribe({
+      next: async (res) => {
+        if (res.statusCode !== 200) {
+          await this.alert.error('查詢市集失敗', res.message || '請稍後再試。');
+          return;
+        }
+
+        if (this.activeTab === 'history') {
+          this.apiHistoryMarkets = res.data.items.map(mapHistoryMarketCard);
+          this.historyMarketTotal = res.data.totalItems;
+          this.historyLoadedFromApi = true;
+          return;
+        }
+
+        this.apiMarkets = res.data.items.map(mapMarketCard);
+        this.marketTotal = res.data.totalItems;
+        this.currentLoadedFromApi = true;
+      },
+      error: async (error) => {
+        await this.alert.error(
+          '查詢市集失敗',
+          error.error?.message || '請確認後端服務是否啟動。'
+        );
+      },
+    });
   }
 }

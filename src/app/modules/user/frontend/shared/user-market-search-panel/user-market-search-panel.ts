@@ -50,7 +50,7 @@ export class UserMarketSearchPanel implements OnInit {
   @Input() selectedStatus = '';
 
   /** 目前選擇的活動類型。 */
-  @Input() selectedCategory = BrandType.food;
+  @Input() selectedCategory = '';
 
   /** 目前選擇的開始日期。 */
   @Input() startDate = '';

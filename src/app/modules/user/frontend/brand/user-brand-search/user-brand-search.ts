@@ -1,10 +1,17 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BrandItem } from '../../../../../models/interface/shared/BrandItem';
+import {
+  UserBrandSearchParams,
+  UserBrandSummaryApi,
+} from '../../../../../models/interface/user/UserPublicApi';
 import { BrandType } from '../../../../../models/type/BrandType ';
+import { AlertService } from '../../../../../core/services/alert.service';
 import { Pagination } from '../../../../shared/pagination/pagination';
 import { Dropdown } from '../../../../shared/dropdown/dropdown';
 import { UserBrandSearchCard } from '../user-brand-search-card/user-brand-search-card';
+import { UserBrandApiService } from '../../../services/user-brand-api.service';
 
 const brandImage = (brandId: string, fileName: string): string =>
   `assets/images/user/brand/brands/${brandId}/${fileName}`;
@@ -183,6 +190,31 @@ export const BRANDS: BrandItem[] = [
 export const findBrandById = (brandId: string | null | undefined): BrandItem | undefined =>
   BRANDS.find((brand) => brand.id === brandId);
 
+const mapBrandSummary = (brand: UserBrandSummaryApi): BrandItem => {
+  const category = brand.category?.name ?? '';
+  const representativeProducts = (brand.representativeProducts ?? [])
+    .map((product) => product.productName)
+    .filter(Boolean);
+
+  return {
+    id: String(brand.brandId),
+    name: brand.brandName,
+    description: brand.brandSummary ?? '',
+    introduction: brand.brandSummary ?? '',
+    tags: category ? [category] : [],
+    historyMarkets: [],
+    image: brand.mainImageUrl ?? brandImage('brand-01', 'cover.png'),
+    logo: brand.avatarImageUrl ?? brandImage('brand-01', 'logo.png'),
+    goodat_works: representativeProducts.join('、') || '代表商品準備中',
+    products: [],
+    links: {
+      instagram: '',
+      facebook: '',
+      officialWebsite: '',
+    },
+  };
+};
+
 @Component({
   selector: 'app-user-brandserch',
   imports: [UserBrandSearchCard, Dropdown, Pagination],
@@ -191,6 +223,8 @@ export const findBrandById = (brandId: string | null | undefined): BrandItem | u
 })
 /** 品牌探索列表頁，顯示品牌卡片與品牌相關篩選 UI。 */
 export class UserBrandSearch {
+  private readonly destroyRef = inject(DestroyRef);
+
   /** 品牌類型下拉選項。 */
   brandTypeOptions = BrandType.filterList;
   /** 參與市集下拉選項。 */
@@ -200,13 +234,37 @@ export class UserBrandSearch {
   currentPage = 1;
   /** 每頁顯示品牌數。 */
   pageSize = 8;
+  keyword = '';
+  selectedCategory = '';
+  selectedMarket = '';
+  totalItems = BRANDS.length;
+  private loadedFromApi = false;
   /** 品牌假資料；之後可替換成 API 回傳資料。 */
-  readonly brands = BRANDS;
+  brands = BRANDS;
 
-  constructor(private router: Router) {}
+  constructor(
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
+    private readonly brandApi: UserBrandApiService,
+    private readonly alert: AlertService,
+  ) {
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.currentPage = Number(params.get('page')) || 1;
+        this.keyword = params.get('keyword') ?? '';
+        this.selectedCategory = params.get('category') ?? '';
+        this.selectedMarket = params.get('market') ?? '';
+        this.loadBrands();
+      });
+  }
 
   /** 目前頁碼要顯示的品牌卡片。 */
   get pagedBrands(): BrandItem[] {
+    if (this.loadedFromApi) {
+      return this.brands;
+    }
+
     const start = (this.currentPage - 1) * this.pageSize;
     return this.brands.slice(start, start + this.pageSize);
   }
@@ -214,6 +272,31 @@ export class UserBrandSearch {
   /** 切換品牌列表頁碼。 */
   onPageChange(page: number): void {
     this.currentPage = page;
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: this.currentQueryParams(page),
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  onKeywordInput(event: Event): void {
+    this.keyword = (event.target as HTMLInputElement).value;
+  }
+
+  onCategorySelected(category: string): void {
+    this.selectedCategory = category === '全部類型' ? '' : category;
+  }
+
+  onMarketSelected(market: string): void {
+    this.selectedMarket = market === '全部市集' ? '' : market;
+  }
+
+  search(): void {
+    this.currentPage = 1;
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: this.currentQueryParams(1),
+    });
   }
 
   /** 前往品牌詳情，帶品牌 id 讓詳情頁重新整理仍可還原。 */
@@ -221,6 +304,44 @@ export class UserBrandSearch {
     this.router.navigate(['/user/brand-detail'], {
       queryParams: { brand: brand.id },
       state: { brand },
+    });
+  }
+
+  private currentQueryParams(page: number): Record<string, string | number | null> {
+    return {
+      page,
+      keyword: this.keyword || null,
+      category: this.selectedCategory || null,
+      market: this.selectedMarket || null,
+    };
+  }
+
+  private loadBrands(): void {
+    const params: UserBrandSearchParams = {
+      keyword: this.keyword,
+      categoryName: this.selectedCategory,
+      marketName: this.selectedMarket,
+      page: this.currentPage,
+      pageSize: this.pageSize,
+    };
+
+    this.brandApi.searchBrands(params).subscribe({
+      next: async (res) => {
+        if (res.statusCode !== 200 || !res.data) {
+          await this.alert.error('取得品牌列表失敗', res.message || '請稍後再試');
+          return;
+        }
+
+        this.brands = res.data.brands.items.map(mapBrandSummary);
+        this.totalItems = res.data.brands.totalItems || res.data.totalCount;
+        this.loadedFromApi = true;
+      },
+      error: async (error) => {
+        await this.alert.error(
+          '取得品牌列表失敗',
+          error.error?.message || '請確認網路連線後再試'
+        );
+      },
     });
   }
 }

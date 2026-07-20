@@ -1,4 +1,4 @@
-<div class="activity-detail user-frontend-page user-detail-page">
+﻿<div class="activity-detail user-frontend-page user-detail-page">
   <nav class="breadcrumb-wrap" aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
@@ -63,7 +63,6 @@
               <strong>{{ market?.address }}</strong>
             </div>
           </li>
-
         </ul>
       </div>
     </div>
@@ -110,14 +109,14 @@
     </div>
     <p class="booth-orientation-note">
       <i class="bi bi-phone-landscape" aria-hidden="true"></i>
-      <span>橫向觀看更清楚，或是</span>
+      <span>手機橫向瀏覽可看完整地圖</span>
       <button type="button" (click)="marketMap.openFullscreenMap()">
         <i class="bi bi-arrows-fullscreen" aria-hidden="true"></i>
         <span>放大地圖</span>
       </button>
     </p>
 
-    <app-market-map #marketMap mode="public" [mapData]="selectedMarketMap"></app-market-map>
+    <app-market-map #marketMap mode="public" [mapData]="selectedMarketMap" (boothSelected)="onMapBoothSelected($event.code)"></app-market-map>
   </section>
 
   <section class="bottom-info-grid">
@@ -134,15 +133,15 @@
         </li>
         <li>
           <span>聯絡信箱</span>
-          <strong>service&#64;marketday.tw</strong>
+          <strong>{{ organizerEmail }}</strong>
         </li>
         <li>
           <span>聯絡電話</span>
-          <strong>04-22556609</strong>
+          <strong>{{ organizerPhone }}</strong>
         </li>
         <li>
           <span>服務時間</span>
-          <strong>週一至週五 10:00 - 18:00</strong>
+          <strong>{{ organizerServiceTime }}</strong>
         </li>
       </ul>
     </article>
@@ -171,11 +170,11 @@
       </div>
 
       <h3>
-        <span>參與品牌與攤位資訊</span>
-        <span>將於報名截止後公開</span>
+        <span>品牌與攤位資訊尚未公開</span>
+        <span>請於公開後再查看攤位地圖</span>
       </h3>
     </div>
 
-    <p>目前活動仍在預告階段，完整攤位地圖與品牌名單會在資訊公開後更新。</p>
+    <p>主辦方尚未公開本活動的品牌與攤位配置，請稍後再回來查看。</p>
   </section>
 </div>
