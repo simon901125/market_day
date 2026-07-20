@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiResult } from '../../../models/interface/shared/ApiResult';
 import { VendorDashboardInit } from '../../../models/interface/vendor/VendorDashboardInit';
+import { VendorNotificationSearchResult } from '../../../models/interface/vendor/VendorNotificationSearch';
 import {
   VendorApplicationSearchParams,
   VendorApplicationSearchResult,
@@ -42,6 +43,21 @@ export class VendorDashboardService {
   getVendorFirstLogin(): Observable<ApiResult<VendorDashboardInit>> {
     const url = `${environment.apiBaseUrl}api/vendor/dashboard/init`;
     return this.http.get<ApiResult<VendorDashboardInit>>(url);
+  }
+
+  /** 取得目前登入攤主的通知中心資料。 */
+  getVendorNotifications(
+    filter = '全部',
+    page = 1,
+    pageSize = 8,
+  ): Observable<ApiResult<VendorNotificationSearchResult>> {
+    const url = `${environment.apiBaseUrl}api/vendor/notices`;
+    const params = new HttpParams()
+      .set('filter', filter)
+      .set('page', String(page))
+      .set('pageSize', String(pageSize));
+
+    return this.http.get<ApiResult<VendorNotificationSearchResult>>(url, { params });
   }
 
   /** 搜尋目前登入攤主的報名紀錄。 */

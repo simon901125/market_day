@@ -1,6 +1,22 @@
-import { Component } from '@angular/core';
-import { NotificationItem, NotificationType } from '../../../../models/interface/shared/NotificationItem';
-import { DashboardNotification } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
+import { Component, OnInit } from '@angular/core';
+import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
+import { NotificationApiService } from '../../../../core/services/notification-api.service';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { VendorDashboardNotification as VendorNotification } from '../../../../models/interface/vendor/VendorDashboardInit';
+import {
+  DashboardNotification,
+  NotificationItem,
+} from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
+
+const TAB_TO_FILTER: Record<string, string> = {
+  全部: '全部',
+  未讀: '未讀',
+  報名通知: '報名審核',
+  收款通知: '付款相關',
+  攤位通知: '攤位分配',
+  活動通知: '活動異動',
+  系統通知: '系統通知',
+};
 
 @Component({
   selector: 'app-vendor-dashboard-notification',
@@ -8,58 +24,110 @@ import { DashboardNotification } from '../../../shared/dashboard/dashboard-notif
   templateUrl: './vendor-dashboard-notification.html',
   styleUrl: './vendor-dashboard-notification.scss',
 })
-export class VendorDashboardNotification {
+export class VendorDashboardNotification implements OnInit {
   /** 標籤 */
-  tabs: Array<'全部' | '未讀' | NotificationType> = [
+  tabs: string[] = [
     '全部',
     '未讀',
     '報名通知',
     '收款通知',
     '攤位通知',
     '活動通知',
+    '系統通知',
   ];
 
-  /** 通知列 */
-  notifications: NotificationItem[] = [
-  {
-    icon: 'bi bi-clipboard-check',
-    iconClass: 'orange',
-    title: '你已送出「草悟野餐市集」報名申請',
-    status: '審核中',
-    statusClass: 'pending',
-    date: '2026/06/02 14:30',
-    unread: true,
-    type: '報名通知',
-  },
-  {
-    icon: 'bi bi-wallet2',
-    iconClass: 'orange',
-    title: '「夏日綠意市集」報名審核通過，請於期限內完成付款',
-    status: '待付款',
-    statusClass: 'payment',
-    date: '2026/06/02 13:10',
-    unread: true,
-    type: '收款通知',
-  },
-  {
-    icon: 'bi bi-shop',
-    iconClass: 'green',
-    title: '你已完成「貓貓森林市集」攤位選擇',
-    status: '已完成選位',
-    statusClass: 'success',
-    date: '2026/06/02 10:15',
-    unread: false,
-    type: '攤位通知',
-  },
-  {
-    icon: 'bi bi-megaphone',
-    iconClass: 'blue',
-    title: '「草悟野餐市集」將於 7 天後開始，請確認活動資訊',
-    status: '活動即將開始',
-    statusClass: 'info',
-    date: '2026/06/01 16:20',
-    unread: true,
-    type: '活動通知',
-  },
-];
+  notifications: NotificationItem[] = [];
+  totalItems = 0;
+  readonly pageSize = 8;
+  loading = false;
+
+  private currentFilter = TAB_TO_FILTER['全部'];
+  private currentPage = 1;
+
+  constructor(
+    private readonly vendorDashboardService: VendorDashboardService,
+    private readonly notificationApiService: NotificationApiService,
+  ) {}
+
+  ngOnInit(): void {
+    this.loadNotifications();
+  }
+
+  onTabChange(tab: string): void {
+    this.currentPage = 1;
+    this.currentFilter = TAB_TO_FILTER[tab] ?? TAB_TO_FILTER['全部'];
+    this.loadNotifications();
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadNotifications();
+  }
+
+  onMarkRead(item: NotificationItem): void {
+    if (item.id == null) return;
+    this.notificationApiService.markAsRead(item.id, { skipLoading: true }).subscribe();
+  }
+
+  private loadNotifications(): void {
+    this.loading = true;
+    this.vendorDashboardService
+      .getVendorNotifications(this.currentFilter, this.currentPage, this.pageSize)
+      .subscribe({
+        next: (response) => {
+          this.loading = false;
+          const page = response.data?.notifications;
+
+          if (!isApiSuccessStatus(response.statusCode) || !page) {
+            this.notifications = [];
+            this.totalItems = 0;
+            return;
+          }
+
+          this.notifications = (page.items ?? []).map((item) => this.toNotificationItem(item));
+          this.totalItems = page.totalItems;
+        },
+        error: () => {
+          this.loading = false;
+          this.notifications = [];
+          this.totalItems = 0;
+        },
+      });
+  }
+
+  private toNotificationItem(item: VendorNotification): NotificationItem {
+    const appearance = this.notificationAppearance(item.category);
+    return {
+      id: item.id,
+      icon: appearance.icon,
+      iconClass: appearance.iconClass,
+      title: item.content,
+      status: item.title,
+      date: this.formatDateTime(item.createdAt),
+      unread: !item.isRead,
+      type: item.category,
+    };
+  }
+
+  private notificationAppearance(category: string): {
+    icon: string;
+    iconClass: string;
+  } {
+    switch (category) {
+      case 'PAYMENT':
+        return { icon: 'bi bi-wallet2', iconClass: 'blue' };
+      case 'STALL_ASSIGNMENT':
+        return { icon: 'bi bi-shop', iconClass: 'green' };
+      case 'EVENT_CHANGE':
+        return { icon: 'bi bi-megaphone', iconClass: 'purple' };
+      case 'SYSTEM':
+        return { icon: 'bi bi-info-circle', iconClass: 'blue' };
+      default:
+        return { icon: 'bi bi-clipboard-check', iconClass: 'orange' };
+    }
+  }
+
+  private formatDateTime(value: string): string {
+    return value ? value.replace('T', ' ').slice(0, 16).replaceAll('-', '/') : '';
+  }
 }
