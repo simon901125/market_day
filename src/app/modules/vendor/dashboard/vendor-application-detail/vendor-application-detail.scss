@@ -1035,12 +1035,14 @@
   padding-right: 28px;
 }
 
-.application-detail-page .registration-card .info-list > div:nth-child(even) {
+.application-detail-page .registration-card .info-list > div:nth-child(even):not(.registration-note-row) {
   padding-left: 28px;
 }
 
 .application-detail-page .registration-card .info-list > .registration-note-row {
   grid-column: 1 / -1;
+  padding-right: 0;
+  padding-left: 0;
   border-bottom: 0;
 }
 

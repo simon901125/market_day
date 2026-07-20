@@ -1,4 +1,4 @@
-<main class="application-detail-page vendor-detail-page page-transition" [class.modal-open]="showDialog">
+<main class="application-detail-page vendor-detail-page page-transition">
   <!-- 詳情 API 請求期間與失敗時提供明確頁面狀態。 -->
   @if (isLoading) {
     <p class="notice-box" role="status">報名詳情載入中…</p>
@@ -81,7 +81,9 @@
       </a>
     </div>
     <div class="summary-image">
-      <img [src]="detail.image" [alt]="detail.title" />
+      @if (detail.image) {
+        <img [src]="detail.image" [alt]="detail.title" />
+      }
     </div>
 
     <div class="summary-info activity-info">

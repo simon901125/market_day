@@ -123,9 +123,13 @@ export interface VendorApplicationApiEquipment {
   /** 租借數量。 */
   quantity: number;
   /** 數量單位。 */
-  unit: string;
-  /** 單價；後端未回傳時可缺省。 */
+  unit: string | null;
+  /** 詳情端點使用的單價欄位。 */
   unitPrice?: number | null;
+  /** 報名與活動設備端點使用的租金欄位。 */
+  rentalFee?: number | null;
+  /** 設備計價方式，例如 EVENT、DAY、UNIT。 */
+  pricingUnit?: string | null;
   /** 設備小計。 */
   subtotal: number;
   /** 租借天數等小計說明。 */

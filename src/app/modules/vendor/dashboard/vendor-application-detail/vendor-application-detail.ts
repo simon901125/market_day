@@ -39,11 +39,8 @@ export class VendorApplicationDetail implements OnInit {
   isRequestingRefund = false;
   loadError = '';
 
-  /** 是否顯示頁內彈窗；退款成功提示改由共用 SweetAlert 顯示。 */
-  showDialog = false;
-  /** 付款結果假資料；之後串接金流 API 時可由後端回傳決定 success 或 failed。 */
-  mockPaymentResult: 'success' | 'failed' = 'success';
   refundReason = '';
+  refundMethod = '';
   marketWorkflowStatus = '';
   private marketWorkflowLoaded = false;
 
@@ -194,7 +191,7 @@ export class VendorApplicationDetail implements OnInit {
     return statusClassMap[statusText.trim()] ?? null;
   }
 
-  /** 前端模擬操作完成後暫時更新畫面狀態。 */
+  /** API 操作成功後先同步畫面狀態，接著重新載入後端詳情。 */
   setStatus(status: ApplicationStatus): void {
     const display = getApplicationStatusDisplay(status);
     this.detail = {
@@ -203,7 +200,6 @@ export class VendorApplicationDetail implements OnInit {
       statusText: display.statusText,
       statusClass: display.statusClass,
     };
-    this.showDialog = false;
   }
 
   /** 調用攤主報名詳情 API，並統一處理業務失敗與網路錯誤。 */
@@ -233,12 +229,13 @@ export class VendorApplicationDetail implements OnInit {
   /** 將後端詳情結構轉成現有樣板所使用的顯示模型。 */
   private applyApiDetail(api: VendorApplicationApiDetail): void {
     const statusDisplay = mapApiApplicationStatus(api.application.applicationStatus);
-    const image = api.event.eventCoverImageUrl || 'assets/images/market/cards/market-card-01.png';
+    const image = api.event.eventCoverImageUrl ?? '';
     const selectedStalls = api.stall.filter((stall) => Boolean(stall.stallNo));
     const hasRefund = Boolean(api.refund.refundStatus);
 
     this.currentApplicationId = api.application.applicationId;
     this.currentApplicationNo = api.application.applicationNo;
+    this.refundMethod = api.refund.refundMethod || api.fee.paymentMethod || '';
     this.marketWorkflowStatus = api.event.workflowStatus
       ?? (api.event.unpublished ? 'UNPUBLISHED' : api.event.unpublishRequested ? 'UNPUBLISH_REQUESTED' : '');
     this.marketWorkflowLoaded = Boolean(
@@ -266,7 +263,10 @@ export class VendorApplicationDetail implements OnInit {
     };
 
     const applicationRows: DetailRow[] = [
-      { label: '報名場次', value: displayValue(api.applicationdetail.registrationPeriods) },
+      {
+        label: '報名場次',
+        value: formatRegistrationPeriods(api.applicationdetail.registrationPeriods),
+      },
       {
         label: '攤位尺寸',
         value: api.applicationdetail.width && api.applicationdetail.length
@@ -280,11 +280,8 @@ export class VendorApplicationDetail implements OnInit {
     ];
     const paymentRows = createPaymentRows(api);
     const refundRows = createRefundRows(api);
-    // 保留後端回傳的完整流程骨架，未到達的步驟依 main 版面顯示「尚未完成」。
-    const statusProgress = api.status.map((step) => ({
-        label: step.label,
-        value: [step.value, step.createdAt].filter(Boolean).join('　') || '尚未完成',
-      }));
+    // 狀態紀錄固定呈現完整流程；尚未發生的步驟也保留位置，方便攤主掌握進度。
+    const statusProgress = createStatusProgress(api.status);
     const boothSelected = selectedStalls.length > 0;
     const boothActionLabel = boothSelected
       ? '查看攤位地圖'
@@ -337,13 +334,13 @@ export class VendorApplicationDetail implements OnInit {
       name: item.equipmentName,
       spec: displayValue(item.specification),
       quantity: item.quantity,
-      unit: item.unit,
+      unit: displayValue(item.unit),
     }));
     this.rentalEquipment = api.equipmentRentals.rentalEquipments.map((item) => ({
       name: item.equipmentName,
       spec: displayValue(item.specification),
       quantity: item.quantity,
-      price: item.unitPrice == null ? '—' : `${formatCurrency(item.unitPrice)} / ${item.unit}`,
+      price: formatEquipmentRentalFee(item),
       subtotal: formatCurrency(item.total ?? item.subtotal),
     }));
     this.basicPower = api.equipmentRentals.freeBasicPower.map((item) => ({
@@ -557,26 +554,6 @@ export class VendorApplicationDetail implements OnInit {
     });
   }
 
-  /** 顯示付款成功確認畫面。 */
-  private openPaymentSuccess(): Promise<unknown> {
-    return this.alert.successHtml({
-      html: this.getPaymentSuccessHtml(),
-      confirmButtonText: '我知道了',
-      popupClass: 'payment-result-swal',
-      showCloseButton: true,
-    });
-  }
-
-  /** 顯示付款失敗確認畫面。 */
-  private openPaymentFailed(): Promise<unknown> {
-    return this.alert.successHtml({
-      html: this.getPaymentFailedHtml(),
-      confirmButtonText: '重新付款',
-      popupClass: 'payment-result-swal',
-      showCloseButton: true,
-    });
-  }
-
   /** 先要求填寫退款原因，未填寫不可進入確認步驟。 */
   private requestRefundReason(): Promise<string | null> {
     return this.alert.requiredReason({
@@ -596,7 +573,7 @@ export class VendorApplicationDetail implements OnInit {
         },
         {
           label: '退款方式',
-          value: '信用卡',
+          value: displayValue(this.refundMethod),
         },
       ],
     });
@@ -608,7 +585,7 @@ export class VendorApplicationDetail implements OnInit {
       title: '確認申請退款？',
       description: '申請退款後，主辦單位將進行審核與處理；送出申請後將無法撤回。',
       subjectLabel: '退款方式',
-      subject: '信用卡',
+      subject: displayValue(this.refundMethod),
       summaryItems: [
         {
           label: '退款金額',
@@ -637,100 +614,6 @@ export class VendorApplicationDetail implements OnInit {
       '主辦單位將進行審核與處理，退款進度可於「我的報名紀錄」中查看。',
       '確認',
     );
-  }
-
-  /** 組合退款確認視窗內容，金額與方式未來可改由 API 帶入。 */
-  private getRefundConfirmHtml(): string {
-    return `
-      <div class="refund-confirm-content">
-        <h3>確認申請退款？</h3>
-        <p class="refund-confirm-lead">
-          申請退款後，主辦單位將進行審核與處理，確認後款項將退回至原付款方式。
-        </p>
-
-        <section class="refund-confirm-section">
-          <i class="bi bi-currency-dollar"></i>
-          <div>
-            <h4>退款金額</h4>
-            <p class="refund-confirm-amount">
-              <strong>$1,700</strong>
-              <span>（含攤位費用）</span>
-            </p>
-          </div>
-        </section>
-
-        <section class="refund-confirm-section">
-          <i class="bi bi-wallet2"></i>
-          <div>
-            <h4>退款方式</h4>
-            <p><strong>原付款方式退回（信用卡）</strong></p>
-            <p>款項將退回至原信用卡帳戶。</p>
-          </div>
-        </section>
-
-        <section class="refund-confirm-notice">
-          <i class="bi bi-info-circle"></i>
-          <h4>注意事項</h4>
-          <ul>
-            <li>保證金不退還。</li>
-            <li>退款完成時間依您的發卡銀行或付款平台作業時間為準。</li>
-            <li>退款審核結果與退款完成後，將於「通知中心」中通知您。</li>
-          </ul>
-        </section>
-
-        <p class="refund-confirm-footnote">送出申請後將無法撤回，請確認後再送出。</p>
-      </div>
-    `;
-  }
-
-  /** 組合退款申請成功視窗內容，符合 swal.md 的共用 SweetAlert 使用規範。 */
-  private getRefundSuccessHtml(): string {
-    return `
-      <div class="refund-success-content">
-        <div class="refund-success-icon">
-          <i class="bi bi-check-lg"></i>
-        </div>
-
-        <h3>退款申請已送出！</h3>
-        <p>
-          您的退款申請已送出，主辦方將進行審核與處理。<br>
-          退款處理進度將於「我的報名紀錄」中查看。
-        </p>
-      </div>
-    `;
-  }
-
-  /** 組合付款成功視窗內容，符合 swal.md 的共用 SweetAlert 使用規範。 */
-  private getPaymentSuccessHtml(): string {
-    return `
-      <div class="registration-swal-content">
-        <div class="registration-swal-icon success">
-          <i class="bi bi-check-lg"></i>
-        </div>
-
-        <h3>付款成功！</h3>
-        <p>您的報名費用已成功付款，感謝您的報名。</p>
-      </div>
-    `;
-  }
-
-  /** 組合付款失敗視窗內容，金流失敗時可直接重試付款。 */
-  private getPaymentFailedHtml(): string {
-    return `
-      <div class="registration-swal-content">
-        <div class="registration-swal-icon error">
-          <i class="bi bi-x-lg"></i>
-        </div>
-
-        <h3>付款失敗！</h3>
-        <p>您的付款無法完成，請重新嘗試付款。</p>
-      </div>
-    `;
-  }
-
-  /** 關閉成功彈窗。 */
-  closeDialog(): void {
-    this.showDialog = false;
   }
 
 }
@@ -813,6 +696,103 @@ function createRefundRows(api: VendorApplicationApiDetail): DetailRow[] {
   ].filter((row): row is DetailRow => row !== null);
 }
 
+const STATUS_PROGRESS_DEFINITIONS: ReadonlyArray<{
+  label: string;
+  keys: readonly string[];
+  labels: readonly string[];
+}> = [
+  { label: '報名日期', keys: ['APPLIED', 'REGISTERED'], labels: ['報名日期', '報名時間'] },
+  { label: '審核時間', keys: ['REVIEWED', 'APPROVED', 'REJECTED'], labels: ['審核時間'] },
+  { label: '取消時間', keys: ['CANCELLED', 'CANCELED'], labels: ['取消時間', '已取消時間'] },
+  { label: '付款時間', keys: ['PAID', 'PAYMENT_COMPLETED'], labels: ['付款時間'] },
+  {
+    label: '退款申請時間',
+    keys: ['REFUND_REQUESTED'],
+    labels: ['退款申請時間'],
+  },
+  {
+    label: '退款審核時間',
+    keys: ['REFUND_REVIEWED', 'REFUND_APPROVED', 'REFUND_REJECTED'],
+    labels: ['退款審核時間'],
+  },
+  {
+    label: '已退款時間',
+    keys: ['REFUNDED', 'REFUND_COMPLETED'],
+    labels: ['已退款時間', '退款時間'],
+  },
+  {
+    label: '選位時間',
+    keys: ['BOOTH_SELECTED', 'STALL_SELECTED', 'SELECTED'],
+    labels: ['選位時間', '攤位選擇時間'],
+  },
+  {
+    label: '保證金退還時間',
+    keys: ['DEPOSIT_RETURNED', 'DEPOSIT_REFUNDED'],
+    labels: ['保證金退還時間', '保證金退還', '保證金完成時間'],
+  },
+];
+
+/** 將後端可能缺項或名稱略異的紀錄，整理成畫面固定的九個時間節點。 */
+function createStatusProgress(
+  steps: VendorApplicationApiDetail['status'],
+): DetailRow[] {
+  const timeline = STATUS_PROGRESS_DEFINITIONS.map((definition) => {
+    const step = steps.find((candidate) => {
+      const normalizedKey = candidate.key.trim().toUpperCase();
+      const normalizedLabel = candidate.label.trim();
+      return definition.keys.includes(normalizedKey) || definition.labels.includes(normalizedLabel);
+    });
+
+    return {
+      label: definition.label,
+      value: formatDateTime(step?.createdAt),
+    };
+  });
+  const reasons = steps
+    .filter((step) => ['取消原因', '退款原因', '退款申請原因'].includes(step.label.trim()))
+    .filter((step) => Boolean(step.value?.trim()))
+    .map((step) => ({ label: step.label.trim(), value: step.value!.trim() }));
+
+  return [...timeline, ...reasons];
+}
+
+/** 日期時間只做文字格式正規化，避免 ISO 時區轉換改變後端所代表的本地時間。 */
+function formatDateTime(value: string | null | undefined): string {
+  if (!value?.trim()) {
+    return '尚未完成';
+  }
+
+  const match = value.trim().match(
+    /^(\d{4})[-/](\d{1,2})[-/](\d{1,2})[T\s](\d{1,2}):(\d{2})/,
+  );
+  if (!match) {
+    return value.trim();
+  }
+
+  const [, year, month, day, hour, minute] = match;
+  return `${year}/${month.padStart(2, '0')}/${day.padStart(2, '0')} ${hour.padStart(2, '0')}:${minute}`;
+}
+
+/** 將一個或多個報名場次統一顯示為 yyyy/MM/dd HH:mm - HH:mm。 */
+function formatRegistrationPeriods(value: string | null): string {
+  if (!value?.trim()) {
+    return '—';
+  }
+
+  return value
+    .trim()
+    .replace(
+      /(\d{4})[-/](\d{1,2})[-/](\d{1,2})\s+(\d{1,2}):(\d{2})\s*[-~–—至]\s*(\d{1,2}):(\d{2})/g,
+      (_, year, month, day, startHour, startMinute, endHour, endMinute) =>
+        `${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')} `
+        + `${String(startHour).padStart(2, '0')}:${startMinute} - `
+        + `${String(endHour).padStart(2, '0')}:${endMinute}`,
+    )
+    // API 目前也可能以「場次一 - 場次二」回傳；只替換兩個完整日期之間的連字號。
+    .replace(/(\d{2}:\d{2})\s*-\s*(?=\d{4}\/\d{2}\/\d{2}\s)/g, '$1、 ')
+    .replace(/\s*[,，;；、]\s*/g, '、 ');
+}
+
 function createEmptyApplicationDetail(): ApplicationDetail {
   return {
     status: 'reviewing',
@@ -822,7 +802,7 @@ function createEmptyApplicationDetail(): ApplicationDetail {
     applicationNo: '',
     dateRange: '',
     location: '',
-    image: 'assets/images/market/cards/market-card-01.png',
+    image: '',
     progress: [],
     applicationRows: [],
     paymentRows: [],
@@ -843,7 +823,7 @@ function createEmptyMarket(): MarketCardItem {
     address: '',
     city: '',
     area: '',
-    image: 'assets/images/market/cards/market-card-01.png',
+    image: '',
     status: '',
     statusClass: '',
     tags: [],
@@ -856,6 +836,27 @@ function createEmptyMarket(): MarketCardItem {
 function displayValue(value: string | number | null | undefined): string {
   const text = value == null ? '' : String(value).trim();
   return text || '—';
+}
+
+/** 詳情 API 的 unitPrice 來源為資料庫 rental_fee；rentalFee 僅保留舊格式相容。 */
+function formatEquipmentRentalFee(
+  item: VendorApplicationApiDetail['equipmentRentals']['rentalEquipments'][number],
+): string {
+  const price = item.unitPrice ?? item.rentalFee;
+  if (price == null) {
+    return '—';
+  }
+
+  const pricingUnitLabels: Record<string, string> = {
+    EVENT: '場',
+    DAY: '天',
+    UNIT: '份',
+  };
+  const unit = item.unit?.trim()
+    || pricingUnitLabels[item.pricingUnit?.trim().toUpperCase() ?? '']
+    || '';
+
+  return `${formatCurrency(price)}${unit ? ` / ${unit}` : ''}`;
 }
 
 function formatCurrency(value: number | null | undefined): string {
