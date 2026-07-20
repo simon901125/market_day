@@ -1,5 +1,3 @@
-import { MarketCardItem } from '../shared/MarketCardItem';
-
 /** 報名詳細頁支援的報名狀態。 */
 export type ApplicationStatus =
   | 'reviewing'
@@ -176,21 +174,6 @@ export interface VendorApplicationDetailApiResponse {
   [key: string]: unknown;
 }
 
-/** 清單進入詳細頁時，用報名編號覆蓋的活動摘要資料。 */
-export interface ApplicationSummary {
-  /** 活動名稱。 */
-  title: string;
-
-  /** 活動日期區間。 */
-  dateRange: string;
-
-  /** 活動地點。 */
-  location: string;
-
-  /** 活動圖片路徑。 */
-  image: string;
-}
-
 /** 報名紀錄列表使用的狀態代碼。 */
 export type ApplicationRecordStatus =
   | 'reviewing'
@@ -224,16 +207,13 @@ export interface RecordAction {
   link?: string;
 }
 
-/** 報名紀錄列表資料；detail 供詳細頁用報名編號直接取得完整內容。 */
+/** 報名紀錄列表資料，由搜尋 API 的摘要內容建立。 */
 export interface ApplicationRecord {
   /** 列表排序用流水號。 */
   id: number;
 
   /** 列表縮圖。 */
   image: string;
-
-  /** 關聯的市集卡片資料，供 activity-detail 直接讀取。 */
-  market: MarketCardItem;
 
   /** 市集名稱。 */
   marketName: string;
@@ -259,6 +239,4 @@ export interface ApplicationRecord {
   /** 列表操作按鈕。 */
   actions: RecordAction[];
 
-  /** 詳細頁需要的完整資料。 */
-  detail: ApplicationDetail;
 }
