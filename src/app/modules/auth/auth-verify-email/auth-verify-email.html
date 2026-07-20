@@ -26,8 +26,9 @@
           inputmode="numeric"
           autocomplete="one-time-code"
           pattern="[0-9]*"
-          [disabled]="isSubmitting"
+          [disabled]="isSubmitting"d
           [ngModel]="code[i]"
+          [ngModelOptions]="{ standalone: true }"
           (ngModelChange)="onCodeInput($event, i)"
           (keydown.backspace)="onCodeBackspace(i)"
           (paste)="onCodePaste($event, i)"
