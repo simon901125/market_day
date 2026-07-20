@@ -8,7 +8,11 @@
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
+import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { OrganizerApplicationDetailResponse } from '../../../../models/interface/organizer/OrganizerApplicationSearch';
 import {
   OrganizerRegistrationDetail,
   OrganizerRegistrationDetailAction,
@@ -171,19 +175,19 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
 
   returnPage = 1;
   returnStatus = '';
-  detail: OrganizerRegistrationDetail = this.createDetail(registrationRows[0], registrationRows[0].status);
+  detail: OrganizerRegistrationDetail = this.createEmptyDetail();
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly alert: AlertService,
+    private readonly organizerApi: OrganizerApiService,
     private readonly appRef: ApplicationRef,
     private readonly environmentInjector: EnvironmentInjector,
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    const status = this.route.snapshot.queryParamMap.get('status');
     const returnPage = Number(this.route.snapshot.queryParamMap.get('returnPage'));
     this.returnStatus = this.route.snapshot.queryParamMap.get('returnStatus') ?? '';
 
@@ -191,7 +195,12 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
       this.returnPage = returnPage;
     }
 
-    this.detail = this.getDetail(id, status);
+    if (!Number.isInteger(id) || id <= 0) {
+      void this.alert.error('報名詳情載入失敗', '報名 ID 不正確。').then(() => this.goBack());
+      return;
+    }
+
+    void this.loadDetail(id);
   }
 
   get statusClass(): string {
@@ -233,14 +242,17 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
           { key: 'approve', label: '審核通過', icon: 'bi-check-lg', variant: 'primary' },
         ];
       case ApplicationStatus.completed:
-        const canReturnDeposit = this.isActivityEnded(this.detail.activity.date);
+        const canReturnDeposit = this.isActivityOngoing(
+          this.detail.activity.startAt,
+          this.detail.activity.endAt,
+        );
         return [
           {
             key: 'returnDeposit',
             label: '退還保證金',
             variant: 'primary',
             disabled: !canReturnDeposit,
-            hint: canReturnDeposit ? undefined : '活動結束後即可退還保證金',
+            hint: canReturnDeposit ? undefined : '活動進行期間才可退還保證金',
           },
         ];
       case ApplicationStatus.pendingSelection:
@@ -352,22 +364,25 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
         await this.returnDeposit();
         return;
       case 'goPaymentManagement':
-        this.router.navigate(['/organizer/dash-board/collection/detail', this.getCollectionDetailId(this.detail.status)]);
+        this.router.navigate(['/organizer/dash-board/collection/detail', this.detail.id]);
         return;
       case 'chooseBooth':
         await this.alert.info('選擇攤位', '將前往攤位分配功能。', '知道了');
         return;
       case 'viewRefundInfo':
-        this.router.navigate(['/organizer/dash-board/collection/detail', this.getCollectionDetailId(this.detail.status)]);
+        this.router.navigate(['/organizer/dash-board/collection/detail', this.detail.id]);
         return;
       case 'viewDepositInfo':
-        this.router.navigate(['/organizer/dash-board/collection/detail', this.getCollectionDetailId(this.detail.status)]);
+        this.router.navigate(['/organizer/dash-board/collection/detail', this.detail.id]);
         return;
       case 'viewActivity':
-        this.router.navigate(['/organizer/dash-board/activity/detail', this.detail.id]);
+        this.router.navigate(['/organizer/dash-board/activity/detail', this.detail.activity.eventId]);
         return;
       case 'viewBrand':
-        this.openInNewTab('/user/brand-detail');
+        this.openInNewTab(
+          '/user/brand-detail',
+          this.detail.brand.id ? { brand: String(this.detail.brand.id) } : undefined,
+        );
         return;
       case 'viewBoothMap':
         this.boothMapModal?.openFullscreenMap();
@@ -375,26 +390,9 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     }
   }
 
-  private openInNewTab(path: string): void {
-    const url = this.router.serializeUrl(this.router.createUrlTree([path]));
+  private openInNewTab(path: string, queryParams?: Record<string, string>): void {
+    const url = this.router.serializeUrl(this.router.createUrlTree([path], { queryParams }));
     window.open(url, '_blank', 'noopener,noreferrer');
-  }
-
-  private getCollectionDetailId(status: string): number {
-    switch (status) {
-      case ApplicationStatus.refundPending:
-        return 2;
-      case ApplicationStatus.refunding:
-        return 3;
-      case ApplicationStatus.refunded:
-        return 8;
-      case ApplicationStatus.depositReturned:
-        return 9;
-      case ApplicationStatus.cancelled:
-        return 6;
-      default:
-        return 1;
-    }
   }
 
   private summarizeEquipment(rows: OrganizerRegistrationDetail['freeEquipmentRows']): string {
@@ -424,17 +422,15 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     return rows.map((row) => row.cells[0]).join('、');
   }
 
-  private isActivityEnded(activityTime: string): boolean {
-    const [, endText] = activityTime.split(' - ');
+  private isActivityOngoing(startAt: string | null, endAt: string | null): boolean {
+    if (!startAt || !endAt) return false;
 
-    if (!endText) {
-      return false;
-    }
+    const start = new Date(startAt);
+    const end = new Date(endAt);
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
 
-    const [year, month, day] = endText.split('/').map(Number);
-    const endDate = new Date(year, month - 1, day, 23, 59, 59);
-
-    return new Date() > endDate;
+    const now = Date.now();
+    return now >= start.getTime() && now <= end.getTime();
   }
 
   goBack(): void {
@@ -452,6 +448,187 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     return records.filter((record): record is OrganizerRegistrationStatusRecordItem => Boolean(record.value));
   }
 
+  private async loadDetail(applicationId: number, showError = true): Promise<void> {
+    try {
+      const response = await firstValueFrom(this.organizerApi.getOrganizerApplicationDetail(applicationId));
+      if (!isApiSuccessStatus(response.statusCode) || !response.data?.application) {
+        if (showError) await this.alert.error('報名詳情載入失敗', response.message || '請稍後再試。');
+        return;
+      }
+      this.detail = this.toRegistrationDetail(response.data);
+    } catch {
+      if (showError) await this.alert.error('報名詳情載入失敗', '目前無法取得報名資料，請稍後再試。');
+    }
+  }
+
+  private toRegistrationDetail(raw: OrganizerApplicationDetailResponse): OrganizerRegistrationDetail {
+    const categoryName = raw.brand.category?.name || '-';
+    const statusTime = (key: string): string | undefined =>
+      raw.status.find((item) => item.key === key && item.createdAt)?.createdAt ?? undefined;
+    const freeEquipmentRows = raw.equipmentRentals.freeEquipments.map((row) => ({
+      cells: [
+        this.textValue(row['equipmentName']),
+        this.textValue(row['specification']),
+        this.textValue(row['quantity']),
+        this.textValue(row['unit'], '個'),
+      ],
+    }));
+    const rentalEquipmentRows = raw.equipmentRentals.rentalEquipments.map((row) => ({
+      cells: [
+        this.textValue(row['equipmentName']),
+        this.textValue(row['specification']),
+        this.textValue(row['quantity']),
+        this.textValue(row['unit'], '個'),
+        this.moneyValue(row['total'] ?? row['subtotal']),
+      ],
+    }));
+    const basicPowerRows = raw.equipmentRentals.freeBasicPower.map((row) => ({
+      cells: [this.textValue(row['powerSpecification']), this.wattValue(row['wattage'])],
+    }));
+    const extraPowerRows = raw.equipmentRentals.extraPower.map((row) => ({
+      cells: [
+        this.textValue(row['powerSpecification']),
+        this.wattValue(row['wattage']),
+        this.moneyValue(row['unitPrice']),
+        this.moneyValue(row['total'] ?? row['subtotal']),
+      ],
+    }));
+    // 後端依序回傳：報名費、設備租借費、額外電費、保證金、總計。
+    // 使用固定欄位順序，避免顯示名稱調整時讓金額對應失效。
+    const applicationFee = raw.feedetail[0]?.amount;
+    const extraPowerFee = raw.feedetail[2]?.amount;
+    const depositAmount = raw.feedetail[3]?.amount;
+    const totalAmount = raw.feedetail[4]?.amount;
+    const registrationPeriods = (raw.applicationdetail.registrationPeriods || '-')
+      .replace(/(?<=\d{2}:\d{2}) - (?=\d{4}[/-]\d{2}[/-]\d{2})/g, '\n');
+    const reason = raw.applicationdetail.reviewNote
+      ? {
+          title: '審核未通過原因',
+          subtitle: raw.applicationdetail.reviewNote,
+          description: raw.applicationdetail.reviewNoteDetail || '-',
+        }
+      : undefined;
+    const refund = raw.refund?.refundStatus
+      ? {
+          reason: raw.refund.refundStatusText || '退款處理',
+          description: '退款進度與金額請至收款詳情查看。',
+          requestedAt: statusTime('REFUND_REQUESTED'),
+          confirmedAt: statusTime('REFUND_REVIEW'),
+          refundedAt: raw.refund.refundedAt || statusTime('REFUNDED'),
+        }
+      : undefined;
+
+    return {
+      id: raw.application.applicationId,
+      status: raw.application.applicationStatus,
+      registrationNo: raw.application.applicationNo || '-',
+      activity: {
+        eventId: raw.event.eventId,
+        name: raw.event.eventTitle || '-',
+        image: raw.event.eventCoverImageUrl || 'assets/images/shared/no-image-placeholder.svg',
+        date: raw.event.eventTime || '-',
+        startAt: raw.event.eventStartAt,
+        endAt: raw.event.eventEndAt,
+        status: raw.event.eventStatus || '-',
+        location: raw.event.locationName || '-',
+        address: raw.event.address || '-',
+      },
+      vendor: {
+        name: raw.vendor.vendorOwnerName || '-',
+        phone: raw.vendor.vendorPhone || '-',
+        email: raw.vendor.vendorEmail || '-',
+        address: raw.vendor.address || '-',
+      },
+      brand: {
+        id: raw.brand.brandId,
+        name: raw.brand.brandName || '-',
+        type: categoryName,
+        image: raw.brand.avatarImageUrl || 'assets/images/shared/no-image-placeholder.svg',
+        description: raw.brand.brandDescription || '-',
+      },
+      registration: {
+        period: registrationPeriods,
+        boothSpec: this.boothSize(raw.applicationdetail.length, raw.applicationdetail.width),
+        boothZone: raw.applicationdetail.stallZone || '-',
+        boothCategories: categoryName,
+        vehiclePlate: raw.applicationdetail.vehicleNo || '-',
+        note: raw.applicationdetail.applicantNote || '-',
+        rentalEquipment: this.summarizeEquipment([...freeEquipmentRows, ...rentalEquipmentRows]),
+      },
+      fee: {
+        boothFee: this.moneyValue(applicationFee),
+        electricityFee: this.moneyValue(extraPowerFee),
+        deposit: this.moneyValue(depositAmount),
+        total: this.moneyValue(totalAmount),
+      },
+      payment: {
+        status: raw.fee.paymentStatus || '-',
+        method: raw.fee.paymentMethod || '-',
+        transactionNo: raw.fee.paymentNo || raw.fee.providerTradeNo || '-',
+        amount: this.moneyValue(raw.fee.paymentAmount),
+        deadline: '-',
+      },
+      boothAssignments: raw.stall.map((stall) => ({
+        date: stall.applyDate,
+        boothNo: stall.stallNo || '-',
+        zone: stall.zoneName || '-',
+        status: stall.selectionStatus,
+      })),
+      feeRows: raw.feedetail.map((row) => ({
+        label: row.item,
+        content: row.content || undefined,
+        value: this.moneyValue(row.amount),
+      })),
+      freeEquipmentRows,
+      rentalEquipmentRows,
+      basicPowerRows,
+      extraPowerRows,
+      rentalEquipmentSubtotal: this.sumMoney(raw.equipmentRentals.rentalEquipments),
+      extraPowerSubtotal: this.sumMoney(raw.equipmentRentals.extraPower),
+      refund,
+      depositReturn: statusTime('DEPOSIT_RETURNED')
+        ? { amount: this.moneyValue(depositAmount), method: '現金退還', returnedAt: statusTime('DEPOSIT_RETURNED') }
+        : undefined,
+      times: {
+        registeredAt: statusTime('APPLIED') || '-',
+        reviewedAt: statusTime('REVIEW'),
+        paidAt: statusTime('PAYMENT') || raw.fee.paidAt || undefined,
+        selectedAt: statusTime('STALL_SELECTED'),
+        finalConfirmedAt: statusTime('COMPLETED'),
+        depositReturnedAt: statusTime('DEPOSIT_RETURNED'),
+        refundRequestedAt: statusTime('REFUND_REQUESTED'),
+        refundReviewedAt: statusTime('REFUND_REVIEW'),
+        refundedAt: statusTime('REFUNDED') || raw.refund?.refundedAt || undefined,
+        cancelledAt: statusTime('CANCELLED'),
+      },
+      reason,
+    };
+  }
+
+  private textValue(value: unknown, fallback = '-'): string {
+    return value === null || value === undefined || value === '' ? fallback : String(value);
+  }
+
+  private wattValue(value: unknown): string {
+    const text = this.textValue(value);
+    return text === '-' || /w$/i.test(text) ? text : `${text}W`;
+  }
+
+  private moneyValue(value: unknown): string {
+    if (value === null || value === undefined || value === '') return '-';
+    const amount = Number(value);
+    return Number.isFinite(amount) ? `$${amount.toLocaleString('zh-TW')}` : String(value);
+  }
+
+  private boothSize(length: number | null, width: number | null): string {
+    return length && width ? `長 ${length} 公尺 × 寬 ${width} 公尺` : '-';
+  }
+
+  private sumMoney(rows: Array<Record<string, unknown>>): string {
+    const total = rows.reduce((sum, row) => sum + Number(row['total'] ?? row['subtotal'] ?? 0), 0);
+    return total > 0 ? this.moneyValue(total) : '-';
+  }
+
   private async approveRegistration(): Promise<void> {
     const confirmed = await this.alert.confirmHtml({
       html: this.getApproveConfirmHtml(),
@@ -464,10 +641,17 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
       return;
     }
 
-    this.detail = this.applyStatus({
-      ...this.detail,
-      status: ApplicationStatus.pendingPayment,
-    });
+    try {
+      const response = await firstValueFrom(this.organizerApi.approveOrganizerApplication(this.detail.id));
+      if (!isApiSuccessStatus(response.statusCode)) {
+        await this.alert.error('審核送出失敗', response.message || '請稍後再試。');
+        return;
+      }
+      await this.loadDetail(this.detail.id, false);
+    } catch {
+      await this.alert.error('審核送出失敗', '目前無法送出審核結果，請稍後再試。');
+      return;
+    }
 
     await this.alert.successHtml({
       html: this.getApproveSuccessHtml(),
@@ -495,19 +679,20 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
       return;
     }
 
-    this.detail = {
-      ...this.detail,
-      status: ApplicationStatus.reviewRejected,
-      times: {
-        ...this.detail.times,
-        reviewedAt: this.formatNow(),
-      },
-      reason: {
-        title: '審核未通過原因',
-        subtitle: form.reason,
-        description: form.description || this.getRejectDefaultDescription(form.reason),
-      },
-    };
+    try {
+      const response = await firstValueFrom(this.organizerApi.rejectOrganizerApplication(this.detail.id, {
+        reviewNote: form.reason,
+        reviewNoteDetail: form.description,
+      }));
+      if (!isApiSuccessStatus(response.statusCode)) {
+        await this.alert.error('審核送出失敗', response.message || '請稍後再試。');
+        return;
+      }
+      await this.loadDetail(this.detail.id, false);
+    } catch {
+      await this.alert.error('審核送出失敗', '目前無法送出審核結果，請稍後再試。');
+      return;
+    }
 
     await this.alert.successHtml({
       html: this.getRejectSuccessHtml(form),
@@ -529,14 +714,17 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
       return;
     }
 
-    this.detail = this.applyStatus({
-      ...this.detail,
-      status: ApplicationStatus.depositReturned,
-      times: {
-        ...this.detail.times,
-        depositReturnedAt: this.formatNow(),
-      },
-    });
+    try {
+      const response = await firstValueFrom(this.organizerApi.refundOrganizerDeposit(this.detail.id));
+      if (!isApiSuccessStatus(response.statusCode)) {
+        await this.alert.error('保證金退還失敗', response.message || '請稍後再試。');
+        return;
+      }
+      await this.loadDetail(this.detail.id, false);
+    } catch {
+      await this.alert.error('保證金退還失敗', '目前無法退還保證金，請稍後再試。');
+      return;
+    }
 
     await this.alert.successHtml({
       html: this.getDepositReturnSuccessHtml(),
@@ -829,9 +1017,12 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
       status,
       registrationNo: `REG2022060100${String(row.id).padStart(2, '0')}`,
       activity: {
+        eventId: row.id,
         name: row.activity,
         image: row.activityImage,
         date: this.getActivityDateTime(row.activityTime),
+        startAt: null,
+        endAt: null,
         status: '進行中',
         location: this.getActivityLocation(row.id),
         address: this.getActivityAddress(row.id),
@@ -843,6 +1034,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
         address: this.getVendorAddress(row.id),
       },
       brand: {
+        id: null,
         name: row.brandName,
         type: row.brandType,
         image: this.getBrandLogo(row.id),
@@ -900,6 +1092,22 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     };
 
     return this.applyStatus(detail);
+  }
+
+  private createEmptyDetail(): OrganizerRegistrationDetail {
+    const detail = this.createDetail({
+      id: 0,
+      activity: '-',
+      activityImage: 'assets/images/shared/no-image-placeholder.svg',
+      activityTime: '-',
+      brandName: '-',
+      vendorName: '-',
+      brandType: '-',
+      registeredAt: '-',
+      status: '',
+    }, '');
+    detail.registrationNo = '-';
+    return detail;
   }
 
   private applyStatus(detail: OrganizerRegistrationDetail): OrganizerRegistrationDetail {

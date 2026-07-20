@@ -168,7 +168,7 @@
           class="detail-table-pagination"
           [currentPage]="rentalCurrentPage"
           [pageSize]="detailPageSize"
-          [totalItems]="detail.rentalRows.length"
+          [totalItems]="rentalTotalItems"
           (pageChange)="onRentalPageChange($event)"
         ></app-dashboard-pagination>
       </article>
@@ -225,7 +225,7 @@
           class="detail-table-pagination"
           [currentPage]="extraPowerCurrentPage"
           [pageSize]="detailPageSize"
-          [totalItems]="detail.extraPowerRows.length"
+          [totalItems]="extraPowerTotalItems"
           (pageChange)="onExtraPowerPageChange($event)"
         ></app-dashboard-pagination>
       </article>
@@ -282,7 +282,7 @@
           class="detail-table-pagination"
           [currentPage]="vehicleCurrentPage"
           [pageSize]="detailPageSize"
-          [totalItems]="detail.vehicleRows.length"
+          [totalItems]="vehicleTotalItems"
           (pageChange)="onVehiclePageChange($event)"
         ></app-dashboard-pagination>
       </article>
