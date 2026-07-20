@@ -69,6 +69,7 @@ interface CollectionDetail {
   templateUrl: './organizer-dashboard-collection-detail.html',
   styleUrl: './organizer-dashboard-collection-detail.scss',
 })
+/** 收款詳情頁，呈現費用明細並處理退款確認與退款付款重試。 */
 export class OrganizerDashboardCollectionDetail implements OnInit {
   returnPage = 1;
   returnStatus = '';
@@ -83,6 +84,7 @@ export class OrganizerDashboardCollectionDetail implements OnInit {
     private readonly organizerApi: OrganizerApiService,
   ) {}
 
+  /** 驗證報名 ID、還原返回條件，並載入收款詳情。 */
   ngOnInit(): void {
     this.applicationId = Number(this.route.snapshot.paramMap.get('id'));
     const pageFromUrl = Number(this.route.snapshot.queryParamMap.get('returnPage'));
@@ -142,6 +144,7 @@ export class OrganizerDashboardCollectionDetail implements OnInit {
     });
   }
 
+  /** 處理退款確認或付款重試，成功後重新取得最新交易狀態。 */
   async handleAction(action: DetailAction): Promise<void> {
     const isRetry = action.key === 'retry-refund';
     const refundNo = this.detail.refundNo;
@@ -186,6 +189,7 @@ export class OrganizerDashboardCollectionDetail implements OnInit {
     }
   }
 
+  /** 載入付款詳情；必要時在資料就緒後接續執行網址指定的待辦操作。 */
   private loadDetail(runPendingAction: boolean): Promise<void> {
     return new Promise((resolve) => {
       this.organizerApi.getOrganizerPaymentDetail(this.applicationId).subscribe({
@@ -221,6 +225,7 @@ export class OrganizerDashboardCollectionDetail implements OnInit {
     });
   }
 
+  /** 將付款、設備、用電與退款資料組合成畫面詳情模型。 */
   private toCollectionDetail(data: OrganizerPaymentDetailResponse): CollectionDetail {
     const feeRows = data.feeDetails.map((row) => this.toFeeRow(row));
     const refundRows = data.refundDetails?.map((row) => this.toFeeRow(row));

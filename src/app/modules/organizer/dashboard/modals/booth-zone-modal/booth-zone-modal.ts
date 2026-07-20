@@ -1,13 +1,15 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BoothZoneDraft } from '../../../../../models/interface/organizer/BoothZoneDraft';
+import { Dropdown } from '../../../../shared/dropdown/dropdown';
 
 @Component({
   selector: 'app-booth-zone-modal',
-  imports: [FormsModule],
+  imports: [FormsModule, Dropdown],
   templateUrl: './booth-zone-modal.html',
   styleUrl: './booth-zone-modal.scss',
 })
+/** 攤位分區編輯視窗，限制 A～Z 分區並驗證名稱、顏色與攤位數。 */
 export class BoothZoneModal {
   /** 分區名稱固定為 A 區至 Z 區，並直接作為攤位編號前綴。 */
   readonly zoneNameOptions = Array.from(
@@ -54,6 +56,16 @@ export class BoothZoneModal {
   get nameDuplicate(): boolean {
     const currentName = this.normalizeZoneName(this.draft.name);
     return Boolean(currentName) && this.existingZoneNames.some((name) => this.normalizeZoneName(name) === currentName);
+  }
+
+  /** 共用下拉選單只顯示尚未被其他分區使用的名稱。 */
+  get availableZoneNameOptions(): string[] {
+    return this.zoneNameOptions.filter((name) => !this.isZoneNameUsed(name));
+  }
+
+  /** 從共用下拉選單更新目前分區名稱。 */
+  onZoneNameSelected(name: string): void {
+    this.draft.name = name;
   }
 
   /** 已被其他分區使用的名稱不再提供選擇。 */

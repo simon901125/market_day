@@ -26,6 +26,7 @@ import { Dropdown } from '../../../shared/dropdown/dropdown';
   templateUrl: './organizer-dashboard-registration-management.html',
   styleUrl: './organizer-dashboard-registration-management.scss',
 })
+/** 報名管理列表，負責查詢、狀態篩選、分頁及導向報名處理頁。 */
 export class OrganizerDashboardRegistrationManagement implements OnInit {
   @ViewChild(DateRangeSelector) private dateRangeSelector?: DateRangeSelector;
 
@@ -58,6 +59,7 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     private readonly alert: AlertService,
   ) {}
 
+  /** 從網址還原篩選條件與頁碼，接著向後端載入報名列表。 */
   ngOnInit(): void {
     const pageFromUrl = Number(this.route.snapshot.queryParamMap.get('page'));
     const statusFromUrl = this.route.snapshot.queryParamMap.get('status') ?? '';
@@ -119,6 +121,7 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     return this.selectedStatus === ApplicationStatus.all ? null : this.selectedStatus;
   }
 
+  /** 依目前搜尋條件查詢報名資料，並同步待辦統計與分頁資訊。 */
   private loadApplications(): void {
     this.organizerApi.searchOrganizerApplications({
       eventTitle: this.searchActivityKeyword.trim() || undefined,
@@ -149,6 +152,7 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     });
   }
 
+  /** 將 API 報名摘要轉成共用表格需要的顯示模型。 */
   private toRegistrationRow(item: OrganizerApplicationSummary): OrganizerRegistrationRow {
     const row: OrganizerRegistrationRow = {
       id: item.applicationId,
@@ -164,6 +168,7 @@ export class OrganizerDashboardRegistrationManagement implements OnInit {
     return { ...row, actions: this.getRowActions(row) };
   }
 
+  /** 依報名狀態決定列表可執行的操作，避免前端顯示不適用的按鈕。 */
   private getRowActions(row: OrganizerRegistrationRow): OrganizerRegistrationAction[] {
     switch (row.status) {
       case ApplicationStatus.pendingReview:

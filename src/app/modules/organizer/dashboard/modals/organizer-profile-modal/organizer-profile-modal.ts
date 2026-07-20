@@ -31,6 +31,7 @@ type OrganizerProfileField =
   templateUrl: './organizer-profile-modal.html',
   styleUrl: './organizer-profile-modal.scss',
 })
+/** 主辦方資料視窗，負責載入、驗證及儲存聯絡與服務時間資料。 */
 export class OrganizerProfileModal implements OnChanges, OnDestroy {
   private readonly closeAnimationMs = 180;
   private closeTimer?: number;
@@ -116,6 +117,7 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
     this.clearValidationError('serviceTime');
   }
 
+  /** 驗證表單後儲存主辦方資料，並防止重複送出與過期回應覆蓋畫面。 */
   async save(): Promise<void> {
     if (this.isLoadingProfile || this.isSavingProfile) {
       return;
@@ -194,6 +196,7 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
     this.clearCloseTimer();
   }
 
+  /** 並行載入主辦方資料與縣市選項，再依縣市取得行政區。 */
   private async loadProfile(): Promise<void> {
     const loadId = ++this.profileLoadId;
     this.isLoadingProfile = true;
@@ -319,6 +322,7 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
     return time?.trim().slice(0, 5) || '';
   }
 
+  /** 將畫面表單轉為 API Request，包含服務星期中英文代碼轉換。 */
   private createSaveRequest(): OrganizerProfileSaveRequest {
     const codesByLabel: Record<string, string> = {
       週一: 'MON',
@@ -346,6 +350,7 @@ export class OrganizerProfileModal implements OnChanges, OnDestroy {
     };
   }
 
+  /** 集中檢查必填、格式與服務時間先後順序。 */
   private validateForm(): boolean {
     const errors: Partial<Record<OrganizerProfileField, string>> = {};
     const phone = this.form.contactPhone.trim();

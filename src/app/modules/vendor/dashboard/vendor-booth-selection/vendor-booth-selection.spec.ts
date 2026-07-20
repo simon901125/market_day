@@ -24,6 +24,58 @@ describe('VendorBoothSelection', () => {
         messageDetails: null,
         data: { event: { eventId: 82 } } as VendorApplicationApiDetail,
       })),
+      getVendorStallMap: jasmine.createSpy('getVendorStallMap').and.returnValue(of({
+        statusCode: 200,
+        message: 'ok',
+        messageDetails: null,
+        data: {
+          application: {
+            applicationNo: 'MD20260801001',
+            applicationStatus: '待選位',
+            vendorName: '測試攤主',
+            currentApplyDate: '2026-08-01',
+            applyDates: '2026-08-01,2026-08-02',
+            applyDateCount: 2,
+            selectedStalls: [{
+              selectedStallId: 12,
+              applyDate: '2026-08-02',
+              stallNo: 'A12',
+              zoneName: 'A區',
+              width: 3,
+              length: 3,
+            }],
+            alreadyselectdate: ['2026-08-02'],
+          },
+          event: {
+            eventTitle: '夏日市集',
+            startAt: '2026-08-01T10:00:00',
+            endAt: '2026-08-02T18:00:00',
+            address: '台北市測試路100號',
+          },
+          stalls: [
+            {
+              stallId: 3,
+              zoneId: 1,
+              zoneName: 'A區',
+              stallNo: 'A03',
+              width: 3,
+              length: 3,
+              status: 'AVAILABLE',
+              selectedApplicationId: null,
+            },
+            {
+              stallId: 4,
+              zoneId: 1,
+              zoneName: 'A區',
+              stallNo: 'A04',
+              width: 3,
+              length: 3,
+              status: 'SELECTED',
+              selectedApplicationId: 99,
+            },
+          ],
+        },
+      })),
     };
     const vendorService = {
       getMarketDetail: jasmine.createSpy('getMarketDetail').and.returnValue(of({
@@ -58,10 +110,19 @@ describe('VendorBoothSelection', () => {
 
     expect(dashboardService.getVendorApplicationDetail).toHaveBeenCalledOnceWith(25);
     expect(vendorService.getMarketDetail).toHaveBeenCalledOnceWith(82);
+    expect(dashboardService.getVendorStallMap)
+      .toHaveBeenCalledOnceWith('MD20260801001', '2026-08-01');
     expect(component.dateOptions).toEqual(['2026-08-01', '2026-08-02']);
-    expect(component.activityTitle).toBe('城市選物市集');
-    expect(component.activityAddress).toBe('關新公園');
-    expect(component.boothTotal).toBe(20);
+    expect(component.activityTitle).toBe('夏日市集');
+    expect(component.activityAddress).toBe('台北市測試路100號');
+    expect(component.boothTotal).toBe(2);
+    expect(component.mapData.booths.find((booth) => booth.code === 'A03')?.status)
+      .toBe('available');
+    expect(component.mapData.booths.find((booth) => booth.code === 'A04')?.status)
+      .toBe('occupied');
+    expect(component.mapData.booths.find((booth) => booth.code === 'B03')?.status)
+      .toBe('occupied');
+    expect(component.days[1].booth?.code).toBe('A12');
     expect(component.isLoading).toBeFalse();
   });
 });

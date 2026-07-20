@@ -31,6 +31,7 @@ interface StallEvent {
   templateUrl: './organizer-dashboard-stall-management.html',
   styleUrl: './organizer-dashboard-stall-management.scss',
 })
+/** 攤位管理列表，依活動與狀態查詢攤位使用概況。 */
 export class OrganizerDashboardStallManagement implements OnInit {
   @ViewChild(DateRangeSelector) private dateRangeSelector?: DateRangeSelector;
   keyword = '';
@@ -60,6 +61,7 @@ export class OrganizerDashboardStallManagement implements OnInit {
     private readonly organizerApi: OrganizerApiService,
   ) {}
 
+  /** 從網址還原查詢條件並載入活動攤位概況。 */
   ngOnInit(): void {
     this.keyword = this.route.snapshot.queryParamMap.get('keyword') ?? '';
     this.selectedStatus = this.route.snapshot.queryParamMap.get('status') ?? ActivityStatus.all;
@@ -113,6 +115,7 @@ export class OrganizerDashboardStallManagement implements OnInit {
     });
   }
 
+  /** 查詢活動攤位數量與選位進度，供主辦方選擇要管理的活動。 */
   private async loadEvents(): Promise<void> {
     try {
       const response = await firstValueFrom(this.organizerApi.searchOrganizerStalls({

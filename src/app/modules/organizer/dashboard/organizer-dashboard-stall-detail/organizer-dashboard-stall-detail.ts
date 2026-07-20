@@ -1,10 +1,17 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
+import { AlertService } from '../../../../core/services/alert.service';
 import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
-import { OrganizerStallMapItem, OrganizerStallMapResponse } from '../../../../models/interface/organizer/OrganizerOperations';
+import {
+  OrganizerStallDetailResponse,
+  OrganizerStallMapItem,
+  OrganizerStallMapResponse,
+} from '../../../../models/interface/organizer/OrganizerOperations';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 import { BoothStatus } from '../../../../models/status/BoothStatus';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 import { DashboardPagination } from '../../../shared/dashboard/dashboard-pagination/dashboard-pagination';
@@ -12,7 +19,8 @@ import { Dropdown } from '../../../shared/dropdown/dropdown';
 
 interface BoothRow { code: string; zone: string; size: string; selected: boolean; brand: string; category: string; vendor: string; selectedAt: string; }
 
-@Component({ selector: 'app-organizer-dashboard-stall-detail', imports: [FormsModule, RouterLink, DashboardPagination, Dropdown], templateUrl: './organizer-dashboard-stall-detail.html', styleUrl: './organizer-dashboard-stall-detail.scss' })
+@Component({ selector: 'app-organizer-dashboard-stall-detail', imports: [DatePipe, FormsModule, RouterLink, DashboardPagination, Dropdown], templateUrl: './organizer-dashboard-stall-detail.html', styleUrl: './organizer-dashboard-stall-detail.scss' })
+/** 活動攤位詳情頁，提供日期、攤位狀態篩選及已選攤位品牌資料。 */
 export class OrganizerDashboardStallDetail implements OnInit {
   readonly boothStatus = BoothStatus;
   eventId = 0;
@@ -23,6 +31,8 @@ export class OrganizerDashboardStallDetail implements OnInit {
   readonly pageSize = 5;
   dates: string[] = [];
   booths: BoothRow[] = [];
+  selectedStallDetail: OrganizerStallDetailResponse | null = null;
+  brandLoadingStallNo: string | null = null;
   event = {
     title: '-', image: 'assets/images/market/cards/market-card-01.png', status: '-', statusClass: 'tag-grey',
     date: '-', location: '-', address: '-', total: 0, selected: 0, available: 0,
@@ -32,8 +42,10 @@ export class OrganizerDashboardStallDetail implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly organizerApi: OrganizerApiService,
+    private readonly alert: AlertService,
   ) {}
 
+  /** 取得活動編號與返回頁碼，再載入攤位清單。 */
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
     this.currentPage = Math.max(1, Number(this.route.snapshot.queryParamMap.get('page')) || 1);
@@ -62,6 +74,49 @@ export class OrganizerDashboardStallDetail implements OnInit {
   onPageChange(page: number): void { this.currentPage = page; }
   selectDate(date: string): void { this.selectedDate = date; this.currentPage = 1; void this.loadMap(); }
 
+  /** 查詢已選攤位的品牌資料，供桌機版側欄與行動版視窗共用。 */
+  async openBrandDetail(booth: BoothRow): Promise<void> {
+    if (!booth.selected || this.brandLoadingStallNo) return;
+
+    this.brandLoadingStallNo = booth.code;
+    try {
+      const response = await firstValueFrom(
+        this.organizerApi.getOrganizerStallDetail(
+          this.eventId,
+          booth.code,
+          this.selectedDate.replaceAll('/', '-') || undefined,
+        ),
+      );
+
+      if (!isApiSuccessStatus(response.statusCode)) {
+        await this.alert.error(
+          '無法查看品牌',
+          response.message || '品牌資料讀取失敗，請稍後再試。',
+        );
+        return;
+      }
+
+      if (!response.data?.vendor) {
+        await this.alert.error('無法查看品牌', '這個攤位目前沒有可顯示的品牌資料。');
+        return;
+      }
+
+      this.selectedStallDetail = response.data;
+    } catch (error: unknown) {
+      const requestError = error as { error?: { message?: string } };
+      await this.alert.error(
+        '無法查看品牌',
+        requestError.error?.message || '品牌資料讀取失敗，請稍後再試。',
+      );
+    } finally {
+      this.brandLoadingStallNo = null;
+    }
+  }
+
+  closeBrandDetail(): void {
+    this.selectedStallDetail = null;
+  }
+
   openBoothMap(): void {
     this.router.navigate(['/organizer/dash-board/stall/detail', this.eventId, 'map'], {
       queryParams: { applyDate: this.selectedDate, returnPage: this.route.snapshot.queryParamMap.get('returnPage'), returnKeyword: this.route.snapshot.queryParamMap.get('returnKeyword'), returnStatus: this.route.snapshot.queryParamMap.get('returnStatus') },
@@ -72,6 +127,7 @@ export class OrganizerDashboardStallDetail implements OnInit {
     this.router.navigate(['/organizer/dash-board/stall'], { queryParams: { page: this.route.snapshot.queryParamMap.get('returnPage'), keyword: this.route.snapshot.queryParamMap.get('returnKeyword'), status: this.route.snapshot.queryParamMap.get('returnStatus') } });
   }
 
+  /** 依選擇日期重新查詢攤位狀態與統計。 */
   private async loadMap(): Promise<void> {
     try {
       const response = await firstValueFrom(this.organizerApi.getOrganizerStallMap(this.eventId, { applyDate: this.selectedDate.replaceAll('/', '-') || undefined }));
@@ -81,6 +137,7 @@ export class OrganizerDashboardStallDetail implements OnInit {
     }
   }
 
+  /** 將攤位地圖 API 回應整理為頁面標頭、日期與表格資料。 */
   private applyResponse(data: OrganizerStallMapResponse): void {
     const e = data.event;
     this.dates = this.enumerateDates(e.startAt, e.endAt);

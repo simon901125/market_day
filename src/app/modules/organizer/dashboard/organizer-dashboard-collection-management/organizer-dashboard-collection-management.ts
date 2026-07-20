@@ -42,6 +42,7 @@ interface CollectionRow {
   templateUrl: './organizer-dashboard-collection-management.html',
   styleUrl: './organizer-dashboard-collection-management.scss',
 })
+/** 收款管理列表，查詢各報名付款與退款狀態並導向收款詳情。 */
 export class OrganizerDashboardCollectionManagement implements OnInit {
   @ViewChild(DateRangeSelector) private dateRangeSelector?: DateRangeSelector;
 
@@ -84,6 +85,7 @@ export class OrganizerDashboardCollectionManagement implements OnInit {
     private readonly organizerApi: OrganizerApiService,
   ) {}
 
+  /** 從網址還原查詢狀態，並載入目前分頁的收款資料。 */
   ngOnInit(): void {
     const pageFromUrl = Number(this.route.snapshot.queryParamMap.get('page'));
     const statusFromUrl = this.route.snapshot.queryParamMap.get('status') ?? '';
@@ -138,6 +140,7 @@ export class OrganizerDashboardCollectionManagement implements OnInit {
     });
   }
 
+  /** 呼叫收款搜尋 API，失敗時清空舊資料以避免顯示過期內容。 */
   private loadPayments(): void {
     this.organizerApi.searchOrganizerPayments({
       keyword: this.keyword,
@@ -165,6 +168,7 @@ export class OrganizerDashboardCollectionManagement implements OnInit {
     });
   }
 
+  /** 將付款摘要整理成列表欄位與前端狀態文字。 */
   private toCollectionRow(item: OrganizerPaymentSummary): CollectionRow {
     const row: CollectionRow = {
       id: item.applicationId,
@@ -184,6 +188,7 @@ export class OrganizerDashboardCollectionManagement implements OnInit {
     return row;
   }
 
+  /** 依付款或退款狀態提供查看、確認退款等操作。 */
   private getRowActions(row: CollectionRow): CollectionRow['actions'] {
     if (row.paymentStatus === PaymentStatus.refundRequested) {
       return [

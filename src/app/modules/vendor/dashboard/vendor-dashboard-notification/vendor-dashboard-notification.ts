@@ -1,6 +1,16 @@
-import { Component } from '@angular/core';
-import { NotificationItem, NotificationType } from '../../../../models/interface/shared/NotificationItem';
-import { DashboardNotification } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
+import { Component, OnInit } from '@angular/core';
+
+import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
+import { AlertService } from '../../../../core/services/alert.service';
+import { NotificationApiService } from '../../../../core/services/notification-api.service';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { VendorDashboardNotification as VendorNotificationApiItem } from '../../../../models/interface/vendor/VendorDashboardInit';
+import { VendorNotificationFilter } from '../../../../models/interface/vendor/VendorNotification';
+import { NotificationTypeDisplay } from '../../../../models/type/NotificationTypeDisplay';
+import {
+  DashboardNotification,
+  NotificationItem,
+} from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
 
 @Component({
   selector: 'app-vendor-dashboard-notification',
@@ -8,58 +18,126 @@ import { DashboardNotification } from '../../../shared/dashboard/dashboard-notif
   templateUrl: './vendor-dashboard-notification.html',
   styleUrl: './vendor-dashboard-notification.scss',
 })
-export class VendorDashboardNotification {
-  /** 標籤 */
-  tabs: Array<'全部' | '未讀' | NotificationType> = [
+export class VendorDashboardNotification implements OnInit {
+  readonly tabs: VendorNotificationFilter[] = [
     '全部',
     '未讀',
-    '報名通知',
-    '收款通知',
-    '攤位通知',
-    '活動通知',
+    '報名審核',
+    '付款相關',
+    '攤位分配',
+    '活動異動',
+    '系統通知',
   ];
 
-  /** 通知列 */
-  notifications: NotificationItem[] = [
-  {
-    icon: 'bi bi-clipboard-check',
-    iconClass: 'orange',
-    title: '你已送出「草悟野餐市集」報名申請',
-    status: '審核中',
-    statusClass: 'pending',
-    date: '2026/06/02 14:30',
-    unread: true,
-    type: '報名通知',
-  },
-  {
-    icon: 'bi bi-wallet2',
-    iconClass: 'orange',
-    title: '「夏日綠意市集」報名審核通過，請於期限內完成付款',
-    status: '待付款',
-    statusClass: 'payment',
-    date: '2026/06/02 13:10',
-    unread: true,
-    type: '收款通知',
-  },
-  {
-    icon: 'bi bi-shop',
-    iconClass: 'green',
-    title: '你已完成「貓貓森林市集」攤位選擇',
-    status: '已完成選位',
-    statusClass: 'success',
-    date: '2026/06/02 10:15',
-    unread: false,
-    type: '攤位通知',
-  },
-  {
-    icon: 'bi bi-megaphone',
-    iconClass: 'blue',
-    title: '「草悟野餐市集」將於 7 天後開始，請確認活動資訊',
-    status: '活動即將開始',
-    statusClass: 'info',
-    date: '2026/06/01 16:20',
-    unread: true,
-    type: '活動通知',
-  },
-];
+  notifications: NotificationItem[] = [];
+  totalItems = 0;
+  unreadCount = 0;
+  readonly pageSize = 8;
+  loading = false;
+
+  private currentPage = 1;
+  private currentFilter: VendorNotificationFilter = '全部';
+
+  constructor(
+    private readonly vendorDashboardService: VendorDashboardService,
+    private readonly notificationApi: NotificationApiService,
+    private readonly alert: AlertService,
+  ) {}
+
+  ngOnInit(): void {
+    this.loadNotifications();
+  }
+
+  onTabChange(tab: string): void {
+    this.currentFilter = this.isVendorFilter(tab) ? tab : '全部';
+    this.currentPage = 1;
+    this.loadNotifications();
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadNotifications();
+  }
+
+  onMarkRead(item: NotificationItem): void {
+    if (item.id == null) return;
+
+    this.notificationApi.markAsRead(item.id, { skipLoading: true }).subscribe({
+      next: async (response) => {
+        if (!isApiSuccessStatus(response.statusCode)) {
+          item.unread = true;
+          await this.alert.error('標記已讀失敗', response.message || '請稍後再試。');
+          return;
+        }
+
+        this.unreadCount = Math.max(0, this.unreadCount - 1);
+        if (this.currentFilter === '未讀') this.loadNotifications();
+      },
+      error: async (error) => {
+        item.unread = true;
+        await this.alert.error('標記已讀失敗', error.error?.message || '請稍後再試。');
+      },
+    });
+  }
+
+  private loadNotifications(): void {
+    this.loading = true;
+    this.vendorDashboardService.getVendorNotifications({
+      filter: this.currentFilter,
+      page: this.currentPage,
+      pageSize: this.pageSize,
+    }).subscribe({
+      next: async (response) => {
+        this.loading = false;
+        if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+          this.notifications = [];
+          this.totalItems = 0;
+          await this.alert.error('讀取失敗', response.message || '無法取得通知資料。');
+          return;
+        }
+
+        this.notifications = response.data.notifications.items.map((item) =>
+          this.toNotificationItem(item),
+        );
+        this.totalItems = response.data.notifications.totalItems;
+        this.unreadCount = response.data.unreadCount;
+      },
+      error: async (error) => {
+        this.loading = false;
+        this.notifications = [];
+        this.totalItems = 0;
+        await this.alert.error('讀取失敗', error.error?.message || '請稍後再試。');
+      },
+    });
+  }
+
+  private toNotificationItem(item: VendorNotificationApiItem): NotificationItem {
+    const type = this.normalizeType(item.type);
+    const display = NotificationTypeDisplay.getDisplay(type);
+    return {
+      id: item.id,
+      icon: display.icon,
+      iconClass: display.iconClass,
+      status: display.status,
+      title: item.content?.trim() || item.title,
+      date: this.formatDateTime(item.createdAt),
+      unread: !item.isRead,
+      type,
+    };
+  }
+
+  private normalizeType(type: string): string {
+    if (!type.includes('_')) return type;
+    return type
+      .toLowerCase()
+      .replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
+  }
+
+  private formatDateTime(value: string): string {
+    return value ? value.replace('T', ' ').slice(0, 16).replaceAll('-', '/') : '-';
+  }
+
+  private isVendorFilter(value: string): value is VendorNotificationFilter {
+    return this.tabs.includes(value as VendorNotificationFilter);
+  }
 }

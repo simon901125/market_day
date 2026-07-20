@@ -1,5 +1,17 @@
-import { Component } from '@angular/core';
-import { DashboardNotification, NotificationItem } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
+import { Component, inject, type OnInit } from '@angular/core';
+import { AlertService } from '../../../../core/services/alert.service';
+import { NotificationApiService } from '../../../../core/services/notification-api.service';
+import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
+import {
+  OrganizerNotificationFilter,
+  OrganizerNotificationItem,
+} from '../../../../models/interface/organizer/OrganizerNotification';
+import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { NotificationTypeDisplay } from '../../../../models/type/NotificationTypeDisplay';
+import {
+  DashboardNotification,
+  NotificationItem,
+} from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
 
 @Component({
   selector: 'app-organizer-dashboard-notification',
@@ -7,65 +19,130 @@ import { DashboardNotification, NotificationItem } from '../../../shared/dashboa
   templateUrl: './organizer-dashboard-notification.html',
   styleUrl: './organizer-dashboard-notification.scss',
 })
-export class OrganizerDashboardNotification {
-  /** 通知中心分類頁籤。 */
-  tabs = ['全部', '未讀', '報名', '付款', '退款', '活動', '公告'];
+/** 主辦方通知中心，負責分類查詢、分頁顯示及通知已讀狀態。 */
+export class OrganizerDashboardNotification implements OnInit {
+  protected readonly organizerNotificationApi = inject(OrganizerApiService);
+  protected readonly notificationApi = inject(NotificationApiService);
+  protected readonly alert = inject(AlertService);
 
-  /** 通知中心列表資料，之後串接 API 時改由後端回傳。 */
-  notifications: NotificationItem[] = [
-    {
-      icon: 'bi bi-clipboard-heart',
-      iconClass: 'orange',
-      status: '新報名',
-      title: '「夏日綠意市集」收到新的攤主報名申請，請前往報名管理查看。',
-      date: '2026/06/02 14:30',
-      unread: true,
-      type: '報名',
-    },
-    {
-      icon: 'bi bi-wallet2',
-      iconClass: 'blue',
-      status: '付款完成',
-      title: '攤主已完成付款，請確認付款狀態與攤位資料。',
-      date: '2026/06/02 13:10',
-      unread: true,
-      type: '付款',
-    },
-    {
-      icon: 'bi bi-arrow-repeat',
-      iconClass: 'green',
-      status: '退款申請',
-      title: '有攤主送出退款申請，請至退款管理進行處理。',
-      date: '2026/06/02 11:45',
-      unread: true,
-      type: '退款',
-    },
-    {
-      icon: 'bi bi-pencil',
-      iconClass: 'purple',
-      status: '補件提醒',
-      title: '活動資料需要補件，請修改後重新送出審核。',
-      date: '2026/06/02 10:15',
-      unread: false,
-      type: '活動',
-    },
-    {
-      icon: 'bi bi-map',
-      iconClass: 'teal',
-      status: '地圖完成',
-      title: '活動攤位地圖已建置完成，可前往活動詳情確認。',
-      date: '2026/06/01 16:20',
-      unread: false,
-      type: '活動',
-    },
-    {
-      icon: 'bi bi-megaphone',
-      iconClass: 'yellow',
-      status: '活動公告',
-      title: '系統公告：請於活動開始前確認攤位配置與品牌公開資料。',
-      date: '2026/05/29 09:30',
-      unread: false,
-      type: '公告',
-    },
+  /** 通知中心分類頁籤。 */
+  readonly tabs: OrganizerNotificationFilter[] = [
+    '全部',
+    '未讀',
+    '報名相關',
+    '付款相關',
+    '活動異動',
+    '系統公告',
   ];
+
+  notifications: NotificationItem[] = [];
+  totalItems = 0;
+  unreadCount = 0;
+  pageSize = 8;
+  loading = false;
+
+  protected currentPage = 1;
+  protected currentFilter: OrganizerNotificationFilter = '全部';
+
+  /** 進入通知中心時載入第一頁通知。 */
+  ngOnInit(): void {
+    this.loadNotifications();
+  }
+
+  onTabChange(tab: string): void {
+    this.currentFilter = this.isOrganizerFilter(tab) ? tab : '全部';
+    this.currentPage = 1;
+    this.loadNotifications();
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadNotifications();
+  }
+
+  /** 依目前分類與頁碼查詢通知，並同步未讀數與分頁資訊。 */
+  protected loadNotifications(requestPageSize = this.pageSize): void {
+    this.loading = true;
+    this.organizerNotificationApi.getOrganizerNotifications({
+      filter: this.currentFilter,
+      page: this.currentPage,
+      pageSize: requestPageSize,
+    }).subscribe({
+      next: async (response) => {
+        this.loading = false;
+        if (!isApiSuccessStatus(response.statusCode) || !response.data) {
+          await this.alert.error('讀取失敗', response.message || '無法取得通知資料。');
+          return;
+        }
+
+        this.notifications = response.data.notifications.items.map((item) =>
+          this.toNotificationItem(item),
+        );
+        this.totalItems = response.data.notifications.totalItems;
+        this.unreadCount = response.data.unreadCount;
+      },
+      error: async (error) => {
+        this.loading = false;
+        await this.alert.error('讀取失敗', error.error?.message || '請稍後再試。');
+      },
+    });
+  }
+
+  /** 將單筆通知標記已讀；失敗時還原畫面的未讀狀態。 */
+  onMarkRead(item: NotificationItem): void {
+    if (item.id == null) return;
+
+    this.notificationApi.markAsRead(item.id, { skipLoading: true }).subscribe({
+      next: async (response) => {
+        if (!isApiSuccessStatus(response.statusCode)) {
+          item.unread = true;
+          await this.alert.error('標記已讀失敗', response.message);
+          return;
+        }
+
+        this.unreadCount = Math.max(0, this.unreadCount - 1);
+        if (this.currentFilter === '未讀') {
+          this.loadNotifications();
+        }
+      },
+      error: async (error) => {
+        item.unread = true;
+        await this.alert.error('標記已讀失敗', error.error?.message || '請稍後再試。');
+      },
+    });
+  }
+
+  /** 將後端通知轉為共用通知元件所需的顯示模型。 */
+  protected toNotificationItem(item: OrganizerNotificationItem): NotificationItem {
+    const type = this.normalizeType(item.type);
+    const display = NotificationTypeDisplay.getDisplay(type);
+    return {
+      id: item.id,
+      icon: display.icon,
+      iconClass: display.iconClass,
+      status: display.status,
+      title: item.content?.trim() || item.title,
+      date: this.formatDate(item.createdAt),
+      unread: !item.isRead,
+      type,
+    };
+  }
+
+  private normalizeType(type: string): string {
+    if (!type.includes('_')) return type;
+    return type
+      .toLowerCase()
+      .replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
+  }
+
+  private formatDate(value: string): string {
+    const match = value?.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    return match
+      ? `${match[1]}/${match[2]}/${match[3]} ${match[4]}:${match[5]}`
+      : value || '-';
+  }
+
+  private isOrganizerFilter(value: string): value is OrganizerNotificationFilter {
+    return this.tabs.includes(value as OrganizerNotificationFilter);
+  }
 }

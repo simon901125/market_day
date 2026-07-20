@@ -18,6 +18,7 @@ import { DashboradAccountSetting } from '../../../shared/dashboard/dashborad-acc
   imports: [DashboradAccountSetting],
   templateUrl: './organizer-account-settings.html',
 })
+/** 主辦方帳號設定頁，整合登入資料、密碼修改、Google 綁定與帳號停用功能。 */
 export class OrganizerAccountSettings {
   @Input() navigateOnClose = true;
   @Output() closed = new EventEmitter<void>();
@@ -52,6 +53,7 @@ export class OrganizerAccountSettings {
     }
   }
 
+  /** 取得 Google 憑證後綁定目前帳號，成功時重新同步使用者資料。 */
   async bindGoogle(): Promise<void> {
     if (this.account.googleBound || this.googleBinding) {
       return;
@@ -88,6 +90,7 @@ export class OrganizerAccountSettings {
     }
   }
 
+  /** 先使用本地已儲存的登入資料，避免頁面初始化時空白。 */
   private loadUserInfo(): void {
     const userInfo = this.authService.getUser(this.role);
 
@@ -98,6 +101,7 @@ export class OrganizerAccountSettings {
     this.applyUserInfo(userInfo);
   }
 
+  /** 從伺服器取得最新帳號狀態，失敗時保留本地資料作為備援。 */
   private async loadCurrentUser(): Promise<void> {
     try {
       const response = await firstValueFrom(

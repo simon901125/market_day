@@ -5,6 +5,10 @@ import { environment } from '../../../../environments/environment';
 import { ApiResult } from '../../../models/interface/shared/ApiResult';
 import { VendorDashboardInit } from '../../../models/interface/vendor/VendorDashboardInit';
 import {
+  VendorNotificationFilter,
+  VendorNotificationSearchResponse,
+} from '../../../models/interface/vendor/VendorNotification';
+import {
   VendorApplicationSearchParams,
   VendorApplicationSearchResult,
 } from '../../../models/interface/vendor/VendorApplicationSearch';
@@ -42,6 +46,22 @@ export class VendorDashboardService {
   getVendorFirstLogin(): Observable<ApiResult<VendorDashboardInit>> {
     const url = `${environment.apiBaseUrl}api/vendor/dashboard/init`;
     return this.http.get<ApiResult<VendorDashboardInit>>(url);
+  }
+
+  /** 查詢目前登入攤主的通知中心資料。 */
+  getVendorNotifications(params: {
+    filter?: VendorNotificationFilter;
+    page?: number;
+    pageSize?: number;
+  } = {}): Observable<ApiResult<VendorNotificationSearchResponse>> {
+    const url = `${environment.apiBaseUrl}api/vendor/notices`;
+    let query = new HttpParams();
+
+    if (params.filter) query = query.set('filter', params.filter);
+    if (params.page !== undefined) query = query.set('page', params.page);
+    if (params.pageSize !== undefined) query = query.set('pageSize', params.pageSize);
+
+    return this.http.get<ApiResult<VendorNotificationSearchResponse>>(url, { params: query });
   }
 
   /** 搜尋目前登入攤主的報名紀錄。 */

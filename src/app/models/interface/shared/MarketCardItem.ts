@@ -42,6 +42,11 @@ export interface MarketCardItem {
   price?: number;
   /** 後端回傳的攤位總數 */
   maxBooths?: number;
+  /** 後端回傳的保證金與攤位尺寸 */
+  depositAmount?: number;
+  stallWidth?: number | null;
+  stallLength?: number | null;
+  stallHeight?: number | null;
   /** 後端回傳的報名起訖時間 */
   registrationStartAt?: string;
   registrationEndAt?: string;

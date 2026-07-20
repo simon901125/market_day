@@ -1,5 +1,11 @@
 <app-dashboard-notification
   [tabs]="tabs"
   [notifications]="notifications"
-  [pageSize]="8"
+  [pageSize]="pageSize"
+  [serverMode]="true"
+  [totalItems]="totalItems"
+  [loading]="loading"
+  (tabChange)="onTabChange($event)"
+  (pageChange)="onPageChange($event)"
+  (markRead)="onMarkRead($event)"
 ></app-dashboard-notification>

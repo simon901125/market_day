@@ -31,7 +31,7 @@
   <div class="notification-list-shell" [class.dashboard-list-content]="!limitItems">
     @if (pagedNotifications().length) {
       <div class="notification-list">
-        @for (item of pagedNotifications(); track item.title) {
+        @for (item of pagedNotifications(); track item.id ?? $index) {
           <article
             class="notification-card"
             [class.unread]="item.unread"

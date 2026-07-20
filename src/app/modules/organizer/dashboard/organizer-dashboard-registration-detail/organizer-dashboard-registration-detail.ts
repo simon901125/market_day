@@ -16,138 +16,17 @@ import { OrganizerApplicationDetailResponse } from '../../../../models/interface
 import {
   OrganizerRegistrationDetail,
   OrganizerRegistrationDetailAction,
-  OrganizerRegistrationDetailSeed,
   OrganizerRegistrationRejectReasonForm,
   OrganizerRegistrationStatusRecordItem,
 } from '../../../../models/interface/organizer/OrganizerRegistrationDetail';
 import { ApplicationStatus } from '../../../../models/status/ApplicationStatus';
 import { AlertService } from '../../../../core/services/alert.service';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
-import { MarketMap } from '../../../shared/market-map/market-map';
-
-const registrationRows: OrganizerRegistrationDetailSeed[] = [
-  {
-    id: 1,
-    activity: '夏日綠意市集',
-    activityImage: 'assets/images/market/cards/market-card-01.png',
-    activityTime: '2026/06/15 - 2026/06/21',
-    brandName: '森林選物',
-    vendorName: '林小森',
-    brandType: '文創手作',
-    registeredAt: '2026/06/01 14:30',
-    status: ApplicationStatus.pendingReview,
-  },
-  {
-    id: 2,
-    activity: '職人咖啡生活市集',
-    activityImage: 'assets/images/market/cards/market-card-02.png',
-    activityTime: '2026/06/27 - 2026/06/28',
-    brandName: '毛孩日常',
-    vendorName: '陳小米',
-    brandType: '寵物生活',
-    registeredAt: '2026/06/01 10:15',
-    status: ApplicationStatus.reviewRejected,
-  },
-  {
-    id: 3,
-    activity: '衣著選物週末',
-    activityImage: 'assets/images/market/cards/market-card-03.png',
-    activityTime: '2026/07/04 - 2026/07/05',
-    brandName: '慢日子',
-    vendorName: '黃慢慢',
-    brandType: '文創手作',
-    registeredAt: '2026/05/31 16:45',
-    status: ApplicationStatus.pendingPayment,
-  },
-  {
-    id: 4,
-    activity: '風格選物生活節',
-    activityImage: 'assets/images/market/cards/market-card-04.png',
-    activityTime: '2026/07/18 - 2026/07/19',
-    brandName: '植感生活',
-    vendorName: '周植植',
-    brandType: '植物選物',
-    registeredAt: '2026/05/30 09:20',
-    status: ApplicationStatus.pendingSelection,
-  },
-  {
-    id: 5,
-    activity: '毛孩友善市集',
-    activityImage: 'assets/images/market/cards/market-card-05.png',
-    activityTime: '2026/08/01 - 2026/08/02',
-    brandName: '小日子手作',
-    vendorName: '張小日',
-    brandType: '文創手作',
-    registeredAt: '2026/05/29 13:50',
-    status: ApplicationStatus.refundPending,
-  },
-  {
-    id: 6,
-    activity: '植感生活市集',
-    activityImage: 'assets/images/market/cards/market-card-06.png',
-    activityTime: '2026/08/15 - 2026/08/16',
-    brandName: '山系日常',
-    vendorName: '吳小山',
-    brandType: '文創手作',
-    registeredAt: '2026/05/28 11:20',
-    status: ApplicationStatus.completed,
-  },
-  {
-    id: 7,
-    activity: '秋日風格市集',
-    activityImage: 'assets/images/market/cards/market-card-07.png',
-    activityTime: '2026/09/05 - 2026/09/06',
-    brandName: '秋光選物',
-    vendorName: '林秋光',
-    brandType: '生活選物',
-    registeredAt: '2026/05/27 15:10',
-    status: ApplicationStatus.refunding,
-  },
-  {
-    id: 8,
-    activity: '冬日暖心市集',
-    activityImage: 'assets/images/market/cards/market-card-08.png',
-    activityTime: '2026/09/19 - 2026/09/20',
-    brandName: '拾甜製菓',
-    vendorName: '簡小單',
-    brandType: '餐飲美食',
-    registeredAt: '2026/05/25 18:30',
-    status: ApplicationStatus.refunded,
-  },
-  {
-    id: 9,
-    activity: '月光手作夜市集',
-    activityImage: 'assets/images/market/cards/market-card-09.png',
-    activityTime: '2026/10/03 - 2026/10/04',
-    brandName: '月光織所',
-    vendorName: '沈月月',
-    brandType: '文創手作',
-    registeredAt: '2026/05/24 12:10',
-    status: ApplicationStatus.cancelled,
-  },
-  {
-    id: 10,
-    activity: '海風手作市集',
-    activityImage: 'assets/images/market/cards/market-card-10.png',
-    activityTime: '2026/11/14 - 2026/11/15',
-    brandName: '海鹽工房',
-    vendorName: '許海鹽',
-    brandType: '文創手作',
-    registeredAt: '2026/05/22 09:40',
-    status: ApplicationStatus.pendingReview,
-  },
-  {
-    id: 11,
-    activity: '春日散策市集',
-    activityImage: 'assets/images/market/cards/market-card-11.png',
-    activityTime: '2026/04/11 - 2026/04/12',
-    brandName: '花間織所',
-    vendorName: '蔡花見',
-    brandType: '生活選物',
-    registeredAt: '2026/04/01 09:30',
-    status: ApplicationStatus.depositReturned,
-  },
-];
+import {
+  DEFAULT_MARKET_MAP_DATA,
+  MarketMap,
+} from '../../../shared/market-map/market-map';
+import { MarketMapData } from '../../../../models/interface/shared/MarketMap';
 
 interface DetailSummaryRow {
   label: string;
@@ -161,6 +40,7 @@ interface DetailSummaryRow {
   templateUrl: './organizer-dashboard-registration-detail.html',
   styleUrl: './organizer-dashboard-registration-detail.scss',
 })
+/** 報名詳情頁，提供審核、退款資訊、保證金退還與攤位地圖檢視功能。 */
 export class OrganizerDashboardRegistrationDetail implements OnInit {
   @ViewChild('boothMapModal') private boothMapModal?: MarketMap;
 
@@ -176,6 +56,9 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
   returnPage = 1;
   returnStatus = '';
   detail: OrganizerRegistrationDetail = this.createEmptyDetail();
+  boothMapData: MarketMapData = DEFAULT_MARKET_MAP_DATA;
+  boothMapDates: string[] = [];
+  boothMapSelectedDate = '';
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -186,6 +69,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     private readonly environmentInjector: EnvironmentInjector,
   ) {}
 
+  /** 驗證網址中的報名 ID，並載入主辦方可查看的報名詳情。 */
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     const returnPage = Number(this.route.snapshot.queryParamMap.get('returnPage'));
@@ -257,7 +141,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
         ];
       case ApplicationStatus.pendingSelection:
         return [
-          { key: 'chooseBooth', label: '選擇攤位', icon: 'bi-grid-3x3-gap', variant: 'primary' },
+          { key: 'viewBoothMap', label: '查看攤位地圖', icon: 'bi-map', variant: 'primary' },
         ];
       case ApplicationStatus.refundPending:
         return [
@@ -366,9 +250,6 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
       case 'goPaymentManagement':
         this.router.navigate(['/organizer/dash-board/collection/detail', this.detail.id]);
         return;
-      case 'chooseBooth':
-        await this.alert.info('選擇攤位', '將前往攤位分配功能。', '知道了');
-        return;
       case 'viewRefundInfo':
         this.router.navigate(['/organizer/dash-board/collection/detail', this.detail.id]);
         return;
@@ -385,8 +266,93 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
         );
         return;
       case 'viewBoothMap':
-        this.boothMapModal?.openFullscreenMap();
+        await this.openBoothMap();
         return;
+    }
+  }
+
+  async onBoothMapDateSelected(date: string): Promise<void> {
+    await this.loadBoothMapData(date);
+  }
+
+  private async openBoothMap(): Promise<void> {
+    const applyDate = this.detail.boothAssignments[0]?.date?.replaceAll('/', '-') || '';
+
+    if (!window.matchMedia('(max-width: 992px)').matches) {
+      await this.router.navigate(
+        ['/organizer/dash-board/stall/detail', this.detail.activity.eventId, 'map'],
+        {
+          queryParams: {
+            applyDate: applyDate || null,
+            returnTo: 'registration',
+            applicationId: this.detail.id,
+            registrationReturnPage: this.returnPage,
+            registrationReturnStatus: this.returnStatus || null,
+          },
+        },
+      );
+      return;
+    }
+
+    const loaded = await this.loadBoothMapData(applyDate);
+    if (loaded) {
+      window.setTimeout(() => this.boothMapModal?.openFullscreenMap(), 0);
+    }
+  }
+
+  private async loadBoothMapData(applyDate: string): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.organizerApi.getOrganizerStallMap(this.detail.activity.eventId, {
+          applyDate: applyDate || undefined,
+        }),
+      );
+      if (!isApiSuccessStatus(response.statusCode) || !response.data?.event) {
+        await this.alert.error('攤位地圖載入失敗', response.message || '請稍後再試。');
+        return false;
+      }
+
+      const data = response.data;
+      const apiStalls = new Map(
+        (data.stalls ?? []).flatMap((zone) =>
+          zone.stalls.map((stall) => [stall.stallNo, { stall, zone: zone.zoneName }] as const),
+        ),
+      );
+      this.boothMapData = {
+        ...DEFAULT_MARKET_MAP_DATA,
+        name: data.event.eventTitle,
+        booths: DEFAULT_MARKET_MAP_DATA.booths.map((booth) => {
+          const api = apiStalls.get(booth.code);
+          if (!api) return booth;
+          const vendor = api.stall.selectedVendor;
+          const selected = api.stall.status === '已選擇' || api.stall.status === '系統分配';
+          return {
+            ...booth,
+            zone: api.zone,
+            status: selected ? 'selected' as const : 'available' as const,
+            size: api.stall.length && api.stall.width
+              ? `${api.stall.length}m × ${api.stall.width}m`
+              : booth.size,
+            brand: vendor?.name
+              ? {
+                  id: String(api.stall.selectedApplicationId ?? api.stall.stallId),
+                  name: vendor.name,
+                  category: vendor.category?.name || '-',
+                  summary: '',
+                  logo: '',
+                }
+              : undefined,
+          };
+        }),
+      };
+      this.boothMapDates = this.detail.boothAssignments
+        .map((assignment) => assignment.date.replaceAll('/', '-'))
+        .filter((date, index, dates) => Boolean(date) && dates.indexOf(date) === index);
+      this.boothMapSelectedDate = data.event.currentApplyDate || applyDate;
+      return true;
+    } catch {
+      await this.alert.error('攤位地圖載入失敗', '目前無法取得攤位地圖，請稍後再試。');
+      return false;
     }
   }
 
@@ -448,6 +414,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     return records.filter((record): record is OrganizerRegistrationStatusRecordItem => Boolean(record.value));
   }
 
+  /** 重新取得報名最新狀態；狀態操作完成後也共用此方法刷新畫面。 */
   private async loadDetail(applicationId: number, showError = true): Promise<void> {
     try {
       const response = await firstValueFrom(this.organizerApi.getOrganizerApplicationDetail(applicationId));
@@ -461,6 +428,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     }
   }
 
+  /** 將分區式 API response 整理為頁面使用的單一詳情模型。 */
   private toRegistrationDetail(raw: OrganizerApplicationDetailResponse): OrganizerRegistrationDetail {
     const categoryName = raw.brand.category?.name || '-';
     const statusTime = (key: string): string | undefined =>
@@ -629,6 +597,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     return total > 0 ? this.moneyValue(total) : '-';
   }
 
+  /** 送出審核通過並重新載入資料，避免保留操作前的狀態。 */
   private async approveRegistration(): Promise<void> {
     const confirmed = await this.alert.confirmHtml({
       html: this.getApproveConfirmHtml(),
@@ -661,6 +630,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     });
   }
 
+  /** 收集未通過原因後送出審核結果，成功時刷新後端最新狀態。 */
   private async rejectRegistration(): Promise<void> {
     const form = await this.openRejectReasonForm();
 
@@ -702,6 +672,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     });
   }
 
+  /** 確認保證金退還，實際狀態與時間以 API response 為準。 */
   private async returnDeposit(): Promise<void> {
     const confirmed = await this.alert.confirmHtml({
       html: this.getDepositReturnConfirmHtml(),
@@ -991,340 +962,69 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
     return descriptionMap[reason] ?? '請依主辦方補充說明調整資料後，再重新提交報名。';
   }
 
-  private formatNow(): string {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const date = String(now.getDate()).padStart(2, '0');
-    const hour = String(now.getHours()).padStart(2, '0');
-    const minute = String(now.getMinutes()).padStart(2, '0');
-
-    return `${year}/${month}/${date} ${hour}:${minute}`;
-  }
-
-  private getDetail(id: number, statusFromQuery: string | null): OrganizerRegistrationDetail {
-    const row = registrationRows.find((item) => item.id === id) ?? registrationRows[0];
-    const status = statusFromQuery && ApplicationStatus.list.includes(statusFromQuery)
-      ? statusFromQuery
-      : row.status;
-
-    return this.createDetail(row, status);
-  }
-
-  private createDetail(row: OrganizerRegistrationDetailSeed, status: string): OrganizerRegistrationDetail {
-    const detail: OrganizerRegistrationDetail = {
-      id: row.id,
-      status,
-      registrationNo: `REG2022060100${String(row.id).padStart(2, '0')}`,
+  private createEmptyDetail(): OrganizerRegistrationDetail {
+    return {
+      id: 0,
+      status: '',
+      registrationNo: '-',
       activity: {
-        eventId: row.id,
-        name: row.activity,
-        image: row.activityImage,
-        date: this.getActivityDateTime(row.activityTime),
+        eventId: 0,
+        name: '-',
+        image: 'assets/images/shared/no-image-placeholder.svg',
+        date: '-',
         startAt: null,
         endAt: null,
-        status: '進行中',
-        location: this.getActivityLocation(row.id),
-        address: this.getActivityAddress(row.id),
+        status: '-',
+        location: '-',
+        address: '-',
       },
       vendor: {
-        name: row.vendorName,
-        phone: this.getVendorPhone(row.id),
-        email: this.getVendorEmail(row.id),
-        address: this.getVendorAddress(row.id),
+        name: '-',
+        phone: '-',
+        email: '-',
+        address: '-',
       },
       brand: {
         id: null,
-        name: row.brandName,
-        type: row.brandType,
-        image: this.getBrandLogo(row.id),
-        description: this.getBrandDescription(row.brandName),
+        name: '-',
+        type: '-',
+        image: 'assets/images/shared/no-image-placeholder.svg',
+        description: '-',
       },
       registration: {
-        period: this.getRegistrationPeriod(row.activityTime),
-        boothSpec: '長 2 公尺 × 寬 3 公尺',
-        boothZone: 'A 區',
-        boothCategories: this.getBoothCategories(row.brandType),
-        vehiclePlate: 'ABC-1234',
+        period: '-',
+        boothSpec: '-',
+        boothZone: '-',
+        boothCategories: '-',
+        vehiclePlate: '-',
         note: '-',
-        rentalEquipment: '桌子（加租）× 1、椅子（加租）× 2',
+        rentalEquipment: '-',
       },
       fee: {
-        boothFee: '$1,300',
-        electricityFee: '$1,200',
-        deposit: '$1,000',
-        total: '$3,800',
+        boothFee: '-',
+        electricityFee: '-',
+        deposit: '-',
+        total: '-',
       },
       payment: {
-        status: '待付款',
+        status: '-',
         method: '-',
         transactionNo: '-',
-        amount: '$3,800',
-        deadline: '2026/06/05 23:59',
+        amount: '-',
+        deadline: '-',
       },
       boothAssignments: [],
-      feeRows: [
-        { label: '報名費', content: '2 天（05/30 + 05/31）', value: '$1,300（$650 × 2 天）' },
-        { label: '設備租借費', content: '桌子（加租）× 1、椅子（加租）× 2', value: '$300（$150 × 2 天）' },
-        { label: '額外用電費', content: '110V / 1000W、220V / 2000W', value: '$1,200（$600 × 2 天）' },
-        { label: '保證金', content: '活動結束後退還', value: '$1,000' },
-      ],
-      freeEquipmentRows: [
-        { cells: ['桌子（基本）', '180 × 60 公分', '1', '張'] },
-        { cells: ['椅子（基本）', '一般塑膠椅', '2', '張'] },
-      ],
-      rentalEquipmentRows: [
-        { cells: ['桌子（加租）', '180 × 60 公分', '1', '$100 / 張', '$100（2天）'] },
-        { cells: ['椅子（加租）', '一般塑膠椅', '2', '$50 / 張', '$100（2天）'] },
-      ],
-      basicPowerRows: [
-        { cells: ['110V / 500W', '500W'] },
-      ],
-      extraPowerRows: [
-        { cells: ['110V / 1000W', '1000W', '$200 / 天', '$400（2天）'] },
-        { cells: ['220V / 2000W', '2000W', '$400 / 天', '$800（2天）'] },
-      ],
-      rentalEquipmentSubtotal: '$200（2天）',
-      extraPowerSubtotal: '$1,200（2天）',
+      feeRows: [],
+      freeEquipmentRows: [],
+      rentalEquipmentRows: [],
+      basicPowerRows: [],
+      extraPowerRows: [],
+      rentalEquipmentSubtotal: '-',
+      extraPowerSubtotal: '-',
       times: {
-        registeredAt: row.registeredAt,
+        registeredAt: '-',
       },
     };
-
-    return this.applyStatus(detail);
-  }
-
-  private createEmptyDetail(): OrganizerRegistrationDetail {
-    const detail = this.createDetail({
-      id: 0,
-      activity: '-',
-      activityImage: 'assets/images/shared/no-image-placeholder.svg',
-      activityTime: '-',
-      brandName: '-',
-      vendorName: '-',
-      brandType: '-',
-      registeredAt: '-',
-      status: '',
-    }, '');
-    detail.registrationNo = '-';
-    return detail;
-  }
-
-  private applyStatus(detail: OrganizerRegistrationDetail): OrganizerRegistrationDetail {
-    const times = { ...detail.times };
-    let reason = detail.reason;
-    let refund = detail.refund;
-    let depositReturn = detail.depositReturn;
-    let payment = { ...detail.payment };
-    let boothAssignments = [...detail.boothAssignments];
-    let fee = { ...detail.fee };
-    let feeRows = [...detail.feeRows];
-
-    switch (detail.status) {
-      case ApplicationStatus.pendingReview:
-        break;
-      case ApplicationStatus.reviewRejected:
-        times.reviewedAt ??= '2026/06/02 15:30';
-        reason ??= {
-          title: '審核未通過原因',
-          subtitle: '攤位類別不符合',
-          description: '您申請的攤位類別與本活動開放類別不符，請重新選擇符合的攤位類別後再提交報名。',
-        };
-        break;
-      case ApplicationStatus.pendingPayment:
-        times.reviewedAt ??= '2026/06/02 15:30';
-        payment = {
-          ...payment,
-          status: '待付款',
-          method: '-',
-          transactionNo: '-',
-        };
-        break;
-      case ApplicationStatus.pendingSelection:
-        times.reviewedAt ??= '2026/06/02 15:30';
-        times.paidAt ??= '2026/06/03 16:50';
-        payment = this.paidPayment(payment);
-        boothAssignments = this.unselectedBooths();
-        break;
-      case ApplicationStatus.completed:
-        times.reviewedAt ??= '2026/06/02 15:30';
-        times.paidAt ??= '2026/06/03 16:50';
-        times.selectedAt ??= '2026/06/05 14:33';
-        times.finalConfirmedAt ??= '2026/06/07 10:30';
-        payment = this.paidPayment(payment);
-        boothAssignments = this.selectedBooths();
-        break;
-      case ApplicationStatus.depositReturned:
-        times.reviewedAt ??= '2026/04/02 10:00';
-        times.paidAt ??= '2026/04/03 11:20';
-        times.selectedAt ??= '2026/04/05 13:10';
-        times.finalConfirmedAt ??= '2026/04/08 16:00';
-        times.depositReturnedAt ??= '2026/04/13 10:20';
-        payment = this.paidPayment(payment);
-        boothAssignments = this.selectedBooths('已完成選位');
-        depositReturn = {
-          amount: '$1,000',
-          method: '現場退還',
-          returnedAt: times.depositReturnedAt,
-        };
-        fee = {
-          ...fee,
-          deposit: '已退還 $1,000',
-        };
-        feeRows = feeRows.map((row) => row.label === '保證金'
-          ? { ...row, content: '已退還', value: '$1,000' }
-          : row);
-        break;
-      case ApplicationStatus.refundPending:
-        times.reviewedAt ??= '2026/06/02 15:30';
-        times.paidAt ??= '2026/06/03 11:20';
-        times.refundRequestedAt ??= '2026/06/10 15:22';
-        payment = { ...this.paidPayment(payment), status: '退款申請中' };
-        boothAssignments = this.selectedBooths();
-        refund = this.refundInfo(times, '退款申請中');
-        break;
-      case ApplicationStatus.refunding:
-        times.reviewedAt ??= '2026/06/02 15:30';
-        times.paidAt ??= '2026/06/03 11:20';
-        times.refundRequestedAt ??= '2026/06/10 15:22';
-        times.refundReviewedAt ??= '2026/06/11 18:22';
-        payment = { ...this.paidPayment(payment), status: '退款處理中' };
-        boothAssignments = this.selectedBooths();
-        refund = this.refundInfo(times, '退款處理中');
-        break;
-      case ApplicationStatus.refunded:
-        times.reviewedAt ??= '2026/06/02 15:30';
-        times.paidAt ??= '2026/06/03 11:20';
-        times.refundRequestedAt ??= '2026/06/10 15:22';
-        times.refundReviewedAt ??= '2026/06/11 18:22';
-        times.refundedAt ??= '2026/06/13 09:56';
-        payment = { ...this.paidPayment(payment), status: '已退款' };
-        boothAssignments = this.selectedBooths();
-        refund = this.refundInfo(times, '已退款');
-        break;
-      case ApplicationStatus.cancelled:
-        times.reviewedAt ??= '2026/06/02 15:30';
-        times.cancelledAt ??= '2026/06/08 10:00';
-        payment = {
-          ...payment,
-          status: '已取消',
-          method: '-',
-          transactionNo: '-',
-        };
-        boothAssignments = this.unselectedBooths();
-        reason ??= {
-          title: '取消原因',
-          subtitle: '付款逾期失效',
-          description: '付款期限內未完成付款，系統已自動取消本次報名，如需參與活動，請重新提出報名申請。',
-        };
-        break;
-    }
-
-    return {
-      ...detail,
-      fee,
-      payment,
-      boothAssignments,
-      feeRows,
-      refund,
-      depositReturn,
-      times,
-      reason,
-    };
-  }
-
-  private paidPayment(payment: OrganizerRegistrationDetail['payment']): OrganizerRegistrationDetail['payment'] {
-    return {
-      ...payment,
-      status: '已付款',
-      method: '信用卡',
-      transactionNo: 'T202406030000123',
-    };
-  }
-
-  private selectedBooths(status = '已選位'): OrganizerRegistrationDetail['boothAssignments'] {
-    return [
-      { date: '2026/05/30', boothNo: 'A-023', zone: 'A 區', status },
-      { date: '2026/05/31', boothNo: 'A-023', zone: 'A 區', status },
-    ];
-  }
-
-  private unselectedBooths(): OrganizerRegistrationDetail['boothAssignments'] {
-    return [
-      { date: '2026/05/30', boothNo: '-', zone: '-', status: '尚未選位' },
-      { date: '2026/05/31', boothNo: '-', zone: '-', status: '尚未選位' },
-    ];
-  }
-
-  private refundInfo(
-    times: OrganizerRegistrationDetail['times'],
-    status: string,
-  ): NonNullable<OrganizerRegistrationDetail['refund']> {
-    return {
-      reason: '因個人行程異動',
-      description: '無法參與本次活動，申請取消報名並辦理退款。',
-      requestedAt: times.refundRequestedAt,
-      confirmedAt: times.refundReviewedAt,
-      refundedAt: status === ApplicationStatus.refunded ? times.refundedAt : undefined,
-    };
-  }
-
-  private getActivityLocation(id: number): string {
-    const locations = ['台北市 信義區', '新北市 淡水區', '台中市 西區', '台南市 中西區', '桃園市 中壢區', '高雄市 鹽埕區'];
-    return locations[(id - 1) % locations.length];
-  }
-
-  private getActivityDateTime(activityTime: string): string {
-    return `${activityTime} 10:00 - 18:00`;
-  }
-
-  private getActivityAddress(id: number): string {
-    const addresses = [
-      '信義區市集路 81 號',
-      '淡水河岸廣場',
-      '西區草悟道周邊',
-      '中西區海安路廣場',
-      '中壢區中央公園草地',
-      '鹽埕區倉庫群廣場',
-    ];
-    return addresses[(id - 1) % addresses.length];
-  }
-
-  private getVendorPhone(id: number): string {
-    return `0912${String(100000 + id * 34567).slice(0, 6)}`;
-  }
-
-  private getVendorEmail(id: number): string {
-    return `vendor${String(id).padStart(2, '0')}@marketday.tw`;
-  }
-
-  private getVendorAddress(id: number): string {
-    const addresses = [
-      '台北市信義區市集路 81 號',
-      '新北市淡水區河岸路 18 號',
-      '台中市西區美村路 35 號',
-      '台南市中西區民生路 62 號',
-      '桃園市中壢區市集路 85 號',
-      '高雄市鹽埕區倉庫路 21 號',
-    ];
-    return addresses[(id - 1) % addresses.length];
-  }
-
-  private getBrandLogo(id: number): string {
-    return `assets/images/brand/brand-${String(((id - 1) % 8) + 1).padStart(2, '0')}.png`;
-  }
-
-  private getBrandDescription(brandName: string): string {
-    return `${brandName} 專注於具有溫度的選物與手作作品，希望在市集中和更多人分享日常裡的小美好。`;
-  }
-
-  private getRegistrationPeriod(activityTime: string): string {
-    const [start, end] = activityTime.split(' - ');
-    return `${start} 13:30 - 20:30\n${end} 13:30 - 20:30`;
-  }
-
-  private getBoothCategories(brandType: string): string {
-    return `${brandType}、生活選物、文創手作`;
   }
 }
 

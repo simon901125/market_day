@@ -9,6 +9,18 @@ export interface NotificationTypeDisplayInfo {
 export class NotificationTypeDisplay {
   /** 後端 NotificationType 的 API 值對應到畫面用的圖示與狀態文字 */
   static readonly apiTypeMap: Record<string, NotificationTypeDisplayInfo> = {
+    /**主辦方撤回活動審核申請 */
+    eventReviewWithdrawn: {
+      icon: 'bi bi-arrow-counterclockwise',
+      iconClass: 'blue',
+      status: '已撤回',
+    },
+    /**主辦方送出活動下架申請 */
+    eventUnpublishRequestSubmitted: {
+      icon: 'bi bi-arrow-down-circle',
+      iconClass: 'orange',
+      status: '下架申請',
+    },
     /**主辦方資格申請已送出 */
     organizerRegistrationSubmitted: { icon: 'bi bi-person-badge', iconClass: 'orange', status: '新申請' },
     /**主辦方資料已重新送出審核 */
@@ -63,6 +75,8 @@ export class NotificationTypeDisplay {
     refundFailed: { icon: 'bi bi-cash-coin', iconClass: 'red', status: '退款失敗' },
     /**退款已完成 */
     refunded: { icon: 'bi bi-cash-coin', iconClass: 'green', status: '退款完成' },
+    /**保證金已由主辦方登記退還 */
+    depositReturned: { icon: 'bi bi-cash-stack', iconClass: 'green', status: '保證金已退還' },
     /**系統公告 */
     systemAnnouncement: { icon: 'bi bi-megaphone', iconClass: 'purple', status: '系統公告' },
     /**系統例外事件通知 */

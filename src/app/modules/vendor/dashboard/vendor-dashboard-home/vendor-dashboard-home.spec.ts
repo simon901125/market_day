@@ -4,18 +4,28 @@ import { of, throwError } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
+import { NotificationApiService } from '../../../../core/services/notification-api.service';
+import { AlertService } from '../../../../core/services/alert.service';
 import { VendorDashboardHome } from './vendor-dashboard-home';
 
 describe('VendorDashboardHome', () => {
   let component: VendorDashboardHome;
   let fixture: ComponentFixture<VendorDashboardHome>;
   let vendorDashboardService: jasmine.SpyObj<VendorDashboardService>;
+  let notificationApi: jasmine.SpyObj<NotificationApiService>;
 
   beforeEach(async () => {
     vendorDashboardService = jasmine.createSpyObj<VendorDashboardService>(
       'VendorDashboardService',
       ['getVendorFirstLogin'],
     );
+    notificationApi = jasmine.createSpyObj<NotificationApiService>('NotificationApiService', ['markAsRead']);
+    notificationApi.markAsRead.and.returnValue(of({
+      statusCode: 200,
+      message: 'OK',
+      messageDetails: null,
+      data: { id: 30, isRead: true },
+    }));
     vendorDashboardService.getVendorFirstLogin.and.returnValue(of({
       statusCode: 200,
       message: 'ok',
@@ -27,6 +37,7 @@ describe('VendorDashboardHome', () => {
         pendingReviewCount: 0,
         pendingPaymentCount: 0,
         pendingStallSelectionCount: 0,
+        pendingRefundCount: 0,
         notifications: [],
       },
     }));
@@ -37,6 +48,8 @@ describe('VendorDashboardHome', () => {
         provideRouter([]),
         { provide: VendorDashboardService, useValue: vendorDashboardService },
         { provide: AuthService, useValue: { getUser: () => null } },
+        { provide: NotificationApiService, useValue: notificationApi },
+        { provide: AlertService, useValue: jasmine.createSpyObj('AlertService', ['error']) },
       ],
     })
     .compileComponents();
@@ -68,6 +81,7 @@ describe('VendorDashboardHome', () => {
         pendingReviewCount: 12,
         pendingPaymentCount: 6,
         pendingStallSelectionCount: 2,
+        pendingRefundCount: 4,
         notifications: [{
           id: 30,
           category: 'APPLICATION_REVIEW',
@@ -94,18 +108,36 @@ describe('VendorDashboardHome', () => {
       jasmine.objectContaining({
         icon: 'bi-arrow-counterclockwise',
         label: '退款處理中',
-        count: 1,
+        count: 4,
         unit: '筆',
         path: '/vendor/dash-board/application-record',
         iconColor: 'purple',
       }),
     ]);
     expect(component.notifications[0]).toEqual(jasmine.objectContaining({
-      status: '待審核',
+      id: 30,
+      status: '新申請',
       title: '報名已送出',
       date: '2026/07/15 10:00',
       unread: true,
     }));
+  });
+
+  it('persists a homepage notification read state', () => {
+    const item = {
+      id: 30,
+      icon: 'bi bi-bell',
+      iconClass: 'blue',
+      status: '通知',
+      title: '測試通知',
+      date: '2026/07/15 10:00',
+      unread: false,
+      type: 'systemAnnouncement',
+    };
+
+    component.onMarkRead(item);
+
+    expect(notificationApi.markAsRead).toHaveBeenCalledWith(30, { skipLoading: true });
   });
 
   it('should show an error instead of the first-login guide when initialization fails', () => {

@@ -72,6 +72,7 @@ describe('VendorDashboardStall', () => {
         pendingReviewCount: 0,
         pendingPaymentCount: 0,
         pendingStallSelectionCount: 0,
+        pendingRefundCount: 0,
         notifications: [],
       },
     }));
@@ -150,6 +151,7 @@ describe('VendorDashboardStall', () => {
         pendingReviewCount: 0,
         pendingPaymentCount: 0,
         pendingStallSelectionCount: 0,
+        pendingRefundCount: 0,
         notifications: [],
       },
     }));

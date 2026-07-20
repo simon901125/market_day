@@ -60,16 +60,24 @@
       </a>
     </div>
 
-    <div class="market-grid">
-      @for (market of markets; track market.id) {
-        <app-user-market-card [market]="market" (click)="goToActivityDetail(market)"></app-user-market-card>
-      }
-    </div>
+    @if (!isMarketsLoading && markets.length === 0) {
+      <div class="user-empty-state" role="status">
+        <i class="bi bi-calendar-x" aria-hidden="true"></i>
+        <h3>目前沒有活動</h3>
+        <p>近期尚未有公開活動，請稍後再回來看看。</p>
+      </div>
+    } @else {
+      <div class="market-grid">
+        @for (market of markets; track market.id) {
+          <app-user-market-card [market]="market" (click)="goToActivityDetail(market)"></app-user-market-card>
+        }
+      </div>
 
-    <a routerLink="/user/activity-list" class="mobile-more-link">
-      查看更多市集活動
-      <i class="bi bi-arrow-right"></i>
-    </a>
+      <a routerLink="/user/activity-list" class="mobile-more-link">
+        查看更多市集活動
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    }
   </section>
 
   <section class="vendor-section">

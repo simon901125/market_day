@@ -6,7 +6,11 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MarketCardItem } from '../../../../../models/interface/shared/MarketCardItem';
 import { MarketMapBrand, MarketMapData } from '../../../../../models/interface/shared/MarketMap';
 import { TrafficItem } from '../../../../../models/interface/user/TrafficItem';
-import { UserMarketDetailApi, UserMarketStallBrandApi } from '../../../../../models/interface/user/UserPublicApi';
+import {
+  UserEventStallStatusApi,
+  UserMarketDetailApi,
+  UserMarketStallBrandApi,
+} from '../../../../../models/interface/user/UserPublicApi';
 import { MarketStatus } from '../../../../../models/status/MarketStatus';
 import { Dropdown } from '../../../../shared/dropdown/dropdown';
 import { DEFAULT_MARKET_MAP_DATA, MarketMap } from '../../../../shared/market-map/market-map';
@@ -136,7 +140,7 @@ export class UserActivityDetail {
       return;
     }
 
-    this.loadMarketDetail(this.marketId, { date: this.toApiDate(date) }, { updateMarket: true });
+    this.loadDailyStallLayout(this.marketId, date);
   }
 
   onMapBoothSelected(stallNo: string): void {
@@ -144,11 +148,19 @@ export class UserActivityDetail {
       return;
     }
 
-    this.loadMarketDetail(
+    this.marketApi.getMarketDetailByStall(
       this.marketId,
-      { date: this.toApiDate(this.selectedActivityDate), stallNo },
-      { updateMarket: false, updateSelectedBrand: true },
-    );
+      this.toApiDate(this.selectedActivityDate),
+      stallNo,
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (res) => {
+        if (res.statusCode !== 200 || !res.data) {
+          return;
+        }
+
+        this.applySelectedStallBrand(stallNo, res.data.selectedStall?.brand ?? null);
+      },
+    });
   }
 
   countMarketDays(startDate: string): number {
@@ -183,13 +195,8 @@ export class UserActivityDetail {
 
   private loadMarketDetail(
     id: string | number,
-    params: { date?: string; stallNo?: string } = {},
-    options: { updateMarket?: boolean; updateSelectedBrand?: boolean } = {},
   ): void {
-    const updateMarket = options.updateMarket ?? true;
-    const updateSelectedBrand = options.updateSelectedBrand ?? false;
-
-    this.marketApi.getMarketDetail(id, params)
+    this.marketApi.getMarketDetail(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -200,16 +207,69 @@ export class UserActivityDetail {
           const detail = res.data;
           this.latestDetail = detail;
 
-          if (updateMarket) {
-            this.market = this.mapMarketDetail(detail);
-            this.initializeActivityMaps(this.toDisplayDate(detail.selectedDate ?? params.date ?? undefined));
-          }
-
-          if (updateSelectedBrand && params.stallNo) {
-            this.applySelectedStallBrand(params.stallNo, detail.selectedStall?.brand ?? null);
+          this.market = this.mapMarketDetail(detail);
+          this.initializeActivityMaps(this.toDisplayDate(detail.selectedDate));
+          if (this.selectedActivityDate) {
+            this.loadDailyStallLayout(id, this.selectedActivityDate);
           }
         },
       });
+  }
+
+  private loadDailyStallLayout(id: string | number, displayDate: string): void {
+    this.marketApi.getEventStallsStatus(id, this.toApiDate(displayDate))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          if (res.statusCode !== 200 || !res.data || displayDate !== this.selectedActivityDate) {
+            return;
+          }
+
+          this.applyDailyStallLayout(displayDate, res.data);
+        },
+      });
+  }
+
+  private applyDailyStallLayout(date: string, stalls: UserEventStallStatusApi[]): void {
+    const stallsByNo = new Map(
+      stalls
+        .filter((stall) => Boolean(stall.stallNo))
+        .map((stall) => [stall.stallNo!.trim().toUpperCase(), stall]),
+    );
+    const baseMap = this.ensureMapForDate(date);
+    const nextMap: MarketMapData = {
+      ...baseMap,
+      booths: baseMap.booths.map((booth) => {
+        if (booth.id === 'service-booth') {
+          return { ...booth };
+        }
+
+        const stall = stallsByNo.get(booth.code.trim().toUpperCase());
+        if (!stall) {
+          return { ...booth, status: 'available', brand: undefined };
+        }
+
+        return {
+          ...booth,
+          zone: stall.zoneName || booth.zone,
+          size: stall.width && stall.length ? `${stall.width}m x ${stall.length}m` : booth.size,
+          status: this.isOccupiedStall(stall) ? 'occupied' : 'available',
+          brand: undefined,
+        };
+      }),
+    };
+
+    this.marketMapsByDate[date] = nextMap;
+    this.selectedMarketMap = nextMap;
+  }
+
+  private isOccupiedStall(stall: UserEventStallStatusApi): boolean {
+    if (stall.vendorName?.trim()) {
+      return true;
+    }
+
+    const status = stall.status?.trim().toLowerCase() ?? '';
+    return status !== '' && !['available', 'open', '可選擇', '空位', '未配置'].includes(status);
   }
 
   private initializeActivityMaps(preferredDate?: string): void {

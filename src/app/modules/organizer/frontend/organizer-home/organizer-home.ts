@@ -11,6 +11,12 @@ import { OrganizerAction, OrganizerFaq, OrganizerFeature, OrganizerStep } from '
   templateUrl: './organizer-home.html',
   styleUrl: './organizer-home.scss',
 })
+/**
+ * 主辦方公開專區首頁。
+ *
+ * 本頁只負責呈現主辦方服務介紹與導向註冊／登入；卡片內容集中定義於
+ * 元件資料陣列，讓模板維持單純並方便後續調整文案與顯示順序。
+ */
 export class OrganizerHome {
   /** 主辦方首頁的核心功能介紹卡片。 */
   readonly features: OrganizerFeature[] = [

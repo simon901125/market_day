@@ -12,6 +12,7 @@ import { MarketMap, DEFAULT_MARKET_MAP_DATA } from '../../../shared/market-map/m
   templateUrl: './organizer-dashboard-stall-map.html',
   styleUrl: './organizer-dashboard-stall-map.scss',
 })
+/** 主辦方攤位地圖頁，將後端攤位狀態套用至目前系統使用的固定地圖版型。 */
 export class OrganizerDashboardStallMap implements OnInit {
   eventId = 0;
   event = { name: '-', date: '-', time: '-', place: '-', total: 0, available: 0, selected: 0 };
@@ -23,17 +24,32 @@ export class OrganizerDashboardStallMap implements OnInit {
     private readonly organizerApi: OrganizerApiService,
   ) {}
 
+  /** 從路由取得活動編號後載入該活動的攤位地圖。 */
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
     if (this.eventId > 0) void this.loadMap();
   }
 
   goBack(): void {
+    if (this.route.snapshot.queryParamMap.get('returnTo') === 'registration') {
+      const applicationId = Number(this.route.snapshot.queryParamMap.get('applicationId'));
+      if (Number.isInteger(applicationId) && applicationId > 0) {
+        this.router.navigate(['/organizer/dash-board/register/detail', applicationId], {
+          queryParams: {
+            returnPage: this.route.snapshot.queryParamMap.get('registrationReturnPage'),
+            returnStatus: this.route.snapshot.queryParamMap.get('registrationReturnStatus'),
+          },
+        });
+        return;
+      }
+    }
+
     this.router.navigate(['/organizer/dash-board/stall/detail', this.eventId], {
       queryParams: { returnPage: this.route.snapshot.queryParamMap.get('returnPage'), returnKeyword: this.route.snapshot.queryParamMap.get('returnKeyword'), returnStatus: this.route.snapshot.queryParamMap.get('returnStatus') },
     });
   }
 
+  /** 將後端攤位狀態合併到目前系統提供的固定地圖座標。 */
   private async loadMap(): Promise<void> {
     try {
       const applyDate = this.route.snapshot.queryParamMap.get('applyDate')?.replaceAll('/', '-');

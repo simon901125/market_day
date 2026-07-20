@@ -8,6 +8,7 @@ import { EventPowerPlanDraft } from '../../../../../models/interface/organizer/O
   templateUrl: './basic-power-modal.html',
   styleUrl: './basic-power-modal.scss',
 })
+/** 基本用電編輯視窗，收集免費供電方案的電壓、瓦數與說明。 */
 export class BasicPowerModal {
   @Input({ required: true }) draft!: EventPowerPlanDraft;
   @Input() editing = false;

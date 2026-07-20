@@ -1,12 +1,42 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnDestroy, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 
 import { MarketCardItem } from '../../../../models/interface/shared/MarketCardItem';
+import { UserMarketCardApi } from '../../../../models/interface/user/UserPublicApi';
 import { MarketStatus } from '../../../../models/status/MarketStatus';
-import { BrandType } from '../../../../models/type/BrandType ';
+import { UserMarketApiService } from '../../services/user-market-api.service';
 import { UserMarketCard } from '../shared/user-market-card/user-market-card';
 import { UserMarketSearchPanel } from '../shared/user-market-search-panel/user-market-search-panel';
+
+const formatApiDate = (value: string | null | undefined): string =>
+  value ? value.replace(/-/g, '/') : '';
+
+const mapMarketCard = (market: UserMarketCardApi): MarketCardItem => {
+  const tags = (market.categories ?? []).map((category) => category.name).filter(Boolean);
+  const status = market.eventStatus || MarketStatus.upcoming;
+
+  return {
+    id: String(market.id),
+    title: market.title,
+    start_date: formatApiDate(market.startDate),
+    end_date: formatApiDate(market.endDate),
+    description: market.summary ?? '',
+    time: '',
+    location: [market.city, market.district, market.locationName].filter(Boolean).join(' '),
+    address: market.address ?? '',
+    city: market.city ?? '',
+    area: market.district ?? '',
+    category: tags[0] ?? '',
+    image: market.coverImageUrl ?? 'assets/images/market/cards/market-card-01.png',
+    status,
+    statusClass: MarketStatus.getClass(status),
+    tags,
+    organizer: '',
+    transportation: [],
+  };
+};
 
 @Component({
   selector: 'app-user-home',
@@ -14,21 +44,22 @@ import { UserMarketSearchPanel } from '../shared/user-market-search-panel/user-m
   templateUrl: './user-home.html',
   styleUrl: './user-home.scss',
 })
-/** 一般使用者首頁，包含 Hero 輪播、搜尋入口、精選活動與角色導流區塊。 */
 export class UserHome implements OnInit, OnDestroy {
-  constructor(private router: Router) {}
+  private readonly destroyRef = inject(DestroyRef);
 
-  /** 目前顯示的 Hero 輪播索引。 */
+  constructor(
+    private readonly router: Router,
+    private readonly marketApi: UserMarketApiService,
+  ) {}
+
   currentHeroIndex = 0;
-  /** 控制 Hero 文字與背景進場動畫。 */
   isHeroAnimating = true;
+  markets: MarketCardItem[] = [];
+  isMarketsLoading = false;
 
-  /** Hero 自動輪播計時器。 */
   private heroTimer: ReturnType<typeof setInterval> | null = null;
-  /** Hero 自動輪播間隔毫秒數。 */
   private readonly heroInterval = 5000;
 
-  /** 首頁 Hero 輪播資料。 */
   heroSlides = [
     {
       title: '讓週末多一點<br /><span>城市市集的溫度</span>',
@@ -65,94 +96,41 @@ export class UserHome implements OnInit, OnDestroy {
     },
   ];
 
-  /** 首頁精選活動卡片資料，之後可替換成 API 回傳結果。 */
-  markets: MarketCardItem[] = [
-    {
-      id: 'market-2026-summer-green',
-      title: '夏日綠意市集',
-      start_date: '2026/06/15',
-      end_date: '2026/06/21',
-      description: '結合手作選物、風格餐飲與親子互動體驗，打造適合週末散步與逛市集的城市綠意空間。',
-      time: '10:00 - 18:00',
-      location: '台北市 信義區 草悟廣場',
-      address: '台北市信義區松高路 11 號',
-      city: '台北市',
-      area: '信義區',
-      category: BrandType.family,
-      image: 'assets/images/market/cards/market-card-01.png',
-      status: MarketStatus.upcoming,
-      statusClass: MarketStatus.getClass(MarketStatus.upcoming),
-      tags: [BrandType.food, BrandType.handmade, BrandType.family],
-      organizer: '小集日企劃團隊',
-      transportation: ['捷運市政府站步行約 8 分鐘', '公車市政府站下車', '周邊設有付費停車場'],
-    },
-    {
-      id: 'market-2026-urban-craft',
-      title: '城市手作週末',
-      start_date: '2026/06/27',
-      end_date: '2026/06/28',
-      description: '邀請獨立創作者與設計品牌，帶來陶作、布品、插畫與生活小物。',
-      time: '11:00 - 19:00',
-      location: '台北市 中正區 華山文創園區',
-      address: '台北市中正區八德路一段 1 號',
-      city: '台北市',
-      area: '中正區',
-      category: BrandType.handmade,
-      image: 'assets/images/market/cards/market-card-02.png',
-      status: MarketStatus.preview,
-      statusClass: MarketStatus.getClass(MarketStatus.preview),
-      tags: [BrandType.handmade, BrandType.fashion],
-      organizer: '城市手作企劃',
-      transportation: [
-        '捷運忠孝新生站步行約 5 分鐘',
-        '公車華山文創園區站下車',
-        '可停華山文創園區停車場',
-      ],
-    },
-    {
-      id: 'market-2026-food-picnic',
-      title: '午後野餐美食市集',
-      start_date: '2026/07/04',
-      end_date: '2026/07/05',
-      description: '集合甜點、咖啡、輕食與在地農產，適合朋友聚會與家庭野餐。',
-      time: '10:30 - 18:30',
-      location: '新北市 板橋區 新板萬坪公園',
-      address: '新北市板橋區新府路 1 號',
-      city: '新北市',
-      area: '板橋區',
-      category: BrandType.food,
-      image: 'assets/images/market/cards/market-card-03.png',
-      status: MarketStatus.preview,
-      statusClass: MarketStatus.getClass(MarketStatus.preview),
-      tags: [BrandType.food, BrandType.family],
-      organizer: '午後食光市集',
-      transportation: ['捷運板橋站步行約 7 分鐘', '板橋公車站下車後步行可達'],
-    },
-  ];
-
-  /** 啟動 Hero 自動輪播。 */
   ngOnInit(): void {
     this.startHeroAutoPlay();
+    this.loadFeaturedMarkets();
   }
 
-  /** 離開頁面時停止計時器，避免背景持續執行。 */
   ngOnDestroy(): void {
     this.stopHeroAutoPlay();
   }
 
-  /** 目前應顯示的 Hero 資料。 */
   get currentHero() {
     return this.heroSlides[this.currentHeroIndex];
   }
 
-  /** 建立自動輪播計時器。 */
-  private startHeroAutoPlay(): void {
-    this.heroTimer = setInterval(() => {
-      this.nextHero();
-    }, this.heroInterval);
+  private loadFeaturedMarkets(): void {
+    this.isMarketsLoading = true;
+    this.marketApi.searchMarkets({ eventType: '目前活動', page: 1, pageSize: 3 })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.isMarketsLoading = false;
+          this.markets = res.statusCode === 200 && res.data
+            ? res.data.items.map(mapMarketCard)
+            : [];
+        },
+        error: () => {
+          this.isMarketsLoading = false;
+          this.markets = [];
+        },
+      });
   }
 
-  /** 清除自動輪播計時器。 */
+  private startHeroAutoPlay(): void {
+    this.heroTimer = setInterval(() => this.nextHero(), this.heroInterval);
+  }
+
   private stopHeroAutoPlay(): void {
     if (this.heroTimer) {
       clearInterval(this.heroTimer);
@@ -160,59 +138,45 @@ export class UserHome implements OnInit, OnDestroy {
     }
   }
 
-  /** 切換 Hero 並觸發淡入動畫。 */
   private changeHero(index: number): void {
     this.isHeroAnimating = false;
-
     setTimeout(() => {
       this.currentHeroIndex = index;
       this.isHeroAnimating = true;
     }, 450);
   }
 
-  /** 切到下一張 Hero。 */
   nextHero(): void {
-    const nextIndex = (this.currentHeroIndex + 1) % this.heroSlides.length;
-    this.changeHero(nextIndex);
+    this.changeHero((this.currentHeroIndex + 1) % this.heroSlides.length);
   }
 
-  /** 使用者手動下一張，並重置自動輪播時間。 */
   nextHeroByUser(): void {
     this.nextHero();
     this.resetHeroAutoPlay();
   }
 
-  /** 切到上一張 Hero。 */
   prevHero(): void {
-    const prevIndex = (this.currentHeroIndex - 1 + this.heroSlides.length) % this.heroSlides.length;
-    this.changeHero(prevIndex);
+    this.changeHero((this.currentHeroIndex - 1 + this.heroSlides.length) % this.heroSlides.length);
   }
 
-  /** 使用者手動上一張，並重置自動輪播時間。 */
   prevHeroByUser(): void {
     this.prevHero();
     this.resetHeroAutoPlay();
   }
 
-  /** 點擊輪播點點切換指定 Hero。 */
   goToHero(index: number): void {
-    if (index === this.currentHeroIndex) {
-      return;
-    }
-
+    if (index === this.currentHeroIndex) return;
     this.changeHero(index);
     this.resetHeroAutoPlay();
   }
 
-  /** 重新計算自動輪播時間，避免手動操作後立刻跳下一張。 */
   private resetHeroAutoPlay(): void {
     this.stopHeroAutoPlay();
     this.startHeroAutoPlay();
   }
 
-  /** 前往活動詳情，帶上 marketId 讓重新整理也能還原資料。 */
   goToActivityDetail(market: MarketCardItem): void {
-    this.router.navigate(['/user/activity-detail'], {
+    void this.router.navigate(['/user/activity-detail'], {
       queryParams: { marketId: market.id },
       state: { market },
     });

@@ -17,6 +17,7 @@ interface AccountDetail {
 }
 
 @Component({ selector: 'app-organizer-dashboard-account-detail', imports: [RouterLink, DashboardPagination], templateUrl: './organizer-dashboard-account-detail.html', styleUrl: './organizer-dashboard-account-detail.scss' })
+/** 活動帳務詳情頁，呈現帳務統計、交易明細與報表下載。 */
 export class OrganizerDashboardAccountDetail implements OnInit {
   eventId = 0;
   returnPage = 1;
@@ -30,6 +31,7 @@ export class OrganizerDashboardAccountDetail implements OnInit {
 
   constructor(private readonly route: ActivatedRoute, private readonly router: Router, private readonly organizerApi: OrganizerApiService) {}
 
+  /** 驗證活動 ID、還原返回條件，並載入帳務詳情。 */
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
     this.returnPage = Math.max(1, Number(this.route.snapshot.queryParamMap.get('returnPage')) || 1);
@@ -49,11 +51,13 @@ export class OrganizerDashboardAccountDetail implements OnInit {
   goBack(): void { this.router.navigate(['/organizer/dash-board/account'], { queryParams: { page: this.returnPage, status: this.returnStatus || null } }); }
   viewCollectionDetail(row: LedgerRow): void { if (row.id > 0) this.router.navigate(['/organizer/dash-board/collection/detail', row.id]); }
 
+  /** 下載後端產生的活動帳務 Excel 報表。 */
   async downloadAccountReport(): Promise<void> {
     const blob = await firstValueFrom(this.organizerApi.downloadOrganizerAccountReport(this.eventId));
     this.saveBlob(blob, `帳務報表-${this.detail.activityName}.xlsx`);
   }
 
+  /** 依目前帳務頁籤與頁碼重新查詢活動交易資料。 */
   private async loadDetail(): Promise<void> {
     try {
       const response = await firstValueFrom(this.organizerApi.getOrganizerAccountDetail(this.eventId, {
@@ -65,6 +69,7 @@ export class OrganizerDashboardAccountDetail implements OnInit {
     }
   }
 
+  /** 將帳務統計及交易明細整理成頁面顯示模型。 */
   private applyResponse(data: OrganizerAccountingDetailResponse): void {
     const event = data.event; const summary = data.summary; const payment = data.statistics.payment; const refund = data.statistics.refund; const deposit = data.statistics.deposit;
     const activityStatus = ActivityStatus.fromApiStatus(this.text(event['publishStatusText'] || event['publishStatus']));

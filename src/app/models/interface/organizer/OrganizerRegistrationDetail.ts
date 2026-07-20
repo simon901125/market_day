@@ -4,7 +4,6 @@ export type OrganizerRegistrationDetailActionKey =
   | 'reject'
   | 'returnDeposit'
   | 'goPaymentManagement'
-  | 'chooseBooth'
   | 'viewRefundInfo'
   | 'viewDepositInfo'
   | 'viewActivity'
@@ -39,19 +38,6 @@ export interface OrganizerRegistrationInfoRow {
 
 export interface OrganizerRegistrationTableRow {
   cells: string[];
-}
-
-// 從報名管理列表帶入詳情頁的基礎資料。
-export interface OrganizerRegistrationDetailSeed {
-  id: number;
-  activity: string;
-  activityImage: string;
-  activityTime: string;
-  brandName: string;
-  vendorName: string;
-  brandType: string;
-  registeredAt: string;
-  status: string;
 }
 
 // 報名詳情頁完整顯示資料。

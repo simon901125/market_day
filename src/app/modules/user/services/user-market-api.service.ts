@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpService } from '../../../core/http/http.service';
 import {
   PageResponse,
+  UserEventStallStatusApi,
   UserMarketCardApi,
   UserMarketDetailApi,
   UserMarketSearchParams,
@@ -29,6 +30,12 @@ export class UserMarketApiService {
 
   getMarketDetailByStall(id: string | number, date: string, stallNo: string) {
     return this.getMarketDetail(id, { date, stallNo });
+  }
+
+  getEventStallsStatus(id: string | number, applyDate?: string) {
+    return this.httpService.get<UserEventStallStatusApi[]>(
+      `api/eventsMap/${id}/stallsStatus${this.toQueryString({ applyDate })}`
+    );
   }
 
   private toQueryString<T extends object>(params: T): string {

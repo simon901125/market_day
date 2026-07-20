@@ -19,6 +19,7 @@ interface EquipmentDetailData {
 }
 
 @Component({ selector: 'app-organizer-dashboard-equipment-detail', imports: [RouterLink, DashboardPagination], templateUrl: './organizer-dashboard-equipment-detail.html', styleUrl: './organizer-dashboard-equipment-detail.scss' })
+/** 設備詳情頁，分頁呈現設備與車牌資料並提供報表下載。 */
 export class OrganizerDashboardEquipmentDetail implements OnInit {
   eventId = 0;
   returnPage = 1;
@@ -53,6 +54,7 @@ export class OrganizerDashboardEquipmentDetail implements OnInit {
 
   constructor(private readonly route: ActivatedRoute, private readonly router: Router, private readonly organizerApi: OrganizerApiService) {}
 
+  /** 驗證活動 ID、還原列表狀態，並載入各設備分頁資料。 */
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
     this.returnPage = Math.max(1, Number(this.route.snapshot.queryParamMap.get('returnPage')) || 1);
@@ -69,11 +71,13 @@ export class OrganizerDashboardEquipmentDetail implements OnInit {
   onExtraPowerPageChange(page: number): void { this.extraPowerCurrentPage = page; void this.loadDetail(); }
   onVehiclePageChange(page: number): void { this.vehicleCurrentPage = page; void this.loadDetail(); }
 
+  /** 下載後端產生的設備管理 Excel 報表。 */
   async downloadEquipmentReport(): Promise<void> {
     const blob = await firstValueFrom(this.organizerApi.downloadOrganizerEquipmentReport(this.eventId));
     this.saveBlob(blob, `設備報表-${this.detail.title}.xlsx`);
   }
 
+  /** 依三個區塊各自的頁碼取得最新設備詳情。 */
   private async loadDetail(): Promise<void> {
     try {
       const response = await firstValueFrom(this.organizerApi.getOrganizerEquipmentDetail(this.eventId, {
@@ -87,6 +91,7 @@ export class OrganizerDashboardEquipmentDetail implements OnInit {
     }
   }
 
+  /** 將設備租借、額外用電與車牌資料分別套用到畫面區塊。 */
   private applyResponse(data: OrganizerEquipmentDetailResponse): void {
     const e = data.event; const overview = data.equipmentOverview;
     const status = ActivityStatus.fromApiStatus(this.text(e['status']));

@@ -57,21 +57,31 @@
         </div>
       </div>
 
-      <div class="brand-grid">
-        @for (brand of pagedBrands; track brand.id) {
-          <app-user-brandserch-card
-            [brand]="brand"
-            (cardClick)="goToBrandDetail($event)"
-          ></app-user-brandserch-card>
-        }
-      </div>
+      @if (!isLoading && pagedBrands.length === 0) {
+        <div class="user-empty-state" role="status">
+          <i class="bi bi-shop" aria-hidden="true"></i>
+          <h3>目前沒有品牌</h3>
+          <p>目前沒有符合條件的品牌，請調整搜尋條件後再試。</p>
+        </div>
+      } @else {
+        <div class="brand-grid">
+          @for (brand of pagedBrands; track brand.id) {
+            <app-user-brandserch-card
+              [brand]="brand"
+              (cardClick)="goToBrandDetail($event)"
+            ></app-user-brandserch-card>
+          }
+        </div>
 
-      <app-pagination
-        [currentPage]="currentPage"
-        [pageSize]="pageSize"
-        [totalItems]="totalItems"
-        (pageChange)="onPageChange($event)"
-      ></app-pagination>
+        @if (totalItems > 0) {
+          <app-pagination
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            [totalItems]="totalItems"
+            (pageChange)="onPageChange($event)"
+          ></app-pagination>
+        }
+      }
     </div>
   </section>
 </div>

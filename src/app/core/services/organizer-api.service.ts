@@ -41,17 +41,39 @@ import {
   OrganizerPaymentSearchResponse,
   OrganizerRefundResponse,
 } from '../../models/interface/organizer/OrganizerPayment';
+import {
+  OrganizerNotificationFilter,
+  OrganizerNotificationSearchResponse,
+} from '../../models/interface/organizer/OrganizerNotification';
 
 @Injectable({
   providedIn: 'root',
 })
+/** 主辦方後台 API 封裝，統一管理活動、報名、收款、攤位、設備、帳務與通知請求。 */
 export class OrganizerApiService {
   constructor(private readonly httpService: HttpService) {}
 
+  // 首頁與通知中心
   getOrganizerDashboardInit(): Observable<ApiResult<OrganizerDashboardInit>> {
     return this.httpService.get<OrganizerDashboardInit>('api/organizer/dashboard/init');
   }
 
+  getOrganizerNotifications(params: {
+    filter?: OrganizerNotificationFilter;
+    page?: number;
+    pageSize?: number;
+  } = {}): Observable<ApiResult<OrganizerNotificationSearchResponse>> {
+    const query = new URLSearchParams();
+    query.set('filter', params.filter ?? '全部');
+    query.set('page', String(params.page ?? 1));
+    query.set('pageSize', String(params.pageSize ?? 8));
+    return this.httpService.get<OrganizerNotificationSearchResponse>(
+      `api/organizer/notices?${query.toString()}`,
+      { skipLoading: true },
+    );
+  }
+
+  // 活動查詢、編輯與工作流操作
   searchOrganizerEvents(params: {
     keyword?: string;
     status?: string;
@@ -144,6 +166,7 @@ export class OrganizerApiService {
     return this.httpService.upload<StoredEventImage>('api/images', formData);
   }
 
+  // 報名查詢、審核與保證金退還
   searchOrganizerApplications(params: {
     eventTitle?: string;
     status?: string;
@@ -202,6 +225,7 @@ export class OrganizerApiService {
     );
   }
 
+  // 收款、退款確認與失敗重試
   searchOrganizerPayments(params: {
     keyword?: string;
     paymentStatus?: string;
@@ -243,6 +267,7 @@ export class OrganizerApiService {
     });
   }
 
+  // 攤位、設備與帳務管理
   searchOrganizerStalls(params: OrganizerOperationSearchParams = {}): Observable<ApiResult<OrganizerStallSearchResponse>> {
     return this.httpService.get<OrganizerStallSearchResponse>(
       `api/organizer/stalls/search?${this.buildOperationSearchQuery(params)}`,
@@ -303,6 +328,7 @@ export class OrganizerApiService {
     return this.httpService.download(`api/organizer/accounts/${eventId}/export`);
   }
 
+  // 主辦方個人與聯絡資料
   getOrganizerProfile(): Observable<ApiResult<OrganizerProfile>> {
     return this.httpService.get<OrganizerProfile>('api/organizer/profile/load');
   }

@@ -33,6 +33,7 @@ interface EquipmentActivityRow {
   templateUrl: './organizer-dashboard-equipment-management.html',
   styleUrl: './organizer-dashboard-equipment-management.scss',
 })
+/** 設備管理列表，依活動查詢租借設備、額外用電與車牌登記概況。 */
 export class OrganizerDashboardEquipmentManagement implements OnInit {
   @ViewChild(DateRangeSelector) private dateRangeSelector?: DateRangeSelector;
   currentPage = 1;
@@ -64,6 +65,7 @@ export class OrganizerDashboardEquipmentManagement implements OnInit {
     private readonly organizerApi: OrganizerApiService,
   ) {}
 
+  /** 還原網址查詢條件並載入設備管理活動列表。 */
   ngOnInit(): void {
     this.currentPage = Math.max(1, Number(this.route.snapshot.queryParamMap.get('page')) || 1);
     this.keyword = this.route.snapshot.queryParamMap.get('keyword') ?? '';
@@ -106,6 +108,7 @@ export class OrganizerDashboardEquipmentManagement implements OnInit {
     });
   }
 
+  /** 依活動、狀態與日期條件查詢設備統計資料。 */
   private async loadRows(): Promise<void> {
     try {
       const response = await firstValueFrom(this.organizerApi.searchOrganizerEquipment({
@@ -124,6 +127,7 @@ export class OrganizerDashboardEquipmentManagement implements OnInit {
     }
   }
 
+  /** 將後端設備摘要轉成管理列表顯示模型。 */
   private mapRow(item: OrganizerEquipmentSummary): EquipmentActivityRow {
     const status = ActivityStatus.fromApiStatus(item.status ?? '');
     return {

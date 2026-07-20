@@ -359,7 +359,6 @@ export class MarketMap implements OnChanges, OnInit {
       return;
     }
 
-    this.boothSelected.emit(booth);
     this.clearHoverPreviewTimer();
     this.hoverPreviewTimer = setTimeout(() => {
       this.clearPreviewCloseTimer();

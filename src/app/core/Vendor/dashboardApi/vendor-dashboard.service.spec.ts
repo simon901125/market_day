@@ -43,7 +43,43 @@ describe('VendorDashboardService', () => {
         pendingReviewCount: 0,
         pendingPaymentCount: 0,
         pendingStallSelectionCount: 0,
+        pendingRefundCount: 0,
         notifications: [],
+      },
+    });
+  });
+
+  it('should get paged vendor notifications with the selected filter', () => {
+    service.getVendorNotifications({
+      filter: '付款相關',
+      page: 2,
+      pageSize: 8,
+    }).subscribe((response) => {
+      expect(response.data.notifications.page).toBe(2);
+    });
+
+    const request = httpTesting.expectOne((candidate) =>
+      candidate.url === `${environment.apiBaseUrl}api/vendor/notices`
+      && candidate.params.get('filter') === '付款相關'
+      && candidate.params.get('page') === '2'
+      && candidate.params.get('pageSize') === '8',
+    );
+    expect(request.request.method).toBe('GET');
+    request.flush({
+      statusCode: 200,
+      message: '攤主通知取得成功',
+      messageDetails: null,
+      data: {
+        unreadCount: 1,
+        notifications: {
+          items: [],
+          page: 2,
+          pageSize: 8,
+          totalItems: 9,
+          totalPages: 2,
+          hasPrevious: true,
+          hasNext: false,
+        },
       },
     });
   });

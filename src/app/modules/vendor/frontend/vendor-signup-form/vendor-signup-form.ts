@@ -138,9 +138,6 @@ export class VendorSignupForm implements OnInit {
     note: '',
   };
 
-  readonly boothSpec = '3 × 3 公尺';
-  readonly boothDeposit = 1000;
-  readonly capacityPerDate = 200;
   readonly noteMaxLength = 200;
 
   constructor(
@@ -209,7 +206,31 @@ export class VendorSignupForm implements OnInit {
   }
 
   get boothFeePerDay(): number {
-    return this.market?.price ?? 650;
+    return this.marketDetail?.baseFee ?? this.market?.price ?? 0;
+  }
+
+  get boothSpec(): string {
+    const dimensions = [
+      this.marketDetail?.stallWidth ?? this.market?.stallWidth,
+      this.marketDetail?.stallLength ?? this.market?.stallLength,
+      this.marketDetail?.stallHeight ?? this.market?.stallHeight,
+    ].filter((value): value is number => typeof value === 'number' && value > 0);
+
+    return dimensions.length
+      ? `${dimensions.map((value) => this.formatDimension(value)).join(' × ')} 公尺`
+      : '-';
+  }
+
+  get boothDeposit(): number {
+    return this.marketDetail?.depositAmount ?? this.market?.depositAmount ?? 0;
+  }
+
+  get capacityPerDate(): number {
+    return this.marketDetail?.maxBooths ?? this.market?.maxBooths ?? 0;
+  }
+
+  capacityForSlot(slot: MarketSlot): number {
+    return slot.total ?? this.capacityPerDate;
   }
 
   get boothSubtotal(): number {
@@ -270,17 +291,13 @@ export class VendorSignupForm implements OnInit {
       return '-';
     }
 
-    const start = this.parseDate(this.market.start_date);
-    if (!start) {
+    const registrationStart = this.formatApiDateTime(this.market.registrationStartAt);
+    const registrationEnd = this.formatApiDateTime(this.market.registrationEndAt);
+    if (!registrationStart || !registrationEnd) {
       return '-';
     }
 
-    const registrationStart = new Date(start);
-    registrationStart.setDate(registrationStart.getDate() - 45);
-    const registrationEnd = new Date(start);
-    registrationEnd.setDate(registrationEnd.getDate() - 22);
-
-    return `${this.formatFullDate(registrationStart)} 12:00 - ${this.formatFullDate(registrationEnd)} 23:59`;
+    return `${registrationStart} - ${registrationEnd}`;
   }
 
   get signupStatusText(): string {
@@ -550,6 +567,26 @@ export class VendorSignupForm implements OnInit {
 
   private formatFullDate(date: Date): string {
     return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+  }
+
+  private formatApiDateTime(value?: string): string | null {
+    const parts = value?.trim().match(
+      /^(\d{4})[-/](\d{1,2})[-/](\d{1,2})(?:[T\s](\d{1,2}):(\d{2}))?/,
+    );
+    if (!parts) {
+      return null;
+    }
+
+    const [, year, month, day, hour, minute] = parts;
+    if (hour == null || minute == null) {
+      return null;
+    }
+
+    return `${year}/${month.padStart(2, '0')}/${day.padStart(2, '0')} ${hour.padStart(2, '0')}:${minute}`;
+  }
+
+  private formatDimension(value: number): string {
+    return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(2)));
   }
 
   private weekday(date: Date): string {

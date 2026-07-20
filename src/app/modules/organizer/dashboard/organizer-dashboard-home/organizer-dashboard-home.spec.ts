@@ -3,6 +3,9 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { ApplicationStatus } from '../../../../models/status/ApplicationStatus';
+import { PaymentStatus } from '../../../../models/status/PaymentStatus';
 import { OrganizerDashboardHome } from './organizer-dashboard-home';
 
 describe('OrganizerDashboardHome', () => {
@@ -17,6 +20,23 @@ describe('OrganizerDashboardHome', () => {
         {
           provide: OrganizerApiService,
           useValue: {
+            getOrganizerNotifications: () => of({
+              statusCode: 200,
+              message: 'OK',
+              messageDetails: null,
+              data: {
+                unreadCount: 0,
+                notifications: {
+                  items: [],
+                  page: 1,
+                  pageSize: 3,
+                  totalItems: 0,
+                  totalPages: 0,
+                  hasPrevious: false,
+                  hasNext: false,
+                },
+              },
+            }),
             getOrganizerDashboardInit: () => of({
               statusCode: 200,
               message: 'OK',
@@ -57,6 +77,33 @@ describe('OrganizerDashboardHome', () => {
             }),
           },
         },
+        {
+          provide: AuthService,
+          useValue: {
+            getUser: () => ({
+              email: 'organizer@example.com',
+              name: '測試主辦方',
+              role: 'ORGANIZER',
+              status: 'ACTIVE',
+              isLogin: true,
+            }),
+            getAuthMe: () => of({
+              statusCode: 200,
+              message: 'OK',
+              messageDetails: null,
+              data: {
+                user: {
+                  email: 'organizer@example.com',
+                  name: '最新主辦方名稱',
+                  role: 'ORGANIZER',
+                  status: 'ACTIVE',
+                  isLogin: true,
+                },
+              },
+            }),
+            saveUser: jasmine.createSpy('saveUser'),
+          },
+        },
       ],
     })
     .compileComponents();
@@ -76,5 +123,21 @@ describe('OrganizerDashboardHome', () => {
 
   it('should load todo card counts from the application task summary', () => {
     expect(component.todoItems.map((item) => item.count)).toEqual([12, 3, 50]);
+  });
+
+  it('should display the current organizer name returned by auth API', () => {
+    expect(component.displayName).toBe('最新主辦方名稱');
+    expect(fixture.nativeElement.textContent).toContain('歡迎回來，最新主辦方名稱！');
+  });
+
+  it('should link todo cards to lists with the matching status filters', () => {
+    expect(component.todoItems.map((item) => ({
+      path: item.path,
+      status: item.queryParams?.['status'],
+    }))).toEqual([
+      { path: '/organizer/dash-board/register', status: ApplicationStatus.pendingReview },
+      { path: '/organizer/dash-board/collection', status: PaymentStatus.refundRequested },
+      { path: '/organizer/dash-board/register', status: ApplicationStatus.pendingSelection },
+    ]);
   });
 });

@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 
+import { AddressApiService } from '../../../../../core/services/address-api.service';
 import { UserMarketSearchPanel } from './user-market-search-panel';
 
 describe('UserMarketSearchPanel', () => {
@@ -8,7 +11,14 @@ describe('UserMarketSearchPanel', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserMarketSearchPanel]
+      imports: [UserMarketSearchPanel],
+      providers: [
+        provideRouter([]),
+        {
+          provide: AddressApiService,
+          useValue: { getAddressCities: () => of({ statusCode: 200, data: ['台北市'] }) },
+        },
+      ],
     })
     .compileComponents();
 

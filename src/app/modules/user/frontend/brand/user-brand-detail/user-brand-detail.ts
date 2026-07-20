@@ -4,7 +4,6 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BrandItem } from '../../../../../models/interface/shared/BrandItem';
 import { UserBrandDetailApi } from '../../../../../models/interface/user/UserPublicApi';
 import { AlertService } from '../../../../../core/services/alert.service';
-import { BRANDS, findBrandById } from '../user-brand-search/user-brand-search';
 import { UserBrandApiService } from '../../../services/user-brand-api.service';
 
 const fallbackBrandImage = (brandId: string, fileName: string): string =>
@@ -61,7 +60,7 @@ const mapBrandDetail = (brand: UserBrandDetailApi): BrandItem => ({
 /** 品牌詳情頁，依 query param 或導頁 state 還原品牌資料。 */
 export class UserBrandDetail {
   /** 目前顯示的品牌資料；沒有指定品牌時顯示第一筆預設資料。 */
-  brand: BrandItem = BRANDS[0];
+  brand: BrandItem | null = null;
 
   /** 優先使用導頁 state，其次用 query param，最後回到預設品牌。 */
   constructor(
@@ -76,7 +75,7 @@ export class UserBrandDetail {
       (history.state?.brand as BrandItem | undefined);
     const brandId = this.route.snapshot.queryParamMap.get('brand') ?? stateBrand?.id;
 
-    this.brand = findBrandById(brandId) ?? stateBrand ?? BRANDS[0];
+    this.brand = stateBrand ?? null;
 
     if (brandId) {
       this.loadBrandDetail(brandId);
@@ -104,7 +103,7 @@ export class UserBrandDetail {
 
   /** 品牌曾參與過的市集紀錄。 */
   get marketRecords() {
-    return this.brand.historyMarkets;
+    return this.brand?.historyMarkets ?? [];
   }
 
   /** 從社群網址取出帳號名稱，讓畫面顯示更簡潔。 */

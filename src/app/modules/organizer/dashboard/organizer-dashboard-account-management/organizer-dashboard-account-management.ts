@@ -33,6 +33,7 @@ interface AccountRow {
   templateUrl: './organizer-dashboard-account-management.html',
   styleUrl: './organizer-dashboard-account-management.scss',
 })
+/** 帳務管理列表，彙整各活動收款、退款與保證金統計。 */
 export class OrganizerDashboardAccountManagement implements OnInit {
   @ViewChild(DateRangeSelector) private dateRangeSelector?: DateRangeSelector;
   currentPage = 1;
@@ -64,6 +65,7 @@ export class OrganizerDashboardAccountManagement implements OnInit {
     private readonly organizerApi: OrganizerApiService,
   ) {}
 
+  /** 還原網址查詢條件並載入活動帳務列表。 */
   ngOnInit(): void {
     this.currentPage = Math.max(1, Number(this.route.snapshot.queryParamMap.get('page')) || 1);
     this.keyword = this.route.snapshot.queryParamMap.get('keyword') ?? '';
@@ -106,6 +108,7 @@ export class OrganizerDashboardAccountManagement implements OnInit {
     });
   }
 
+  /** 查詢各活動的收款、退款與保證金彙總資料。 */
   private async loadRows(): Promise<void> {
     try {
       const response = await firstValueFrom(this.organizerApi.searchOrganizerAccounts({
@@ -124,6 +127,7 @@ export class OrganizerDashboardAccountManagement implements OnInit {
     }
   }
 
+  /** 將後端帳務摘要轉成列表顯示欄位。 */
   private mapRow(item: OrganizerAccountingSummary): AccountRow {
     const status = ActivityStatus.fromApiStatus(item.publishStatusText || item.publishStatus || '');
     return {
