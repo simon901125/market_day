@@ -1,5 +1,5 @@
-﻿import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+﻿import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import { DateRangeSelector } from '../../../shared/date-range-selector/date-range-selector';
 import { ActivityStatus } from '../../../../models/status/ActivityStatus';
@@ -22,9 +22,10 @@ import { ClickableTableRowDirective } from '../../../shared/dashboard/clickable-
   templateUrl: './admin-dashboard-market-management.html',
   styleUrl: './admin-dashboard-market-management.scss',
 })
-export class AdminDashboardMarketManagement implements AfterViewInit {
+export class AdminDashboardMarketManagement implements OnInit, AfterViewInit {
   constructor(
     private router: Router,
+    private readonly route: ActivatedRoute,
     private readonly adminApiService: AdminApiService,
     private readonly alert: AlertService,
   ) {}
@@ -67,7 +68,7 @@ export class AdminDashboardMarketManagement implements AfterViewInit {
   ];
 
   /** 目前篩選條件：狀態 */
-  private selectedStatus = '';
+  selectedStatus = '';
   /** 目前輸入的搜尋關鍵字 */
   searchKeyword = '';
 
@@ -81,6 +82,15 @@ export class AdminDashboardMarketManagement implements AfterViewInit {
   pageSize = 6;
   /** 篩選後的總筆數 */
   totalItems = 0;
+
+  /** 從網址 query params 還原預設篩選狀態（例如從首頁待辦卡片帶入的 status）。 */
+  ngOnInit(): void {
+    const statusFromUrl = this.route.snapshot.queryParamMap.get('status') ?? '';
+
+    if (this.statusOptions.includes(statusFromUrl) && statusFromUrl !== ActivityStatus.all) {
+      this.selectedStatus = statusFromUrl;
+    }
+  }
 
   ngAfterViewInit(): void {
     setTimeout(() => {

@@ -23,6 +23,7 @@
       title="活動狀態"
       placeholder="全部狀態"
       [options]="statusOptions"
+      [selectedValue]="selectedStatus"
       (optionSelected)="onStatusSelected($event)"
     ></app-dropdown>
 
