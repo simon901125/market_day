@@ -1194,6 +1194,27 @@
   fill: #2563eb;
 }
 
+// 一般使用者瀏覽地圖時以分區色辨識 A／B／C 區；
+// 可選攤位的藍色狀態僅供後台選位模式使用，不能覆蓋公開地圖的分區色。
+.market-map.is-public .booth.booth-available.zone-a rect {
+  fill: var(--booth-a);
+  stroke: transparent;
+}
+
+.market-map.is-public .booth.booth-available.zone-b rect {
+  fill: var(--booth-b);
+  stroke: transparent;
+}
+
+.market-map.is-public .booth.booth-available.zone-c rect {
+  fill: var(--booth-c);
+  stroke: transparent;
+}
+
+.market-map.is-public .booth.booth-available text {
+  fill: #111827;
+}
+
 .booth:hover rect {
   stroke: rgba(47, 41, 36, 0.18);
   filter: drop-shadow(0 2px 5px rgba(47, 41, 36, 0.12));

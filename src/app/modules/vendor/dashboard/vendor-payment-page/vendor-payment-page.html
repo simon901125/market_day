@@ -26,7 +26,7 @@
           <img [src]="application.event.eventCoverImageUrl || 'assets/images/market/cards/market-card-01.png'" [alt]="application.event.eventTitle" />
           <div class="application-info">
             <h3>{{ application.event.eventTitle }}</h3>
-            <p><span class="info-label">活動狀態</span><span class="status-badge">{{ application.event.eventStatus }}</span></p>
+            <p><span class="info-label">活動狀態</span><span class="status-badge" [ngClass]="marketStatus.getClass(application.event.eventStatus)">{{ application.event.eventStatus }}</span></p>
             <p><span class="info-label">活動時間</span>{{ application.event.eventTime }}</p>
             <p><span class="info-label">活動地點</span>{{ application.event.locationName }}</p>
             <p><span class="info-label">活動地址</span>{{ application.event.address }}</p>

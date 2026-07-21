@@ -23,7 +23,7 @@ const categoryNames = (market: UserMarketCardApi): string[] =>
   (market.categories ?? []).map((category) => category.name).filter(Boolean);
 
 const mapMarketCard = (market: UserMarketCardApi): MarketCardItem => {
-  const status = market.eventStatus || MarketStatus.upcoming;
+  const status = MarketStatus.fromApiStatus(market.eventStatus) || MarketStatus.upcoming;
 
   return {
     id: String(market.id),

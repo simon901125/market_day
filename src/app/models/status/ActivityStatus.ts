@@ -90,7 +90,11 @@ export class ActivityStatus {
 
   /** 把後端回傳的 EventStatus API 值轉成畫面用的中文標籤。 */
   static fromApiStatus(status: string): string {
-    return ActivityStatus.apiStatusMap[status] ?? status;
+    const value = status.trim();
+    const normalized = ActivityStatus.normalizeApiStatusKey(value);
+    return ActivityStatus.apiStatusMap[value]
+      ?? ActivityStatus.apiStatusMap[normalized]
+      ?? value;
   }
 
   /** 把畫面上的中文狀態標籤轉成要送給後端的 EventStatus API 值。 */
@@ -120,6 +124,16 @@ export class ActivityStatus {
 
   /** 把後端回傳的 WorkflowStatus API 值轉成畫面用的中文標籤。 */
   static fromWorkflowApiStatus(status: string): string {
-    return ActivityStatus.workflowApiStatusMap[status] ?? status;
+    const value = status.trim();
+    const normalized = ActivityStatus.normalizeApiStatusKey(value);
+    return ActivityStatus.workflowApiStatusMap[value]
+      ?? ActivityStatus.workflowApiStatusMap[normalized]
+      ?? value;
+  }
+
+  /** 同時接受後端 enum 常見的 PENDING_REVIEW 與既有 pendingReview 格式。 */
+  private static normalizeApiStatusKey(status: string): string {
+    const lowerCase = status.toLowerCase();
+    return lowerCase.replace(/_([a-z])/g, (_, letter: string) => letter.toUpperCase());
   }
 }
