@@ -10,9 +10,9 @@ import { NotificationApiService } from '../../../../core/services/notification-a
 import { DashboardNotification } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
 import { NotificationTypeDisplay } from '../../../../models/type/NotificationTypeDisplay';
 
-/** 通知分類 tab 對應的後端 NotificationCategory API 值（管理員只使用活動異動、系統、異常三種分類） */
+/** 通知分類 tab 對應的後端 NotificationCategory API 值（管理員只使用活動管理、系統、異常三種分類） */
 const TAB_TO_CATEGORY: Record<string, string> = {
-  活動: 'eventChange',
+  活動: 'eventManagement',
   系統: 'system',
   異常: 'exception',
 };
@@ -108,7 +108,7 @@ export class AdminDashboardNotification implements OnInit {
         id: notice.id,
         icon: display.icon,
         iconClass: display.iconClass,
-        title: notice.title,
+        title: notice.content,
         status: display.status,
         statusClass: NotificationTypeDisplay.getStatusClass(display.iconClass),
         date: notice.time,
