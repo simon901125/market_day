@@ -5,6 +5,7 @@ export interface VendorDashboardInit {
   pendingReviewCount: number;
   pendingPaymentCount: number;
   pendingStallSelectionCount: number;
+  pendingRefundCount: number;
   notifications: VendorDashboardNotification[];
 }
 

@@ -8,6 +8,7 @@ import { EventPowerPlanDraft } from '../../../../../models/interface/organizer/O
   templateUrl: './extra-power-modal.html',
   styleUrl: './extra-power-modal.scss',
 })
+/** 額外用電編輯視窗，收集加購用電方案與每日費用。 */
 export class ExtraPowerModal {
   @Input({ required: true }) draft!: EventPowerPlanDraft;
   @Input() editing = false;

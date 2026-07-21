@@ -4,7 +4,7 @@
 <section class="organizer-dashboard-home page-transition">
   <header class="welcome-header">
     <div>
-      <h1 class="welcome-title">歡迎回來，董映彤！ <span aria-hidden="true">👋</span></h1>
+      <h1 class="welcome-title">歡迎回來，{{ displayName }}！ <span aria-hidden="true">👋</span></h1>
       <p class="welcome-subtitle">快速掌握活動進度，開始今天的工作吧！</p>
     </div>
     <a class="create-activity-button" routerLink="/organizer/dash-board/activity/detail">
@@ -22,6 +22,7 @@
           [unit]="item.unit"
           [label]="item.label"
           [path]="item.path"
+          [queryParams]="item.queryParams"
           [iconColor]="item.iconColor ?? 'orange'"
         />
       }
@@ -81,8 +82,10 @@
       [limitItems]="true"
       [showTabs]="false"
       [showPagination]="false"
+      [loading]="loading"
       viewAllLink="/organizer/dash-board/notification"
       viewAllText="查看全部"
+      (markRead)="onMarkRead($event)"
     />
   </div>
 

@@ -7,6 +7,7 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { NotificationApiService } from '../../../../core/services/notification-api.service';
 import { AdminDashboardOverview } from '../../../../models/interface/admin/AdminDashboardOverview';
 import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { ActivityStatus } from '../../../../models/status/ActivityStatus';
 
 /**
  * 管理員首頁待處理事項資料格式
@@ -17,6 +18,7 @@ interface TodoItem {
   unit: string;
   label: string;
   path: string;
+  queryParams?: Record<string, string>;
   iconColor?: string;
 }
 
@@ -130,6 +132,7 @@ export class AdminDashboardHome extends AdminDashboardNotification implements On
         unit: '筆',
         label: '活動審核',
         path: '/admin/dash-board/activity',
+        queryParams: { status: ActivityStatus.pendingReview },
         iconColor: 'orange',
       },
       {
@@ -138,6 +141,7 @@ export class AdminDashboardHome extends AdminDashboardNotification implements On
         unit: '筆',
         label: '活動地圖建置',
         path: '/admin/dash-board/activity',
+        queryParams: { status: ActivityStatus.mapBuilding },
         iconColor: 'orange',
       },
       {
@@ -146,6 +150,7 @@ export class AdminDashboardHome extends AdminDashboardNotification implements On
         unit: '筆',
         label: '活動下架申請',
         path: '/admin/dash-board/activity',
+        queryParams: { status: ActivityStatus.unpublishRequested },
         iconColor: 'orange',
       },
       {

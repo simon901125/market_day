@@ -83,9 +83,18 @@ export class VendorSignupConfirmPage {
     return this.signup?.slotDate || this.market?.start_date || '-';
   }
 
-  /** 攤位規格由表單頁帶入，沒有資料時顯示預設規格。 */
+  /** 攤位規格由活動詳細 API 經表單頁帶入。 */
   get boothSpec(): string {
-    return this.signup?.boothSpec || '3 × 3 公尺';
+    if (this.signup?.boothSpec && this.signup.boothSpec !== '-') return this.signup.boothSpec;
+
+    const dimensions = [
+      this.market?.stallWidth,
+      this.market?.stallLength,
+      this.market?.stallHeight,
+    ].filter((value): value is number => typeof value === 'number' && value > 0);
+    return dimensions.length
+      ? `${dimensions.map((value) => this.formatDimension(value)).join(' × ')} 公尺`
+      : '-';
   }
 
   get selectedSlots(): MarketSlot[] {
@@ -119,7 +128,7 @@ export class VendorSignupConfirmPage {
   }
 
   get boothDeposit(): number {
-    return this.signup?.boothDeposit ?? 1000;
+    return this.signup?.boothDeposit ?? this.market?.depositAmount ?? 0;
   }
 
   get equipmentFee(): number {
@@ -160,15 +169,11 @@ export class VendorSignupConfirmPage {
 
   get registrationPeriodText(): string {
     if (!this.market) return '-';
-    const eventStart = this.parseDate(this.market.start_date);
-    if (!eventStart) return '-';
-
-    const registrationStart = new Date(eventStart);
-    registrationStart.setDate(registrationStart.getDate() - 45);
-    const registrationEnd = new Date(eventStart);
-    registrationEnd.setDate(registrationEnd.getDate() - 22);
-
-    return `${this.formatDateOnly(registrationStart)} 12:00 - ${this.formatDateOnly(registrationEnd)} 23:59`;
+    const registrationStart = this.formatApiDateTime(this.market.registrationStartAt);
+    const registrationEnd = this.formatApiDateTime(this.market.registrationEndAt);
+    return registrationStart && registrationEnd
+      ? `${registrationStart} - ${registrationEnd}`
+      : '-';
   }
 
   get eventDates(): string[] {
@@ -181,18 +186,11 @@ export class VendorSignupConfirmPage {
 
   get registrationDates(): string[] {
     if (!this.market) return ['-'];
-    const eventStart = this.parseDate(this.market.start_date);
-    if (!eventStart) return ['-'];
-
-    const registrationStart = new Date(eventStart);
-    registrationStart.setDate(registrationStart.getDate() - 45);
-    const registrationEnd = new Date(eventStart);
-    registrationEnd.setDate(registrationEnd.getDate() - 22);
-
-    return [
-      `${this.formatFullDateObject(registrationStart)}　12:00－`,
-      `${this.formatFullDateObject(registrationEnd)}　23:59`,
-    ];
+    const registrationStart = this.formatApiDateTime(this.market.registrationStartAt);
+    const registrationEnd = this.formatApiDateTime(this.market.registrationEndAt);
+    return registrationStart && registrationEnd
+      ? [`${registrationStart}－`, registrationEnd]
+      : ['-'];
   }
 
   formatSlotDate(value: string): string {
@@ -319,8 +317,20 @@ export class VendorSignupConfirmPage {
     return `${includeYear ? `${date.getFullYear()}/` : ''}${dateText}（${weekday}）`;
   }
 
-  private formatDateOnly(date: Date): string {
-    return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+  private formatApiDateTime(value?: string): string | null {
+    const parts = value?.trim().match(
+      /^(\d{4})[-/](\d{1,2})[-/](\d{1,2})(?:[T\s](\d{1,2}):(\d{2}))?/,
+    );
+    if (!parts) return null;
+
+    const [, year, month, day, hour, minute] = parts;
+    if (hour == null || minute == null) return null;
+
+    return `${year}/${month.padStart(2, '0')}/${day.padStart(2, '0')} ${hour.padStart(2, '0')}:${minute}`;
+  }
+
+  private formatDimension(value: number): string {
+    return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(2)));
   }
 
   private rentalUnits(pricingUnit?: string | null): number {

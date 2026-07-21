@@ -130,7 +130,16 @@ export class VendorSignupCompletePage {
   }
 
   get boothSpec(): string {
-    return this.signup?.boothSpec || '3 × 3 公尺';
+    if (this.signup?.boothSpec && this.signup.boothSpec !== '-') return this.signup.boothSpec;
+
+    const dimensions = [
+      this.market?.stallWidth,
+      this.market?.stallLength,
+      this.market?.stallHeight,
+    ].filter((value): value is number => typeof value === 'number' && value > 0);
+    return dimensions.length
+      ? `${dimensions.map((value) => this.formatDimension(value)).join(' × ')} 公尺`
+      : '-';
   }
 
   get selectedSlots(): MarketSlot[] {
@@ -155,7 +164,11 @@ export class VendorSignupCompletePage {
   }
 
   get totalFee(): number {
-    return this.signup?.totalFee ?? 0;
+    return this.application?.totalAmount ?? this.signup?.totalFee ?? 0;
+  }
+
+  private formatDimension(value: number): string {
+    return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(2)));
   }
 
   /** 返回市集詳細頁時保留 market，避免 detail 頁資料遺失。 */

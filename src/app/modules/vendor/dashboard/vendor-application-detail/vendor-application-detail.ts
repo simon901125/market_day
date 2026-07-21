@@ -547,7 +547,6 @@ export class VendorApplicationDetail implements OnInit {
             applicationId: this.currentApplicationId,
             mode: 'view',
             dates: this.boothAssignments.map((booth) => booth.date).join(','),
-            booths: this.boothAssignments.map((booth) => booth.number).join(','),
             selectedAt: this.boothAssignments.map((booth) => booth.selectedAt).join(','),
           }
         : { applicationId: this.currentApplicationId },

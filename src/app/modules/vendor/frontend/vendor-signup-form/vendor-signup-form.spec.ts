@@ -29,9 +29,16 @@ describe('VendorSignupForm', () => {
     organizer: '小集日',
     transportation: [],
     price: 650,
+    maxBooths: 150,
+    depositAmount: 1000,
+    stallWidth: 3,
+    stallLength: 3,
+    stallHeight: null,
+    registrationStartAt: '2026-04-15T12:00:00',
+    registrationEndAt: '2026-05-08T23:59:00',
     slots: [
-      { date: '05/30', remaining: 120 },
-      { date: '05/31', remaining: 85 },
+      { date: '05/30', remaining: 120, total: 150 },
+      { date: '05/31', remaining: 85, total: 150 },
     ],
   };
 
@@ -99,6 +106,9 @@ describe('VendorSignupForm', () => {
     expect(component.equipmentSubtotal).toBe(200);
     expect(component.powerSubtotal).toBe(600);
     expect(component.totalFee).toBe(3100);
+    expect(component.boothSpec).toBe('3 × 3 公尺');
+    expect(component.boothDeposit).toBe(1000);
+    expect(component.capacityForSlot(market.slots![0])).toBe(150);
   });
 
   it('should build selectable dates when market slots are missing', () => {
@@ -108,6 +118,17 @@ describe('VendorSignupForm', () => {
     };
 
     expect(component.slots.map((slot) => slot.date)).toEqual(['05/30', '05/31']);
+  });
+
+  it('should display the registration period returned by the API', () => {
+    expect(component.registrationPeriod).toBe('2026/04/15 12:00 - 2026/05/08 23:59');
+
+    component.market = {
+      ...market,
+      registrationEndAt: undefined,
+    };
+
+    expect(component.registrationPeriod).toBe('-');
   });
 
   it('should update equipment quantity and selection together', () => {

@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserBrandDetail } from './user-brand-detail';
 import { provideRouter } from '@angular/router';
+import { AlertService } from '../../../../../core/services/alert.service';
+import { UserBrandApiService } from '../../../services/user-brand-api.service';
 
 describe('UserBrandDetail', () => {
   let component: UserBrandDetail;
@@ -9,7 +11,11 @@ describe('UserBrandDetail', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [UserBrandDetail],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        { provide: UserBrandApiService, useValue: { getBrandDetail: () => undefined } },
+        { provide: AlertService, useValue: { error: () => Promise.resolve() } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(UserBrandDetail);
@@ -21,12 +27,11 @@ describe('UserBrandDetail', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should use the selected brand products', () => {
-    expect(component.brand.products.length).toBe(3);
+  it('should not fall back to a fake brand', () => {
+    expect(component.brand).toBeNull();
   });
 
-  it('should create market records from the selected brand history', () => {
-    expect(component.marketRecords.length).toBe(component.brand.historyMarkets.length);
-    expect(component.marketRecords[0].name).toBe('草悟野餐市集');
+  it('should expose an empty market record list without a brand', () => {
+    expect(component.marketRecords).toEqual([]);
   });
 });

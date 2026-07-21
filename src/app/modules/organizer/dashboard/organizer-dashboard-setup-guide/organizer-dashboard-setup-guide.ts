@@ -9,6 +9,7 @@ import { SetupStep } from '../../../../models/interface/organizer/OrganizerSetup
   templateUrl: './organizer-dashboard-setup-guide.html',
   styleUrl: './organizer-dashboard-setup-guide.scss',
 })
+/** 主辦方首次設定導引，說明建檔流程並開啟主辦方資料視窗。 */
 export class OrganizerDashboardSetupGuide {
   constructor(private readonly organizerProfileDialog: OrganizerProfileDialogService) {}
 

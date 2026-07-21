@@ -36,39 +36,60 @@
         [selectedCategory]="selectedCategory"
         [startDate]="startDate"
         [endDate]="endDate"
+        (searchSubmit)="onSearch($event)"
       ></app-user-market-search-panel>
 
-      <div class="market-grid">
-        @for (market of pagedMarkets; track market.id) {
-          <app-user-market-card
-            [market]="market"
-            (click)="goToActivityDetail(market)"
-          ></app-user-market-card>
-        }
-      </div>
+      @if (!isLoading && pagedMarkets.length === 0) {
+        <div class="user-empty-state" role="status">
+          <i class="bi bi-calendar-x" aria-hidden="true"></i>
+          <h3>目前沒有活動</h3>
+          <p>目前沒有符合條件的近期活動，請稍後再回來看看。</p>
+        </div>
+      } @else {
+        <div class="market-grid">
+          @for (market of pagedMarkets; track market.id) {
+            <app-user-market-card
+              [market]="market"
+              (click)="goToActivityDetail(market)"
+            ></app-user-market-card>
+          }
+        </div>
 
-      <app-pagination
-        [currentPage]="currentPage"
-        [pageSize]="pageSize"
-        [totalItems]="markets.length"
-        (pageChange)="changePage($event)">
-      </app-pagination>
+        @if (totalItems > 0) {
+          <app-pagination
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            [totalItems]="totalItems"
+            (pageChange)="changePage($event)">
+          </app-pagination>
+        }
+      }
     } @else {
-      <div class="history-list">
-        @for (market of pagedHistoryMarkets; track market.id) {
-          <app-user-history-market-card
-            [market]="market"
-            (click)="goToActivityDetail(market)"
-          ></app-user-history-market-card>
-        }
-      </div>
+      @if (!isLoading && pagedHistoryMarkets.length === 0) {
+        <div class="user-empty-state" role="status">
+          <i class="bi bi-calendar2-x" aria-hidden="true"></i>
+          <h3>目前沒有歷史活動</h3>
+          <p>目前尚無已結束的活動紀錄。</p>
+        </div>
+      } @else {
+        <div class="history-list">
+          @for (market of pagedHistoryMarkets; track market.id) {
+            <app-user-history-market-card
+              [market]="market"
+              (click)="goToActivityDetail(market)"
+            ></app-user-history-market-card>
+          }
+        </div>
 
-      <app-pagination
-        [currentPage]="currentPage"
-        [pageSize]="pageSize"
-        [totalItems]="historyMarkets.length"
-        (pageChange)="changePage($event)">
-      </app-pagination>
+        @if (totalItems > 0) {
+          <app-pagination
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            [totalItems]="totalItems"
+            (pageChange)="changePage($event)">
+          </app-pagination>
+        }
+      }
     }
   </section>
 </div>

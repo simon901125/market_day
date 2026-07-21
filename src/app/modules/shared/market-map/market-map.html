@@ -160,8 +160,8 @@
             [attr.id]="'market-booth-' + booth.id"
             class="booth"
             [ngClass]="boothClass(booth)"
-            [attr.role]="mode === 'vendor-view' ? 'img' : booth.brand || mode !== 'public' ? 'button' : 'img'"
-            [attr.tabindex]="mode === 'vendor-view' ? -1 : booth.brand || mode !== 'public' ? 0 : -1"
+            [attr.role]="isInteractiveBooth(booth) ? 'button' : 'img'"
+            [attr.tabindex]="isInteractiveBooth(booth) ? 0 : -1"
             [attr.aria-label]="booth.brand ? booth.code + ' ' + booth.brand.name : booth.code + ' 尚未配置品牌'"
             (mouseenter)="showBoothPreview(booth)"
             (mouseleave)="clearBoothPreview(booth)"
@@ -458,7 +458,7 @@
             </div>
 
             <div class="brand-directory-compact">
-              @for (booth of filteredBrandBooths; track booth.id) {
+              @for (booth of directoryBooths; track booth.id) {
                 <button
                   type="button"
                   class="directory-row"
@@ -467,7 +467,7 @@
                   (click)="selectBrand(booth)"
                 >
                   <span>{{ booth.code }}</span>
-                  <strong>{{ booth.brand?.name }}</strong>
+                  <strong>{{ booth.brand?.name || '查看攤位' }}</strong>
                 </button>
               } @empty {
                 <p class="directory-empty">沒有符合條件的品牌</p>

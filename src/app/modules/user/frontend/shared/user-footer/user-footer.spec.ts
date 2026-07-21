@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { UserFooter } from './user-footer';
 
@@ -8,7 +9,8 @@ describe('UserFooter', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserFooter]
+      imports: [UserFooter],
+      providers: [provideRouter([])],
     })
     .compileComponents();
 

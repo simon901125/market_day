@@ -14,6 +14,7 @@ export interface VendorMarketDetail {
   registrationEndAt: string | null;
   maxBooths: number;
   baseFee: number;
+  depositAmount: number;
   coverImageUrl: string | null;
   mapImageUrl: string | null;
   /** 活動可複選的招商類別；目前詳情 API 使用此欄位回傳。 */

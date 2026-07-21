@@ -195,6 +195,10 @@ export class VendorMarketSignupDetail implements OnInit {
       ),
       price: detail.baseFee,
       maxBooths: detail.maxBooths,
+      depositAmount: detail.depositAmount,
+      stallWidth: detail.stallWidth,
+      stallLength: detail.stallLength,
+      stallHeight: detail.stallHeight,
       registrationStartAt: detail.registrationStartAt ?? undefined,
       registrationEndAt: detail.registrationEndAt ?? undefined,
       slots: detail.dailyAvailability.map((slot) => ({

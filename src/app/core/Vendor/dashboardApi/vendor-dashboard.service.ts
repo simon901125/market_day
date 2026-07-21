@@ -4,7 +4,10 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiResult } from '../../../models/interface/shared/ApiResult';
 import { VendorDashboardInit } from '../../../models/interface/vendor/VendorDashboardInit';
-import { VendorNotificationSearchResult } from '../../../models/interface/vendor/VendorNotificationSearch';
+import {
+  VendorNotificationFilter,
+  VendorNotificationSearchResponse,
+} from '../../../models/interface/vendor/VendorNotification';
 import {
   VendorApplicationSearchParams,
   VendorApplicationSearchResult,
@@ -45,19 +48,20 @@ export class VendorDashboardService {
     return this.http.get<ApiResult<VendorDashboardInit>>(url);
   }
 
-  /** 取得目前登入攤主的通知中心資料。 */
-  getVendorNotifications(
-    filter = '全部',
-    page = 1,
-    pageSize = 8,
-  ): Observable<ApiResult<VendorNotificationSearchResult>> {
+  /** 查詢目前登入攤主的通知中心資料。 */
+  getVendorNotifications(params: {
+    filter?: VendorNotificationFilter;
+    page?: number;
+    pageSize?: number;
+  } = {}): Observable<ApiResult<VendorNotificationSearchResponse>> {
     const url = `${environment.apiBaseUrl}api/vendor/notices`;
-    const params = new HttpParams()
-      .set('filter', filter)
-      .set('page', String(page))
-      .set('pageSize', String(pageSize));
+    let query = new HttpParams();
 
-    return this.http.get<ApiResult<VendorNotificationSearchResult>>(url, { params });
+    if (params.filter) query = query.set('filter', params.filter);
+    if (params.page !== undefined) query = query.set('page', params.page);
+    if (params.pageSize !== undefined) query = query.set('pageSize', params.pageSize);
+
+    return this.http.get<ApiResult<VendorNotificationSearchResponse>>(url, { params: query });
   }
 
   /** 搜尋目前登入攤主的報名紀錄。 */

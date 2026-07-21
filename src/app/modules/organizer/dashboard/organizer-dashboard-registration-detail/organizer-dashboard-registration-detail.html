@@ -294,5 +294,9 @@
     #boothMapModal
     mode="organizer-view"
     [launchOnly]="true"
+    [mapData]="boothMapData"
+    [fullscreenDateOptions]="boothMapDates"
+    [fullscreenSelectedDate]="boothMapSelectedDate"
+    (fullscreenDateSelected)="onBoothMapDateSelected($event)"
   ></app-market-map>
 </main>

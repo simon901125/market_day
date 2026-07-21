@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
+﻿import { CommonModule } from '@angular/common';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { Dropdown } from '../dropdown/dropdown';
@@ -17,20 +17,6 @@ const boothSize = 32;
 const mapPaddingX = 28;
 const mapPaddingTop = 10;
 const mapPaddingBottom = 0;
-
-const brandNames = [
-  '拾甜製菓', '森林選物', '毛孩日常', '花間織所', '植感生活', '小日子手作',
-  '慢日陶房', '午後烘焙', '日光咖啡', '山系日常', '微景設計', '木木皮革',
-  '好好生活', '暖暖花室', '小島果醬', '日日器物', '白露茶所', '野餐研究室',
-  '一隅香氛', '初日烘焙', '漫漫織品', '甜野果實', '小森花藝', '日日木作',
-  '島嶼紙品', '清晨麵包', '貓掌小舖', '春光花房', '海風選品', '鹿角木工',
-  '森之器', '青鳥插畫', '慢慢選物', '午后茶點', '星丘玻璃', '野花甜點',
-  '橘子手感', '日安布作', '甜陶工房', '晴天皮革', '小路陶器', '米粒選物',
-  '山丘果醬', '醒埕小物', '末日香氛', '布魯農場', '森之路', '吉玉咖啡',
-  '寓式泥作', '森嶼花房',
-];
-
-const categories = ['餐飲美食', '文創手作', '寵物生活', '服飾配件', '植物選物'];
 
 const boothCoordinates: Record<string, Point[]> = {
   A: [
@@ -71,55 +57,36 @@ const createBooths = (): MarketMapBooth[] => {
 
   Object.entries(zoneCounts).forEach(([zone, count]) => {
     for (let index = 0; index < count; index += 1) {
-      const brandIndex = booths.length;
       const code = `${zone}${String(index + 1).padStart(2, '0')}`;
       const [x, y] = boothCoordinates[zone][index];
-      const category = categories[brandIndex % categories.length];
-      const name = brandNames[brandIndex % brandNames.length];
 
       booths.push({
         id: code,
         code,
-        zone: `${zone}區`,
+        zone: `${zone}\u5340`,
         ...createPosition(x, y),
-        status: 'occupied',
+        status: 'available',
         size: '3m x 3m x 2.5m',
-        brand: {
-          id: `brand-${brandIndex + 1}`,
-          name,
-          category,
-          summary: `${name}以${category}為主題，現場規劃互動體驗、限定商品與生活風格展示，邀請參觀者在逛市集的過程中認識品牌理念，也能挑選適合日常使用的作品。`,
-          logo: `assets/images/user/brand/brands/brand-0${(brandIndex % 8) + 1}/logo.png`,
-          socialLinks: [
-            { type: 'facebook', label: name, url: 'https://www.facebook.com/' },
-            { type: 'instagram', label: name, url: 'https://www.instagram.com/' },
-            { type: 'website', label: '官方網站', url: '/user/brands' },
-          ],
-        },
       });
     }
   });
 
   booths.push({
     id: 'service-booth',
-    code: '服務處',
-    zone: '服務處',
+    code: '\u670d\u52d9\u8655',
+    zone: '\u670d\u52d9\u8655',
     ...createPosition(0, 232),
     width: 46,
     labelX: 23,
     status: 'occupied',
-    size: '服務攤位',
+    size: '\u670d\u52d9\u6524\u4f4d',
   });
 
-  /*
-      zone: '服務處',
-      size: '服務攤位',
-  */
   return booths;
 };
 
 export const DEFAULT_MARKET_MAP_DATA: MarketMapData = {
-  name: '小集日市集',
+  name: '\u5c0f\u96c6\u65e5\u5e02\u96c6',
   width: 1000,
   height: 580,
   booths: createBooths(),
@@ -157,7 +124,7 @@ export const DEFAULT_MARKET_MAP_DATA: MarketMapData = {
   templateUrl: './market-map.html',
   styleUrl: './market-map.scss',
 })
-export class MarketMap implements OnInit {
+export class MarketMap implements OnChanges, OnInit {
   private readonly hostElement = inject(ElementRef<HTMLElement>);
 
   @ViewChild('mapViewport') private mapViewport?: ElementRef<HTMLDivElement>;
@@ -186,7 +153,6 @@ export class MarketMap implements OnInit {
   zoom = 1;
   readonly organizerDates = ['2026/07/18', '2026/07/19'];
   selectedOrganizerDate = this.organizerDates[0];
-  private readonly organizerSelectedCodes = ['A02', 'A03', 'A10', 'A12', 'B01', 'B03', 'B10', 'B13', 'C03'];
   private hoverPreviewTimer: ReturnType<typeof setTimeout> | null = null;
   private previewCloseTimer: ReturnType<typeof setTimeout> | null = null;
   private fullscreenCloseTimer: ReturnType<typeof setTimeout> | null = null;
@@ -203,13 +169,33 @@ export class MarketMap implements OnInit {
     [586, 476], [768, 476],
   ];
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!changes['mapData'] || this.mode !== 'public') {
+      return;
+    }
+
+    const activeCode = this.selectedBooth?.code ?? this.hoveredBooth?.code;
+    if (!activeCode) {
+      return;
+    }
+
+    const updatedBooth = this.mapData.booths.find((booth) => booth.code === activeCode) ?? null;
+    if (!updatedBooth) {
+      this.clearPreviewState();
+      return;
+    }
+
+    this.hoveredBooth = updatedBooth;
+    this.selectedBooth = updatedBooth;
+    this.hasPublicBrandSelection = Boolean(updatedBooth.brand);
+    this.isPreviewPinned = Boolean(updatedBooth.brand);
+  }
   ngOnInit(): void {
     if (this.mode !== 'organizer-view' || this.selectedBooth) {
       return;
     }
 
-    this.selectedBooth = this.mapData.booths.find((booth) => booth.code === 'B13')
-      ?? this.mapData.booths.find((booth) => this.isOrganizerBoothSelected(booth))
+    this.selectedBooth = this.mapData.booths.find((booth) => this.isOrganizerBoothSelected(booth))
       ?? null;
   }
 
@@ -233,18 +219,26 @@ export class MarketMap implements OnInit {
     );
   }
 
+  get directoryBooths(): MarketMapBooth[] {
+    return this.mapData.booths.filter((booth) =>
+      booth.id !== 'service-booth' &&
+      (this.selectedZone === 'all' || booth.zone.startsWith(this.selectedZone)) &&
+      this.matchesSearch(booth)
+    );
+  }
+
   get zoneOptions(): string[] {
-    return ['全部', ...this.zones.map((zone) => `${zone}區`)];
+    return ['\u5168\u90e8', ...this.zones.map((zone) => `${zone}\u5340`)];
   }
 
   get selectedZoneLabel(): string {
-    return this.selectedZone === 'all' ? '全部' : `${this.selectedZone}區`;
+    return this.selectedZone === 'all' ? '\u5168\u90e8' : `${this.selectedZone}\u5340`;
   }
 
   get directoryColumns(): MarketMapBooth[][] {
     const columnCount = 6;
     const columns: MarketMapBooth[][] = Array.from({ length: columnCount }, () => []);
-    this.filteredBrandBooths.forEach((booth, index) => columns[index % columnCount].push(booth));
+    this.directoryBooths.forEach((booth, index) => columns[index % columnCount].push(booth));
     return columns;
   }
 
@@ -261,7 +255,11 @@ export class MarketMap implements OnInit {
       return null;
     }
 
-    return this.selectedBooth ?? this.brandBooths[0] ?? null;
+    return this.selectedBooth ?? null;
+  }
+
+  isInteractiveBooth(booth: MarketMapBooth): boolean {
+    return this.mode !== 'vendor-view' && (this.mode !== 'public' || booth.id !== 'service-booth');
   }
 
   get vendorSelectedBooth(): MarketMapBooth | null {
@@ -287,7 +285,7 @@ export class MarketMap implements OnInit {
   }
 
   selectZoneByLabel(label: string): void {
-    this.selectZone(label === '全部' ? 'all' : label.replace('區', ''));
+    this.selectZone(label === '\u5168\u90e8' ? 'all' : label.replace('\u5340', ''));
   }
 
   boothClass(booth: MarketMapBooth): string {
@@ -313,7 +311,7 @@ export class MarketMap implements OnInit {
   }
 
   isOrganizerBoothSelected(booth: MarketMapBooth): boolean {
-    return this.organizerSelectedCodes.includes(booth.code);
+    return booth.status === 'selected' || booth.status === 'mine';
   }
 
   selectBooth(booth: MarketMapBooth): void {
@@ -321,9 +319,6 @@ export class MarketMap implements OnInit {
       return;
     }
 
-    if (this.mode === 'public' && !booth.brand) {
-      return;
-    }
 
     if (this.mode === 'select' && booth.status === 'occupied') {
       return;
@@ -334,8 +329,9 @@ export class MarketMap implements OnInit {
       this.isPreviewClosing = false;
       this.hoveredBooth = booth;
       this.selectedBooth = booth;
-      this.hasPublicBrandSelection = true;
-      this.isPreviewPinned = false;
+      this.hasPublicBrandSelection = Boolean(booth.brand);
+      this.isPreviewPinned = Boolean(booth.brand);
+      this.boothSelected.emit(booth);
       return;
     }
 
@@ -349,8 +345,9 @@ export class MarketMap implements OnInit {
       this.isPreviewClosing = false;
       this.hoveredBooth = booth;
       this.selectedBooth = booth;
-      this.hasPublicBrandSelection = true;
-      this.isPreviewPinned = false;
+      this.hasPublicBrandSelection = Boolean(booth.brand);
+      this.isPreviewPinned = Boolean(booth.brand);
+      this.boothSelected.emit(booth);
     } else {
       this.selectedBooth = booth;
     }
@@ -358,7 +355,7 @@ export class MarketMap implements OnInit {
   }
 
   showBoothPreview(booth: MarketMapBooth): void {
-    if (this.mode !== 'public' || booth.id === 'service-booth' || !booth.brand) {
+    if (this.mode !== 'public' || booth.id === 'service-booth') {
       return;
     }
 
@@ -368,7 +365,7 @@ export class MarketMap implements OnInit {
       this.isPreviewClosing = false;
       this.hoveredBooth = booth;
       this.selectedBooth = booth;
-      this.hasPublicBrandSelection = true;
+      this.hasPublicBrandSelection = Boolean(booth.brand);
       this.hoverPreviewTimer = null;
     }, 60);
   }
@@ -403,11 +400,29 @@ export class MarketMap implements OnInit {
     }, 180);
   }
 
-  /** 切換活動日期／地圖資料時，清除前一張地圖留下的攤位預覽與搜尋。 */
+  /** ??瘣餃??交?嚗????嚗??文?銝撘萄??銝??支??汗??撠?*/
   resetPublicMapState(): void {
     this.clearPreviewState();
     this.searchText = '';
     this.selectedZone = 'all';
+  }
+
+  showPublicBoothBrand(stallNo: string): void {
+    if (this.mode !== 'public') return;
+
+    const booth = this.mapData.booths.find((item) => item.code === stallNo) ?? null;
+    if (!booth?.brand) {
+      this.clearPreviewState();
+      return;
+    }
+
+    this.clearHoverPreviewTimer();
+    this.clearPreviewCloseTimer();
+    this.isPreviewClosing = false;
+    this.hoveredBooth = booth;
+    this.selectedBooth = booth;
+    this.hasPublicBrandSelection = true;
+    this.isPreviewPinned = true;
   }
 
   previewX(booth: MarketMapBooth): number {
@@ -547,10 +562,10 @@ export class MarketMap implements OnInit {
 
   boothStatusLabel(status: MarketBoothStatus): string {
     const labels: Record<MarketBoothStatus, string> = {
-      available: '可選擇',
-      occupied: '已進駐品牌',
-      selected: '已選擇',
-      mine: '我的攤位',
+      available: '\u53ef\u9078\u64c7',
+      occupied: '\u5df2\u914d\u7f6e\u54c1\u724c',
+      selected: '\u5df2\u9078\u64c7',
+      mine: '\u6211\u7684\u6524\u4f4d',
     };
     return labels[status];
   }
@@ -629,3 +644,5 @@ export class MarketMap implements OnInit {
     });
   }
 }
+
+

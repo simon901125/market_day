@@ -4,5 +4,6 @@ export interface TodoItem {
   unit: string;
   label: string;
   path: string;
+  queryParams?: Record<string, string>;
   iconColor?: string;
 }

@@ -13,7 +13,13 @@
           <span class="app-control-title">品牌名稱</span>
           <span class="app-search-input">
             <i class="bi bi-search"></i>
-            <input type="text" placeholder="請輸入品牌名稱或關鍵字" />
+            <input
+              type="text"
+              placeholder="請輸入品牌名稱或關鍵字"
+              [value]="keyword"
+              (input)="onKeywordInput($event)"
+              (keyup.enter)="search()"
+            />
           </span>
         </label>
 
@@ -22,16 +28,20 @@
             title="品牌類型"
             [options]="brandTypeOptions"
             placeholder="選擇類型"
+            [selectedValue]="selectedCategory || '全部類型'"
+            (optionSelected)="onCategorySelected($event)"
           ></app-dropdown>
 
           <app-dropdown
             title="參與市集"
             [options]="marketOptions"
             placeholder="選擇市集"
+            [selectedValue]="selectedMarket || '全部市集'"
+            (optionSelected)="onMarketSelected($event)"
           ></app-dropdown>
         </div>
 
-        <button class="app-btn search" type="button">
+        <button class="app-btn search" type="button" (click)="search()">
           搜尋
         </button>
       </div>
@@ -47,21 +57,31 @@
         </div>
       </div>
 
-      <div class="brand-grid">
-        @for (brand of pagedBrands; track brand.id) {
-          <app-user-brandserch-card
-            [brand]="brand"
-            (cardClick)="goToBrandDetail($event)"
-          ></app-user-brandserch-card>
-        }
-      </div>
+      @if (!isLoading && pagedBrands.length === 0) {
+        <div class="user-empty-state" role="status">
+          <i class="bi bi-shop" aria-hidden="true"></i>
+          <h3>目前沒有品牌</h3>
+          <p>目前沒有符合條件的品牌，請調整搜尋條件後再試。</p>
+        </div>
+      } @else {
+        <div class="brand-grid">
+          @for (brand of pagedBrands; track brand.id) {
+            <app-user-brandserch-card
+              [brand]="brand"
+              (cardClick)="goToBrandDetail($event)"
+            ></app-user-brandserch-card>
+          }
+        </div>
 
-      <app-pagination
-        [currentPage]="currentPage"
-        [pageSize]="pageSize"
-        [totalItems]="brands.length"
-        (pageChange)="onPageChange($event)"
-      ></app-pagination>
+        @if (totalItems > 0) {
+          <app-pagination
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            [totalItems]="totalItems"
+            (pageChange)="onPageChange($event)"
+          ></app-pagination>
+        }
+      }
     </div>
   </section>
 </div>

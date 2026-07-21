@@ -28,6 +28,7 @@ describe('VendorAccessService', () => {
         pendingReviewCount: 0,
         pendingPaymentCount: 0,
         pendingStallSelectionCount: 0,
+        pendingRefundCount: 0,
         notifications: [],
       },
     }));

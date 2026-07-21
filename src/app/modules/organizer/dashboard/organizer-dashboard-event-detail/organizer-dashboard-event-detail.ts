@@ -66,6 +66,7 @@ function createEmptyEventTimeForm(): EventTimeForm {
   templateUrl: './organizer-dashboard-event-detail.html',
   styleUrl: './organizer-dashboard-event-detail.scss',
 })
+/** 活動新增、編輯與查看頁，集中處理表單驗證、圖片上傳及活動工作流程操作。 */
 export class OrganizerDashboardEventDetail implements OnDestroy {
   /** 是否為查看活動詳情模式。 */
   readonly isViewMode: boolean;

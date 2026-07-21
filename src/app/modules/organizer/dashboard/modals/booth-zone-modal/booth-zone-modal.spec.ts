@@ -36,5 +36,14 @@ describe('BoothZoneModal', () => {
 
     expect(component.nameDuplicate).toBeTrue();
     expect(component.isZoneNameUsed('A 區')).toBeTrue();
+    expect(component.availableZoneNameOptions).not.toContain('A 區');
+    expect(component.availableZoneNameOptions).toContain('B 區');
+  });
+
+  it('updates the draft from the shared dropdown selection', () => {
+    component.onZoneNameSelected('C 區');
+
+    expect(component.draft.name).toBe('C 區');
+    expect(component.nameInvalid).toBeFalse();
   });
 });

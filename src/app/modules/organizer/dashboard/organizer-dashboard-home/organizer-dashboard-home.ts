@@ -22,6 +22,10 @@ import { OrganizerAccessService } from '../../../../core/services/organizer-acce
 import { OrganizerDashboardSetupGuide } from '../organizer-dashboard-setup-guide/organizer-dashboard-setup-guide';
 import { OrganizerApiService } from '../../../../core/services/organizer-api.service';
 import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { MarketDayUser } from '../../../../models/interface/shared/Auth';
+import { ApplicationStatus } from '../../../../models/status/ApplicationStatus';
+import { PaymentStatus } from '../../../../models/status/PaymentStatus';
 
 interface ActivityRegistrationOverview {
   eventId: number;
@@ -40,6 +44,7 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Legend, To
   templateUrl: './organizer-dashboard-home.html',
   styleUrl: './organizer-dashboard-home.scss',
 })
+/** 主辦方首頁，彙整待辦統計、活動報名概況、使用者名稱與最新通知。 */
 export class OrganizerDashboardHome extends OrganizerDashboardNotification implements OnInit, OnDestroy {
   @ViewChild('registrationChart')
   private set registrationChartRef(ref: ElementRef<HTMLCanvasElement> | undefined) {
@@ -55,45 +60,53 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
   private registrationChart?: Chart<'bar'>;
   private registrationCanvas?: ElementRef<HTMLCanvasElement>;
   readonly needsProfile: Signal<boolean | null>;
+  displayName = '主辦方';
 
   constructor(
     private readonly router: Router,
     private readonly organizerAccess: OrganizerAccessService,
     private readonly organizerApi: OrganizerApiService,
+    private readonly authService: AuthService,
   ) {
     super();
     this.needsProfile = this.organizerAccess.needsProfile;
   }
 
-  ngOnInit(): void {
+  /** 初始化主辦方資料，並載入首頁各區塊所需的 API 資料。 */
+  override ngOnInit(): void {
     void this.organizerAccess.initialize();
+    this.loadDisplayName();
+    this.loadNotifications(3);
     this.loadDashboardData();
   }
 
-  /** 主辦方後台首頁待辦展示資料；待報名列表統計 API 完成後再串接。 */
+  /** 主辦方後台首頁待辦展示資料，由報名管理 API 的 taskSummary 更新。 */
   todoItems: TodoItem[] = [
     {
       icon: 'bi-clipboard-heart',
-      count: 12,
+      count: 0,
       unit: '筆',
       label: '待審核報名',
       path: '/organizer/dash-board/register',
+      queryParams: { status: ApplicationStatus.pendingReview },
       iconColor: 'orange',
     },
     {
       icon: 'bi-wallet2',
-      count: 3,
+      count: 0,
       unit: '筆',
       label: '退款待確認',
       path: '/organizer/dash-board/collection',
+      queryParams: { status: PaymentStatus.refundRequested },
       iconColor: 'red',
     },
     {
       icon: 'bi-shop-window',
-      count: 50,
+      count: 0,
       unit: '位',
       label: '待完成選位',
-      path: '/organizer/dash-board/stall',
+      path: '/organizer/dash-board/register',
+      queryParams: { status: ApplicationStatus.pendingSelection },
       iconColor: 'blue',
     },
   ];
@@ -101,13 +114,58 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
   /** 首頁圖表展示資料；串接 API 後由首頁統計端點取代。 */
   activityRegistrationOverview: ActivityRegistrationOverview[] = [];
 
+  /** 先顯示本地登入資料，再以伺服器的最新名稱覆蓋。 */
+  private loadDisplayName(): void {
+    this.displayName = this.resolveDisplayName(this.authService.getUser('organizer'));
+
+    this.authService.getAuthMe({ skipLoading: true }).subscribe({
+      next: (response) => {
+        const user = response.data?.user;
+        if (!isApiSuccessStatus(response.statusCode) || user?.role !== 'ORGANIZER') return;
+
+        this.authService.saveUser('organizer', user);
+        this.displayName = this.resolveDisplayName(user);
+      },
+      error: () => {
+        // 保留登入時已儲存的名稱，避免個人資料 API 暫時失敗影響首頁顯示。
+      },
+    });
+  }
+
+  private resolveDisplayName(user: MarketDayUser | null): string {
+    const name = user?.name?.trim();
+    if (name) return name;
+
+    return user?.email?.split('@')[0]?.trim() || '主辦方';
+  }
+
+  /** 載入待辦數量與活動報名概況，成功後同步更新圖表。 */
   private loadDashboardData(): void {
+    this.organizerApi
+      .searchOrganizerApplications({ page: 1, pageSize: 1 })
+      .subscribe((applications) => {
+        if (!isApiSuccessStatus(applications.statusCode) || !applications.data?.taskSummary) {
+          return;
+        }
+
+        const summary = applications.data.taskSummary;
+        const countByLabel: Record<string, number> = {
+          待審核報名: summary.pendingReviewCount,
+          退款待確認: summary.pendingRefundConfirmationCount,
+          待完成選位: summary.pendingStallSelectionCount,
+        };
+        this.todoItems = this.todoItems.map((item) => ({
+          ...item,
+          count: countByLabel[item.label] ?? item.count,
+        }));
+      });
+
     this.organizerApi.searchOrganizerEvents({
-        sort: 'UPCOMING_FIRST',
-        page: 1,
-        pageSize: 3,
-        registrationOverview: true,
-      }).subscribe((events) => {
+      sort: 'UPCOMING_FIRST',
+      page: 1,
+      pageSize: 3,
+      registrationOverview: true,
+    }).subscribe((events) => {
         if (!isApiSuccessStatus(events.statusCode) || !events.data) return;
         this.activityRegistrationOverview = events.data.events.items.map((event) => ({
           eventId: event.eventId,
@@ -133,6 +191,7 @@ export class OrganizerDashboardHome extends OrganizerDashboardNotification imple
     this.registrationChart?.destroy();
   }
 
+  /** 建立報名概況的堆疊橫條圖設定與互動行為。 */
   private createRegistrationChartConfig(): ChartConfiguration<'bar'> {
     const rows = this.activityRegistrationOverview;
     const colors = {

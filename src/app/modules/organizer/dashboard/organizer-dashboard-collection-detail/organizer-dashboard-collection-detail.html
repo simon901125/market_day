@@ -27,10 +27,10 @@
             [class.danger]="action.variant === 'danger'"
             (click)="handleAction(action)"
           >
-            @if (action.key === 'reject-refund') {
-              <i class="bi bi-x-lg" aria-hidden="true"></i>
-            } @else if (action.key === 'approve-refund') {
+            @if (action.key === 'approve-refund') {
               <i class="bi bi-check-lg" aria-hidden="true"></i>
+            } @else if (action.key === 'retry-refund') {
+              <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
             }
             {{ action.label }}
           </button>

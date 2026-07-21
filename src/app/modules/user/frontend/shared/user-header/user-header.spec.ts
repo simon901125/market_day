@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { UserHeader } from './user-header';
 
@@ -8,7 +9,8 @@ describe('UserHeader', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserHeader]
+      imports: [UserHeader],
+      providers: [provideRouter([])],
     })
     .compileComponents();
 

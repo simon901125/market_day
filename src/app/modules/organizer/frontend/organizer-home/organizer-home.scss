@@ -4,12 +4,14 @@
   overflow-x: hidden;
 }
 
+// 主內容容器：沿用公開前台的內容寬度與色彩變數。
 .organizer-home {
   width: 100%;
   padding: 28px 0 0;
   color: var(--text-dark);
 }
 
+// 首屏共用操作按鈕。
 .primary-btn,
 .outline-btn {
   min-width: 180px;
@@ -62,6 +64,7 @@
   }
 }
 
+// 首屏在桌面版採左右圖文排列。
 .organizer-hero {
   width: var(--user-content-width);
   height: 320px;
@@ -119,6 +122,7 @@
   }
 }
 
+// 各介紹區塊共用標題與內容寬度。
 .section-block {
   width: var(--user-content-width);
   margin: 0 auto 38px;
@@ -145,6 +149,7 @@
   }
 }
 
+// 平台特色與主辦方功能卡片。
 .feature-grid,
 .action-grid {
   display: grid;
@@ -247,6 +252,7 @@
   }
 }
 
+// 主辦方申請與使用流程；虛線只連接同一列中的相鄰步驟。
 .step-list {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -314,6 +320,7 @@
   }
 }
 
+// 常見問題使用原生 details，保留鍵盤操作與語意結構。
 .faq-list {
   overflow: hidden;
   border: 1px solid var(--border-light);
@@ -394,6 +401,7 @@ details {
   }
 }
 
+// 中型桌面：功能卡改為兩欄，流程分成三欄排列。
 @media (max-width: 1200px) {
   .action-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -414,6 +422,7 @@ details {
   }
 }
 
+// 平板版：首屏改為上圖下文，其餘介紹卡改為單欄。
 @media (max-width: 992px) {
   .organizer-hero {
     height: auto;
@@ -455,6 +464,7 @@ details {
   }
 }
 
+// 小型平板：流程改為垂直時間軸，避免內容橫向擁擠。
 @media (max-width: 768px) {
   .organizer-hero {
     border-radius: 12px;
@@ -546,6 +556,7 @@ details {
   }
 }
 
+// 手機版：縮減首屏高度與內距，主要操作改為上下排列。
 @media (max-width: 576px) {
   .organizer-hero {
     margin-bottom: 32px;
@@ -618,6 +629,7 @@ details {
   }
 }
 
+// 極窄手機維持單欄操作，避免按鈕文字被壓縮。
 @media (max-width: 380px) {
   .hero-actions {
     grid-template-columns: 1fr;

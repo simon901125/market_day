@@ -14,6 +14,9 @@ import {
   NotificationItem,
 } from '../../../shared/dashboard/dashboard-notification/dashboard-notification';
 import { LoadingSpinner } from '../../../shared/loading-spinner/loading-spinner';
+import { NotificationApiService } from '../../../../core/services/notification-api.service';
+import { AlertService } from '../../../../core/services/alert.service';
+import { NotificationTypeDisplay } from '../../../../models/type/NotificationTypeDisplay';
 
 interface VendorHomeCard {
   icon: string;
@@ -43,6 +46,8 @@ export class VendorDashboardHome implements OnInit {
   constructor(
     private readonly authService: AuthService,
     private readonly vendorDashboardService: VendorDashboardService,
+    private readonly notificationApi: NotificationApiService,
+    private readonly alert: AlertService,
   ) {}
 
   ngOnInit(): void {
@@ -133,34 +138,43 @@ export class VendorDashboardHome implements OnInit {
       || '攤主';
   }
 
+  onMarkRead(item: NotificationItem): void {
+    if (item.id == null) return;
+
+    this.notificationApi.markAsRead(item.id, { skipLoading: true }).subscribe({
+      next: async (response) => {
+        if (!isApiSuccessStatus(response.statusCode)) {
+          item.unread = true;
+          await this.alert.error('標記已讀失敗', response.message || '請稍後再試。');
+        }
+      },
+      error: async (error) => {
+        item.unread = true;
+        await this.alert.error('標記已讀失敗', error.error?.message || '請稍後再試。');
+      },
+    });
+  }
+
   private toNotificationItem(item: VendorDashboardNotification): NotificationItem {
-    const appearance = this.notificationAppearance(item.category);
+    const type = this.normalizeType(item.type);
+    const display = NotificationTypeDisplay.getDisplay(type);
     return {
-      status: item.title,
-      title: item.content,
+      id: item.id,
+      status: display.status,
+      title: item.content?.trim() || item.title,
       date: this.formatDateTime(item.createdAt),
-      icon: appearance.icon,
-      iconClass: appearance.iconClass,
+      icon: display.icon,
+      iconClass: display.iconClass,
       unread: !item.isRead,
-      type: item.category,
+      type,
     };
   }
 
-  private notificationAppearance(category: string): { icon: string; iconClass: string } {
-    switch (category) {
-      case 'PAYMENT':
-        return { icon: 'bi bi-wallet2', iconClass: 'blue' };
-      case 'STALL_ASSIGNMENT':
-        return { icon: 'bi bi-shop', iconClass: 'green' };
-      case 'EVENT_CHANGE':
-        return { icon: 'bi bi-calendar-event', iconClass: 'purple' };
-      case 'SYSTEM':
-        return { icon: 'bi bi-info-circle', iconClass: 'blue' };
-      case 'EXCEPTION':
-        return { icon: 'bi bi-exclamation-triangle', iconClass: 'red' };
-      default:
-        return { icon: 'bi bi-clipboard-check', iconClass: 'orange' };
-    }
+  private normalizeType(type: string): string {
+    if (!type.includes('_')) return type;
+    return type
+      .toLowerCase()
+      .replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
   }
 
   private formatDateTime(value: string): string {

@@ -1,3 +1,4 @@
+@if (brand) {
 <div class="brand-detail-page user-frontend-page user-detail-page">
   <section class="detail-hero">
     <img class="hero-bg" [src]="brand.image" alt="品牌封面" />
@@ -130,3 +131,17 @@
     </div>
   </section>
 </div>
+} @else {
+  <div class="brand-detail-page user-frontend-page user-detail-page">
+    <section class="detail-main">
+      <div class="main-container">
+        <div class="user-empty-state" role="status">
+          <i class="bi bi-shop" aria-hidden="true"></i>
+          <h3>目前沒有品牌資料</h3>
+          <p>找不到指定的品牌，請返回品牌探索重新選擇。</p>
+          <a routerLink="/user/brands">返回品牌探索</a>
+        </div>
+      </div>
+    </section>
+  </div>
+}

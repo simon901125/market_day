@@ -21,27 +21,87 @@
         <button type="button" class="map-btn" (click)="openBoothMap()"><i class="bi bi-map"></i>瀏覽攤位地圖</button>
       </div>
       <div class="event-content">
-        <div class="event-image-frame"><img src="assets/images/market/cards/market-card-01.png" alt="夏日綠意市集" /></div>
-        <div class="event-info"><h3>夏日綠意市集</h3><p><span class="info-label">活動狀態</span><span class="status-badge tag-green">報名中</span></p><p><span class="info-label">活動日期</span>2026/07/18 - 2026/07/19</p><p><span class="info-label">活動地點</span>宜蘭車站前天天園森林廣場</p><p><span class="info-label">活動地址</span>宜蘭縣宜蘭市舊城南路 123 號</p></div>
+        <div class="event-image-frame"><img [src]="event.image" [alt]="event.title" /></div>
+        <div class="event-info"><h3>{{ event.title }}</h3><p><span class="info-label">活動狀態</span><span class="status-badge" [class]="event.statusClass">{{ event.status }}</span></p><p><span class="info-label">活動日期</span>{{ event.date }}</p><p><span class="info-label">活動地點</span>{{ event.location }}</p><p><span class="info-label">活動地址</span>{{ event.address }}</p></div>
       </div>
     </article>
 
     <article class="detail-card booth-summary-card">
       <h2><i class="bi bi-bar-chart"></i>攤位摘要</h2>
       <dl class="booth-summary-list">
-        <div><dt>攤位總數</dt><dd><strong>150</strong><span>攤</span></dd></div>
-        <div><dt>已選擇攤位數</dt><dd><strong>118</strong><span>攤</span></dd></div>
-        <div><dt>可選擇攤位數</dt><dd><strong>32</strong><span>攤</span></dd></div>
+        <div><dt>攤位總數</dt><dd><strong>{{ event.total }}</strong><span>攤</span></dd></div>
+        <div><dt>已選擇攤位數</dt><dd><strong>{{ event.selected }}</strong><span>攤</span></dd></div>
+        <div><dt>可選擇攤位數</dt><dd><strong>{{ event.available }}</strong><span>攤</span></dd></div>
       </dl>
     </article>
   </section>
 
   <section class="detail-card table-card booth-card">
     <h2><i class="bi bi-shop"></i>攤位選位明細</h2>
-    <div class="toolbar"><app-dropdown title="活動日期" [options]="dates" [selectedValue]="selectedDate" (optionSelected)="selectedDate = $event"></app-dropdown><span class="booth-search"><input type="search" placeholder="搜尋攤位編號 / 品牌名稱" [(ngModel)]="keyword" /><i class="bi bi-search"></i></span></div>
+    <div class="toolbar"><app-dropdown title="活動日期" [options]="dates" [selectedValue]="selectedDate" (optionSelected)="selectDate($event)"></app-dropdown><span class="booth-search"><input type="search" placeholder="搜尋攤位編號 / 品牌名稱" [(ngModel)]="keyword" /><i class="bi bi-search"></i></span></div>
     <div class="booth-tabs" role="tablist" aria-label="攤位狀態篩選"><button type="button" role="tab" [attr.aria-selected]="activeTab==='all'" [class.active]="activeTab==='all'" (click)="setTab('all')">全部（{{ count('all') }}）</button><button type="button" role="tab" [attr.aria-selected]="activeTab==='available'" [class.active]="activeTab==='available'" (click)="setTab('available')">可選擇（{{ count('available') }}）</button><button type="button" role="tab" [attr.aria-selected]="activeTab==='selected'" [class.active]="activeTab==='selected'" (click)="setTab('selected')">已選擇（{{ count('selected') }}）</button></div>
-    <div class="table-scroll"><table><thead><tr><th>攤位編號</th><th>攤位分區</th><th>攤位規格（長 × 寬）</th><th>攤位狀態</th><th>品牌名稱</th><th>品牌類型</th><th>攤主姓名</th><th>選位時間</th><th></th></tr></thead><tbody>@for(booth of displayBooths; track booth.code){<tr><td>{{booth.code}}</td><td>{{booth.zone}}</td><td>{{booth.size}}</td><td><span class="status-badge" [class.tag-green]="booth.selected" [class.tag-blue]="!booth.selected">{{ booth.selected ? boothStatus.selected : boothStatus.available }}</span></td><td>{{booth.brand}}</td><td>{{booth.category}}</td><td>{{booth.vendor}}</td><td>{{booth.selectedAt}}</td><td>@if(booth.selected){<button class="brand-btn">查看品牌</button>}@else{-}</td></tr>}</tbody></table></div>
+    <div class="table-scroll"><table><thead><tr><th>攤位編號</th><th>攤位分區</th><th>攤位規格（長 × 寬）</th><th>攤位狀態</th><th>品牌名稱</th><th>品牌類型</th><th>攤主姓名</th><th>選位時間</th><th></th></tr></thead><tbody>@for(booth of displayBooths; track booth.code){<tr><td>{{booth.code}}</td><td>{{booth.zone}}</td><td>{{booth.size}}</td><td><span class="status-badge" [class.tag-green]="booth.selected" [class.tag-blue]="!booth.selected">{{ booth.selected ? boothStatus.selected : boothStatus.available }}</span></td><td>{{booth.brand}}</td><td>{{booth.category}}</td><td>{{booth.vendor}}</td><td>{{booth.selectedAt}}</td><td>@if(booth.selected){<button type="button" class="brand-btn" [disabled]="brandLoadingStallNo !== null" (click)="openBrandDetail(booth)">@if(brandLoadingStallNo === booth.code){<span class="brand-btn-spinner" aria-hidden="true"></span>讀取中}@else{查看品牌}</button>}@else{-}</td></tr>}</tbody></table></div>
     <app-dashboard-pagination class="booth-pagination" [currentPage]="currentPage" [pageSize]="pageSize" [totalItems]="filteredBooths.length" (pageChange)="onPageChange($event)"></app-dashboard-pagination>
   </section>
   </div>
 </main>
+
+@if (selectedStallDetail; as detail) {
+  <div class="brand-detail-backdrop app-modal-backdrop" role="presentation" (click)="closeBrandDetail()">
+    <section
+      class="brand-detail-modal app-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="stall-brand-detail-title"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="app-modal-header">
+        <div>
+          <span class="brand-detail-eyebrow">{{ detail.stall.zoneName }}・{{ detail.stall.stallNo }}</span>
+          <h2 id="stall-brand-detail-title">
+            <i class="bi bi-shop-window" aria-hidden="true"></i>
+            品牌資料
+          </h2>
+        </div>
+        <button type="button" class="app-icon-btn" aria-label="關閉品牌資料" (click)="closeBrandDetail()">
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <div class="brand-detail-content">
+        <div class="brand-detail-name-card">
+          <span class="brand-detail-icon"><i class="bi bi-shop" aria-hidden="true"></i></span>
+          <div>
+            <small>品牌名稱</small>
+            <strong>{{ detail.vendor?.brandName || '-' }}</strong>
+            <span>{{ detail.vendor?.category?.name || '未設定品牌類別' }}</span>
+          </div>
+        </div>
+
+        <section class="brand-detail-section" aria-labelledby="vendor-contact-title">
+          <h3 id="vendor-contact-title">攤主聯絡資料</h3>
+          <dl class="brand-detail-grid">
+            <div><dt>攤主姓名</dt><dd>{{ detail.vendor?.vendorOwnerName || '-' }}</dd></div>
+            <div><dt>聯絡電話</dt><dd>{{ detail.vendor?.vendorPhone || '-' }}</dd></div>
+            <div class="full-row"><dt>Email</dt><dd>{{ detail.vendor?.vendorEmail || '-' }}</dd></div>
+          </dl>
+        </section>
+
+        <section class="brand-detail-section" aria-labelledby="stall-selection-title">
+          <h3 id="stall-selection-title">攤位資料</h3>
+          <dl class="brand-detail-grid">
+            <div><dt>活動日期</dt><dd>{{ detail.stall.applyDate || '-' }}</dd></div>
+            <div><dt>攤位狀態</dt><dd><span class="status-badge tag-green">{{ detail.stall.status }}</span></dd></div>
+            <div><dt>攤位分區</dt><dd>{{ detail.stall.zoneName || '-' }}</dd></div>
+            <div><dt>攤位規格</dt><dd>{{ detail.stall.length && detail.stall.width ? detail.stall.length + 'm × ' + detail.stall.width + 'm' : '-' }}</dd></div>
+            <div class="full-row"><dt>選位時間</dt><dd>{{ detail.stall.selectedAt ? (detail.stall.selectedAt | date:'yyyy/MM/dd HH:mm') : '-' }}</dd></div>
+          </dl>
+        </section>
+      </div>
+
+      <footer class="app-modal-actions">
+        <button type="button" class="app-btn primary" (click)="closeBrandDetail()">確定</button>
+      </footer>
+    </section>
+  </div>
+}

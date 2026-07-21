@@ -49,28 +49,22 @@
       </div>
 
       <div class="dialog-grid two zone-basic-grid">
-        <label class="field">
+        <div class="field">
           <span>分區名稱 <b>*</b></span>
-          <span class="text-control zone-dialog-name-input" [class.invalid]="submitted && (nameInvalid || nameDuplicate)">
-            <select
-              [(ngModel)]="draft.name"
-              name="zoneDialogName"
-              [attr.aria-invalid]="submitted && (nameInvalid || nameDuplicate)"
-            >
-              <option value="" disabled>請選擇分區</option>
-              @for (zoneName of zoneNameOptions; track zoneName) {
-                <option [value]="zoneName" [disabled]="isZoneNameUsed(zoneName)">
-                  {{ zoneName }}
-                </option>
-              }
-            </select>
-          </span>
+          <app-dropdown
+            class="zone-dialog-name-dropdown"
+            [options]="availableZoneNameOptions"
+            [selectedValue]="draft.name"
+            [invalid]="submitted && (nameInvalid || nameDuplicate)"
+            placeholder="請選擇分區"
+            (optionSelected)="onZoneNameSelected($event)"
+          ></app-dropdown>
           @if (submitted && nameInvalid) {
             <small class="field-error">請選擇 A 區至 Z 區</small>
           } @else if (submitted && nameDuplicate) {
             <small class="field-error">此分區名稱已存在，請使用其他名稱</small>
           }
-        </label>
+        </div>
 
         <label class="field">
           <span>攤位數量 <b>*</b></span>

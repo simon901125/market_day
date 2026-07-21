@@ -19,6 +19,7 @@ import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResul
   templateUrl: './organizer-dashboard-event-management.html',
   styleUrl: './organizer-dashboard-event-management.scss',
 })
+/** 活動管理列表，負責搜尋分頁及送審、撤回、發布與下架等快速操作。 */
 export class OrganizerDashboardEventManagement implements OnInit {
   /** 日期區間元件，用來取得列表搜尋的起訖日期。 */
   @ViewChild(DateRangeSelector) private dateRangeSelector?: DateRangeSelector;
@@ -73,190 +74,8 @@ export class OrganizerDashboardEventManagement implements OnInit {
     { key: 'action', label: '', type: 'action', align: 'end', width: '16%' },
   ];
 
-  /**
-   * 活動管理列表目前使用前端假資料。
-   * 後續串接 API 時可保留欄位結構，改由服務層取得資料。
-   */
-  rows: OrganizerEventRow[] = [
-    {
-      id: 1,
-      name: '夏日綠意市集',
-      nameImage: 'assets/images/market/cards/market-card-01.png',
-      date: '2026/06/15 - 2026/06/21',
-      location: '台北市 信義區 草悟廣場',
-      status: ActivityStatus.pendingReview,
-      signupProgress: '128 / 150',
-      paidCount: '118',
-      actionLabel: '查看',
-    },
-    {
-      id: 2,
-      name: '職人咖啡生活市集',
-      nameImage: 'assets/images/market/cards/market-card-02.png',
-      date: '2026/06/27 - 2026/06/28',
-      location: '台北市 中正區 華山文創園區',
-      status: ActivityStatus.revisionRequired,
-      signupProgress: '120 / 120',
-      paidCount: '102',
-      actionLabel: '查看',
-    },
-    {
-      id: 3,
-      name: '衣著選物週末',
-      nameImage: 'assets/images/market/cards/market-card-03.png',
-      date: '2026/07/04 - 2026/07/05',
-      location: '新北市 板橋區 新板萬坪公園',
-      status: ActivityStatus.mapBuilding,
-      signupProgress: '100 / 100',
-      paidCount: '96',
-      actionLabel: '查看',
-    },
-    {
-      id: 4,
-      name: '風格選物生活節',
-      nameImage: 'assets/images/market/cards/market-card-04.png',
-      date: '2026/07/18 - 2026/07/19',
-      location: '台中市 西區 勤美草悟道',
-      status: ActivityStatus.readyToPublish,
-      signupProgress: '64 / 90',
-      paidCount: '58',
-      actionLabel: '查看',
-    },
-    {
-      id: 5,
-      name: '毛孩友善市集',
-      nameImage: 'assets/images/market/cards/market-card-05.png',
-      date: '2026/08/01 - 2026/08/02',
-      location: '高雄市 鹽埕區 駁二藝術特區',
-      status: ActivityStatus.registrationOpen,
-      signupProgress: '72 / 110',
-      paidCount: '63',
-      actionLabel: '查看',
-    },
-    {
-      id: 6,
-      name: '植感生活市集',
-      nameImage: 'assets/images/market/cards/market-card-06.png',
-      date: '2026/08/15 - 2026/08/16',
-      location: '桃園市 中壢區 青塘園',
-      status: ActivityStatus.full,
-      signupProgress: '54 / 100',
-      paidCount: '46',
-      actionLabel: '查看',
-    },
-    {
-      id: 7,
-      name: '烘焙陶作午後市集',
-      nameImage: 'assets/images/market/cards/market-card-07.png',
-      date: '2026/09/05 - 2026/09/06',
-      location: '台南市 中西區 河樂廣場',
-      status: ActivityStatus.published,
-      signupProgress: '48 / 80',
-      paidCount: '41',
-      actionLabel: '查看',
-    },
-    {
-      id: 8,
-      name: '草地親子手作日',
-      nameImage: 'assets/images/market/cards/market-card-08.png',
-      date: '2026/09/19 - 2026/09/20',
-      location: '新竹市 東區 關新公園',
-      status: ActivityStatus.active,
-      signupProgress: '36 / 90',
-      paidCount: '29',
-      actionLabel: '查看',
-    },
-    {
-      id: 9,
-      name: '月光手作夜市集',
-      nameImage: 'assets/images/market/cards/market-card-09.png',
-      date: '2026/10/03 - 2026/10/04',
-      location: '台中市 西屯區 中央公園',
-      status: ActivityStatus.registrationOpen,
-      signupProgress: '-',
-      paidCount: '-',
-      actionLabel: '查看',
-    },
-    {
-      id: 10,
-      name: '海風編織選物市集',
-      nameImage: 'assets/images/market/cards/market-card-10.png',
-      date: '2026/11/14 - 2026/11/15',
-      location: '基隆市 中正區 正濱漁港',
-      status: ActivityStatus.unpublished,
-      signupProgress: '-',
-      paidCount: '-',
-      actionLabel: '查看',
-    },
-    {
-      id: 16,
-      name: '河岸文創週末市集',
-      nameImage: 'assets/images/market/cards/market-card-09.png',
-      date: '2026/10/17 - 2026/10/18',
-      location: '新北市 板橋區 新月橋河濱廣場',
-      status: ActivityStatus.unpublishRequested,
-      signupProgress: '76 / 90',
-      paidCount: '71',
-      actionLabel: '查看',
-    },
-    {
-      id: 11,
-      name: '春日野餐市集',
-      nameImage: 'assets/images/market/history/history-market-01.png',
-      date: '2025/04/12 - 2025/04/13',
-      location: '台北市 大安區 大安森林公園',
-      status: ActivityStatus.ended,
-      signupProgress: '80 / 80',
-      paidCount: '80',
-      actionLabel: '查看',
-    },
-    {
-      id: 12,
-      name: '手感工藝生活節',
-      nameImage: 'assets/images/market/history/history-market-02.png',
-      date: '2025/05/18 - 2025/05/19',
-      location: '台中市 西區 審計新村',
-      status: ActivityStatus.ended,
-      signupProgress: '68 / 70',
-      paidCount: '68',
-      actionLabel: '查看',
-    },
-    {
-      id: 13,
-      name: '老街綠意選物市集',
-      nameImage: 'assets/images/market/history/history-market-03.png',
-      date: '2025/06/07 - 2025/06/08',
-      location: '台南市 中西區 蝸牛巷',
-      status: ActivityStatus.ended,
-      signupProgress: '74 / 80',
-      paidCount: '72',
-      actionLabel: '查看',
-    },
-    {
-      id: 14,
-      name: '港邊手作假日',
-      nameImage: 'assets/images/market/history/history-market-04.png',
-      date: '2025/07/12 - 2025/07/13',
-      location: '高雄市 鼓山區 棧貳庫',
-      status: ActivityStatus.ended,
-      signupProgress: '88 / 90',
-      paidCount: '86',
-      actionLabel: '查看',
-    },
-    {
-      id: 15,
-      name: '草木試營小集',
-      nameImage: 'assets/images/shared/no-image-placeholder.svg',
-      date: '',
-      location: '',
-      status: ActivityStatus.draft,
-      signupProgress: '',
-      paidCount: '',
-      canSubmitReview: false,
-      actionLabel: '查看',
-    },
-  ];
-
+  /** 後端回傳的目前分頁活動資料。 */
+  rows: OrganizerEventRow[] = [];
   /** 目前頁面實際顯示的資料。 */
   displayRows: OrganizerEventRow[] = [];
   private serverTotalItems = 0;
@@ -290,18 +109,6 @@ export class OrganizerDashboardEventManagement implements OnInit {
     this.loadEvents();
   }
 
-  /** 依照狀態、名稱與日期區間回傳篩選後的活動。 */
-  get filteredRows(): OrganizerEventRow[] {
-    return this.rows.filter((row) => {
-      const matchesStatus = !this.selectedStatus || row.status === this.selectedStatus;
-      const matchesName = !this.appliedKeyword || row.name.toLocaleLowerCase().includes(this.appliedKeyword);
-      const [activityStartDate, activityEndDate] = row.date.split(' - ').map((date) => date.replaceAll('/', '-'));
-      const matchesStartDate = !this.appliedStartDate || activityEndDate >= this.appliedStartDate;
-      const matchesEndDate = !this.appliedEndDate || activityStartDate <= this.appliedEndDate;
-      return matchesStatus && matchesName && matchesStartDate && matchesEndDate;
-    });
-  }
-
   /** 篩選後的總筆數。 */
   get totalItems(): number {
     return this.serverTotalItems;
@@ -322,7 +129,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
     this.loadEvents();
   }
 
-  /** 執行搜尋；之後串接 API 時可在這裡改為呼叫服務層。 */
+  /** 套用搜尋條件並重新查詢活動列表。 */
   searchActivities(): void {
     const range = this.dateRangeSelector?.getTimeRange() ?? {
       startDate: this.filterStartDate,
@@ -693,15 +500,9 @@ export class OrganizerDashboardEventManagement implements OnInit {
     return date ? date.replaceAll('-', '/') : '';
   }
 
-  /** 更新目前分頁顯示的資料。 */
+  /** 依目前後端分頁資料更新列表顯示。 */
   private updateDisplayRows(): void {
-    const rows = this.filteredRows;
-    const maxPage = Math.max(1, Math.ceil(rows.length / this.pageSize));
-    this.currentPage = Math.min(Math.max(1, this.currentPage), maxPage);
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    this.displayRows = rows
-      .slice(startIndex, startIndex + this.pageSize)
-      .map((row) => this.toDisplayRow(row));
+    this.displayRows = this.rows.map((row) => this.toDisplayRow(row));
   }
 
   /** 依活動狀態產生列表操作按鈕，避免列表按鈕和狀態規則不一致。 */
@@ -747,7 +548,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
     }
   }
 
-  /** 列表顯示資料依狀態補齊操作按鈕與尚未產生的統計欄位。 */
+  /** 依活動狀態整理列表操作按鈕與統計欄位顯示值。 */
   private toDisplayRow(row: OrganizerEventRow): OrganizerEventRow {
     const actions = this.getRowActions(row);
     const pendingStatisticStatuses = [
