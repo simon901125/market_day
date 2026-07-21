@@ -336,6 +336,8 @@
 
   .detail-value {
     color: var(--text-dark);
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 }
 

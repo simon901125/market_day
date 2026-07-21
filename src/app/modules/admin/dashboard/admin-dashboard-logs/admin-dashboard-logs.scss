@@ -89,7 +89,9 @@
     }
 
     &.log-target {
-      white-space: nowrap;
+      white-space: normal;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
 
     &.log-targetRole {
