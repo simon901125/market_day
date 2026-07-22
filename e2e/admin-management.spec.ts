@@ -231,7 +231,82 @@ test.describe('Market Day 管理員後台', () => {
         await organizerPage.reload();
         await expect(organizerPage.getByText(/已發布|報名中/).first()).toBeVisible();
       });
-      await test.step('ADMIN-11～14 活動 A 下架審核（駁回後核准）', async () => {});
+      await test.step('ADMIN-11～14 活動 A 下架審核（駁回後核准）', async () => {
+        progress('ADMIN-11 主辦方第一次申請下架');
+        await adminPage.goto('/admin/dash-board/home');
+        const beforeUnpublishCount = await readTodoCount(adminPage, '活動下架申請');
+
+        await organizerPage.goto(`/organizer/dash-board/activity/detail/${state.eventAId}`);
+        await organizerPage.getByRole('button', { name: '下架活動', exact: true }).click();
+        await organizerPage.locator('#requiredReason').fill('E2E 測試：第一次下架申請（預期被駁回）。');
+        await organizerPage.getByRole('button', { name: '下一步', exact: true }).click();
+        const unpublishRequestPromise1 = waitForApi(
+          organizerPage,
+          `/api/organizer/events/${state.eventAId}/unpublish-request`,
+          'POST',
+        );
+        await organizerPage.getByRole('button', { name: '確認送出', exact: true }).click();
+        await expectApiSuccess(await unpublishRequestPromise1);
+        await closeAlert(organizerPage, '下架申請已送出', '知道了');
+        await expect(organizerPage.getByText('下架申請中', { exact: true }).first()).toBeVisible();
+
+        progress('ADMIN-12 管理員不同意下架（第一次）');
+        await adminPage.goto('/admin/dash-board/notification');
+        await adminPage.reload();
+        await expectNotificationVisible(adminPage, eventAName);
+
+        await adminPage.goto('/admin/dash-board/home');
+        const afterUnpublishCount = await readTodoCount(adminPage, '活動下架申請');
+        expect(afterUnpublishCount).toBeGreaterThan(beforeUnpublishCount);
+
+        await adminPage.goto(`/admin/dash-board/activity/detail/${state.eventAId}`);
+        await adminPage.locator('.header-actions button', { hasText: '下架審核' }).click();
+        await adminPage.getByLabel('不同意下架', { exact: true }).check();
+        await adminPage.locator('#supplementReason').fill('E2E 測試：資料尚不完整，請補充後再申請。');
+        const rejectPromise = waitForApi(adminPage, '/request-revision', 'POST');
+        await adminPage.getByRole('button', { name: '確認送出', exact: true }).click();
+        await expectApiSuccess(await rejectPromise);
+        await closeAlert(adminPage, '已駁回下架申請', '確定');
+        await expect(adminPage.getByText('已發布', { exact: true }).first()).toBeVisible();
+
+        progress('ADMIN-13 主辦方第二次申請下架');
+        await organizerPage.goto('/organizer/dash-board/notification');
+        await organizerPage.reload();
+        await expectNotificationVisible(organizerPage, eventAName);
+
+        await organizerPage.goto(`/organizer/dash-board/activity/detail/${state.eventAId}`);
+        await expect(organizerPage.getByText('已發布', { exact: true }).first()).toBeVisible();
+        await organizerPage.getByRole('button', { name: '下架活動', exact: true }).click();
+        await organizerPage.locator('#requiredReason').fill('E2E 測試：第二次下架申請（預期被核准）。');
+        await organizerPage.getByRole('button', { name: '下一步', exact: true }).click();
+        const unpublishRequestPromise2 = waitForApi(
+          organizerPage,
+          `/api/organizer/events/${state.eventAId}/unpublish-request`,
+          'POST',
+        );
+        await organizerPage.getByRole('button', { name: '確認送出', exact: true }).click();
+        await expectApiSuccess(await unpublishRequestPromise2);
+        await closeAlert(organizerPage, '下架申請已送出', '知道了');
+        await expect(organizerPage.getByText('下架申請中', { exact: true }).first()).toBeVisible();
+
+        progress('ADMIN-14 管理員同意下架（第二次）');
+        await adminPage.goto(`/admin/dash-board/activity/detail/${state.eventAId}`);
+        await adminPage.locator('.header-actions button', { hasText: '下架審核' }).click();
+        await adminPage.getByLabel('同意下架', { exact: true }).check();
+        const confirmUnpublishPromise = waitForApi(
+          adminPage,
+          `/api/admin/events/${state.eventAId}/unpublish-confirm`,
+          'POST',
+        );
+        await adminPage.getByRole('button', { name: '確認送出', exact: true }).click();
+        await expectApiSuccess(await confirmUnpublishPromise);
+        await closeAlert(adminPage, '審核通過', '確定');
+        await expect(adminPage.getByText('已下架', { exact: true }).first()).toBeVisible();
+
+        await organizerPage.goto('/organizer/dash-board/notification');
+        await organizerPage.reload();
+        await expectNotificationVisible(organizerPage, eventAName);
+      });
       await test.step('ADMIN-15～17 活動 C 短時間窗與款項結清', async () => {});
       await test.step('ADMIN-18～23 目標主辦方帳號管理', async () => {});
       await test.step('ADMIN-24～28 目標攤主帳號管理', async () => {});
