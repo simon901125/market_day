@@ -107,10 +107,12 @@ test.describe('Market Day 管理員後台', () => {
 
         const unreadCard = adminPage.locator('.notification-card.unread').first();
         if (await unreadCard.count() > 0) {
+          const markedTitle = (await unreadCard.locator('.notification-content h3').textContent())?.trim() ?? '';
           const markReadPromise = waitForApi(adminPage, '/isRead', 'POST');
           await unreadCard.click();
           await expectApiSuccess(await markReadPromise);
-          await expect(unreadCard).not.toHaveClass(/unread/);
+          const markedCard = adminPage.locator('.notification-card', { hasText: markedTitle }).first();
+          await expect(markedCard).not.toHaveClass(/unread/);
         }
       });
       await test.step('ADMIN-05～07 活動 A 建立、要求補件、重新送審', async () => {});
