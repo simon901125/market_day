@@ -20,6 +20,23 @@
   table-layout: fixed;
 }
 
+:host ::ng-deep .stall-table td[data-column='name'] {
+  overflow: hidden;
+}
+
+:host ::ng-deep .stall-table td[data-column='name'] .image-text-cell {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+:host ::ng-deep .stall-table td[data-column='name'] .image-text-cell span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 :host ::ng-deep .stall-table td[data-column='location'] span {
   display: block;
   overflow: hidden;

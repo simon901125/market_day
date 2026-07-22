@@ -6,6 +6,7 @@ import { AlertService } from '../../../../core/services/alert.service';
 import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
 import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResult';
 import type { VendorApplicationApiDetail } from '../../../../models/interface/vendor/VendorApplicationApiDetail';
+import { MarketStatus } from '../../../../models/status/MarketStatus';
 import type {
   NewebPayPaymentForm,
   VendorPaymentStatus,
@@ -18,6 +19,7 @@ import type {
   styleUrl: './vendor-payment-page.scss',
 })
 export class VendorPaymentPage implements OnInit {
+  readonly marketStatus = MarketStatus;
   readonly applicationNo: string;
   detailRouteId: string;
   application: VendorApplicationApiDetail | null = null;

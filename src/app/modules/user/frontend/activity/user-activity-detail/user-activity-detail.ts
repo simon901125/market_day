@@ -79,7 +79,8 @@ export class UserActivityDetail {
   }
 
   get showBoothInfo(): boolean {
-    return this.market?.status !== MarketStatus.preview;
+    return this.latestDetail?.brandsPublic === true
+      && this.market?.status !== MarketStatus.preview;
   }
 
   get showAnnouncement(): boolean {
@@ -145,6 +146,11 @@ export class UserActivityDetail {
 
   onMapBoothSelected(stallNo: string): void {
     if (!stallNo || !this.selectedActivityDate || this.marketId === null) {
+      return;
+    }
+
+    const selectedBooth = this.selectedMarketMap.booths.find((booth) => booth.code === stallNo);
+    if (!selectedBooth || selectedBooth.status !== 'occupied') {
       return;
     }
 
@@ -236,25 +242,37 @@ export class UserActivityDetail {
         .filter((stall) => Boolean(stall.stallNo))
         .map((stall) => [stall.stallNo!.trim().toUpperCase(), stall]),
     );
-    const baseMap = this.ensureMapForDate(date);
+    const currentMap = this.ensureMapForDate(date);
+    const existingBrands = new Map(
+      currentMap.booths
+        .filter((booth) => Boolean(booth.brand))
+        .map((booth) => [booth.code.trim().toUpperCase(), booth.brand]),
+    );
     const nextMap: MarketMapData = {
-      ...baseMap,
-      booths: baseMap.booths.map((booth) => {
+      ...currentMap,
+      booths: DEFAULT_MARKET_MAP_DATA.booths
+        .filter((booth) => booth.id === 'service-booth'
+          || stallsByNo.has(booth.code.trim().toUpperCase()))
+        .map((booth) => {
         if (booth.id === 'service-booth') {
           return { ...booth };
         }
 
         const stall = stallsByNo.get(booth.code.trim().toUpperCase());
         if (!stall) {
-          return { ...booth, status: 'available', brand: undefined };
+          return { ...booth };
         }
+
+        const occupied = this.isOccupiedStall(stall);
 
         return {
           ...booth,
           zone: stall.zoneName || booth.zone,
           size: stall.width && stall.length ? `${stall.width}m x ${stall.length}m` : booth.size,
-          status: this.isOccupiedStall(stall) ? 'occupied' : 'available',
-          brand: undefined,
+          status: occupied ? 'occupied' : 'available',
+          brand: occupied
+            ? existingBrands.get(booth.code.trim().toUpperCase())
+            : undefined,
         };
       }),
     };
@@ -326,7 +344,6 @@ export class UserActivityDetail {
       if (!brand) {
         return {
           ...booth,
-          status: 'available' as const,
           brand: undefined,
         };
       }
@@ -372,7 +389,7 @@ export class UserActivityDetail {
 
   private mapMarketDetail(detail: UserMarketDetailApi): MarketCardItem {
     const categories = (detail.categories ?? []).map((category) => category.name).filter(Boolean);
-    const status = detail.eventStatus || MarketStatus.upcoming;
+    const status = MarketStatus.fromApiStatus(detail.eventStatus) || MarketStatus.upcoming;
 
     return {
       id: String(detail.id),

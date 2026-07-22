@@ -36,7 +36,23 @@ export class MarketStatus {
     [MarketStatus.ended]: 'ended',
   };
 
+  /** 將公開活動 API 的狀態統一成前台正式顯示名稱。 */
+  static readonly apiStatusMap: Record<string, string> = {
+    活動預告: MarketStatus.preview,
+    籌備中: MarketStatus.preview,
+    即將開始: MarketStatus.upcoming,
+    準備開始: MarketStatus.upcoming,
+    進行中: MarketStatus.active,
+    活動進行中: MarketStatus.active,
+    已結束: MarketStatus.ended,
+  };
+
+  static fromApiStatus(status: string | null | undefined): string {
+    const value = status?.trim() ?? '';
+    return MarketStatus.apiStatusMap[value] ?? value;
+  }
+
   static getClass(status: string): string {
-    return MarketStatus.classMap[status] ?? '';
+    return MarketStatus.classMap[MarketStatus.fromApiStatus(status)] ?? '';
   }
 }
