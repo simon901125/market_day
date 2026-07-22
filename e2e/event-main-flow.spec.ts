@@ -40,15 +40,15 @@ test.describe('Market Day 活動主流程', () => {
     const credentials = requiredCredentials();
     test.skip(!credentials, '主流程需要主辦方、管理員與攤主三種 E2E 測試帳號。');
 
-    // Timestamp alone can collide when two E2E runs start at nearly the same time.
-    // Add a UUID fragment so every database-writing run owns distinct test data.
-    const runId = `${Date.now()}-${randomUUID().slice(0, 8)}`;
-    const eventName = `E2E 主流程活動 ${runId}`;
-    const organizerName = `E2E 主辦單位 ${runId}`;
-    const brandName = `E2E 展示品牌 ${runId}`;
-    const productName = `E2E 展示商品 ${runId}`;
+    // 唯一性由自然的市集主題組合提供，畫面不顯示 timestamp 或 UUID。
+    const eventName = createNaturalEventName('日光慢旅生活市集');
+    const organizerName = '沐日市集企劃工作室';
+    const brandName = '山眠植作';
+    const productName = '苔球與原木植栽組';
     const vehicleNo = createUniqueVehicleNo();
-    const registrationOpensAt = roundUpToMinute(new Date(Date.now() + 90 * 1000));
+    // 建立活動與上傳圖片需要一些時間，開始時間至少預留 5 分鐘，避免
+    // 測試執行較慢時送審被「報名開始時間已過」的前端驗證擋下。
+    const registrationOpensAt = roundUpToMinute(new Date(Date.now() + 5 * 60 * 1000));
     // 留出足夠操作時間，同時讓本次 E2E 能等待每分鐘執行的自動選位排程。
     const registrationWindowMs = isDemo ? 8 * 60 * 1000 : 2 * 60 * 1000;
     const registrationEndsAt = new Date(registrationOpensAt.getTime() + registrationWindowMs);
@@ -119,9 +119,9 @@ test.describe('Market Day 活動主流程', () => {
         await organizerPage.locator('input[name="eventName"]').fill(eventName);
         await organizerPage.locator('label.category-option', { hasText: '文創手作' }).locator('input').check();
         await organizerPage.locator('.cover-field input[type="file"]').setInputFiles(eventCoverPath);
-        await organizerPage.locator('textarea[name="description"]').fill('E2E 自動化主流程活動簡介');
+        await organizerPage.locator('textarea[name="description"]').fill('以植物、手作與風格選物為主題的夏日午後生活市集。');
         await organizerPage.locator('textarea[name="introduction"]').fill(
-          '此活動由 Playwright 自動建立，用來驗證活動審核、公開、報名與付款前流程。',
+          '集結台灣獨立品牌、植栽創作者與甜點職人，規劃品牌展售、手作體驗及親子休息空間，歡迎民眾在城市中享受悠閒的週末午後。',
         );
         await clickNext(organizerPage);
 
@@ -130,7 +130,7 @@ test.describe('Market Day 活動主流程', () => {
         await fillDateTime(organizerPage, 'registrationStart', registrationOpensAt);
         await fillDateTime(organizerPage, 'registrationEnd', registrationEndsAt);
         await organizerPage.locator('input[name="metro"]').fill('無');
-        await organizerPage.locator('input[name="bus"]').fill('E2E 測試公車站');
+        await organizerPage.locator('input[name="bus"]').fill('搭乘 202、205 或 257 路公車至臺北科技大學站，步行約 3 分鐘');
         await organizerPage.locator('input[name="driving"]').fill('場地附設停車區');
         await clickNext(organizerPage);
 
@@ -138,7 +138,7 @@ test.describe('Market Day 活動主流程', () => {
         await chooseDropdown(venuePanel.locator('app-dropdown').nth(0), '台北市');
         await chooseDropdown(venuePanel.locator('app-dropdown').nth(1), '中正區');
         await organizerPage.locator('input[name="address"]').fill('八德路一段 1 號');
-        await organizerPage.locator('input[name="venueName"]').fill('E2E 測試活動場地');
+        await organizerPage.locator('input[name="venueName"]').fill('華山文創園區・東二館');
         await organizerPage.locator('input[name="boothLength"]').fill('3');
         await organizerPage.locator('input[name="boothWidth"]').fill('3');
         await organizerPage.locator('input[name="totalBooths"]').fill('2');
@@ -158,7 +158,7 @@ test.describe('Market Day 活動主流程', () => {
         await organizerPage.getByLabel('提供設備租借', { exact: true }).check();
         await organizerPage.getByRole('button', { name: '新增設備' }).click();
         const equipmentDialog = organizerPage.getByRole('dialog', { name: '新增設備' });
-        await equipmentDialog.locator('input[name="equipmentName"]').fill('E2E 展示桌');
+        await equipmentDialog.locator('input[name="equipmentName"]').fill('六尺木紋展示桌');
         await equipmentDialog.locator('input[name="equipmentUnit"]').fill('張');
         await equipmentDialog.locator('textarea[name="equipmentSpecification"]').fill('180 x 60 cm');
         await equipmentDialog.locator('input[name="equipmentFreeQuantity"]').fill('0');
@@ -182,7 +182,7 @@ test.describe('Market Day 活動主流程', () => {
         await extraPowerDialog.locator('input[name="extraPowerVoltage"]').fill('110V');
         await extraPowerDialog.locator('input[name="extraPowerWattage"]').fill('1000');
         await extraPowerDialog.locator('input[name="extraPowerFee"]').fill('200');
-        await extraPowerDialog.locator('textarea[name="extraPowerDescription"]').fill('E2E 額外用電');
+        await extraPowerDialog.locator('textarea[name="extraPowerDescription"]').fill('高功率餐飲設備用電');
         await extraPowerDialog.getByRole('button', { name: '儲存', exact: true }).click();
 
         await organizerPage.getByRole('button', { name: '送出審核', exact: true }).click();
@@ -309,13 +309,17 @@ test.describe('Market Day 活動主流程', () => {
 
         await expect(vendorPage).toHaveURL('/vendor/sign-up-form');
         await expect(vendorPage.getByRole('heading', { name: eventName })).toBeVisible();
-        await vendorPage.locator('.date-option input[type="checkbox"]').first().check();
+        const registrationDates = vendorPage.locator('.date-option input[type="checkbox"]');
+        for (let index = 0; index < await registrationDates.count(); index += 1) {
+          await registrationDates.nth(index).uncheck();
+        }
+        await registrationDates.first().check();
         await vendorPage.locator('.equipment-row input[type="checkbox"]').first().check();
         await vendorPage.getByLabel('需要申請額外用電', { exact: true }).check();
         await vendorPage.locator('.power-options input[type="checkbox"]').first().check();
         await vendorPage.getByLabel('有', { exact: true }).check();
         await vendorPage.getByPlaceholder('請輸入車牌號碼（範例：ABC-1234）').fill(vehicleNo);
-        await vendorPage.getByPlaceholder('請輸入內容（選填）').fill('E2E 主流程報名');
+        await vendorPage.getByPlaceholder('請輸入內容（選填）').fill('主要販售苔球與原木植栽，希望安排鄰近走道且通風良好的攤位。');
         await vendorPage.getByRole('button', { name: /下一步，確認資料/ }).click();
 
         await expect(vendorPage).toHaveURL('/vendor/sign-up-confirm');
@@ -350,8 +354,8 @@ test.describe('Market Day 活動主流程', () => {
         await expect(organizerPage.getByText(eventName, { exact: true })).toBeVisible();
         await expect(organizerPage.getByText(brandName, { exact: true })).toBeVisible();
         await expect(organizerPage.getByText(vehicleNo, { exact: true })).toBeVisible();
-        await expect(organizerPage.getByText('E2E 展示桌', { exact: false })).toBeVisible();
-        await expect(organizerPage.getByText('E2E 額外用電', { exact: false })).toBeVisible();
+        await expect(organizerPage.getByText('六尺木紋展示桌', { exact: false })).toBeVisible();
+        await expect(organizerPage.getByText('高功率餐飲設備用電', { exact: false })).toBeVisible();
 
         await organizerPage.locator('.header-actions .detail-status-action', { hasText: '審核通過' }).click();
         const approveApplicationPromise = waitForApi(
@@ -484,21 +488,40 @@ test.describe('Market Day 活動主流程', () => {
         await vendorPage.goto(
           `/vendor/dash-board/application-record/detail/${state.applicationNo}/booth?applicationId=${state.applicationId}`,
         );
-        const stallMapBody = await expectApiSuccess<{
+        let stallMapBody = await expectApiSuccess<{
           stalls?: Array<{ stallNo?: string; status?: string; selectedApplicationId?: number | null }>;
         }>(await stallMapPromise);
-        const availableStall = stallMapBody.data?.stalls?.find((stall) =>
-          Boolean(stall.stallNo)
-          && stall.selectedApplicationId == null
-          && /AVAILABLE|可選/.test(String(stall.status ?? '').toUpperCase()),
-        );
-        state.selectedStallNo = String(availableStall?.stallNo ?? '');
-        expect(state.selectedStallNo).toBeTruthy();
+        const activityDates = await vendorPage.locator('.day-result > strong').allTextContents();
+        expect(activityDates.length).toBeGreaterThan(0);
+        for (let index = 0; index < activityDates.length; index += 1) {
+          if (index > 0) {
+            const nextMapPromise = waitForApi(
+              vendorPage,
+              `/api/vendor/stall-map/${state.applicationNo}`,
+              'GET',
+            );
+            const dateDropdown = vendorPage.locator('.date-filter app-dropdown');
+            await dateDropdown.locator('.select-btn').click();
+            await dateDropdown.getByRole('option', { name: activityDates[index], exact: true }).click();
+            stallMapBody = await expectApiSuccess<{
+              stalls?: Array<{ stallNo?: string; status?: string; selectedApplicationId?: number | null }>;
+            }>(await nextMapPromise);
+          }
 
-        const selectedBooth = vendorPage.locator(`#market-booth-${state.selectedStallNo}`);
-        await expect(selectedBooth).toHaveAttribute('role', 'button');
-        await selectedBooth.click();
-        await expect(vendorPage.getByText(state.selectedStallNo, { exact: true }).last()).toBeVisible();
+          const availableStall = stallMapBody.data?.stalls?.find((stall) =>
+            Boolean(stall.stallNo)
+            && stall.selectedApplicationId == null
+            && /AVAILABLE|可選/.test(String(stall.status ?? '').toUpperCase()),
+          );
+          const stallNo = String(availableStall?.stallNo ?? '');
+          expect(stallNo).toBeTruthy();
+          if (!state.selectedStallNo) state.selectedStallNo = stallNo;
+
+          const selectedBooth = vendorPage.locator(`#market-booth-${stallNo}`);
+          await expect(selectedBooth).toHaveAttribute('role', 'button');
+          await selectedBooth.click();
+          await expect(vendorPage.getByText(stallNo, { exact: true }).last()).toBeVisible();
+        }
         await vendorPage.getByRole('button', { name: '完成攤位選擇' }).click();
 
         const selectPromise = waitForApi(vendorPage, '/api/stalls/select', 'POST');
@@ -546,7 +569,7 @@ test.describe('Market Day 活動主流程', () => {
         await expectApiSuccess(await equipmentPromise);
         await expect(organizerPage.getByRole('heading', { name: '設備詳情' })).toBeVisible();
         await expect(organizerPage.getByText(brandName, { exact: true }).first()).toBeVisible();
-        await expect(organizerPage.getByText('E2E 展示桌', { exact: true }).first()).toBeVisible();
+        await expect(organizerPage.getByText('六尺木紋展示桌', { exact: true }).first()).toBeVisible();
         await expect(organizerPage.getByText('額外用電', { exact: true }).first()).toBeVisible();
         await expect(organizerPage.getByText('110V/1000w', { exact: true }).first()).toBeVisible();
         await expect(organizerPage.getByText(vehicleNo, { exact: true })).toBeVisible();
@@ -612,7 +635,7 @@ test.describe('Market Day 活動主流程', () => {
         await expect(publicBrandPreview.getByText(brandName, { exact: true })).toBeVisible();
         await expect(publicPage.getByText(credentials!.vendor.email, { exact: true })).toHaveCount(0);
         await expect(publicPage.getByText(vehicleNo, { exact: true })).toHaveCount(0);
-        await expect(publicPage.getByText('E2E 展示桌', { exact: true })).toHaveCount(0);
+        await expect(publicPage.getByText('六尺木紋展示桌', { exact: true })).toHaveCount(0);
 
         await publicBrandPreview.getByRole('link', { name: '查看品牌' }).click();
         await publicPage.getByPlaceholder('請輸入品牌名稱或關鍵字').fill(brandName);
@@ -688,14 +711,14 @@ async function fillOrganizerProfile(
 ): Promise<void> {
   const dialog = page.locator('.organizer-profile-modal');
   await dialog.locator('input[name="organizerName"]').fill(organizerName);
-  await dialog.locator('input[name="contactName"]').fill('E2E 聯絡人');
-  await dialog.locator('input[name="contactPhone"]').fill('0912345678');
+  await dialog.locator('input[name="contactName"]').fill('林沐晴');
+  await dialog.locator('input[name="contactPhone"]').fill('0928613745');
   await dialog.locator('input[name="contactEmail"]').fill(organizerEmail);
-  await dialog.locator('input[name="companyName"]').fill('E2E 專題展示團隊');
+  await dialog.locator('input[name="companyName"]').fill('沐日整合行銷有限公司');
   await dialog.locator('input[name="taxId"]').fill('');
   await chooseDropdown(dialog.locator('app-dropdown').nth(0), '台北市');
   await chooseDropdown(dialog.locator('app-dropdown').nth(1), '中正區');
-  await dialog.locator('input[name="address"]').fill('八德路一段 1 號');
+  await dialog.locator('input[name="address"]').fill('松江路 123 號 5 樓');
   const monday = dialog.locator('input[name="weekday週一"]');
   if (!(await monday.isChecked())) await monday.check();
   await dialog.locator('input[name="serviceStartTime"]').fill('09:00');
@@ -709,19 +732,19 @@ async function fillVendorStall(
   vendorEmail: string,
 ): Promise<void> {
   await page.getByLabel('品牌名稱', { exact: false }).fill(brandName);
-  await page.getByLabel('負責人姓名', { exact: false }).fill('E2E 攤主');
-  await page.getByLabel('聯絡電話', { exact: false }).fill('0987654321');
+  await page.getByLabel('負責人姓名', { exact: false }).fill('陳雨森');
+  await page.getByLabel('聯絡電話', { exact: false }).fill('0918276435');
   await page.getByLabel('Email', { exact: false }).fill(vendorEmail);
-  await page.getByLabel('Instagram', { exact: false }).fill('e2e_market_day');
-  await page.getByLabel('Facebook 粉絲專頁', { exact: false }).fill('e2e-market-day');
-  await page.getByLabel('詳細地址', { exact: false }).fill('忠孝東路一段 1 號');
-  await page.getByLabel('官方網站', { exact: false }).fill('https://example.com/e2e-market-day');
+  await page.getByLabel('Instagram', { exact: false }).fill('shanmi.botanical');
+  await page.getByLabel('Facebook 粉絲專頁', { exact: false }).fill('山眠植作 Shanmi Botanical');
+  await page.getByLabel('詳細地址', { exact: false }).fill('迪化街一段 127 號');
+  await page.getByLabel('官方網站', { exact: false }).fill('');
 
   const basicCard = page.locator('.stall-card').first();
   await chooseDropdown(basicCard.locator('app-dropdown').nth(0), '台北市');
   await chooseDropdown(basicCard.locator('app-dropdown').nth(1), '中正區');
   await page.locator('textarea[name="brandDescription"]').fill(
-    'E2E 自動化測試品牌，用於驗證攤主資料、報名與公開攤位資訊。',
+    '以苔球、原木與自然素材創作療癒植栽，希望把森林的安定感帶進日常生活。',
   );
   await chooseDropdown(page.locator('.brand-grid app-dropdown'), '文創手作');
 
@@ -734,7 +757,7 @@ async function fillVendorStall(
     const dialog = page.locator('.vendor-product-modal');
     await dialog.getByPlaceholder('請輸入商品名稱').fill(productName);
     await dialog.getByPlaceholder('請輸入價格').fill('100');
-    await dialog.getByPlaceholder('請簡單介紹你的商品特色').fill('E2E 專題展示商品');
+    await dialog.getByPlaceholder('請簡單介紹你的商品特色').fill('選用台灣原木與耐陰植物製作，每件作品皆為手工搭配。');
     await dialog.locator('.app-modal-actions .primary').click();
     await expect(dialog).toBeHidden();
   } else {
@@ -742,7 +765,7 @@ async function fillVendorStall(
     const dialog = page.locator('.vendor-product-modal');
     await dialog.getByPlaceholder('請輸入商品名稱').fill(productName);
     await dialog.getByPlaceholder('請輸入價格').fill('100');
-    await dialog.getByPlaceholder('請簡單介紹你的商品特色').fill('E2E 專題展示商品');
+    await dialog.getByPlaceholder('請簡單介紹你的商品特色').fill('選用台灣原木與耐陰植物製作，每件作品皆為手工搭配。');
     await dialog.locator('input[type="file"]').setInputFiles(productImagePath);
     await dialog.locator('.app-modal-actions .primary').click();
     await expect(dialog).toBeHidden();
@@ -897,9 +920,9 @@ async function fillNewebPaySandboxCard(page: Page, email: string): Promise<void>
     throw new Error(`無法辨識藍新信用卡安全碼欄位；目前可見欄位：${descriptors.join(' | ')}`);
   }
 
-  await fillIfPresent(/card.?holder|holder.?name|持卡人姓名|持卡人/i, 'E2E TESTER');
+  await fillIfPresent(/card.?holder|holder.?name|持卡人姓名|持卡人/i, 'LIN MU QING');
   await fillIfPresent(/e-?mail|電子郵件|信箱/i, email);
-  await fillIfPresent(/mobile|phone|手機/i, '0912345678');
+  await fillIfPresent(/mobile|phone|手機/i, '0928613745');
 }
 
 function createFutureCardExpiry(): { month: string; year: string; combined: string } {
@@ -917,6 +940,16 @@ function createUniqueVehicleNo(): string {
     .join('');
   const digits = String(Number.parseInt(seed.slice(6, 14), 16) % 10_000).padStart(4, '0');
   return `${letters}-${digits}`;
+}
+
+function createNaturalEventName(baseName: string): string {
+  const seed = randomUUID().replaceAll('-', '');
+  const atmospheres = ['晨光', '森野', '花間', '海風', '山嵐', '暖日', '月光', '微風'];
+  const themes = ['植感', '手作', '選物', '食光', '漫遊', '好日', '拾光', '風格'];
+  const sessions = ['午後場', '週末場', '草地場', '城市場', '限定場', '小旅行', '生活節', '散步日'];
+  const pick = (items: readonly string[], offset: number): string =>
+    items[Number.parseInt(seed.slice(offset, offset + 2), 16) % items.length];
+  return `${baseName}・${pick(atmospheres, 0)}${pick(themes, 2)}${pick(sessions, 4)}`;
 }
 
 function parseCurrency(value: string | null): number {

@@ -15,6 +15,7 @@ import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResul
 import { MarketStatus } from '../../../../models/status/MarketStatus';
 import { VendorStatus } from '../../../../models/status/VendorStatus';
 import type { VendorApplicationApiDetail } from '../../../../models/interface/vendor/VendorApplicationApiDetail';
+import { paymentMethodLabel } from '../../../../core/utils/payment-method.util';
 
 @Component({
   selector: 'app-vendor-application-detail',
@@ -235,7 +236,7 @@ export class VendorApplicationDetail implements OnInit {
 
     this.currentApplicationId = api.application.applicationId;
     this.currentApplicationNo = api.application.applicationNo;
-    this.refundMethod = api.refund.refundMethod || api.fee.paymentMethod || '';
+    this.refundMethod = paymentMethodLabel(api.refund.refundMethod || api.fee.paymentMethod, '');
     this.marketWorkflowStatus = api.event.workflowStatus
       ?? (api.event.unpublished ? 'UNPUBLISHED' : api.event.unpublishRequested ? 'UNPUBLISH_REQUESTED' : '');
     this.marketWorkflowLoaded = Boolean(
@@ -665,7 +666,7 @@ function createPaymentRows(api: VendorApplicationApiDetail): DetailRow[] {
       ? { label: '付款狀態', value: api.fee.paymentStatus, highlight: true }
       : null,
     api.fee.paymentMethod
-      ? { label: '付款方式', value: api.fee.paymentMethod }
+      ? { label: '付款方式', value: paymentMethodLabel(api.fee.paymentMethod) }
       : null,
     api.fee.paymentNo ? { label: '付款編號', value: api.fee.paymentNo } : null,
     api.fee.providerTradeNo
@@ -685,7 +686,7 @@ function createRefundRows(api: VendorApplicationApiDetail): DetailRow[] {
       ? { label: '退款狀態', value: api.refund.refundStatusText, highlight: true }
       : null,
     api.refund.refundMethod
-      ? { label: '退款方式', value: api.refund.refundMethod }
+      ? { label: '退款方式', value: paymentMethodLabel(api.refund.refundMethod) }
       : null,
     api.refund.refundNo ? { label: '退款編號', value: api.refund.refundNo } : null,
     api.refund.refundAmount != null

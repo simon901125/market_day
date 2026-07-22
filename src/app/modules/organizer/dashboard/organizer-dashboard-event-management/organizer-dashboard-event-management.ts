@@ -188,11 +188,17 @@ export class OrganizerDashboardEventManagement implements OnInit {
       queryParams: {
         returnPage: this.currentPage,
         returnStatus: this.selectedStatus || null,
+        returnKeyword: this.searchKeyword.trim() || null,
+        returnStartDate: this.appliedStartDate,
+        returnEndDate: this.appliedEndDate,
       },
       state: {
         activity,
         returnPage: this.currentPage,
         returnStatus: this.selectedStatus,
+        returnKeyword: this.searchKeyword.trim(),
+        returnStartDate: this.appliedStartDate,
+        returnEndDate: this.appliedEndDate,
       },
     });
   }

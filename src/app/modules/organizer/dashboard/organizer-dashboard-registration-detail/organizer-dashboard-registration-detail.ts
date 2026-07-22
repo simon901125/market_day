@@ -21,6 +21,7 @@ import {
 } from '../../../../models/interface/organizer/OrganizerRegistrationDetail';
 import { ApplicationStatus } from '../../../../models/status/ApplicationStatus';
 import { AlertService } from '../../../../core/services/alert.service';
+import { paymentMethodLabel } from '../../../../core/utils/payment-method.util';
 import { Dropdown } from '../../../shared/dropdown/dropdown';
 import {
   DEFAULT_MARKET_MAP_DATA,
@@ -531,7 +532,7 @@ export class OrganizerDashboardRegistrationDetail implements OnInit {
       },
       payment: {
         status: raw.fee.paymentStatus || '-',
-        method: raw.fee.paymentMethod || '-',
+        method: paymentMethodLabel(raw.fee.paymentMethod),
         transactionNo: raw.fee.paymentNo || raw.fee.providerTradeNo || '-',
         amount: this.moneyValue(raw.fee.paymentAmount),
         deadline: '-',
