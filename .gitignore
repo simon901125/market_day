@@ -53,3 +53,9 @@ CLAUDE.md
 docs/superpowers
 
 env.e2e.download
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example

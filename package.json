@@ -24,7 +24,9 @@
     "e2e:headed": "playwright test --headed",
     "e2e:ui": "playwright test --ui --ui-port=0",
     "e2e:report": "playwright show-report",
-    "prepare": "husky"
+    "prepare": "husky",
+    "deploy": "npm run build && wrangler deploy",
+    "preview": "npm run build && wrangler dev"
   },
   "prettier": {
     "printWidth": 100,
@@ -70,6 +72,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "wrangler": "^4.113.0"
   }
 }
