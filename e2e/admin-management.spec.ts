@@ -74,7 +74,45 @@ test.describe('Market Day 管理員後台', () => {
     };
 
     try {
-      await test.step('ADMIN-01～04 管理員登入、總覽、通知中心', async () => {});
+      await test.step('ADMIN-01～04 管理員登入、總覽、通知中心', async () => {
+        progress('ADMIN-01～04 登入、總覽、通知中心');
+        const adminConfig = authRoleCases.find((item) => item.role === 'admin')!;
+        const loginResponse = await loginWithUi(
+          adminPage,
+          adminConfig,
+          credentials!.admin.email,
+          credentials!.admin.password,
+        );
+        const loginBody = await expectApiSuccess<{ user?: { role?: string } }>(loginResponse);
+        expect(loginBody.data?.user?.role).toBe('ADMIN');
+        await expect(adminPage).toHaveURL(adminConfig.dashboardPath);
+
+        const overviewPromise = waitForApi(adminPage, '/api/admin/dashboard/overview', 'GET');
+        await adminPage.goto('/admin/dash-board/home');
+        const overviewBody = await expectApiSuccess<{
+          pendingReview?: number;
+          totalActivity?: number;
+        }>(await overviewPromise);
+        expect(overviewBody.data?.totalActivity).toBeGreaterThanOrEqual(0);
+        await expect(adminPage.locator('.todo-card', { hasText: '活動審核' })).toBeVisible();
+        await expect(adminPage.locator('.stats-cards .todo-card', { hasText: '活動總數' })).toBeVisible();
+
+        await adminPage.goto('/admin/dash-board/notification');
+        await expect(adminPage.getByRole('heading', { name: '通知中心' })).toBeVisible();
+        for (const tab of ['未讀', '活動', '系統', '異常', '全部'] as const) {
+          const noticesPromise = waitForApi(adminPage, '/api/admin/notices/search', 'POST');
+          await adminPage.locator('.tabs button', { hasText: tab }).click();
+          await expectApiSuccess(await noticesPromise);
+        }
+
+        const unreadCard = adminPage.locator('.notification-card.unread').first();
+        if (await unreadCard.count() > 0) {
+          const markReadPromise = waitForApi(adminPage, '/isRead', 'POST');
+          await unreadCard.click();
+          await expectApiSuccess(await markReadPromise);
+          await expect(unreadCard).not.toHaveClass(/unread/);
+        }
+      });
       await test.step('ADMIN-05～07 活動 A 建立、要求補件、重新送審', async () => {});
       await test.step('ADMIN-08～10 活動 A 審核通過、地圖建置、發布', async () => {});
       await test.step('ADMIN-11～14 活動 A 下架審核（駁回後核准）', async () => {});
