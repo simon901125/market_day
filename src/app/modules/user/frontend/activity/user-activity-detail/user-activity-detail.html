@@ -116,7 +116,13 @@
       </button>
     </p>
 
-    <app-market-map #marketMap mode="public" [mapData]="selectedMarketMap" (boothSelected)="onMapBoothSelected($event.code)"></app-market-map>
+    <app-market-map
+      #marketMap
+      mode="public"
+      [mapData]="selectedMarketMap"
+      [activePublicBoothCode]="selectedPublicStallNo"
+      (boothSelected)="onMapBoothSelected($event.code)"
+    ></app-market-map>
   </section>
 
   <section class="bottom-info-grid">

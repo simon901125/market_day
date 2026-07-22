@@ -486,6 +486,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       [ActivityStatus.registrationOpen, 'REGISTRATION_OPEN'],
       [ActivityStatus.full, 'FULL'],
       [ActivityStatus.published, 'PUBLISHED'],
+      [ActivityStatus.brandsPublished, 'BRANDS_PUBLISHED'],
       [ActivityStatus.finalConfirmation, 'FINAL_CONFIRMATION'],
       [ActivityStatus.active, 'ACTIVE'],
       [ActivityStatus.ended, 'ENDED'],
@@ -537,6 +538,7 @@ export class OrganizerDashboardEventManagement implements OnInit {
       case ActivityStatus.registrationOpen:
       case ActivityStatus.full:
       case ActivityStatus.published:
+      case ActivityStatus.brandsPublished:
       case ActivityStatus.finalConfirmation:
       case ActivityStatus.active:
         return [

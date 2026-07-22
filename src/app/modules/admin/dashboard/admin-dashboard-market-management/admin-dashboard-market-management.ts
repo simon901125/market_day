@@ -54,6 +54,8 @@ export class AdminDashboardMarketManagement implements OnInit, AfterViewInit {
     ActivityStatus.registrationOpen,
     ActivityStatus.full,
     ActivityStatus.published,
+    ActivityStatus.finalConfirmation,
+    ActivityStatus.brandsPublished,
     ActivityStatus.active,
     ActivityStatus.ended,
     ActivityStatus.unpublishRequested,

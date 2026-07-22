@@ -36,6 +36,7 @@ export class UserActivityDetail {
   market: MarketCardItem | null = null;
   activityDateOptions: string[] = [];
   selectedActivityDate = '';
+  selectedPublicStallNo = '';
   selectedMarketMap: MarketMapData = this.createMapForDate('');
 
   constructor(
@@ -134,6 +135,7 @@ export class UserActivityDetail {
     }
 
     this.selectedActivityDate = date;
+    this.selectedPublicStallNo = '';
     this.selectedMarketMap = this.ensureMapForDate(date);
     this.marketMapComponent?.resetPublicMapState();
 
@@ -153,6 +155,8 @@ export class UserActivityDetail {
     if (!selectedBooth || selectedBooth.status !== 'occupied') {
       return;
     }
+
+    this.selectedPublicStallNo = stallNo;
 
     this.marketApi.getMarketDetailByStall(
       this.marketId,
