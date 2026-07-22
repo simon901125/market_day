@@ -115,7 +115,75 @@ test.describe('Market Day 管理員後台', () => {
           await expect(markedCard).not.toHaveClass(/unread/);
         }
       });
-      await test.step('ADMIN-05～07 活動 A 建立、要求補件、重新送審', async () => {});
+      await test.step('ADMIN-05～07 活動 A 建立、要求補件、重新送審', async () => {
+        progress('ADMIN-05 建立並送審活動 A');
+        const organizerConfig = authRoleCases.find((item) => item.role === 'organizer')!;
+        const organizerLoginResponse = await loginWithUi(
+          organizerPage,
+          organizerConfig,
+          credentials!.organizer.email,
+          credentials!.organizer.password,
+        );
+        const organizerLoginBody = await expectApiSuccess<{ user?: { role?: string } }>(
+          organizerLoginResponse,
+        );
+        expect(organizerLoginBody.data?.user?.role).toBe('ORGANIZER');
+        await expect(organizerPage).toHaveURL(organizerConfig.dashboardPath);
+
+        await adminPage.goto('/admin/dash-board/home');
+        const beforeReviewCount = await readTodoCount(adminPage, '活動審核');
+
+        const now = Date.now();
+        state.eventAId = await createAndSubmitMinimalEvent(organizerPage, eventAName, {
+          registrationStartsAt: new Date(now + 5 * 60 * 1000),
+          registrationEndsAt: new Date(now + 10 * 60 * 1000),
+          eventStartsAt: new Date(now + 48 * 60 * 60 * 1000),
+          eventEndsAt: new Date(now + 48 * 60 * 60 * 1000 + 8 * 60 * 60 * 1000),
+        });
+
+        progress('ADMIN-06 管理員要求補件');
+        await adminPage.goto('/admin/dash-board/notification');
+        await adminPage.reload();
+        await expectNotificationVisible(adminPage, eventAName);
+
+        await adminPage.goto('/admin/dash-board/home');
+        const afterReviewCount = await readTodoCount(adminPage, '活動審核');
+        expect(afterReviewCount).toBeGreaterThan(beforeReviewCount);
+
+        await adminPage.goto(`/admin/dash-board/activity/detail/${state.eventAId}`);
+        await expect(adminPage.getByRole('heading', { name: eventAName })).toBeVisible();
+        await adminPage.locator('.header-actions button', { hasText: '要求補件' }).click();
+        await adminPage.locator('#supplementReason').fill('E2E 測試：請補充活動介紹細節。');
+        await adminPage.getByRole('button', { name: '確認送出', exact: true }).click();
+
+        const revisionPromise = waitForApi(
+          adminPage,
+          `/api/admin/events/${state.eventAId}/request-revision`,
+          'POST',
+        );
+        await adminPage.getByRole('button', { name: '確認送出', exact: true }).click();
+        await expectApiSuccess(await revisionPromise);
+        await closeAlert(adminPage, '補件要求已送出', '確定');
+        await expect(adminPage.getByText('補件中', { exact: true }).first()).toBeVisible();
+
+        progress('ADMIN-07 主辦方重新送審活動 A');
+        await organizerPage.goto('/organizer/dash-board/notification');
+        await organizerPage.reload();
+        await expectNotificationVisible(organizerPage, eventAName);
+
+        await organizerPage.goto(`/organizer/dash-board/activity/detail/${state.eventAId}`);
+        await expect(organizerPage.getByText('補件中', { exact: true }).first()).toBeVisible();
+        await organizerPage.getByRole('button', { name: '重新送審', exact: true }).click();
+        const resubmitPromise = waitForApi(
+          organizerPage,
+          `/api/organizer/events/${state.eventAId}/submit-review`,
+          'POST',
+        );
+        await organizerPage.getByRole('button', { name: '確定重新送審', exact: true }).click();
+        await expectApiSuccess(await resubmitPromise);
+        await closeAlert(organizerPage, '重新送審成功', '知道了');
+        await expect(organizerPage.getByText('待審核', { exact: true }).first()).toBeVisible();
+      });
       await test.step('ADMIN-08～10 活動 A 審核通過、地圖建置、發布', async () => {});
       await test.step('ADMIN-11～14 活動 A 下架審核（駁回後核准）', async () => {});
       await test.step('ADMIN-15～17 活動 C 短時間窗與款項結清', async () => {});
