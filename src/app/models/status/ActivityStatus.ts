@@ -14,8 +14,9 @@ export class ActivityStatus {
   static readonly registrationOpen = '報名中';
   static readonly full = '已額滿';
   static readonly published = '已發布';
+  static readonly brandsPublished = '品牌已公開';
   static readonly active = '進行中';
-  static readonly finalConfirmation = '最終確認';
+  static readonly finalConfirmation = '最終名單確認中';
   static readonly ended = '已結束';
   static readonly unpublishRequested = '下架申請中';
   static readonly unpublished = '已下架';
@@ -34,6 +35,7 @@ export class ActivityStatus {
     ActivityStatus.registrationOpen,
     ActivityStatus.full,
     ActivityStatus.published,
+    ActivityStatus.brandsPublished,
     ActivityStatus.active,
     ActivityStatus.finalConfirmation,
     ActivityStatus.ended,
@@ -57,6 +59,7 @@ export class ActivityStatus {
     [ActivityStatus.registrationOpen]: 'tag-green',
     [ActivityStatus.full]: 'tag-orange',
     [ActivityStatus.published]: 'tag-teal',
+    [ActivityStatus.brandsPublished]: 'tag-teal',
     [ActivityStatus.active]: 'tag-blue',
     [ActivityStatus.finalConfirmation]: 'tag-teal',
     [ActivityStatus.ended]: 'tag-grey',
@@ -81,6 +84,7 @@ export class ActivityStatus {
     registrationOpen: ActivityStatus.registrationOpen,
     full: ActivityStatus.full,
     published: ActivityStatus.published,
+    brandsPublished: ActivityStatus.brandsPublished,
     active: ActivityStatus.active,
     finalConfirmation: ActivityStatus.finalConfirmation,
     ended: ActivityStatus.ended,

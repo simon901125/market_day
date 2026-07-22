@@ -101,7 +101,7 @@
         role="img"
         aria-label="小集日攤位地圖"
         preserveAspectRatio="xMidYMin meet"
-        (click)="clearPublicBoothSelection()"
+        (click)="onPublicMapBackgroundClick($event)"
       >
         <rect
           class="poster-ground"
@@ -188,6 +188,7 @@
           @if (booth.brand; as brand) {
             <foreignObject
               class="booth-preview-fo"
+              [class.is-pinned]="isPreviewPinned"
               [class.is-closing]="isPreviewClosing"
               [attr.x]="previewX(booth)"
               [attr.y]="previewY(booth)"

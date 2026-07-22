@@ -29,12 +29,13 @@ const brandImagePath = resolve('src/assets/images/market/cards/market-card-03.pn
 const productImagePath = resolve('src/assets/images/market/cards/market-card-04.png');
 
 const isDemo = process.env['E2E_DEMO'] === '1';
+const apiBaseUrl = (process.env['E2E_API_BASE_URL'] ?? 'http://localhost:8081').replace(/\/$/, '');
 const newebPaySandboxCardNumber = '4000221111111111';
 const newebPaySandboxSecurityCode = '123';
 
 test.describe('Market Day 活動主流程', () => {
   test('@main-flow 活動從建立、付款、選位到公開結果的完整主流程', async ({ browser }) => {
-    test.setTimeout(12 * 60 * 1000);
+    test.setTimeout(15 * 60 * 1000);
 
     const credentials = requiredCredentials();
     test.skip(!credentials, '主流程需要主辦方、管理員與攤主三種 E2E 測試帳號。');
@@ -48,14 +49,19 @@ test.describe('Market Day 活動主流程', () => {
     const productName = `E2E 展示商品 ${runId}`;
     const vehicleNo = createUniqueVehicleNo();
     const registrationOpensAt = roundUpToMinute(new Date(Date.now() + 90 * 1000));
-    const registrationEndsAt = new Date(registrationOpensAt.getTime() + 24 * 60 * 60 * 1000);
+    // 留出足夠操作時間，同時讓本次 E2E 能等待每分鐘執行的自動選位排程。
+    const registrationWindowMs = isDemo ? 8 * 60 * 1000 : 2 * 60 * 1000;
+    const registrationEndsAt = new Date(registrationOpensAt.getTime() + registrationWindowMs);
     const eventStartsAt = new Date(registrationOpensAt.getTime() + 48 * 60 * 60 * 1000);
     const eventEndsAt = new Date(eventStartsAt.getTime() + 8 * 60 * 60 * 1000);
 
-    const organizerContext = await browser.newContext();
-    const adminContext = await browser.newContext();
-    const vendorContext = await browser.newContext();
-    const publicContext = await browser.newContext();
+    // Headless Chromium does not apply --start-maximized and otherwise falls back
+    // to 800x600, which switches the dashboards to their mobile navigation.
+    const desktopViewport = { width: 1440, height: 900 };
+    const organizerContext = await browser.newContext({ viewport: desktopViewport });
+    const adminContext = await browser.newContext({ viewport: desktopViewport });
+    const vendorContext = await browser.newContext({ viewport: desktopViewport });
+    const publicContext = await browser.newContext({ viewport: desktopViewport });
 
     const organizerPage = await organizerContext.newPage();
     const adminPage = await adminContext.newPage();
@@ -398,7 +404,14 @@ test.describe('Market Day 活動主流程', () => {
         vendorPage.on('requestfailed', captureGatewayFailure);
         const paymentPromise = waitForApi(vendorPage, '/api/vendor/payments/newebpay', 'POST');
         await vendorPage.locator('.credit-card .app-btn.primary').click();
-        await expectApiSuccess(await paymentPromise);
+        const paymentResponse = await paymentPromise;
+        // 成功回應後前端會立刻以表單導向藍新；跨網域導頁可能讓 Chromium
+        // 先釋放原 API response body，因此此處只驗證 HTTP 狀態。付款內容
+        // 會再由藍新頁面與返回後的付款狀態共同驗證。
+        expect(
+          paymentResponse.ok(),
+          `${paymentResponse.request().method()} ${paymentResponse.url()}`,
+        ).toBe(true);
         try {
           await expect(vendorPage).toHaveURL(/ccore\.newebpay\.com/, { timeout: 30_000 });
         } catch (error) {
@@ -427,12 +440,22 @@ test.describe('Market Day 活動主流程', () => {
         const returnUrlPattern = new RegExp(
           `/vendor/dash-board/application-record/detail/${state.applicationNo}/payment`,
         );
-        await vendorPage.getByRole('button', { name: /立即付款|確認付款|確認送出/ }).last().click();
-
-        // 某些藍新付款頁會在刷卡前再顯示一次訂單確認。
-        if (/ccore\.newebpay\.com/.test(vendorPage.url())) {
-          const confirmButton = vendorPage.getByRole('button', { name: /確認付款|確認送出/ });
-          if (await confirmButton.isVisible().catch(() => false)) await confirmButton.click();
+        const agreementCheckboxes = vendorPage.locator('input[type="checkbox"]:visible');
+        const agreementCount = await agreementCheckboxes.count();
+        expect(agreementCount, '藍新付款頁應顯示訂單確認與服務條款勾選欄位').toBeGreaterThanOrEqual(2);
+        for (let index = 0; index < agreementCount; index += 1) {
+          await agreementCheckboxes.nth(index).check();
+        }
+        let gatewayDialog = 'none';
+        vendorPage.once('dialog', async (dialog) => {
+          gatewayDialog = `${dialog.type()}: ${dialog.message()}`;
+          await dialog.accept();
+        });
+        const submitText = vendorPage.getByText('確認送出', { exact: true });
+        await submitText.click();
+        await vendorPage.waitForTimeout(2_000);
+        if (gatewayDialog.startsWith('alert:')) {
+          throw new Error(`藍新付款資料驗證失敗：${gatewayDialog.slice('alert:'.length).trim()}`);
         }
         await expect(vendorPage).toHaveURL(returnUrlPattern, { timeout: 90_000 });
 
@@ -482,7 +505,7 @@ test.describe('Market Day 活動主流程', () => {
         await vendorPage.getByRole('button', { name: '確認完成選位' }).click();
         await expectApiSuccess(await selectPromise);
         const selectionDialog = vendorPage.getByRole('dialog');
-        await expect(selectionDialog).toContainText('攤位選擇完成');
+        await expect(selectionDialog).toContainText('已完成攤位選擇');
         await selectionDialog.getByRole('button', { name: '返回報名詳情' }).click();
 
         await expect(vendorPage.getByText('報名完成', { exact: true }).first()).toBeVisible();
@@ -524,7 +547,8 @@ test.describe('Market Day 活動主流程', () => {
         await expect(organizerPage.getByRole('heading', { name: '設備詳情' })).toBeVisible();
         await expect(organizerPage.getByText(brandName, { exact: true }).first()).toBeVisible();
         await expect(organizerPage.getByText('E2E 展示桌', { exact: true }).first()).toBeVisible();
-        await expect(organizerPage.getByText('E2E 額外用電', { exact: false }).first()).toBeVisible();
+        await expect(organizerPage.getByText('額外用電', { exact: true }).first()).toBeVisible();
+        await expect(organizerPage.getByText('110V/1000w', { exact: true }).first()).toBeVisible();
         await expect(organizerPage.getByText(vehicleNo, { exact: true })).toBeVisible();
         await expect(organizerPage.getByText(state.selectedStallNo, { exact: true }).first()).toBeVisible();
         await demoPause(organizerPage);
@@ -553,6 +577,7 @@ test.describe('Market Day 活動主流程', () => {
 
       await test.step('FLOW-32～34 一般使用者再次查看公開活動與攤商', async () => {
         progress('FLOW-32～34 公開活動結果');
+        await waitUntilBrandsPublic(publicPage, state.eventId, registrationEndsAt);
         await publicPage.goto('/user/activity-list');
         await publicPage.getByPlaceholder('請輸入活動名稱或關鍵字').fill(eventName);
         const publicSearchPromise = waitForApi(publicPage, '/api/markets/search', 'POST');
@@ -569,9 +594,7 @@ test.describe('Market Day 活動主流程', () => {
         );
         await expect(publicPage.getByRole('heading', { name: eventName })).toBeVisible();
         await expectApiSuccess(await publicMapPromise);
-        const publicBooth = publicPage.getByRole('button', {
-          name: new RegExp(`${state.selectedStallNo}.*${escapeRegExp(brandName)}`),
-        });
+        const publicBooth = publicPage.locator(`#market-booth-${state.selectedStallNo}`);
         await expect(publicBooth).toBeVisible();
         const brandDetailPromise = waitForApi(
           publicPage,
@@ -580,12 +603,18 @@ test.describe('Market Day 活動主流程', () => {
         );
         await publicBooth.click();
         await expectApiSuccess(await brandDetailPromise);
-        await expect(publicPage.getByText(brandName, { exact: true }).last()).toBeVisible();
+        await expect(publicBooth).toHaveAttribute(
+          'aria-label',
+          `${state.selectedStallNo} ${brandName}`,
+        );
+        const publicBrandPreview = publicPage.locator('.booth-preview-fo.is-pinned');
+        await expect(publicBrandPreview).toBeVisible();
+        await expect(publicBrandPreview.getByText(brandName, { exact: true })).toBeVisible();
         await expect(publicPage.getByText(credentials!.vendor.email, { exact: true })).toHaveCount(0);
         await expect(publicPage.getByText(vehicleNo, { exact: true })).toHaveCount(0);
         await expect(publicPage.getByText('E2E 展示桌', { exact: true })).toHaveCount(0);
 
-        await publicPage.getByRole('link', { name: '查看品牌' }).first().click();
+        await publicBrandPreview.getByRole('link', { name: '查看品牌' }).click();
         await publicPage.getByPlaceholder('請輸入品牌名稱或關鍵字').fill(brandName);
         const brandSearchPromise = waitForApi(publicPage, '/api/brands/search', 'GET');
         await publicPage.getByRole('button', { name: '搜尋', exact: true }).click();
@@ -640,14 +669,14 @@ async function loginAndVerify(
 async function openOrganizerProfile(page: Page): Promise<void> {
   const userMenuButton = page.locator('.user-box');
   await expect(userMenuButton).toBeVisible();
-  await userMenuButton.evaluate((element: HTMLElement) => element.click());
+  await userMenuButton.click();
   await expect(userMenuButton).toHaveAttribute('aria-expanded', 'true');
   const loadPromise = waitForApi(page, '/api/organizer/profile/load', 'GET');
   // 主辦方資料是選單第一項；使用結構定位，避免 Bootstrap 圖示字型
   // 被瀏覽器算進 accessible name 後，精確文字定位失效。
   const profileButton = page.locator('.user-menu .user-menu-item').first();
   await expect(profileButton).toBeVisible();
-  await profileButton.evaluate((element: HTMLElement) => element.click());
+  await profileButton.click();
   await expectApiSuccess(await loadPromise);
   await expect(page.locator('.organizer-profile-modal')).toBeVisible();
 }
@@ -772,6 +801,30 @@ async function waitUntilRegistrationOpens(page: Page, opensAt: Date): Promise<vo
   }
 }
 
+async function waitUntilBrandsPublic(
+  page: Page,
+  eventId: number,
+  registrationEndsAt: Date,
+): Promise<void> {
+  const timeout = Math.max(
+    30_000,
+    registrationEndsAt.getTime() - Date.now() + 2 * 60 * 1000,
+  );
+  await expect.poll(async () => {
+    const response = await page.request.get(`${apiBaseUrl}/api/markets/${eventId}`);
+    if (!response.ok()) return false;
+    const body = (await response.json()) as ApiEnvelope<{ brandsPublic?: boolean }>;
+    return body.statusCode != null
+      && body.statusCode >= 200
+      && body.statusCode < 300
+      && body.data?.brandsPublic === true;
+  }, {
+    message: '報名截止並完成每分鐘自動選位後，公開 API 應開放品牌與攤位地圖',
+    timeout,
+    intervals: [1_000, 2_000, 5_000],
+  }).toBe(true);
+}
+
 async function demoPause(page: Page, milliseconds = 800): Promise<void> {
   if (isDemo) await page.waitForTimeout(milliseconds);
 }
@@ -808,23 +861,25 @@ async function fillNewebPaySandboxCard(page: Page, email: string): Promise<void>
     return true;
   };
 
-  const cardNumberFilled = await fillIfPresent(
+  const cardParts = page.locator(
+    '#card1:visible, #card2:visible, #card3:visible, #card4:visible, '
+    + 'input[name="card1"]:visible, input[name="card2"]:visible, input[name="card3"]:visible, input[name="card4"]:visible',
+  );
+  const cardPartValues = newebPaySandboxCardNumber.match(/.{4}/g)!;
+  if ((await cardParts.count()) === 4) {
+    for (const [index, value] of cardPartValues.entries()) {
+      // 藍新頁面依逐字鍵盤事件更新四段卡號的內部狀態，不能只設定 input value。
+      await cardParts.nth(index).type(value, { delay: 80 });
+    }
+  } else if (!(await fillIfPresent(
     /card.?no|card.?number|credit.?card|信用卡號|卡號/i,
     newebPaySandboxCardNumber,
-  );
-  if (!cardNumberFilled) {
-    const cardParts = page.locator('input[maxlength="4"]:visible');
-    if ((await cardParts.count()) >= 4) {
-      for (const [index, value] of newebPaySandboxCardNumber.match(/.{4}/g)!.entries()) {
-        await cardParts.nth(index).fill(value);
-      }
-    } else {
-      throw new Error(`無法辨識藍新信用卡號欄位；目前可見欄位：${descriptors.join(' | ')}`);
-    }
+  ))) {
+    throw new Error(`無法辨識藍新信用卡號欄位；目前可見欄位：${descriptors.join(' | ')}`);
   }
 
   const expiryFilled = await fillIfPresent(
-    /expire|expiry|expiration|有效期限|月\s*\/\s*年/i,
+    /expire|expiry|expiration|有效期限|月\s*[／/]\s*年|mm\s*[／/]\s*yy/i,
     expiry.combined,
   );
   if (!expiryFilled) {

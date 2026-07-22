@@ -13,10 +13,10 @@ if (
 }
 
 const isUiMode = process.argv.includes('--ui');
+const hasExplicitDemoSetting = process.env['E2E_DEMO'] != null;
 const isMainFlowDemo =
   process.env['E2E_DEMO'] === '1' ||
-  (process.argv.includes('--headed') &&
-    process.argv.some((argument) => argument.includes('event-main-flow.spec.ts')));
+  (!hasExplicitDemoSetting && process.env['npm_lifecycle_event'] === 'e2e:main-flow:demo');
 
 if (isMainFlowDemo) {
   process.env['E2E_DEMO'] = '1';

@@ -21,4 +21,10 @@ describe('ActivityStatus', () => {
     expect(ActivityStatus.fromApiStatus('已發布')).toBe('已發布');
     expect(ActivityStatus.fromApiStatus('UNKNOWN_STATUS')).toBe('UNKNOWN_STATUS');
   });
+
+  it('區分最終名單確認中與品牌已公開', () => {
+    expect(ActivityStatus.fromApiStatus('finalConfirmation')).toBe('最終名單確認中');
+    expect(ActivityStatus.fromApiStatus('brandsPublished')).toBe('品牌已公開');
+    expect(ActivityStatus.getClass('品牌已公開')).toBe('tag-teal');
+  });
 });

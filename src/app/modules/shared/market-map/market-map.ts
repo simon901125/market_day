@@ -132,6 +132,7 @@ export class MarketMap implements OnChanges, OnInit {
 
   @Input() mode: MarketMapMode = 'public';
   @Input() mapData: MarketMapData = DEFAULT_MARKET_MAP_DATA;
+  @Input() activePublicBoothCode = '';
   @Input() launchOnly = false;
   @Input() fullscreenDateOptions: string[] = [];
   @Input() fullscreenSelectedDate = '';
@@ -174,7 +175,9 @@ export class MarketMap implements OnChanges, OnInit {
       return;
     }
 
-    const activeCode = this.selectedBooth?.code ?? this.hoveredBooth?.code;
+    const activeCode = this.activePublicBoothCode
+      || this.selectedBooth?.code
+      || this.hoveredBooth?.code;
     if (!activeCode) {
       return;
     }
@@ -325,6 +328,10 @@ export class MarketMap implements OnChanges, OnInit {
     }
 
     if (this.mode === 'public') {
+      // Clicking can happen while the delayed hover preview is still pending.
+      // Cancel it so the stale booth object (before its brand API response)
+      // cannot overwrite the selected booth after the brand has been loaded.
+      this.clearHoverPreviewTimer();
       this.clearPreviewCloseTimer();
       this.isPreviewClosing = false;
       this.hoveredBooth = booth;
@@ -398,6 +405,15 @@ export class MarketMap implements OnChanges, OnInit {
       this.isPreviewClosing = false;
       this.previewCloseTimer = null;
     }, 180);
+  }
+
+  onPublicMapBackgroundClick(event: MouseEvent): void {
+    const target = event.target;
+    if (target instanceof Element && target.closest('.booth, .booth-preview-fo')) {
+      return;
+    }
+
+    this.clearPublicBoothSelection();
   }
 
   /** ??瘣餃??交?嚗????嚗??文?銝撘萄??銝??支??汗??撠?*/
