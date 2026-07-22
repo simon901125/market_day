@@ -28,7 +28,7 @@ export class AdminDashboardMarketManagement implements OnInit, AfterViewInit {
     private readonly route: ActivatedRoute,
     private readonly adminApiService: AdminApiService,
     private readonly alert: AlertService,
-  ) {}
+  ) { }
 
   @ViewChild(DateRangeSelector) timeSelectorRef!: DateRangeSelector;
   @ViewChild('statusDropdown') statusDropdownRef!: Dropdown;
@@ -60,6 +60,7 @@ export class AdminDashboardMarketManagement implements OnInit, AfterViewInit {
     ActivityStatus.ended,
     ActivityStatus.unpublishRequested,
     ActivityStatus.unpublished,
+    ActivityStatus.payment
   ];
 
   /** 需要管理員處理（同時顯示「審核」與「查看」按鈕）的狀態。 */
@@ -67,6 +68,7 @@ export class AdminDashboardMarketManagement implements OnInit, AfterViewInit {
     ActivityStatus.pendingReview,
     ActivityStatus.mapBuilding,
     ActivityStatus.unpublishRequested,
+    ActivityStatus.payment,
   ];
 
   /** 目前篩選條件：狀態 */
@@ -233,7 +235,13 @@ export class AdminDashboardMarketManagement implements OnInit, AfterViewInit {
 
   /** 依活動狀態提供明確的審核按鈕名稱。 */
   getReviewButtonLabel(status: string): string {
-    return status === ActivityStatus.unpublishRequested ? '下架審核' : '審核';
+    if (status === ActivityStatus.unpublishRequested) {
+      return '下架審核';
+    } else if (status === ActivityStatus.pendingReview) {
+      return '審核';
+    } else {
+      return '通知已付款';
+    }
   }
 }
 

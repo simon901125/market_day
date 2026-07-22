@@ -13,7 +13,7 @@ export interface AdminDashboardOverview {
   pendingReview: number;
   mapBuilding: number;
   pendingUnpublish: number;
-  systemWarning: number;
+  eventPayment: number;
   totalOrganizer: number;
   totalVender: number;
   totalActivity: number;

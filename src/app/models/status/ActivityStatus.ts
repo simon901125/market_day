@@ -25,6 +25,9 @@ export class ActivityStatus {
   static readonly workflowFinalReview = '參與品牌名單確認';
   static readonly cancelled = '已取消';
 
+  /**只會出現在管理員和主辦方後台的活動狀態，活動已經結束，管理員還沒將活動款項交付主辦方 */
+  static readonly payment = "等待付款";
+
   /** 所有可顯示的活動狀態。 */
   static readonly list: string[] = [
     ActivityStatus.draft,
