@@ -32,4 +32,9 @@ describe('VendorPaymentPage', () => {
 
     expect(component.isSubmitting).toBeFalse();
   });
+
+  it('should use the shared market status class on the payment page', () => {
+    expect(component.marketStatus.getClass('即將開始')).toBe('upcoming');
+    expect(component.marketStatus.getClass('已結束')).toBe('ended');
+  });
 });

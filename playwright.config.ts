@@ -13,8 +13,17 @@ if (
 }
 
 const isUiMode = process.argv.includes('--ui');
+const isMainFlowDemo =
+  process.env['E2E_DEMO'] === '1' ||
+  (process.argv.includes('--headed') &&
+    process.argv.some((argument) => argument.includes('event-main-flow.spec.ts')));
+
+if (isMainFlowDemo) {
+  process.env['E2E_DEMO'] = '1';
+}
+
 const slowMo = Number(
-  process.env[isUiMode ? 'PW_UI_SLOW_MO' : 'PW_SLOW_MO'] ?? 0,
+  process.env[isUiMode ? 'PW_UI_SLOW_MO' : 'PW_SLOW_MO'] ?? (isMainFlowDemo ? 400 : 0),
 );
 
 export default defineConfig({
@@ -44,6 +53,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         browserName: 'chromium',
+        channel: process.env['PW_BROWSER_CHANNEL'] || undefined,
         viewport: null,
       },
     },
