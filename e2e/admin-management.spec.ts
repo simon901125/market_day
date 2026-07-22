@@ -184,7 +184,53 @@ test.describe('Market Day 管理員後台', () => {
         await closeAlert(organizerPage, '重新送審成功', '知道了');
         await expect(organizerPage.getByText('待審核', { exact: true }).first()).toBeVisible();
       });
-      await test.step('ADMIN-08～10 活動 A 審核通過、地圖建置、發布', async () => {});
+      await test.step('ADMIN-08～10 活動 A 審核通過、地圖建置、發布', async () => {
+        progress('ADMIN-08 管理員審核通過活動 A');
+        await adminPage.goto('/admin/dash-board/home');
+        const beforeMapBuildingCount = await readTodoCount(adminPage, '活動地圖建置');
+
+        await adminPage.goto(`/admin/dash-board/activity/detail/${state.eventAId}`);
+        await adminPage.locator('.header-actions button', { hasText: '審核通過' }).click();
+        const approvePromise = waitForApi(adminPage, `/api/admin/events/${state.eventAId}/approve`, 'POST');
+        await adminPage.getByRole('button', { name: '確認送出', exact: true }).click();
+        await expectApiSuccess(await approvePromise);
+        await closeAlert(adminPage, '審核通過', '確定');
+        await expect(adminPage.getByText('地圖建置中', { exact: true }).first()).toBeVisible();
+
+        await adminPage.goto('/admin/dash-board/home');
+        const afterMapBuildingCount = await readTodoCount(adminPage, '活動地圖建置');
+        expect(afterMapBuildingCount).toBeGreaterThan(beforeMapBuildingCount);
+
+        progress('ADMIN-09 管理員完成活動 A 地圖建置');
+        await adminPage.goto(`/admin/dash-board/activity/detail/${state.eventAId}`);
+        const mapCompleteButton = adminPage.locator('.header-actions button', { hasText: '地圖建置完成' });
+        await expect(mapCompleteButton).toBeVisible();
+        await mapCompleteButton.click();
+        const mapPromise = waitForApi(adminPage, `/api/admin/events/${state.eventAId}/map-complete`, 'POST');
+        await adminPage.getByRole('button', { name: '確認送出', exact: true }).click();
+        await expectApiSuccess(await mapPromise);
+        await closeAlert(adminPage, '地圖建置已送出', '確定');
+        await expect(adminPage.getByText('待發布', { exact: true }).first()).toBeVisible();
+
+        progress('ADMIN-10 主辦方發布活動 A');
+        await organizerPage.goto('/organizer/dash-board/notification');
+        await organizerPage.reload();
+        await expectNotificationVisible(organizerPage, eventAName);
+
+        await organizerPage.goto(`/organizer/dash-board/activity/detail/${state.eventAId}`);
+        await expect(organizerPage.getByRole('button', { name: '發布活動', exact: true })).toBeVisible();
+        await organizerPage.getByRole('button', { name: '發布活動', exact: true }).click();
+        const publishPromise = waitForApi(
+          organizerPage,
+          `/api/organizer/events/${state.eventAId}/publish`,
+          'POST',
+        );
+        await organizerPage.getByRole('button', { name: '確定發布', exact: true }).click();
+        await expectApiSuccess(await publishPromise);
+        await closeAlert(organizerPage, '發布活動成功', '知道了');
+        await organizerPage.reload();
+        await expect(organizerPage.getByText(/已發布|報名中/).first()).toBeVisible();
+      });
       await test.step('ADMIN-11～14 活動 A 下架審核（駁回後核准）', async () => {});
       await test.step('ADMIN-15～17 活動 C 短時間窗與款項結清', async () => {});
       await test.step('ADMIN-18～23 目標主辦方帳號管理', async () => {});
