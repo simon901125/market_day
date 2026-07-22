@@ -25,6 +25,9 @@ export class ActivityStatus {
   static readonly workflowFinalReview = '參與品牌名單確認';
   static readonly cancelled = '已取消';
 
+  /**只會出現在管理員和主辦方後台的活動狀態，活動已經結束，管理員還沒將活動款項交付主辦方 */
+  static readonly payment = "款項未結清";
+
   /** 所有可顯示的活動狀態。 */
   static readonly list: string[] = [
     ActivityStatus.draft,
@@ -67,6 +70,7 @@ export class ActivityStatus {
     [ActivityStatus.unpublished]: 'tag-red',
     [ActivityStatus.workflowFinalReview]: 'tag-teal',
     [ActivityStatus.cancelled]: 'tag-red',
+    [ActivityStatus.payment]: 'tag-orange'
   };
 
   /** 取得活動狀態標籤樣式。 */
@@ -90,6 +94,7 @@ export class ActivityStatus {
     ended: ActivityStatus.ended,
     pendingUnpublish: ActivityStatus.unpublishRequested,
     unpublished: ActivityStatus.unpublished,
+    payment: ActivityStatus.payment,
   };
 
   /** 把後端回傳的 EventStatus API 值轉成畫面用的中文標籤。 */
