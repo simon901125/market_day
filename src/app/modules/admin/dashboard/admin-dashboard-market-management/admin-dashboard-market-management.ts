@@ -57,10 +57,10 @@ export class AdminDashboardMarketManagement implements OnInit, AfterViewInit {
     ActivityStatus.finalConfirmation,
     ActivityStatus.brandsPublished,
     ActivityStatus.active,
+    ActivityStatus.payment,
     ActivityStatus.ended,
     ActivityStatus.unpublishRequested,
     ActivityStatus.unpublished,
-    ActivityStatus.payment
   ];
 
   /** 需要管理員處理（同時顯示「審核」與「查看」按鈕）的狀態。 */
@@ -237,10 +237,10 @@ export class AdminDashboardMarketManagement implements OnInit, AfterViewInit {
   getReviewButtonLabel(status: string): string {
     if (status === ActivityStatus.unpublishRequested) {
       return '下架審核';
-    } else if (status === ActivityStatus.pendingReview) {
-      return '審核';
+    } else if (status === ActivityStatus.payment) {
+      return '通知結清款項';
     } else {
-      return '通知已付款';
+      return '審核';
     }
   }
 }

@@ -15,7 +15,7 @@ export class OperationType {
     /**系統設定 */
     static readonly systemSetting = '系統設定';
     /**通知主辦方活動款項已結清 */
-    static readonly notifyEventPayment = '通知款項已結清';
+    static readonly notifyEventPayment = '款項結清通知';
 
     /** 操作類型 -> 標籤顏色 class 對應 */
     static readonly classMap: Record<string, string> = {
