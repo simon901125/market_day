@@ -104,7 +104,10 @@ export class AdminDashboardMarketDetail implements OnInit {
 
   /** 把 API 回傳的活動詳細資料轉成畫面用的 AdminMarketDetail */
   private mapDetail(data: AdminEventDetailDto): AdminMarketDetail {
-    const categoryNames = data.categories?.map((category) => category.name) ?? [];
+    const categoryNames = data.categories?.map((category) => category.name) ?? ['-'];
+    const boothZoneLabels = data.boothZones?.length
+      ? data.boothZones.map((zone) => `${zone.name}：${zone.qty}攤`)
+      : ['-'];
 
     return {
       activityId: data.eventId,
@@ -142,7 +145,7 @@ export class AdminDashboardMarketDetail implements OnInit {
         boothSpec: this.formatBoothSpec(data.boothSpec),
         boothCount: data.boothCount,
         boothPrice: data.boothPrice,
-        boothZones: data.boothZones.map((zone) => `${zone.name}：${zone.qty}攤`),
+        boothZones: boothZoneLabels,
       },
       boothLayoutImage: data.boothLayoutImage,
       statusLogs: data.logs.items.map((log) => this.mapStatusLog(log)),
