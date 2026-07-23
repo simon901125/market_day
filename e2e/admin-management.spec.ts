@@ -349,6 +349,35 @@ test.describe('Market Day 管理員後台', () => {
         await organizerPage.getByRole('button', { name: '確定發布', exact: true }).click();
         await expectApiSuccess(await publishCPromise);
         await closeAlert(organizerPage, '發布活動成功', '知道了');
+
+        progress('ADMIN-16 等待活動 C 結束並確認款項未結清');
+        await waitUntilPast(adminPage, eventCEndsAt);
+        // /api/admin/events/{id} 需要管理員登入的 Authorization header，Playwright 的
+        // page.request 不會自動帶入 Angular HttpClient 攔截器加上的 token，所以這裡改成
+        // 透過已登入的頁面重新整理、直接讀畫面上的狀態文字來輪詢，不直接呼叫 API。
+        // 只讀文字不丟例外，單次「還沒變成款項未結清」不會中止整個 expect.poll。
+        const statusTag = adminPage
+          .locator('.meta-item', { hasText: '活動狀態' })
+          .locator('.status-tag');
+        await expect.poll(async () => {
+          await adminPage.goto(`/admin/dash-board/activity/detail/${state.eventCId}`);
+          return (await statusTag.textContent())?.trim() ?? '';
+        }, {
+          message: '活動 C 結束時間已過，管理員查看活動詳情應顯示「款項未結清」',
+          timeout: 90_000,
+          intervals: [5_000, 10_000, 15_000],
+        }).toBe('款項未結清');
+
+        progress('ADMIN-17 管理員通知款項結清');
+        await adminPage.locator('.header-actions button', { hasText: '通知款項結清' }).click();
+        const paymentPromise = waitForApi(adminPage, `/api/admin/events/${state.eventCId}/payment`, 'POST');
+        await adminPage.getByRole('button', { name: '確認送出', exact: true }).click();
+        await expectApiSuccess(await paymentPromise);
+        await closeAlert(adminPage, '款項交付通知已送出', '確定');
+
+        await organizerPage.goto('/organizer/dash-board/notification');
+        await organizerPage.reload();
+        await expectNotificationVisible(organizerPage, eventCName);
       });
       await test.step('ADMIN-18～23 目標主辦方帳號管理', async () => {});
       await test.step('ADMIN-24～28 目標攤主帳號管理', async () => {});
