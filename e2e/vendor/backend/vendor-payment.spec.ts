@@ -1,4 +1,4 @@
-import { expect, test } from './fixtures';
+import { expect, test } from '../../fixtures';
 import {
   createApplicationDetail,
   fulfillApi,
@@ -6,7 +6,8 @@ import {
   stubApplicationDetail,
   VENDOR_APPLICATION_ID,
   VENDOR_APPLICATION_NO,
-} from './vendor-flow-helpers';
+} from '../vendor-flow-helpers';
+import { vendorTestData } from '../vendor-test-data';
 
 test.describe('攤主付款狀態（不測第三方金流）', () => {
   test('@smoke VENDOR-PAY-01 待付款頁顯示後端核定金額與期限', async ({ page }) => {
@@ -21,8 +22,8 @@ test.describe('攤主付款狀態（不測第三方金流）', () => {
         reviewStatus: 'APPROVED',
         applicationPaymentStatus: 'PENDING',
         cancelled: false,
-        applicationAmount: 1650,
-        paymentDueAt: '2026-07-25T23:59:00',
+        applicationAmount: vendorTestData.fees.baseTotal,
+        paymentDueAt: vendorTestData.payment.deadlineAt,
         paymentId: null,
         paymentNo: null,
         merchantOrderNo: null,
@@ -48,7 +49,7 @@ test.describe('攤主付款狀態（不測第三方金流）', () => {
     await expect(page.getByRole('heading', { name: '付款頁面' })).toBeVisible();
     await expect(page.getByText(VENDOR_APPLICATION_NO, { exact: true })).toBeVisible();
     await expect(page.getByText('待付款', { exact: true })).toBeVisible();
-    await expect(page.getByText('$1,650')).toHaveCount(2);
+    await expect(page.getByText(`$${vendorTestData.fees.baseTotal.toLocaleString()}`)).toHaveCount(2);
     await expect(page.getByText(/2026\/7\/25 23:59:00/)).toBeVisible();
     expect(paymentCreationRequested).toBe(false);
   });

@@ -1,5 +1,5 @@
-import { expect, test } from './fixtures';
-import { fulfillApi, installVendorShellStubs } from './vendor-flow-helpers';
+import { expect, test } from '../../fixtures';
+import { fulfillApi, installVendorShellStubs } from '../vendor-flow-helpers';
 
 test.describe('攤主退款資格（不測實際退款交易）', () => {
   test('@smoke VENDOR-REFUND-02 報名完成清單不提供退款入口', async ({ page }) => {

@@ -1,5 +1,5 @@
-import { expect, test } from './fixtures';
-import { fulfillApi, installVendorShellStubs } from './vendor-flow-helpers';
+import { expect, test } from '../../fixtures';
+import { fulfillApi, installVendorShellStubs } from '../vendor-flow-helpers';
 
 const applicationRows = [
   { id: 31, no: 'MD-E2E-00031', status: '待審核', title: '待審核測試市集' },

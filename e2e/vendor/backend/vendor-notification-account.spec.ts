@@ -1,56 +1,8 @@
-import { expect, test } from './fixtures';
-import { fulfillApi, installVendorShellStubs, vendorUser } from './vendor-flow-helpers';
+import { expect, test } from '../../fixtures';
+import { fulfillApi, installVendorShellStubs, vendorUser } from '../vendor-flow-helpers';
+import { vendorTestData } from '../vendor-test-data';
 
-const notices = [
-  {
-    id: 71,
-    category: '報名審核',
-    type: 'APPLICATION_APPROVED',
-    targetType: 'APPLICATION',
-    targetId: 25,
-    title: '審核通知',
-    content: '您的市集報名已審核通過',
-    isRead: false,
-    readAt: null,
-    createdAt: '2026-07-21T10:00:00',
-  },
-  {
-    id: 72,
-    category: '付款相關',
-    type: 'PAYMENT_PAID',
-    targetType: 'PAYMENT',
-    targetId: 25,
-    title: '付款通知',
-    content: '已確認收到您的報名費用',
-    isRead: false,
-    readAt: null,
-    createdAt: '2026-07-21T10:05:00',
-  },
-  {
-    id: 73,
-    category: '攤位分配',
-    type: 'STALL_SELECTION_AVAILABLE',
-    targetType: 'APPLICATION',
-    targetId: 25,
-    title: '選位通知',
-    content: '攤位地圖已開放選位',
-    isRead: true,
-    readAt: '2026-07-21T10:10:00',
-    createdAt: '2026-07-21T10:08:00',
-  },
-  {
-    id: 74,
-    category: '活動異動',
-    type: 'EVENT_UPDATED',
-    targetType: 'EVENT',
-    targetId: 101,
-    title: '活動異動',
-    content: '活動入場時間已更新',
-    isRead: true,
-    readAt: '2026-07-21T10:15:00',
-    createdAt: '2026-07-21T10:12:00',
-  },
-];
+const notices = Object.values(vendorTestData.notification);
 
 test.describe('攤主通知中心與帳號限制', () => {
   test('@smoke VENDOR-NOTIFY-01／02 通知可分類並標示已讀', async ({ page }) => {

@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 
-import { expect, test } from './fixtures';
+import { expect, test } from '../../fixtures';
 import {
   createMarketDetail,
   createMarketSearchItem,
@@ -10,7 +10,7 @@ import {
   installVendorShellStubs,
   stubMarketDetail,
   VENDOR_EVENT_ID,
-} from './vendor-flow-helpers';
+} from '../vendor-flow-helpers';
 
 test.use({ viewport: { width: 1440, height: 900 } });
 

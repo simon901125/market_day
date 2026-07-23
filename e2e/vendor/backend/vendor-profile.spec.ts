@@ -1,5 +1,6 @@
-import { expect, test } from './fixtures';
-import { installVendorShellStubs } from './vendor-flow-helpers';
+import { expect, test } from '../../fixtures';
+import { installVendorShellStubs } from '../vendor-flow-helpers';
+import { vendorTestData } from '../vendor-test-data';
 
 test.describe('攤主首次登入與品牌資料', () => {
   test('@smoke VENDOR-PROFILE-01 未完成品牌時鎖定報名功能並引導設定', async ({ page }) => {
@@ -63,11 +64,11 @@ test.describe('攤主首次登入與品牌資料', () => {
     await page.goto('/vendor/dash-board/myStall');
 
     const coverInput = page.getByLabel('上傳品牌封面').locator('input[type="file"]');
-    await coverInput.setInputFiles('e2e/assets/duck.gif');
+    await coverInput.setInputFiles(vendorTestData.profile.invalidImagePath);
     await expect(page.getByRole('dialog')).toContainText('圖片格式不符');
     await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
 
-    await coverInput.setInputFiles('e2e/assets/jellyfish-aquarium_original.jpg');
+    await coverInput.setInputFiles(vendorTestData.profile.coverPath);
     await expect(page.getByRole('dialog')).toContainText('圖片檔案過大');
     await expect(page.getByRole('dialog')).toContainText('不可超過 5MB');
   });

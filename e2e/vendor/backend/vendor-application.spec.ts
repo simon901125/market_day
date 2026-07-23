@@ -1,4 +1,4 @@
-import { expect, test } from './fixtures';
+import { expect, test } from '../../fixtures';
 import {
   apiResult,
   createMarketDetail,
@@ -7,7 +7,7 @@ import {
   VENDOR_APPLICATION_ID,
   VENDOR_APPLICATION_NO,
   VENDOR_EVENT_ID,
-} from './vendor-flow-helpers';
+} from '../vendor-flow-helpers';
 
 async function openApplicationForm(page: import('@playwright/test').Page): Promise<void> {
   await installVendorShellStubs(page, { needsProfile: false });

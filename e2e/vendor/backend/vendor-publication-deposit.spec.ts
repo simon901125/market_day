@@ -1,4 +1,4 @@
-import { test } from './fixtures';
+import { test } from '../../fixtures';
 
 test.describe('攤主公開資訊與保證金', () => {
   test.skip('VENDOR-PUBLIC-01 最終名單確認前不公開品牌與攤位', async () => {
