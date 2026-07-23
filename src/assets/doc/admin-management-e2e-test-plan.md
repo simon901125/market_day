@@ -145,6 +145,7 @@ npm run e2e:admin-management
 - **結果**：`1 passed (5.6m)`，ADMIN-01～29 全數依序執行並通過。
 - **涵蓋範圍**：活動 A 的補件、重新送審、審核通過、地圖建置、發布、下架審核（先駁回再核准）；活動 C 的短時間窗、款項未結清判定、通知款項結清；目標主辦方與目標攤主帳號的停用/恢復與登入驗證；操作紀錄查詢（依活動 A、活動 C、目標主辦方 Email 三種關鍵字搜尋，驗證 `requestRevision`、`eventUnpublishReview`、`notifyEventPayment`、`accountDisabled`、`accountRestored` 皆可查到）。測試結束時兩個目標帳號皆確認回到「正常」狀態。
 - **編譯確認**：`npx tsc --noEmit -p tsconfig.app.json` 無錯誤；`npx tsc --noEmit -p tsconfig.spec.json` 有 1 個既有、與本次改動無關的錯誤（`admin-dashboard-home.spec.ts` 的 `systemWarning` 欄位不存在於 `AdminDashboardOverview`），與實作前記錄的 baseline 一致，非本次改動引入。
+- **整支分支最終審查**：完成後另做過一次涵蓋全部 12 個任務的整體審查，額外發現並修正一個 race condition——ADMIN-18/24 使用者搜尋跟 ADMIN-29 操作紀錄查詢是同一種問題（進頁面自動觸發的無關鍵字預設查詢，可能被等待邏輯誤接），原本只在 ADMIN-29 修過，這次一併補上並用 `PW_SLOW_MO=0` 重新驗證確認修好，避免掩蓋在 slow-mo 的時間差裡。修正後再次完整執行仍是 `1 passed (5.6m)`。
 - **已知風險**（非本次修復範圍，經與使用者確認維持現狀）：ADMIN-18～23／ADMIN-24～28 停用目標主辦方／攤主帳號後、驗證登入被拒與恢復帳號之間沒有失敗保護機制，若中間斷言意外失敗，帳號會卡在停用狀態，需要手動用管理員後台或 API 恢復。
 
 ## 10. 後續案例
