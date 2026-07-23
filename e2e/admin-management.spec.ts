@@ -518,7 +518,38 @@ test.describe('Market Day 管理員後台', () => {
         expect(restoredVendorBody.data?.user?.role).toBe('VENDOR');
         await expect(targetVendorPage).toHaveURL(vendorConfig.dashboardPath);
       });
-      await test.step('ADMIN-29 操作紀錄查詢', async () => {});
+      await test.step('ADMIN-29 操作紀錄查詢', async () => {
+        progress('ADMIN-29 操作紀錄查詢');
+
+        async function searchLogOperationTypes(keyword: string): Promise<Set<string>> {
+          await adminPage.goto('/admin/dash-board/logs');
+          await adminPage.getByPlaceholder('請輸入搜尋內容').fill(keyword);
+          // 進頁面時 AdminDashboardLogs 會自動打一次無關鍵字的預設查詢（ngAfterViewInit），
+          // 若只比對 URL/method，可能會搶先接到那次還沒有 keyWord 的回應而不是點擊搜尋後的結果，
+          // 因此改成同時比對 request body 的 keyWord 是否等於這次輸入的關鍵字。
+          const logsPromise = adminPage.waitForResponse((response) =>
+            response.url().includes('/api/admin/logs/search') &&
+            response.request().method() === 'POST' &&
+            response.request().postDataJSON()?.keyWord === keyword,
+          );
+          await adminPage.locator('.app-btn.search').click();
+          const body = await expectApiSuccess<{
+            items?: Array<{ operationType?: string }>;
+          }>(await logsPromise);
+          return new Set((body.data?.items ?? []).map((item) => item.operationType));
+        }
+
+        const eventALogTypes = await searchLogOperationTypes(eventAName);
+        expect(eventALogTypes.has('requestRevision')).toBe(true);
+        expect(eventALogTypes.has('eventUnpublishReview')).toBe(true);
+
+        const eventCLogTypes = await searchLogOperationTypes(eventCName);
+        expect(eventCLogTypes.has('notifyEventPayment')).toBe(true);
+
+        const targetOrganizerLogTypes = await searchLogOperationTypes(credentials!.targetOrganizer.email);
+        expect(targetOrganizerLogTypes.has('accountDisabled')).toBe(true);
+        expect(targetOrganizerLogTypes.has('accountRestored')).toBe(true);
+      });
     } finally {
       await Promise.all([
         adminContext.close(),
