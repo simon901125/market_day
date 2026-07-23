@@ -72,6 +72,7 @@ test.describe('Market Day 管理員後台', () => {
       targetOrganizerUserId: 0,
       targetVendorUserId: 0,
     };
+    let eventCEndsAt: Date = new Date(0);
 
     try {
       await test.step('ADMIN-01～04 管理員登入、總覽、通知中心', async () => {
@@ -307,7 +308,48 @@ test.describe('Market Day 管理員後台', () => {
         await organizerPage.reload();
         await expectNotificationVisible(organizerPage, eventAName);
       });
-      await test.step('ADMIN-15～17 活動 C 短時間窗與款項結清', async () => {});
+      await test.step('ADMIN-15～17 活動 C 短時間窗與款項結清', async () => {
+        progress('ADMIN-15 建立、審核、發布短時間窗活動 C');
+        const now = Date.now();
+        const registrationStartsAt = new Date(now + 90 * 1000);
+        const registrationEndsAt = new Date(now + 150 * 1000);
+        const eventStartsAt = new Date(now + 180 * 1000);
+        eventCEndsAt = new Date(now + 240 * 1000);
+
+        state.eventCId = await createAndSubmitMinimalEvent(organizerPage, eventCName, {
+          registrationStartsAt,
+          registrationEndsAt,
+          eventStartsAt,
+          eventEndsAt: eventCEndsAt,
+        });
+
+        await adminPage.goto(`/admin/dash-board/activity/detail/${state.eventCId}`);
+        await adminPage.locator('.header-actions button', { hasText: '審核通過' }).click();
+        const approveCPromise = waitForApi(adminPage, `/api/admin/events/${state.eventCId}/approve`, 'POST');
+        await adminPage.getByRole('button', { name: '確認送出', exact: true }).click();
+        await expectApiSuccess(await approveCPromise);
+        await closeAlert(adminPage, '審核通過', '確定');
+
+        const mapCompleteCButton = adminPage.locator('.header-actions button', { hasText: '地圖建置完成' });
+        await expect(mapCompleteCButton).toBeVisible();
+        await mapCompleteCButton.click();
+        const mapCPromise = waitForApi(adminPage, `/api/admin/events/${state.eventCId}/map-complete`, 'POST');
+        await adminPage.getByRole('button', { name: '確認送出', exact: true }).click();
+        await expectApiSuccess(await mapCPromise);
+        await closeAlert(adminPage, '地圖建置已送出', '確定');
+
+        await organizerPage.goto(`/organizer/dash-board/activity/detail/${state.eventCId}`);
+        await expect(organizerPage.getByRole('button', { name: '發布活動', exact: true })).toBeVisible();
+        await organizerPage.getByRole('button', { name: '發布活動', exact: true }).click();
+        const publishCPromise = waitForApi(
+          organizerPage,
+          `/api/organizer/events/${state.eventCId}/publish`,
+          'POST',
+        );
+        await organizerPage.getByRole('button', { name: '確定發布', exact: true }).click();
+        await expectApiSuccess(await publishCPromise);
+        await closeAlert(organizerPage, '發布活動成功', '知道了');
+      });
       await test.step('ADMIN-18～23 目標主辦方帳號管理', async () => {});
       await test.step('ADMIN-24～28 目標攤主帳號管理', async () => {});
       await test.step('ADMIN-29 操作紀錄查詢', async () => {});
