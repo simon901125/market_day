@@ -379,7 +379,76 @@ test.describe('Market Day 管理員後台', () => {
         await organizerPage.reload();
         await expectNotificationVisible(organizerPage, eventCName);
       });
-      await test.step('ADMIN-18～23 目標主辦方帳號管理', async () => {});
+      await test.step('ADMIN-18～23 目標主辦方帳號管理', async () => {
+        progress('ADMIN-18 搜尋使用者列表');
+        await adminPage.goto('/admin/dash-board/users');
+        await adminPage.getByPlaceholder('搜尋姓名/Email').fill(credentials!.targetOrganizer.email);
+        const searchUsersPromise = waitForApi(adminPage, '/api/admin/users/search', 'POST');
+        await adminPage.locator('.app-btn.search').click();
+        const usersBody = await expectApiSuccess<{
+          items?: Array<{ id?: number; email?: string; role?: string }>;
+        }>(await searchUsersPromise);
+        const targetOrganizerRow = usersBody.data?.items?.find(
+          (item) => item.email === credentials!.targetOrganizer.email,
+        );
+        expect(targetOrganizerRow?.id).toBeTruthy();
+        state.targetOrganizerUserId = Number(targetOrganizerRow!.id);
+
+        progress('ADMIN-19 開啟目標主辦方詳細頁');
+        const organizerDetailPromise = waitForApi(adminPage, `/api/admin/users/${state.targetOrganizerUserId}`, 'GET');
+        await adminPage.goto(`/admin/dash-board/user/detail/organizer/${state.targetOrganizerUserId}`);
+        await expectApiSuccess(await organizerDetailPromise);
+        await expect(adminPage.getByText(credentials!.targetOrganizer.email, { exact: true })).toBeVisible();
+
+        progress('ADMIN-20 停用目標主辦方帳號');
+        await adminPage.getByRole('button', { name: '停用帳號', exact: true }).click();
+        const disableOrganizerPromise = waitForApi(
+          adminPage,
+          `/api/admin/users/${state.targetOrganizerUserId}/disable`,
+          'POST',
+        );
+        await adminPage.getByRole('button', { name: '確認停用', exact: true }).click();
+        await expectApiSuccess(await disableOrganizerPromise);
+        await closeAlert(adminPage, '帳號已停用', '確定');
+        await expect(adminPage.getByText('已停用', { exact: true }).first()).toBeVisible();
+
+        progress('ADMIN-21 目標主辦方停用期間無法登入');
+        const organizerConfig = authRoleCases.find((item) => item.role === 'organizer')!;
+        const rejectedLoginResponse = await loginWithUi(
+          targetOrganizerPage,
+          organizerConfig,
+          credentials!.targetOrganizer.email,
+          credentials!.targetOrganizer.password,
+        );
+        const rejectedLoginBody = await rejectedLoginResponse.json();
+        expect(rejectedLoginBody.statusCode).toBe(400);
+        await expect(targetOrganizerPage.getByRole('dialog')).toContainText(/停用/);
+        await expect(targetOrganizerPage).toHaveURL(organizerConfig.loginPath);
+
+        progress('ADMIN-22 恢復目標主辦方帳號');
+        await adminPage.goto(`/admin/dash-board/user/detail/organizer/${state.targetOrganizerUserId}`);
+        await adminPage.getByRole('button', { name: '恢復帳號', exact: true }).click();
+        const restoreOrganizerPromise = waitForApi(
+          adminPage,
+          `/api/admin/users/${state.targetOrganizerUserId}/restore`,
+          'POST',
+        );
+        await adminPage.getByRole('button', { name: '確認恢復', exact: true }).click();
+        await expectApiSuccess(await restoreOrganizerPromise);
+        await closeAlert(adminPage, '帳號已恢復', '確定');
+        await expect(adminPage.getByText('正常', { exact: true }).first()).toBeVisible();
+
+        progress('ADMIN-23 目標主辦方恢復後能重新登入');
+        const restoredLoginResponse = await loginWithUi(
+          targetOrganizerPage,
+          organizerConfig,
+          credentials!.targetOrganizer.email,
+          credentials!.targetOrganizer.password,
+        );
+        const restoredLoginBody = await expectApiSuccess<{ user?: { role?: string } }>(restoredLoginResponse);
+        expect(restoredLoginBody.data?.user?.role).toBe('ORGANIZER');
+        await expect(targetOrganizerPage).toHaveURL(organizerConfig.dashboardPath);
+      });
       await test.step('ADMIN-24～28 目標攤主帳號管理', async () => {});
       await test.step('ADMIN-29 操作紀錄查詢', async () => {});
     } finally {
