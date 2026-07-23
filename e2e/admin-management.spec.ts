@@ -449,7 +449,75 @@ test.describe('Market Day 管理員後台', () => {
         expect(restoredLoginBody.data?.user?.role).toBe('ORGANIZER');
         await expect(targetOrganizerPage).toHaveURL(organizerConfig.dashboardPath);
       });
-      await test.step('ADMIN-24～28 目標攤主帳號管理', async () => {});
+      await test.step('ADMIN-24～28 目標攤主帳號管理', async () => {
+        progress('ADMIN-24 搜尋並開啟目標攤主詳細頁');
+        await adminPage.goto('/admin/dash-board/users');
+        await adminPage.getByPlaceholder('搜尋姓名/Email').fill(credentials!.targetVendor.email);
+        const searchVendorPromise = waitForApi(adminPage, '/api/admin/users/search', 'POST');
+        await adminPage.locator('.app-btn.search').click();
+        const vendorUsersBody = await expectApiSuccess<{
+          items?: Array<{ id?: number; email?: string }>;
+        }>(await searchVendorPromise);
+        const targetVendorRow = vendorUsersBody.data?.items?.find(
+          (item) => item.email === credentials!.targetVendor.email,
+        );
+        expect(targetVendorRow?.id).toBeTruthy();
+        state.targetVendorUserId = Number(targetVendorRow!.id);
+
+        const vendorDetailPromise = waitForApi(adminPage, `/api/admin/users/${state.targetVendorUserId}`, 'GET');
+        await adminPage.goto(`/admin/dash-board/user/detail/vender/${state.targetVendorUserId}`);
+        await expectApiSuccess(await vendorDetailPromise);
+        await expect(adminPage.getByText(credentials!.targetVendor.email, { exact: true })).toBeVisible();
+
+        progress('ADMIN-25 停用目標攤主帳號');
+        await adminPage.getByRole('button', { name: '停用帳號', exact: true }).click();
+        const disableVendorPromise = waitForApi(
+          adminPage,
+          `/api/admin/users/${state.targetVendorUserId}/disable`,
+          'POST',
+        );
+        await adminPage.getByRole('button', { name: '確認停用', exact: true }).click();
+        await expectApiSuccess(await disableVendorPromise);
+        await closeAlert(adminPage, '帳號已停用', '確定');
+        await expect(adminPage.getByText('已停用', { exact: true }).first()).toBeVisible();
+
+        progress('ADMIN-26 目標攤主停用期間無法登入');
+        const vendorConfig = authRoleCases.find((item) => item.role === 'vendor')!;
+        const rejectedVendorLogin = await loginWithUi(
+          targetVendorPage,
+          vendorConfig,
+          credentials!.targetVendor.email,
+          credentials!.targetVendor.password,
+        );
+        const rejectedVendorBody = await rejectedVendorLogin.json();
+        expect(rejectedVendorBody.statusCode).toBe(400);
+        await expect(targetVendorPage.getByRole('dialog')).toContainText(/停用/);
+        await expect(targetVendorPage).toHaveURL(vendorConfig.loginPath);
+
+        progress('ADMIN-27 恢復目標攤主帳號');
+        await adminPage.goto(`/admin/dash-board/user/detail/vender/${state.targetVendorUserId}`);
+        await adminPage.getByRole('button', { name: '恢復帳號', exact: true }).click();
+        const restoreVendorPromise = waitForApi(
+          adminPage,
+          `/api/admin/users/${state.targetVendorUserId}/restore`,
+          'POST',
+        );
+        await adminPage.getByRole('button', { name: '確認恢復', exact: true }).click();
+        await expectApiSuccess(await restoreVendorPromise);
+        await closeAlert(adminPage, '帳號已恢復', '確定');
+        await expect(adminPage.getByText('正常', { exact: true }).first()).toBeVisible();
+
+        progress('ADMIN-28 目標攤主恢復後能重新登入');
+        const restoredVendorLogin = await loginWithUi(
+          targetVendorPage,
+          vendorConfig,
+          credentials!.targetVendor.email,
+          credentials!.targetVendor.password,
+        );
+        const restoredVendorBody = await expectApiSuccess<{ user?: { role?: string } }>(restoredVendorLogin);
+        expect(restoredVendorBody.data?.user?.role).toBe('VENDOR');
+        await expect(targetVendorPage).toHaveURL(vendorConfig.dashboardPath);
+      });
       await test.step('ADMIN-29 操作紀錄查詢', async () => {});
     } finally {
       await Promise.all([
