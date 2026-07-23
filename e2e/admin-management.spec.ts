@@ -383,7 +383,14 @@ test.describe('Market Day 管理員後台', () => {
         progress('ADMIN-18 搜尋使用者列表');
         await adminPage.goto('/admin/dash-board/users');
         await adminPage.getByPlaceholder('搜尋姓名/Email').fill(credentials!.targetOrganizer.email);
-        const searchUsersPromise = waitForApi(adminPage, '/api/admin/users/search', 'POST');
+        // 進頁面時 AdminDashboardUserManagement 會自動打一次無關鍵字的預設查詢
+        // （跟 ADMIN-29 操作紀錄頁同樣的模式），若只比對 URL/method 可能搶接到那次
+        // 回應而不是點擊搜尋後的結果，因此同時比對 request body 的 keyWord。
+        const searchUsersPromise = adminPage.waitForResponse((response) =>
+          response.url().includes('/api/admin/users/search') &&
+          response.request().method() === 'POST' &&
+          response.request().postDataJSON()?.keyWord === credentials!.targetOrganizer.email,
+        );
         await adminPage.locator('.app-btn.search').click();
         const usersBody = await expectApiSuccess<{
           items?: Array<{ id?: number; email?: string; role?: string }>;
@@ -453,7 +460,12 @@ test.describe('Market Day 管理員後台', () => {
         progress('ADMIN-24 搜尋並開啟目標攤主詳細頁');
         await adminPage.goto('/admin/dash-board/users');
         await adminPage.getByPlaceholder('搜尋姓名/Email').fill(credentials!.targetVendor.email);
-        const searchVendorPromise = waitForApi(adminPage, '/api/admin/users/search', 'POST');
+        // 同 ADMIN-18 的說明：避免搶接到進頁面時自動觸發的無關鍵字預設查詢。
+        const searchVendorPromise = adminPage.waitForResponse((response) =>
+          response.url().includes('/api/admin/users/search') &&
+          response.request().method() === 'POST' &&
+          response.request().postDataJSON()?.keyWord === credentials!.targetVendor.email,
+        );
         await adminPage.locator('.app-btn.search').click();
         const vendorUsersBody = await expectApiSuccess<{
           items?: Array<{ id?: number; email?: string }>;
