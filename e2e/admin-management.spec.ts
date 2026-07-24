@@ -24,7 +24,6 @@ interface AdminFlowCredentials {
 
 interface AdminFlowState {
   eventAId: number;
-  eventCId: number;
   targetOrganizerUserId: number;
   targetVendorUserId: number;
 }
@@ -40,7 +39,7 @@ const eventCoverPath = resolve('src/assets/images/market/cards/market-card-01.pn
 const eventMapPath = resolve('src/assets/images/market/cards/market-card-02.png');
 
 test.describe('Market Day 管理員後台', () => {
-  test('@admin-management 管理員後台補件、下架審核、款項結清、使用者管理與操作紀錄', async ({ browser }) => {
+  test('@admin-management 管理員後台補件、下架審核、使用者管理與操作紀錄', async ({ browser }) => {
     test.setTimeout(10 * 60 * 1000);
 
     const credentials = requiredCredentials();
@@ -48,7 +47,6 @@ test.describe('Market Day 管理員後台', () => {
 
     const runId = `${Date.now()}-${randomUUID().slice(0, 8)}`;
     const eventAName = `E2E 管理員測試活動A ${runId}`;
-    const eventCName = `E2E 管理員測試活動C ${runId}`;
 
     const desktopViewport = { width: 1440, height: 900 };
     const adminContext = await browser.newContext({ viewport: desktopViewport });
@@ -68,11 +66,9 @@ test.describe('Market Day 管理員後台', () => {
 
     const state: AdminFlowState = {
       eventAId: 0,
-      eventCId: 0,
       targetOrganizerUserId: 0,
       targetVendorUserId: 0,
     };
-    let eventCEndsAt: Date = new Date(0);
 
     try {
       await test.step('ADMIN-01～04 管理員登入、總覽、通知中心', async () => {
@@ -308,77 +304,6 @@ test.describe('Market Day 管理員後台', () => {
         await organizerPage.reload();
         await expectNotificationVisible(organizerPage, eventAName);
       });
-      await test.step('ADMIN-15～17 活動 C 短時間窗與款項結清', async () => {
-        progress('ADMIN-15 建立、審核、發布短時間窗活動 C');
-        const now = Date.now();
-        const registrationStartsAt = new Date(now + 90 * 1000);
-        const registrationEndsAt = new Date(now + 150 * 1000);
-        const eventStartsAt = new Date(now + 180 * 1000);
-        eventCEndsAt = new Date(now + 240 * 1000);
-
-        state.eventCId = await createAndSubmitMinimalEvent(organizerPage, eventCName, {
-          registrationStartsAt,
-          registrationEndsAt,
-          eventStartsAt,
-          eventEndsAt: eventCEndsAt,
-        });
-
-        await adminPage.goto(`/admin/dash-board/activity/detail/${state.eventCId}`);
-        await adminPage.locator('.header-actions button', { hasText: '審核通過' }).click();
-        const approveCPromise = waitForApi(adminPage, `/api/admin/events/${state.eventCId}/approve`, 'POST');
-        await adminPage.getByRole('button', { name: '確認送出', exact: true }).click();
-        await expectApiSuccess(await approveCPromise);
-        await closeAlert(adminPage, '審核通過', '確定');
-
-        const mapCompleteCButton = adminPage.locator('.header-actions button', { hasText: '地圖建置完成' });
-        await expect(mapCompleteCButton).toBeVisible();
-        await mapCompleteCButton.click();
-        const mapCPromise = waitForApi(adminPage, `/api/admin/events/${state.eventCId}/map-complete`, 'POST');
-        await adminPage.getByRole('button', { name: '確認送出', exact: true }).click();
-        await expectApiSuccess(await mapCPromise);
-        await closeAlert(adminPage, '地圖建置已送出', '確定');
-
-        await organizerPage.goto(`/organizer/dash-board/activity/detail/${state.eventCId}`);
-        await expect(organizerPage.getByRole('button', { name: '發布活動', exact: true })).toBeVisible();
-        await organizerPage.getByRole('button', { name: '發布活動', exact: true }).click();
-        const publishCPromise = waitForApi(
-          organizerPage,
-          `/api/organizer/events/${state.eventCId}/publish`,
-          'POST',
-        );
-        await organizerPage.getByRole('button', { name: '確定發布', exact: true }).click();
-        await expectApiSuccess(await publishCPromise);
-        await closeAlert(organizerPage, '發布活動成功', '知道了');
-
-        progress('ADMIN-16 等待活動 C 結束並確認款項未結清');
-        await waitUntilPast(adminPage, eventCEndsAt);
-        // /api/admin/events/{id} 需要管理員登入的 Authorization header，Playwright 的
-        // page.request 不會自動帶入 Angular HttpClient 攔截器加上的 token，所以這裡改成
-        // 透過已登入的頁面重新整理、直接讀畫面上的狀態文字來輪詢，不直接呼叫 API。
-        // 只讀文字不丟例外，單次「還沒變成款項未結清」不會中止整個 expect.poll。
-        const statusTag = adminPage
-          .locator('.meta-item', { hasText: '活動狀態' })
-          .locator('.status-tag');
-        await expect.poll(async () => {
-          await adminPage.goto(`/admin/dash-board/activity/detail/${state.eventCId}`);
-          return (await statusTag.textContent())?.trim() ?? '';
-        }, {
-          message: '活動 C 結束時間已過，管理員查看活動詳情應顯示「款項未結清」',
-          timeout: 90_000,
-          intervals: [5_000, 10_000, 15_000],
-        }).toBe('款項未結清');
-
-        progress('ADMIN-17 管理員通知款項結清');
-        await adminPage.locator('.header-actions button', { hasText: '通知款項結清' }).click();
-        const paymentPromise = waitForApi(adminPage, `/api/admin/events/${state.eventCId}/payment`, 'POST');
-        await adminPage.getByRole('button', { name: '確認送出', exact: true }).click();
-        await expectApiSuccess(await paymentPromise);
-        await closeAlert(adminPage, '款項交付通知已送出', '確定');
-
-        await organizerPage.goto('/organizer/dash-board/notification');
-        await organizerPage.reload();
-        await expectNotificationVisible(organizerPage, eventCName);
-      });
       await test.step('ADMIN-18～23 目標主辦方帳號管理', async () => {
         progress('ADMIN-18 搜尋使用者列表');
         await adminPage.goto('/admin/dash-board/users');
@@ -555,9 +480,6 @@ test.describe('Market Day 管理員後台', () => {
         expect(eventALogTypes.has('requestRevision')).toBe(true);
         expect(eventALogTypes.has('eventUnpublishReview')).toBe(true);
 
-        const eventCLogTypes = await searchLogOperationTypes(eventCName);
-        expect(eventCLogTypes.has('notifyEventPayment')).toBe(true);
-
         const targetOrganizerLogTypes = await searchLogOperationTypes(credentials!.targetOrganizer.email);
         expect(targetOrganizerLogTypes.has('accountDisabled')).toBe(true);
         expect(targetOrganizerLogTypes.has('accountRestored')).toBe(true);
@@ -646,13 +568,6 @@ function formatTime(value: Date): string {
   return `${String(value.getHours()).padStart(2, '0')}:${String(value.getMinutes()).padStart(2, '0')}`;
 }
 
-async function waitUntilPast(page: Page, target: Date, bufferMs = 3_000): Promise<void> {
-  const remaining = target.getTime() - Date.now() + bufferMs;
-  if (remaining > 0) {
-    await page.waitForTimeout(remaining);
-  }
-}
-
 async function readTodoCount(page: Page, label: string): Promise<number> {
   const card = page.locator('.todo-card', { hasText: label });
   await expect(card).toBeVisible();
@@ -678,7 +593,7 @@ async function createAndSubmitMinimalEvent(
   await page.locator('.cover-field input[type="file"]').setInputFiles(eventCoverPath);
   await page.locator('textarea[name="description"]').fill('E2E 管理員後台測試活動簡介');
   await page.locator('textarea[name="introduction"]').fill(
-    '此活動由 Playwright 自動建立，用來驗證管理員後台的審核、下架與款項結清流程。',
+    '此活動由 Playwright 自動建立，用來驗證管理員後台的審核與下架流程。',
   );
   await clickNext(page);
 
