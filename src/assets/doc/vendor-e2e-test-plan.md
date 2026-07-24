@@ -241,7 +241,7 @@ Vendor 自動化測試依 Organizer 相同方式拆分於 `e2e/vendor/frontend/`
 npm.cmd run e2e:vendor:smoke
 ```
 
-本次結果：完成 frontend／backend 拆分並新增 RWD 後，Vendor Smoke 共 `26 passed`、`0 failed`，headed 單一 worker 耗時約 1.9 分鐘。Playwright 可收集 46 個 Vendor 案例；另外 20 個未標記 `@smoke` 的 `test.skip`／`test.fixme` 仍需 Real API、後端 seed、測試時鐘、Sandbox 或一次性 destructive 資料，不列入本次 Smoke 通過數。
+本次結果：完成 frontend／backend 拆分並新增 RWD 後，Vendor Smoke 共 `26 passed`、`0 failed`，headed 單一 worker 搭配 HTML Report 耗時約 2.5 分鐘。Playwright 可收集 46 個 Vendor 案例；另外 20 個未標記 `@smoke` 的 `test.skip`／`test.fixme` 仍需 Real API、後端 seed、測試時鐘、Sandbox 或一次性 destructive 資料，不列入本次 Smoke 通過數。
 
 關聯計畫的已完成結果不併入上述 46 個 Vendor 案例計數：
 

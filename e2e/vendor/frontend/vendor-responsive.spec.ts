@@ -49,7 +49,7 @@ test.describe('攤主公開專區 RWD', () => {
 
     const menuButton = page.getByRole('button', { name: '開啟攤主導覽選單' });
     const drawer = page.locator('#vendor-mobile-menu');
-    const backdrop = page.getByRole('button', { name: '關閉攤主導覽選單' }).first();
+    const backdrop = page.locator('.vendor-menu-backdrop');
 
     await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
     await expect(drawer).toHaveAttribute('aria-hidden', 'true');
@@ -64,7 +64,9 @@ test.describe('攤主公開專區 RWD', () => {
     await expect(drawer).toHaveAttribute('aria-hidden', 'true');
 
     await menuButton.click();
-    await backdrop.click({ force: true });
+    await expect(backdrop).toHaveClass(/open/);
+    await expect(backdrop).toBeVisible();
+    await backdrop.click({ position: { x: 380, y: 400 } });
     await expect(drawer).toHaveAttribute('aria-hidden', 'true');
 
     await menuButton.click();
