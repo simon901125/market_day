@@ -32,7 +32,7 @@ describe('VendorDashboardStall', () => {
     coverImageUrl: 'cover.png',
     brandSummary: '品牌簡介',
     brandDescription: '品牌介紹',
-    categories: [{ id: 7, name: '玩具選物', slug: 'toys' }],
+    category: { id: 7, name: '玩具選物', slug: 'toys' },
     products: [
       {
         id: 1,
@@ -117,6 +117,11 @@ describe('VendorDashboardStall', () => {
     expect(descriptionInput.value).toBe(stallInfo.brandDescription);
     expect(avatarImage.getAttribute('src')).toBe(stallInfo.avatarImageUrl);
     expect(coverImage.getAttribute('src')).toBe(stallInfo.coverImageUrl);
+    expect(component.brandInfo.category).toBe(stallInfo.category!.name);
+    expect(component.brandInfo.categoryId).toBe(stallInfo.category!.id);
+    expect(
+      fixture.nativeElement.querySelector('.brand-grid app-dropdown .select-label').textContent,
+    ).toContain(stallInfo.category!.name);
     expect(textContent).toContain(component.products[0].name);
     expect(vendorDashboardService.getVendorStallInfo).toHaveBeenCalled();
   });
