@@ -14,6 +14,7 @@ import { isApiSuccessStatus } from '../../../../models/interface/shared/ApiResul
 import { ApplicationStatus } from '../../../../models/status/ApplicationStatus';
 import { DepositStatus } from '../../../../models/status/DepositStatus';
 import { PaymentStatus } from '../../../../models/status/PaymentStatus';
+import { paymentMethodLabel } from '../../../../core/utils/payment-method.util';
 
 interface DetailAction {
   key: 'approve-refund' | 'retry-refund';
@@ -268,14 +269,14 @@ export class OrganizerDashboardCollectionDetail implements OnInit {
         description: data.brand.introduction || '-',
       },
       paymentInfo: [
-        { label: '付款方式', value: data.payment.paymentMethod || '-' },
-        { label: '金流平台', value: data.payment.paymentPlatform || '-' },
+        { label: '付款方式', value: paymentMethodLabel(data.payment.paymentMethod) },
+        { label: '金流平台', value: paymentMethodLabel(data.payment.paymentPlatform) },
         { label: '付款交易編號', value: data.payment.paymentTradeNo || '-' },
       ],
       refundInfo: data.refund ? [
         { label: '退款狀態', value: data.refund.refundStatus || '-' },
-        { label: '退款方式', value: data.refund.refundMethod || '原付款方式退回' },
-        { label: '金流平台', value: data.refund.paymentPlatform || '-' },
+        { label: '退款方式', value: paymentMethodLabel(data.refund.refundMethod, '原付款方式退回') },
+        { label: '金流平台', value: paymentMethodLabel(data.refund.paymentPlatform) },
         { label: '退款編號', value: data.refund.refundTradeNo || '-' },
       ] : undefined,
       feeRows,

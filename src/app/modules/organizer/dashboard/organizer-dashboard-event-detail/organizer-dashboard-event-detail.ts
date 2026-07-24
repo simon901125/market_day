@@ -86,6 +86,10 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
   /** 返回活動管理列表時要保留的狀態篩選。 */
   readonly returnStatus: string;
 
+  readonly returnKeyword: string;
+  readonly returnStartDate: string;
+  readonly returnEndDate: string;
+
   /** 目前顯示或編輯的活動資料。 */
   activity: OrganizerEventRow;
 
@@ -244,6 +248,9 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     this.editActivityId = Number(this.route.snapshot.queryParamMap.get('edit')) || 0;
     this.returnPage = Number(this.route.snapshot.queryParamMap.get('returnPage') || history.state?.returnPage) || 1;
     this.returnStatus = this.route.snapshot.queryParamMap.get('returnStatus') || history.state?.returnStatus || '';
+    this.returnKeyword = this.route.snapshot.queryParamMap.get('returnKeyword') || history.state?.returnKeyword || '';
+    this.returnStartDate = this.route.snapshot.queryParamMap.get('returnStartDate') || history.state?.returnStartDate || '';
+    this.returnEndDate = this.route.snapshot.queryParamMap.get('returnEndDate') || history.state?.returnEndDate || '';
     const requestedStep = Number(this.route.snapshot.queryParamMap.get('step'));
     if (Number.isInteger(requestedStep) && requestedStep >= 1 && requestedStep <= this.steps.length) {
       this.currentStep = requestedStep - 1;
@@ -925,7 +932,13 @@ export class OrganizerDashboardEventDetail implements OnDestroy {
     }
 
     this.router.navigate(['/organizer/dash-board/activity'], {
-      queryParams: { page: this.returnPage, status: this.returnStatus || null },
+      queryParams: {
+        page: this.returnPage,
+        status: this.returnStatus || null,
+        keyword: this.returnKeyword || null,
+        startDate: this.returnStartDate || null,
+        endDate: this.returnEndDate || null,
+      },
     });
   }
 
