@@ -10,7 +10,7 @@
 
 - [帳號 E2E 測試計畫](./auth-account-e2e-test-plan.md)：攤主、主辦方、管理員帳號功能。
 - [活動主流程 E2E 測試計畫](./event-main-flow-e2e-test-plan.md)：跨角色的活動建立、審核、報名、付款與選位。
-- [管理員後台 E2E 測試計畫](./admin-management-e2e-test-plan.md)：管理員專屬的補件、下架審核、款項結清、使用者管理與操作紀錄。
+- [管理員後台 E2E 測試計畫](./admin-management-e2e-test-plan.md)：管理員專屬的補件、下架審核、使用者管理與操作紀錄。
 
 ## 2. 目前環境
 
