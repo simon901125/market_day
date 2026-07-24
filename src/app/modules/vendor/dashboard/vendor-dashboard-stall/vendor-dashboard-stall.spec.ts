@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { AddressApiService } from '../../../../core/services/address-api.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { VendorAccessService } from '../../../../core/Vendor/dashboardApi/vendor-access.service';
 import { VendorDashboardService } from '../../../../core/Vendor/dashboardApi/vendor-dashboard.service';
@@ -15,6 +16,7 @@ describe('VendorDashboardStall', () => {
   let alert: AlertService;
   let vendorDashboardService: jasmine.SpyObj<VendorDashboardService>;
   let authService: jasmine.SpyObj<AuthService>;
+  let addressApiService: jasmine.SpyObj<AddressApiService>;
   let vendorAccess: jasmine.SpyObj<VendorAccessService>;
 
   const stallInfo: VendorStallInfo = {
@@ -53,6 +55,22 @@ describe('VendorDashboardStall', () => {
       status: 'ACTIVE',
       isLogin: true,
     });
+    addressApiService = jasmine.createSpyObj<AddressApiService>('AddressApiService', [
+      'getAddressCities',
+      'getAddressDistricts',
+    ]);
+    addressApiService.getAddressCities.and.returnValue(of({
+      statusCode: 200,
+      message: 'ok',
+      messageDetails: null,
+      data: ['台中市'],
+    }));
+    addressApiService.getAddressDistricts.and.returnValue(of({
+      statusCode: 200,
+      message: 'ok',
+      messageDetails: null,
+      data: ['南屯區'],
+    }));
     vendorAccess = jasmine.createSpyObj<VendorAccessService>('VendorAccessService', ['refresh']);
     vendorAccess.refresh.and.resolveTo(false);
     vendorDashboardService = jasmine.createSpyObj<VendorDashboardService>('VendorDashboardService', [
@@ -89,6 +107,7 @@ describe('VendorDashboardStall', () => {
         provideRouter([]),
         { provide: VendorDashboardService, useValue: vendorDashboardService },
         { provide: AuthService, useValue: authService },
+        { provide: AddressApiService, useValue: addressApiService },
         { provide: VendorAccessService, useValue: vendorAccess },
       ],
     }).compileComponents();
